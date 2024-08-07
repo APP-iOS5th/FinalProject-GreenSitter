@@ -4,7 +4,7 @@
 //
 //  Created by Jiyong Cha on 8/7/24.
 //
-
+import AuthenticationServices
 import UIKit
 
 class LoginViewController: UIViewController {
@@ -29,20 +29,64 @@ class LoginViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    private let appleButton: ASAuthorizationAppleIDButton = {
+        let button = ASAuthorizationAppleIDButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(appleLogin), for: .touchUpInside)
+        return button
+    }()
+    
+    private let googleButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "googleLogin"), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.imageView?.contentMode = .scaleAspectFill
+        button.addTarget(self, action: #selector(googleLogin), for: .touchUpInside)
+        return button
+    }()
+    
+    private var textButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("둘러보기", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(navigationTap), for: .touchUpInside)
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        
         view.addSubview(bodyLabel)
         view.addSubview(titleLabel)
+        view.addSubview(appleButton)
+        view.addSubview(googleButton)
+        view.addSubview(textButton)
+        
         showToast(withDuration: 1, delay: 4)
         
         NSLayoutConstraint.activate([
             titleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -200),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            
             bodyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
             bodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
+            
+            appleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            appleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200),
+            appleButton.widthAnchor.constraint(equalToConstant: 300),
+            appleButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            googleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            googleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -120),
+            googleButton.widthAnchor.constraint(equalToConstant: 300),
+            googleButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            textButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            textButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
         ])
 
     }
@@ -121,4 +165,21 @@ class LoginViewController: UIViewController {
             toastView.removeFromSuperview()
         })
     }
+    
+    //MARK: - AppleLogin
+    @objc func appleLogin() {
+        
+    }
+    
+    //MARK: - GoogleLogin
+    @objc func googleLogin() {
+        print("Google Button Size: \(googleButton.bounds.size)")
+
+    }
+    
+    //MARK: - MainView move
+    @objc func navigationTap() {
+        
+    }
+
 }
