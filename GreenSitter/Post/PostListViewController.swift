@@ -13,6 +13,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
     private let tableView = UITableView()
     private var posts: [String] = ["화분 관리해드려요"]
     private var filteredPosts: [String] = []
+    private var selectedButton: UIButton?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,13 +27,15 @@ class PostListViewController: UIViewController, UITableViewDataSource {
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
         careProviderButton.setTitle("새싹 돌봐드립니다.", for: .normal)
-        careProviderButton.setTitleColor(.systemGreen, for: .normal)
+        careProviderButton.setTitleColor(.black, for: .normal)
         careProviderButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
         
         let careSeekerButton = UIButton()
         careSeekerButton.setTitle("새싹돌봄이를 찾습니다.", for: .normal)
-        careSeekerButton.setTitleColor(.systemGreen, for: .normal)
+        careSeekerButton.setTitleColor(.black, for: .normal)
         careSeekerButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
+        
+        categoryButtonTapped(careProviderButton)
         
         categoryStackView.axis = .horizontal
         categoryStackView.distribution = .fillEqually
@@ -48,6 +51,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
             categoryStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryStackView.heightAnchor.constraint(equalToConstant: 50)
         ])
+        
     }
     
     func setupTableView() {
@@ -64,6 +68,10 @@ class PostListViewController: UIViewController, UITableViewDataSource {
     }
     
     @objc func categoryButtonTapped(_ sender: UIButton) {
+        selectedButton?.setTitleColor(.black, for: .normal)
+        sender.setTitleColor(.systemGreen, for: .normal)
+        selectedButton = sender
+        
         guard let category = sender.titleLabel?.text else { return }
         filterPosts(for: category)
     }
@@ -88,7 +96,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
     }
 }
 
-
 #Preview {
     return UINavigationController(rootViewController: PostListViewController())
 }
+
