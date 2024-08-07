@@ -41,6 +41,8 @@
 		97934E3F2C62FFC500B38E0A /* ChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E3E2C62FFC500B38E0A /* ChatListViewController.swift */; };
 		97934E412C62FFDB00B38E0A /* CareFinderMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E402C62FFDB00B38E0A /* CareFinderMapViewController.swift */; };
 		97934E432C63003C00B38E0A /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E422C63003C00B38E0A /* Colors.swift */; };
+		97934E4A2C633D6E00B38E0A /* APIKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97934E492C633D6E00B38E0A /* APIKey.plist */; };
+		97934E4D2C633DAC00B38E0A /* KakaoMapsSDK-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 97934E4C2C633DAC00B38E0A /* KakaoMapsSDK-SPM */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +82,7 @@
 		97934E3E2C62FFC500B38E0A /* ChatListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewController.swift; sourceTree = "<group>"; };
 		97934E402C62FFDB00B38E0A /* CareFinderMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareFinderMapViewController.swift; sourceTree = "<group>"; };
 		97934E422C63003C00B38E0A /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		97934E492C633D6E00B38E0A /* APIKey.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = APIKey.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				97934E4D2C633DAC00B38E0A /* KakaoMapsSDK-SPM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				97934E342C62FEEA00B38E0A /* GoogleService-Info.plist */,
+				97934E492C633D6E00B38E0A /* APIKey.plist */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
 				97934DD82C62F3C600B38E0A /* ViewController.swift */,
@@ -255,6 +260,9 @@
 			dependencies = (
 			);
 			name = GreenSitter;
+			packageProductDependencies = (
+				97934E4C2C633DAC00B38E0A /* KakaoMapsSDK-SPM */,
+			);
 			productName = GreenSitter;
 			productReference = 97934DD12C62F3C600B38E0A /* GreenSitter.app */;
 			productType = "com.apple.product-type.application";
@@ -283,6 +291,9 @@
 				Base,
 			);
 			mainGroup = 97934DC82C62F3C600B38E0A;
+			packageReferences = (
+				97934E4B2C633DAC00B38E0A /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */,
+			);
 			productRefGroup = 97934DD22C62F3C600B38E0A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -298,6 +309,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
+				97934E4A2C633D6E00B38E0A /* APIKey.plist in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
 				97934E352C62FEEA00B38E0A /* GoogleService-Info.plist in Resources */,
 			);
@@ -553,6 +565,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		97934E4B2C633DAC00B38E0A /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao-mapsSDK/KakaoMapsSDK-SPM.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.10.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		97934E4C2C633DAC00B38E0A /* KakaoMapsSDK-SPM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97934E4B2C633DAC00B38E0A /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */;
+			productName = "KakaoMapsSDK-SPM";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97934DC92C62F3C600B38E0A /* Project object */;
 }
