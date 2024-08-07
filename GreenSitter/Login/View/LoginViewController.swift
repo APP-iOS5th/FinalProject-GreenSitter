@@ -9,10 +9,23 @@ import UIKit
 
 class LoginViewController: UIViewController {
     
-    lazy var textLabel: UILabel = {
-       let label = UILabel()
+    lazy var titleLabel: UILabel = {
+        let label = UILabel()
         label.text = "새싹 돌봄이"
-        label.font = .systemFont(ofSize: 30)
+        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    lazy var bodyLabel: UILabel = {
+        let label = UILabel()
+        label.text = """
+    내 주변의 새싹 돌봄이 ☘️들이
+    당신의 소중한 식물을
+    돌봐드립니다
+"""
+        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.numberOfLines = 0 // 여러 줄 텍스트를 지원
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -21,14 +34,22 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
-        
-        view.addSubview(textLabel)
+        view.addSubview(bodyLabel)
+        view.addSubview(titleLabel)
         showToast(withDuration: 1, delay: 4)
+        
+        NSLayoutConstraint.activate([
+            titleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -200),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            bodyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
+            bodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
+        ])
+
     }
     
     //MARK: - ToastMessage
     func showToast(withDuration: Double, delay: Double) {
-        let toastLabelWidth: CGFloat = 280
+        let toastLabelWidth: CGFloat = 380
         let toastLabelHeight: CGFloat = 80
         
         // UIView 생성
@@ -37,13 +58,13 @@ class LoginViewController: UIViewController {
         toastView.alpha = 1.0
         toastView.layer.cornerRadius = 25
         toastView.clipsToBounds = true
-        toastView.layer.borderColor = UIColor.black.cgColor
+        toastView.layer.borderColor = UIColor.gray.cgColor
         toastView.layer.borderWidth = 1
         
-        //쉐도우 설정
+        // 쉐도우 설정
         toastView.layer.shadowColor = UIColor.gray.cgColor
-        toastView.layer.shadowOpacity = 0.5 //투명도
-        toastView.layer.shadowOffset = CGSize(width: 4, height: 4) //그림자 위치
+        toastView.layer.shadowOpacity = 0.5 // 투명도
+        toastView.layer.shadowOffset = CGSize(width: 4, height: 4) // 그림자 위치
         toastView.layer.shadowRadius = 10
         
         // UIImageView 생성 및 설정
@@ -94,14 +115,10 @@ class LoginViewController: UIViewController {
         ])
         
         self.view.addSubview(toastView)
-        
-        
         UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseOut, animations: {
             toastView.alpha = 0.0
         }, completion: {(isCompleted) in
             toastView.removeFromSuperview()
         })
     }
-
-
 }
