@@ -9,11 +9,11 @@ import UIKit
 
 class ChatListViewController: UIViewController {
     // 로그인 여부를 나타내는 변수
-    private var isLoggedIn = true
+    private var isLoggedIn = false
     private var hasChats = false
     
     // container
-    private let container: UIView = {
+    private lazy var container: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -21,7 +21,7 @@ class ChatListViewController: UIViewController {
     }()
     
     // 아이콘
-    private let iconImageView: UIImageView = {
+    private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "ChatIcon")
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -30,7 +30,7 @@ class ChatListViewController: UIViewController {
     }()
     
     // 홈 이동 버튼
-    private let goToHomeButton: UIButton = {
+    private lazy var goToHomeButton: UIButton = {
         var configuration = UIButton.Configuration.filled()
         // 버튼 타이틀
         var attributedTitle = AttributedString("새싹 돌봄이/보호자\n찾아보기")
@@ -53,7 +53,7 @@ class ChatListViewController: UIViewController {
     }()
     
     // 기본 텍스트
-    private let guideLabel: UILabel = {
+    private lazy var guideLabel: UILabel = {
         let label = UILabel()
         label.text = "현재 참여 중인 채팅이 없습니다."
         label.textColor = .secondaryLabel
@@ -153,7 +153,87 @@ class ChatListViewController: UIViewController {
     private func presentLoginViewController() {
         let loginViewController = LoginViewController()
         loginViewController.modalPresentationStyle = .fullScreen
-        present(loginViewController, animated: true, completion: nil)
+        self.present(loginViewController, animated: true) {
+                let image = UIImage(named: "profileIcon")
+                let title = "로그인 권한이 필요한 기능입니다."
+                let subtitle = "로그인 화면으로 이동합니다."
+                if let image = image {
+                    self.showToast(image: image, title: title, subtitle: subtitle, on: loginViewController)
+            }
+        }
+    }
+    
+    // 비로그인 시 토스트 메세지 창
+    private func showToast(image: UIImage, title: String, subtitle: String, on viewController: UIViewController) {
+        let toastView = UIView()
+        toastView.backgroundColor = .white
+        toastView.layer.borderColor = UIColor.systemGray4.cgColor
+        toastView.layer.borderWidth = 2.0
+        toastView.layer.cornerRadius = 23
+        toastView.clipsToBounds = true
+        toastView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let imageView = UIImageView()
+        imageView.image = image
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let labelView = UIView()
+        labelView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        titleLabel.textColor = .black
+        titleLabel.textAlignment = .left
+        titleLabel.numberOfLines = 0
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        let subtitleLabel = UILabel()
+        subtitleLabel.text = subtitle
+        subtitleLabel.font = UIFont.systemFont(ofSize: 14)
+        subtitleLabel.textColor = .black
+        subtitleLabel.textAlignment = .left
+        subtitleLabel.numberOfLines = 0
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        labelView.addSubview(titleLabel)
+        labelView.addSubview(subtitleLabel)
+        toastView.addSubview(imageView)
+        toastView.addSubview(labelView)
+        viewController.view.addSubview(toastView)
+        
+        NSLayoutConstraint.activate([
+            toastView.topAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            toastView.centerXAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.centerXAnchor),
+            toastView.widthAnchor.constraint(equalToConstant: 370),
+            toastView.heightAnchor.constraint(equalToConstant: 88),
+
+            imageView.leadingAnchor.constraint(equalTo: toastView.leadingAnchor, constant: 10),
+            imageView.centerYAnchor.constraint(equalTo: toastView.centerYAnchor),
+            imageView.widthAnchor.constraint(equalToConstant: 52),
+            imageView.heightAnchor.constraint(equalToConstant: 52),
+            
+            labelView.centerYAnchor.constraint(equalTo: toastView.centerYAnchor),
+            labelView.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
+            labelView.trailingAnchor.constraint(equalTo: toastView.trailingAnchor, constant: -10),
+            
+            titleLabel.topAnchor.constraint(equalTo: labelView.topAnchor, constant: 10),
+            titleLabel.leadingAnchor.constraint(equalTo: labelView.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: labelView.trailingAnchor),
+
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
+            subtitleLabel.leadingAnchor.constraint(equalTo: labelView.leadingAnchor),
+            subtitleLabel.trailingAnchor.constraint(equalTo: labelView.trailingAnchor),
+            subtitleLabel.bottomAnchor.constraint(equalTo: labelView.bottomAnchor, constant: -10)
+        ])
+        
+        // LoginView가 뜨고 0.8초 이후에 토스트 메세지가 4.0초 동안 떴다가 서서히 사라짐
+        UIView.animate(withDuration: 4.0, delay: 0.8, options: .curveEaseOut, animations: {
+            toastView.alpha = 0.0
+        }) { _ in
+            toastView.removeFromSuperview()
+        }
     }
     
     // 비로그인이었다가 로그인했을 때
@@ -162,5 +242,5 @@ class ChatListViewController: UIViewController {
         hasChats = true
         viewDidLoad()
     }
-
+    
 }
