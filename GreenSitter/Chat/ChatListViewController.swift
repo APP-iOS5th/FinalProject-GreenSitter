@@ -9,7 +9,7 @@ import UIKit
 
 class ChatListViewController: UIViewController {
     // 로그인 여부를 나타내는 변수
-    private var isLoggedIn = false
+    private var isLoggedIn = true
     private var hasChats = false
     
     // container
@@ -95,14 +95,21 @@ class ChatListViewController: UIViewController {
     func setupChatListUI() {
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
-//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: <#T##Any?#>, action: <#T##Selector?#>)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
     }
-        
+    
+    // MARK: - 로그인/채팅 목록 있음 Methods
+    @objc private func editButtonTapped() {
+
+    }
+    
     // MARK: - Setup Empty ChatList UI
     func setupEmptyChatListUI() {
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
-//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: <#T##Any?#>, action: <#T##Selector?#>)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
+        // Edit 버튼 비활성화
+        self.navigationItem.rightBarButtonItem?.isEnabled = false
         
         container.addSubview(iconImageView)
         container.addSubview(goToHomeButton)
@@ -134,13 +141,15 @@ class ChatListViewController: UIViewController {
         ])
     }
     
-    // MARK: - goToHomeButton Action Methods
+    // MARK: - 로그인/채팅 목록 없음 Methods
+    // goToHomeButton 눌렀을 때
     private func navigateToHome() {
         let homeViewController = PostListViewController()
         self.navigationController?.pushViewController(homeViewController, animated: true)
     }
     
     // MARK: - 비로그인 Methods
+    // 비로그인 시 로그인 화면 보여주기
     private func presentLoginViewController() {
         let loginViewController = LoginViewController()
         loginViewController.modalPresentationStyle = .fullScreen
