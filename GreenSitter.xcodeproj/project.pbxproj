@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		3BEFEC6A2C63123200E48D1E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3BEFEC692C63123200E48D1E /* GoogleService-Info.plist */; };
 		3BEFEC6E2C63185100E48D1E /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BEFEC6D2C63185100E48D1E /* LoginViewModel.swift */; };
+		3BEFEC722C63543500E48D1E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC712C63543500E48D1E /* FirebaseAuth */; };
+		3BEFEC752C63547D00E48D1E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC742C63547D00E48D1E /* GoogleSignIn */; };
+		3BEFEC772C63547D00E48D1E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC762C63547D00E48D1E /* GoogleSignInSwift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
 		97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD62C62F3C600B38E0A /* SceneDelegate.swift */; };
 		97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD82C62F3C600B38E0A /* ViewController.swift */; };
@@ -90,6 +93,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3BEFEC772C63547D00E48D1E /* GoogleSignInSwift in Frameworks */,
+				3BEFEC722C63543500E48D1E /* FirebaseAuth in Frameworks */,
+				3BEFEC752C63547D00E48D1E /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +282,11 @@
 			dependencies = (
 			);
 			name = GreenSitter;
+			packageProductDependencies = (
+				3BEFEC712C63543500E48D1E /* FirebaseAuth */,
+				3BEFEC742C63547D00E48D1E /* GoogleSignIn */,
+				3BEFEC762C63547D00E48D1E /* GoogleSignInSwift */,
+			);
 			productName = GreenSitter;
 			productReference = 97934DD12C62F3C600B38E0A /* GreenSitter.app */;
 			productType = "com.apple.product-type.application";
@@ -304,6 +315,10 @@
 				Base,
 			);
 			mainGroup = 97934DC82C62F3C600B38E0A;
+			packageReferences = (
+				3BEFEC702C63543500E48D1E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				3BEFEC732C63547D00E48D1E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			productRefGroup = 97934DD22C62F3C600B38E0A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -577,6 +592,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3BEFEC702C63543500E48D1E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+		3BEFEC732C63547D00E48D1E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3BEFEC712C63543500E48D1E /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3BEFEC702C63543500E48D1E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		3BEFEC742C63547D00E48D1E /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3BEFEC732C63547D00E48D1E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		3BEFEC762C63547D00E48D1E /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3BEFEC732C63547D00E48D1E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97934DC92C62F3C600B38E0A /* Project object */;
 }
