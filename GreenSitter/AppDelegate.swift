@@ -4,15 +4,16 @@
 //
 //  Created by Yungui Lee on 8/7/24.
 //
-import KakaoMapsSDK
+
 import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // 엔진 시작 전에 Kakao SDK 초기화
-        SDKInitializer.InitSDK(appKey: Bundle.main.kakaoAPIKey)
+        // Override point for customization after application launch.
         return true
     }
 
