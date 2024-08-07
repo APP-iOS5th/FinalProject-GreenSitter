@@ -28,8 +28,8 @@ class ChatAdditionalButtonsViewController: UIViewController {
     private lazy var additionalButtonStackView: UIStackView = {
        let additionalButtonStackView = UIStackView(arrangedSubviews: [planButton, cameraButton, albumButton])
         additionalButtonStackView.axis = .vertical
-        additionalButtonStackView.spacing = 62
-        additionalButtonStackView.alignment = .center
+        additionalButtonStackView.spacing = 37
+        additionalButtonStackView.alignment = .leading
         additionalButtonStackView.translatesAutoresizingMaskIntoConstraints = false
 
         return additionalButtonStackView
@@ -44,10 +44,9 @@ class ChatAdditionalButtonsViewController: UIViewController {
     
     private func setupUI() {
         view.addSubview(additionalButtonStackView)
-        
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            additionalButtonStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -115),
+            additionalButtonStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -80),
             additionalButtonStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 32),
         ])
     }
@@ -114,6 +113,8 @@ class ChatAdditionalButton: UIButton {
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             backgroundView.widthAnchor.constraint(equalToConstant: 50),
             backgroundView.heightAnchor.constraint(equalToConstant: 50),
             imageView.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
