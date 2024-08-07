@@ -21,12 +21,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         
         // Home(커뮤니티)
-        let firstViewController = UIViewController()
+        let firstViewController = PostListViewController()
         let firstNavigationController = UINavigationController(rootViewController: firstViewController)
         firstNavigationController.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house.fill"), tag: 0)
         
         // Map
-        let secondViewController = UIViewController()
+        let secondViewController = CareFinderMapViewController()
         let secondNavigationController = UINavigationController(rootViewController: secondViewController)
         secondNavigationController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
         
@@ -36,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
         
         // Profile
-        let fourthViewController = UIViewController()
+        let fourthViewController = ProfileViewController()
         let fourthNavigationController = UINavigationController(rootViewController: fourthViewController)
         fourthNavigationController.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.fill"), tag: 3)
         

@@ -70,7 +70,9 @@ class ChatListViewController: UIViewController {
         
         
         // MARK: - 로그인 시
-        
+        // 버튼 클릭 시 홈 화면으로 이동
+        goToHomeButton.addAction(UIAction { [weak self] _ in
+            self?.navigateToHome()}, for: .touchUpInside)
     }
     
     // MARK: - Setup UI
@@ -109,6 +111,12 @@ class ChatListViewController: UIViewController {
             guideLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
             guideLabel.widthAnchor.constraint(equalTo: container.widthAnchor)
         ])
+    }
+    
+    // MARK: - goToHomeButton Action Method
+    private func navigateToHome() {
+        let homeViewController = PostListViewController()
+        self.navigationController?.pushViewController(homeViewController, animated: true)
     }
 
 }
