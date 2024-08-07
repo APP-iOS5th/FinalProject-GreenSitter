@@ -2,7 +2,7 @@
 //  ChatListViewController.swift
 //  GreenSitter
 //
-//  Created by Yungui Lee on 8/7/24.
+//  Created by Jihye Park on 8/7/24.
 //
 
 import UIKit
