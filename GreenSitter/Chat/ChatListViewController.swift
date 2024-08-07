@@ -12,7 +12,6 @@ class ChatListViewController: UIViewController {
     // container
     private let container: UIView = {
         let view = UIView()
-        view.frame = CGRect(x: 30, y: 285, width: 333, height: 281)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -29,22 +28,22 @@ class ChatListViewController: UIViewController {
     
     // 홈 이동 버튼
     private let goToHomeButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = UIColor(red: 128/255, green: 188/255, blue: 86/255, alpha: 1.0)
-        button.setTitle("새싹 돌봄이/보호자\n찾아보기", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title3)
-        button.titleLabel?.numberOfLines = 2
-        button.titleLabel?.textAlignment = .center
-        button.titleLabel?.lineBreakMode = .byWordWrapping
-        button.layer.cornerRadius = 10
-        button.clipsToBounds = true
-        
+        var configuration = UIButton.Configuration.filled()
+        // 버튼 타이틀
+        var attributedTitle = AttributedString("새싹 돌봄이/보호자\n찾아보기")
+        attributedTitle.font = UIFont.preferredFont(forTextStyle: .title3)
+        configuration.attributedTitle = attributedTitle
+        // 버튼 색상
+        configuration.baseBackgroundColor = UIColor(red: 128/255, green: 188/255, blue: 86/255, alpha: 1.0)
+        configuration.baseForegroundColor = .white
         // padding
-        var buttonConfiguration = button.configuration
-        buttonConfiguration?.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-        button.configuration = buttonConfiguration
-        
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+        let button = UIButton(configuration: configuration)
+        // 버튼 타이틀 여러 줄 표시
+        button.titleLabel?.textAlignment = .center
+        button.titleLabel?.numberOfLines = 0
+        button.titleLabel?.lineBreakMode = .byWordWrapping
+
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -89,10 +88,10 @@ class ChatListViewController: UIViewController {
         self.view.addSubview(container)
         
         NSLayoutConstraint.activate([
-            container.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 100),
-            container.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            container.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            container.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -100),
+            container.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            container.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+            container.widthAnchor.constraint(equalToConstant: 333),
+            container.heightAnchor.constraint(equalToConstant: 281),
             
             iconImageView.topAnchor.constraint(equalTo: container.topAnchor),
             iconImageView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
@@ -100,12 +99,15 @@ class ChatListViewController: UIViewController {
             iconImageView.heightAnchor.constraint(equalToConstant: 121),
             
             goToHomeButton.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 20),
+            goToHomeButton.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 60),
+            goToHomeButton.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -60),
             goToHomeButton.centerXAnchor.constraint(equalTo: container.centerXAnchor),
             goToHomeButton.widthAnchor.constraint(equalToConstant: 231),
-            goToHomeButton.heightAnchor.constraint(equalToConstant: 51),
+            goToHomeButton.heightAnchor.constraint(equalToConstant: 70),
             
             guideLabel.topAnchor.constraint(equalTo: goToHomeButton.bottomAnchor, constant: 20),
-            guideLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor)
+            guideLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            guideLabel.widthAnchor.constraint(equalTo: container.widthAnchor)
         ])
     }
 
