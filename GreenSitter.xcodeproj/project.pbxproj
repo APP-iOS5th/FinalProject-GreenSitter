@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1543FB272C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */; };
+		1543FB292C6317EA002E4CC8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1543FB282C6317EA002E4CC8 /* GoogleService-Info.plist */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
 		97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD62C62F3C600B38E0A /* SceneDelegate.swift */; };
 		97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD82C62F3C600B38E0A /* ViewController.swift */; };
@@ -34,7 +36,6 @@
 		97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */; };
 		97934E312C62FE2E00B38E0A /* PostTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E302C62FE2E00B38E0A /* PostTableViewController.swift */; };
 		97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E322C62FE3400B38E0A /* ReviewViewController.swift */; };
-		97934E352C62FEEA00B38E0A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97934E342C62FEEA00B38E0A /* GoogleService-Info.plist */; };
 		97934E392C62FF9200B38E0A /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E382C62FF9200B38E0A /* LoginViewController.swift */; };
 		97934E3B2C62FFA800B38E0A /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E3A2C62FFA800B38E0A /* ProfileViewController.swift */; };
 		97934E3D2C62FFB600B38E0A /* PostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E3C2C62FFB600B38E0A /* PostListViewController.swift */; };
@@ -44,6 +45,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewController.swift; sourceTree = "<group>"; };
+		1543FB282C6317EA002E4CC8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97934DD42C62F3C600B38E0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		97934DD62C62F3C600B38E0A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -73,7 +76,6 @@
 		97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewListViewController.swift; sourceTree = "<group>"; };
 		97934E302C62FE2E00B38E0A /* PostTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewController.swift; sourceTree = "<group>"; };
 		97934E322C62FE3400B38E0A /* ReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewViewController.swift; sourceTree = "<group>"; };
-		97934E342C62FEEA00B38E0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		97934E382C62FF9200B38E0A /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		97934E3A2C62FFA800B38E0A /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		97934E3C2C62FFB600B38E0A /* PostListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostListViewController.swift; sourceTree = "<group>"; };
@@ -112,7 +114,6 @@
 		97934DD32C62F3C600B38E0A /* GreenSitter */ = {
 			isa = PBXGroup;
 			children = (
-				97934E342C62FEEA00B38E0A /* GoogleService-Info.plist */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
 				97934DD82C62F3C600B38E0A /* ViewController.swift */,
@@ -127,6 +128,7 @@
 				97934DDD2C62F3C800B38E0A /* Assets.xcassets */,
 				97934DDF2C62F3C800B38E0A /* LaunchScreen.storyboard */,
 				97934DE22C62F3C800B38E0A /* Info.plist */,
+				1543FB282C6317EA002E4CC8 /* GoogleService-Info.plist */,
 			);
 			path = GreenSitter;
 			sourceTree = "<group>";
@@ -219,6 +221,7 @@
 			isa = PBXGroup;
 			children = (
 				97934E3E2C62FFC500B38E0A /* ChatListViewController.swift */,
+				1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -299,7 +302,7 @@
 			files = (
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
-				97934E352C62FEEA00B38E0A /* GoogleService-Info.plist in Resources */,
+				1543FB292C6317EA002E4CC8 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,6 +321,7 @@
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				97934E292C62FDF700B38E0A /* MapViewController.swift in Sources */,
+				1543FB272C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift in Sources */,
 				97934E3B2C62FFA800B38E0A /* ProfileViewController.swift in Sources */,
 				97934DFB2C62F87D00B38E0A /* User.swift in Sources */,
 				97934E1B2C62F8EC00B38E0A /* PostTableViewModel.swift in Sources */,
