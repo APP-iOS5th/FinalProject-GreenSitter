@@ -19,7 +19,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = ViewController()
+        
+        // Home(커뮤니티)
+        let firstViewController = UIViewController()
+        let firstNavigationController = UINavigationController(rootViewController: firstViewController)
+        firstNavigationController.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house.fill"), tag: 0)
+        
+        // Map
+        let secondViewController = UIViewController()
+        let secondNavigationController = UINavigationController(rootViewController: secondViewController)
+        secondNavigationController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
+        
+        // Chat
+        let thirdViewController = ChatListViewController()
+        let thirdNavigationController = UINavigationController(rootViewController: thirdViewController)
+        thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
+        
+        // Profile
+        let fourthViewController = UIViewController()
+        let fourthNavigationController = UINavigationController(rootViewController: fourthViewController)
+        fourthNavigationController.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.fill"), tag: 3)
+        
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController]
+        
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
 
