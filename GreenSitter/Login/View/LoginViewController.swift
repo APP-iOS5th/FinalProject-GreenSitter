@@ -230,8 +230,16 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                     print("Apple 로그인 오류: \(error?.localizedDescription)")
                     return
                 }
-                // User is signed in to Firebase with Apple.
-                // ...
+                //Firebase Database에 사용자 정보 저장
+                if let user = authResult?.user {
+                    let db = Firestore.firestore()
+                    let userRef = db.collection("users").document(user.uid)
+                    
+                    userRef.setData([
+                        "uid": user.uid,
+                    ])
+                }
+
                 DispatchQueue.main.async {
                     // Ensure that self is in a UINavigationController
                     if let navigationController = self.navigationController {
