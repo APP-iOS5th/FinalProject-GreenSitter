@@ -4,10 +4,19 @@
 //
 //  Created by Jiyong Cha on 8/7/24.
 //
-import AuthenticationServices
 import UIKit
+import AuthenticationServices
+import CryptoKit
+import FirebaseAuth
+import FirebaseCore
+import FirebaseFirestore
+import GoogleSignIn
 
 class LoginViewController: UIViewController {
+    let viewController: UIViewController = TestViewController() // 올바른 사용
+    
+    
+    var currentNonce: String? //Apple Login Property
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -54,7 +63,7 @@ class LoginViewController: UIViewController {
         button.addTarget(self, action: #selector(navigationTap), for: .touchUpInside)
         return button
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -88,7 +97,7 @@ class LoginViewController: UIViewController {
             textButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             textButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
         ])
-
+        
     }
     
     //MARK: - ToastMessage
@@ -166,20 +175,115 @@ class LoginViewController: UIViewController {
         })
     }
     
-    //MARK: - AppleLogin
-    @objc func appleLogin() {
-        
-    }
     
     //MARK: - GoogleLogin
     @objc func googleLogin() {
         print("Google Button Size: \(googleButton.bounds.size)")
-
+        
     }
     
     //MARK: - MainView move
     @objc func navigationTap() {
         
     }
-
+    
+}
+//MARK: - AppleLogin
+extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    //Apple의 응답을 처리
+    @objc func appleLogin() {
+        let nonce = randomNonceString()
+        currentNonce = nonce
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        request.nonce = sha256(nonce)
+        
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+        
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+            guard let nonce = currentNonce else {
+                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+            }
+            guard let appleIDToken = appleIDCredential.identityToken else {
+                print("Unable to fetch identity token")
+                return
+            }
+            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+                return
+            }
+            // Firebase에 사용자 인증 정보 저장
+            let credential = OAuthProvider.credential(withProviderID: "apple.com",
+                                                      idToken: String(data: appleIDCredential.identityToken!, encoding: .utf8)!,
+                                                      rawNonce: currentNonce!)
+            // Sign in with Firebase.
+            Auth.auth().signIn(with: credential) { (authResult, error) in
+                if (error != nil) {
+                    //로그인 오류 처리
+                    print("Apple 로그인 오류: \(error?.localizedDescription)")
+                    return
+                }
+                // User is signed in to Firebase with Apple.
+                // ...
+                DispatchQueue.main.async {
+                    // Ensure that self is in a UINavigationController
+                    if let navigationController = self.navigationController {
+                        let testViewController = TestViewController()
+                        navigationController.pushViewController(testViewController, animated: true)
+                    } else {
+                        print("Error: The current view controller is not embedded in a UINavigationController.")
+                    }
+                }
+            }
+        }
+    }
+    //로그인 실패 처리코드
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print("Apple 로그인 실패: \(error)")
+    }
+    
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window! // 현재 뷰 컨트롤러의 윈도우를 반환
+    }
+    
+    //로그인 요청 시 nonce값이 필요해서 주어진 길이의 난수 문자열을 생성하는 매서드
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        var randomBytes = [UInt8](repeating: 0, count: length)
+        let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+        if errorCode != errSecSuccess {
+            fatalError(
+                "Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)"
+            )
+        }
+        
+        let charset: [Character] =
+        Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        
+        let nonce = randomBytes.map { byte in
+            // Pick a random character from the set, wrapping around if needed.
+            charset[Int(byte) % charset.count]
+        }
+        
+        return String(nonce)
+    }
+    
+    //주어진 문자열의 SHA256 해시 값을 반환하는 메서드
+    @available(iOS 13, *)
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            String(format: "%02x", $0)
+        }.joined()
+        
+        return hashString
+    }
 }
