@@ -66,12 +66,17 @@ class ChatListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
+        self.view.backgroundColor = .systemBackground
+        
+        // 로그인 이벤트 수신
+        NotificationCenter.default.addObserver(self, selector: #selector(userDidLogin), name: NSNotification.Name("UserDidLoginNotification"), object: nil)
+
         if isLoggedIn {
-            setupUI()
-            
             // MARK: - 로그인/채팅방 있음
             if hasChats {
+                setupChatListUI()
+                
             } else {
                 // MARK: - 로그인/채팅방 없음
                 setupEmptyChatListUI()
@@ -86,20 +91,15 @@ class ChatListViewController: UIViewController {
         }
     }
     
-    // MARK: - Setup Common UI
-    func setupUI() {
-        
-    }
-    
     // MARK: - Setup ChatList UI
     func setupChatListUI() {
-        
+        self.title = "나의 채팅"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: <#T##Any?#>, action: <#T##Selector?#>)
     }
         
     // MARK: - Setup Empty ChatList UI
     func setupEmptyChatListUI() {
-        self.view.backgroundColor = .systemBackground
-        
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
 //        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: <#T##Any?#>, action: <#T##Selector?#>)
@@ -145,6 +145,13 @@ class ChatListViewController: UIViewController {
         let loginViewController = LoginViewController()
         loginViewController.modalPresentationStyle = .fullScreen
         present(loginViewController, animated: true, completion: nil)
+    }
+    
+    // 비로그인이었다가 로그인했을 때
+    @objc private func userDidLogin() {
+        isLoggedIn = true
+        hasChats = true
+        viewDidLoad()
     }
 
 }
