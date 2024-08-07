@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		1543FB272C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */; };
 		1543FB292C6317EA002E4CC8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1543FB282C6317EA002E4CC8 /* GoogleService-Info.plist */; };
+		1543FB2B2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */; };
+		1543FB2D2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB2C2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift */; };
+		1543FB2F2C636966002E4CC8 /* ChatAdditionalButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB2E2C636966002E4CC8 /* ChatAdditionalButton.swift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
 		97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD62C62F3C600B38E0A /* SceneDelegate.swift */; };
 		97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD82C62F3C600B38E0A /* ViewController.swift */; };
@@ -47,6 +50,9 @@
 /* Begin PBXFileReference section */
 		1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewController.swift; sourceTree = "<group>"; };
 		1543FB282C6317EA002E4CC8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewModel.swift; sourceTree = "<group>"; };
+		1543FB2C2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonModel.swift; sourceTree = "<group>"; };
+		1543FB2E2C636966002E4CC8 /* ChatAdditionalButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButton.swift; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97934DD42C62F3C600B38E0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		97934DD62C62F3C600B38E0A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -95,6 +101,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1543FB302C636B5E002E4CC8 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		1543FB312C636B68002E4CC8 /* CustomComponents */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB2E2C636966002E4CC8 /* ChatAdditionalButton.swift */,
+			);
+			path = CustomComponents;
+			sourceTree = "<group>";
+		};
+		1543FB322C636B9F002E4CC8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1543FB332C636BC3002E4CC8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB2C2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		97934DC82C62F3C600B38E0A = {
 			isa = PBXGroup;
 			children = (
@@ -220,8 +258,11 @@
 		97934DF02C62F77000B38E0A /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				1543FB332C636BC3002E4CC8 /* Models */,
+				1543FB322C636B9F002E4CC8 /* Views */,
+				1543FB302C636B5E002E4CC8 /* ViewModels */,
+				1543FB312C636B68002E4CC8 /* CustomComponents */,
 				97934E3E2C62FFC500B38E0A /* ChatListViewController.swift */,
-				1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -320,6 +361,7 @@
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
+				1543FB2B2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift in Sources */,
 				97934E292C62FDF700B38E0A /* MapViewController.swift in Sources */,
 				1543FB272C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift in Sources */,
 				97934E3B2C62FFA800B38E0A /* ProfileViewController.swift in Sources */,
@@ -342,7 +384,9 @@
 				97934E032C62F89700B38E0A /* Message.swift in Sources */,
 				97934E1D2C62F8F000B38E0A /* ReviewViewModel.swift in Sources */,
 				97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */,
+				1543FB2D2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift in Sources */,
 				97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */,
+				1543FB2F2C636966002E4CC8 /* ChatAdditionalButton.swift in Sources */,
 				97934E392C62FF9200B38E0A /* LoginViewController.swift in Sources */,
 				97934E192C62F8E700B38E0A /* ReviewListViewModel.swift in Sources */,
 			);

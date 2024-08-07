@@ -1,5 +1,5 @@
 //
-//  AlbumTestViewController.swift
+//  ChatAdditionalButton.swift
 //  GreenSitter
 //
 //  Created by 김영훈 on 8/7/24.
@@ -7,66 +7,6 @@
 
 import UIKit
 
-class ChatAdditionalButtonsViewController: UIViewController {
-    
-    private lazy var albumButton: ChatAdditionalButton = {
-        let albumButton = ChatAdditionalButton(imageName: "photo.on.rectangle", titleText: "앨범", buttonAction: albumButtonAction)
-        albumButton.translatesAutoresizingMaskIntoConstraints = false
-        return albumButton
-    }()
-    
-    private lazy var cameraButton: ChatAdditionalButton = {
-        let cameraButton = ChatAdditionalButton(imageName: "camera.fill", titleText: "카메라", buttonAction: cameraButtonAction)
-        return cameraButton
-    }()
-    
-    private lazy var planButton: ChatAdditionalButton = {
-        let planButton = ChatAdditionalButton(imageName: "calendar", titleText: "약속 정하기", buttonAction: planButtonAction)
-        return planButton
-    }()
-    
-    private lazy var additionalButtonStackView: UIStackView = {
-       let additionalButtonStackView = UIStackView(arrangedSubviews: [planButton, cameraButton, albumButton])
-        additionalButtonStackView.axis = .vertical
-        additionalButtonStackView.spacing = 37
-        additionalButtonStackView.alignment = .leading
-        additionalButtonStackView.translatesAutoresizingMaskIntoConstraints = false
-
-        return additionalButtonStackView
-    }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .black.withAlphaComponent(0.8)
-        
-        setupUI()
-    }
-    
-    private func setupUI() {
-        view.addSubview(additionalButtonStackView)
-        let safeArea = view.safeAreaLayoutGuide
-        NSLayoutConstraint.activate([
-            additionalButtonStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -80),
-            additionalButtonStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 32),
-        ])
-    }
-    
-    //MARK: Button UIActions
-    private let albumButtonAction = UIAction { _ in
-        print("AlbumButton Tapped")
-    }
-    
-    private let cameraButtonAction = UIAction { _ in
-        print("CameraButton Tapped")
-    }
-    
-    private let planButtonAction = UIAction { _ in
-        print("planButton Tapped")
-    }
-    
-}
-
-//MARK: Chat Additional Button
 class ChatAdditionalButton: UIButton {
     private let imageName: String
     private let titleText: String
