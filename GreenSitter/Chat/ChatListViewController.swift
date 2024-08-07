@@ -8,6 +8,9 @@
 import UIKit
 
 class ChatListViewController: UIViewController {
+    // 로그인 여부를 나타내는 변수
+    private var isLoggedIn = false
+    private var hasChats = false
     
     // container
     private let container: UIView = {
@@ -63,20 +66,38 @@ class ChatListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupUI()
-        
-        // TODO: - 비로그인 시
-        
-        
-        // MARK: - 로그인 시
-        // 버튼 클릭 시 홈 화면으로 이동
-        goToHomeButton.addAction(UIAction { [weak self] _ in
-            self?.navigateToHome()}, for: .touchUpInside)
+    
+        if isLoggedIn {
+            setupUI()
+            
+            // MARK: - 로그인/채팅방 있음
+            if hasChats {
+            } else {
+                // MARK: - 로그인/채팅방 없음
+                setupEmptyChatListUI()
+                
+                // 버튼 클릭 시 홈 화면으로 이동
+                goToHomeButton.addAction(UIAction { [weak self] _ in
+                    self?.navigateToHome()}, for: .touchUpInside)
+            }
+        } else {
+            // MARK: - 비로그인
+            presentLoginViewController()
+        }
     }
     
-    // MARK: - Setup UI
+    // MARK: - Setup Common UI
     func setupUI() {
+        
+    }
+    
+    // MARK: - Setup ChatList UI
+    func setupChatListUI() {
+        
+    }
+        
+    // MARK: - Setup Empty ChatList UI
+    func setupEmptyChatListUI() {
         self.view.backgroundColor = .systemBackground
         
         self.title = "나의 채팅"
@@ -113,10 +134,17 @@ class ChatListViewController: UIViewController {
         ])
     }
     
-    // MARK: - goToHomeButton Action Method
+    // MARK: - goToHomeButton Action Methods
     private func navigateToHome() {
         let homeViewController = PostListViewController()
         self.navigationController?.pushViewController(homeViewController, animated: true)
+    }
+    
+    // MARK: - 비로그인 Methods
+    private func presentLoginViewController() {
+        let loginViewController = LoginViewController()
+        loginViewController.modalPresentationStyle = .fullScreen
+        present(loginViewController, animated: true, completion: nil)
     }
 
 }
