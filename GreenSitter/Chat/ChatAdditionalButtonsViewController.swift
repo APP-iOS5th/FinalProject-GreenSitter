@@ -15,28 +15,54 @@ class ChatAdditionalButtonsViewController: UIViewController {
         return albumButton
     }()
     
-    private let albumButtonAction = UIAction { _ in
-        print("ButtonTapped")
-    }
+    private lazy var cameraButton: ChatAdditionalButton = {
+        let cameraButton = ChatAdditionalButton(imageName: "camera.fill", titleText: "카메라", buttonAction: cameraButtonAction)
+        return cameraButton
+    }()
+    
+    private lazy var planButton: ChatAdditionalButton = {
+        let planButton = ChatAdditionalButton(imageName: "calendar", titleText: "약속 정하기", buttonAction: planButtonAction)
+        return planButton
+    }()
+    
+    private lazy var additionalButtonStackView: UIStackView = {
+       let additionalButtonStackView = UIStackView(arrangedSubviews: [planButton, cameraButton, albumButton])
+        additionalButtonStackView.axis = .vertical
+        additionalButtonStackView.spacing = 62
+        additionalButtonStackView.alignment = .center
+        additionalButtonStackView.translatesAutoresizingMaskIntoConstraints = false
+
+        return additionalButtonStackView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .black
+        view.backgroundColor = .black.withAlphaComponent(0.8)
         
         setupUI()
     }
     
     private func setupUI() {
-        view.addSubview(albumButton)
+        view.addSubview(additionalButtonStackView)
         
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            albumButton.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
-            albumButton.heightAnchor.constraint(equalToConstant: 50),
-            albumButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
-            albumButton.widthAnchor.constraint(equalToConstant: 108)
+            additionalButtonStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -115),
+            additionalButtonStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 32),
         ])
+    }
+    
+    //MARK: Button UIActions
+    private let albumButtonAction = UIAction { _ in
+        print("AlbumButton Tapped")
+    }
+    
+    private let cameraButtonAction = UIAction { _ in
+        print("CameraButton Tapped")
+    }
+    
+    private let planButtonAction = UIAction { _ in
+        print("planButton Tapped")
     }
     
 }
@@ -64,9 +90,9 @@ class ChatAdditionalButton: UIButton {
         backgroundView.backgroundColor = .white.withAlphaComponent(0.85)
         backgroundView.layer.cornerRadius = 25
         backgroundView.layer.masksToBounds = true
-        backgroundView.translatesAutoresizingMaskIntoConstraints = false
         
         let imageView = UIImageView(image: UIImage(systemName: imageName)?.withTintColor(.black, renderingMode: .alwaysOriginal))
+        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         backgroundView.addSubview(imageView)
@@ -75,25 +101,25 @@ class ChatAdditionalButton: UIButton {
         titleLabel.text = titleText
         titleLabel.font = UIFont.systemFont(ofSize: 20)
         titleLabel.textColor = .white
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let stackView = UIStackView(arrangedSubviews: [backgroundView, titleLabel])
         stackView.axis = .horizontal
         stackView.spacing = 10
         stackView.alignment = .center
+        stackView.isUserInteractionEnabled = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(stackView)
         
         NSLayoutConstraint.activate([
-            stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
             backgroundView.widthAnchor.constraint(equalToConstant: 50),
             backgroundView.heightAnchor.constraint(equalToConstant: 50),
             imageView.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
-            imageView.widthAnchor.constraint(equalToConstant: 35),
-            imageView.heightAnchor.constraint(equalToConstant: 35),
+            imageView.widthAnchor.constraint(equalToConstant: 30),
+            imageView.heightAnchor.constraint(equalToConstant: 30),
         ])
         
         addAction(buttonAction, for: .touchUpInside)
