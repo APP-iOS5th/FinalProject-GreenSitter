@@ -22,7 +22,15 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         button.tintColor = .systemGreen
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-        
+    }()
+    
+    private let searchPostButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "magnifyingglass")
+        button.setImage(image, for: .normal)
+        button.tintColor = .systemGray
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     override func viewDidLoad() {
@@ -31,6 +39,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         setupCategoryButtons()
         setupTableView()
         setupAddPostButton()
+        setupSearchPostButton()
         
         filterPosts(for: "새싹 돌봐드립니다.")
     }
@@ -57,7 +66,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         view.addSubview(categoryStackView)
         
         NSLayoutConstraint.activate([
-            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             categoryStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             categoryStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryStackView.heightAnchor.constraint(equalToConstant: 50)
@@ -65,7 +74,19 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         
     }
     
-
+    func setupSearchPostButton() {
+        view.addSubview(searchPostButton)
+        searchPostButton.addTarget(self, action: #selector(searchPostButtonTapped), for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            searchPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
+            searchPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+            searchPostButton.widthAnchor.constraint(equalToConstant: 40),
+            searchPostButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+    }
+    
+    
     func setupTableView() {
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -83,7 +104,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         view.addSubview(addPostButton)
         addPostButton.addTarget(self, action: #selector(addPostButtonTapped), for: .touchUpInside)
         NSLayoutConstraint.activate([
-            addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
             addPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             addPostButton.widthAnchor.constraint(equalToConstant: 40),
             addPostButton.heightAnchor.constraint(equalToConstant: 40)
@@ -101,8 +122,12 @@ class PostListViewController: UIViewController, UITableViewDataSource {
     }
     
     @objc func addPostButtonTapped() {
-            print("Plus button tapped")
-        }
+        print("Plus button tapped")
+    }
+    
+    @objc func searchPostButtonTapped() {
+        print("Search button tapped")
+    }
     
     func filterPosts(for category: String) {
         if category == "새싹 돌봐드립니다." {
