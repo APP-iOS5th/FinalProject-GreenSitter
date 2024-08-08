@@ -107,6 +107,9 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if mapController?.isEngineActive == true {
+            addViews()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -166,12 +169,37 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
     
     //addView 성공 이벤트 delegate. 추가적으로 수행할 작업을 진행한다.
     func addViewSucceeded(_ viewName: String, viewInfoName: String) {
-        print("OK") //추가 성공. 성공시 추가적으로 수행할 작업을 진행한다.
+        print("View \(viewName) with info \(viewInfoName) added successfully.")
+        
+        // KakaoMap 객체 가져오기
+        mapView = mapController?.getView(viewName) as? KakaoMap
+        
+        // 초기 위치가 있다면 지도 위치 업데이트
+        updateMapPosition()
     }
     
     //addView 실패 이벤트 delegate. 실패에 대한 오류 처리를 진행한다.
     func addViewFailed(_ viewName: String, viewInfoName: String) {
-        print("Failed")
+        print("Failed to add view \(viewName) with info \(viewInfoName).")
+    }
+    
+    func updateMapPosition() {
+        if mapView == nil {
+            mapView = mapController?.getView("mapview") as? KakaoMap
+        }
+        
+        if let latitude = latitude, let longitude = longitude, let mapView = mapView {
+            print("Updating map position to latitude: \(latitude), longitude: \(longitude)") // Debug log
+            let currentPosition = MapPoint(longitude: longitude, latitude: latitude)
+            let cameraUpdate = CameraUpdate.make(
+                target: currentPosition,
+                zoomLevel: 15,
+                rotation: 1.7,
+                tilt: 0.0,
+                mapView: mapView
+            )
+            mapView.moveCamera(cameraUpdate)
+        }
     }
     
     //Container 뷰가 리사이즈 되었을때 호출된다. 변경된 크기에 맞게 ViewBase들의 크기를 조절할 필요가 있는 경우 여기에서 수행한다.
@@ -199,11 +227,11 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
     }
     
     @objc func willResignActive(){
-//        mapController?.stopRendering()  //뷰가 inactive 상태로 전환되는 경우 렌더링 중인 경우 렌더링을 중단.
+        mapController?.pauseEngine()  //뷰가 inactive 상태로 전환되는 경우 렌더링 중인 경우 렌더링을 중단.
     }
     
     @objc func didBecomeActive(){
-//        mapController?.startRendering() //뷰가 active 상태가 되면 렌더링 시작. 엔진은 미리 시작된 상태여야 함.
+        mapController?.activateEngine() //뷰가 active 상태가 되면 렌더링 시작. 엔진은 미리 시작된 상태여야 함.
     }
     
     func showToast(_ view: UIView, message: String, duration: TimeInterval = 2.0) {
@@ -253,8 +281,9 @@ extension APISampleBaseViewController: CLLocationManagerDelegate {
      // MARK: - CLLocationManagerDelegate
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let myLocation = locations.first {
-            let latitude = myLocation.coordinate.latitude
-            let longitude = myLocation.coordinate.longitude
+            self.latitude = myLocation.coordinate.latitude
+            self.longitude = myLocation.coordinate.longitude
+            updateMapPosition()
         }
     }
     
