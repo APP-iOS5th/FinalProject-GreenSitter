@@ -171,6 +171,12 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
         // KakaoMap 객체 가져오기
         mapView = mapController?.getView(viewName) as? KakaoMap
         
+        let manager = mapView?.getShapeManager()
+
+        // 레이어의 이름과 렌더링 우선순위를 지정하여 ShapeLayer를 생성한다.
+        // 생성된 Layer가 리턴된다.
+        let layer = manager?.addShapeLayer(layerID: "shapeLayer", zOrder: 10001, passType: .route)
+        
         // 초기 위치가 있다면 지도 위치 업데이트
         updateMapPosition()
     }
