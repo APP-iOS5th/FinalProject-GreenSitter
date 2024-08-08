@@ -7,7 +7,13 @@
 
 import Foundation
 
+protocol ChatAdditionalButtonsViewModelDelegate {
+    func presentPhotoPicker()
+}
+
 class ChatAdditionalButtonsViewModel {
+    
+    var delegate: ChatAdditionalButtonsViewModelDelegate?
     
     var buttonModels: [ChatAdditionalButtonModel] {
         return [
@@ -19,7 +25,7 @@ class ChatAdditionalButtonsViewModel {
     
     //MARK: Button Action Functions
     func albumButtonTapped() {
-        print("AlbumButton Tapped")
+        delegate?.presentPhotoPicker()
     }
     
     func cameraButtonTapped() {
