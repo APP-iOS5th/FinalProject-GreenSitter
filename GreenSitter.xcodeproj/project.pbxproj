@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B6F335A2C6459C7003F164E /* SetLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6F33592C6459C7003F164E /* SetLocationViewController.swift */; };
 		3BEFEC6A2C63123200E48D1E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3BEFEC692C63123200E48D1E /* GoogleService-Info.plist */; };
 		3BEFEC6E2C63185100E48D1E /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BEFEC6D2C63185100E48D1E /* LoginViewModel.swift */; };
 		3BEFEC722C63543500E48D1E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC712C63543500E48D1E /* FirebaseAuth */; };
@@ -50,6 +51,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B6F33592C6459C7003F164E /* SetLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetLocationViewController.swift; sourceTree = "<group>"; };
 		3BEFEC692C63123200E48D1E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3BEFEC6D2C63185100E48D1E /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		3BEFEC6F2C633D5D00E48D1E /* GreenSitter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GreenSitter.entitlements; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 			children = (
 				97934E382C62FF9200B38E0A /* LoginViewController.swift */,
 				3BEFEC7A2C6366DC00E48D1E /* TestViewController.swift */,
+				3B6F33592C6459C7003F164E /* SetLocationViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -358,6 +361,7 @@
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
+				3B6F335A2C6459C7003F164E /* SetLocationViewController.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				97934E292C62FDF700B38E0A /* MapViewController.swift in Sources */,
 				97934E3B2C62FFA800B38E0A /* ProfileViewController.swift in Sources */,
