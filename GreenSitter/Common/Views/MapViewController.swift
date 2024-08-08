@@ -5,6 +5,7 @@
 //  Created by Yungui Lee on 8/7/24.
 //
 
+import CoreLocation
 import UIKit
 import KakaoMapsSDK
 
@@ -17,11 +18,16 @@ class MapViewController: UIViewController {
 
 class APISampleBaseViewController: UIViewController, MapControllerDelegate {
     
-    var mapContainer: KMViewContainer?
-    var mapController: KMController?
+    var mapContainer: KMViewContainer?  // 카카오 맵 SDK에서 지도를 표시하기 위해 사용하는 UIView
+    var mapController: KMController?    // SDK의 인증 및 엔진과의 연결을 관리
+    var mapView: KakaoMap?
     var _observerAdded: Bool
     var _auth: Bool
     var _appear: Bool
+    
+    var locationManager: CLLocationManager!
+    var latitude: CLLocationDegrees?
+    var longitude: CLLocationDegrees?
     
     init() {
         self._observerAdded = false
@@ -59,10 +65,38 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
             mapController?.delegate = self
             mapController?.prepareEngine() // 엔진 초기화. 엔진 내부 객체 생성 및 초기화가 진행된다.
         }
+        
+        // Location Manager Delegate
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.startUpdatingLocation()
+        
+        if let location = locationManager.location {
+            latitude = location.coordinate.latitude
+            longitude = location.coordinate.longitude
+        }
+        
+//        let currentLocation = CLLocation(latitude: latitude, longitude: longitude)
+//        let geocoder = CLGeocoder()
+//        let locale = Locale(identifier: "Ko-kr")
+//        geocoder.reverseGeocodeLocation(currentLocation, preferredLocale: locale) { (placemarks, error) in
+//            if let address: [CLPlacemark] = placemarks {
+//                if let country: String = address.last?.country {
+//                    print(country)
+//                }
+//                if let administrativeArea: String = address.last?.administrativeArea {
+//                    print(administrativeArea)   // 도시 (서울 특별시)
+//                }
+//                if let locality: String = address.last?.locality { print(locality) }    // 동, 구 (관악구)
+//                if let name: String = address.last?.name { print(name) }    // 상세 주소 (남부순환로 ...)
+//            }
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
+        super.viewWillAppear(animated)
         addObservers()
         _appear = true
         
@@ -72,15 +106,14 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
+        super.viewDidAppear(animated)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
+        super.viewWillDisappear(animated)
         _appear = false
         mapController?.pauseEngine()  // 렌더링 중지.
     }
-
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -193,6 +226,40 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
                        completion: { (finished) in
             toastLabel.removeFromSuperview()
         })
+    }
+}
+
+extension APISampleBaseViewController: CLLocationManagerDelegate {
+    
+    func getLocationUsagePermission() {
+        self.locationManager.requestWhenInUseAuthorization()
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedAlways, .authorizedWhenInUse:
+            print("GPS 권한 설정됨")
+        case .restricted, .notDetermined:
+            print("GPS 권한 설정되지 않음")
+            getLocationUsagePermission()
+        case .denied:
+            print("GPS 권한 요청 거부됨")
+            getLocationUsagePermission()
+        default:
+            print("GPS: Default")
+        }
+    }
+    
+     // MARK: - CLLocationManagerDelegate
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let myLocation = locations.first {
+            let latitude = myLocation.coordinate.latitude
+            let longitude = myLocation.coordinate.longitude
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Failed to find user's location: \(error.localizedDescription)")
     }
     
 }
