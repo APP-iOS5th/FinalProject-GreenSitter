@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		582F5D052C64856F00141938 /* SampleChatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582F5D042C64856F00141938 /* SampleChatData.swift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
 		97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD62C62F3C600B38E0A /* SceneDelegate.swift */; };
 		97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD82C62F3C600B38E0A /* ViewController.swift */; };
@@ -44,6 +45,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		582F5D042C64856F00141938 /* SampleChatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleChatData.swift; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97934DD42C62F3C600B38E0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		97934DD62C62F3C600B38E0A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 			isa = PBXGroup;
 			children = (
 				97934E3E2C62FFC500B38E0A /* ChatListViewController.swift */,
+				582F5D042C64856F00141938 /* SampleChatData.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -321,6 +324,7 @@
 				97934E3B2C62FFA800B38E0A /* ProfileViewController.swift in Sources */,
 				97934DFB2C62F87D00B38E0A /* User.swift in Sources */,
 				97934E1B2C62F8EC00B38E0A /* PostTableViewModel.swift in Sources */,
+				582F5D052C64856F00141938 /* SampleChatData.swift in Sources */,
 				97934E3F2C62FFC500B38E0A /* ChatListViewController.swift in Sources */,
 				97934E232C62FAC800B38E0A /* Plan.swift in Sources */,
 				97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */,
