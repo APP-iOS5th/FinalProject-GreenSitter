@@ -67,6 +67,8 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
         view.backgroundColor = .white
         
         view.addSubview(bodyLabel)
@@ -178,9 +180,76 @@ class LoginViewController: UIViewController {
     
     //MARK: - GoogleLogin
     @objc func googleLogin() {
-        print("Google Button Size: \(googleButton.bounds.size)")
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            print("Error: Unable to fetch clientID.")
+            return
+        }
         
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+        
+        // Start the sign in flow!
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { [unowned self] result, error in
+            if let error = error {
+                print("Google SignIn Error: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let user = result?.user else {
+                print("Error: GoogleSignIn result is nil.")
+                return
+            }
+            
+            guard let idToken = user.idToken?.tokenString else {
+                print("Error: Unable to fetch idToken.")
+                return
+            }
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.accessToken.tokenString)
+            
+            // Firebase 인증 처리
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    print("Firebase SignIn Error: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let user = authResult?.user else {
+                    print("Error: Firebase authResult is nil.")
+                    return
+                }
+                
+                // Firebase Database에 사용자 정보 저장
+                let db = Firestore.firestore()
+                let userRef = db.collection("users").document(user.uid)
+                
+                userRef.setData([
+                    "uid": user.uid,
+                    "email": user.email ?? "",
+                    "displayName": user.displayName ?? ""
+                ]) { error in
+                    if let error = error {
+                        print("Firestore Save Error: \(error.localizedDescription)")
+                    } else {
+                        print("Firestore에 사용자 정보 저장 성공")
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    // Ensure that self is in a UINavigationController
+                    if let navigationController = self.navigationController {
+                        let testViewController = TestViewController()
+                        navigationController.pushViewController(testViewController, animated: true)
+                    } else {
+                        print("Error: The current view controller is not embedded in a UINavigationController.")
+                    }
+                }
+            }
+        }
     }
+
+
     
     //MARK: - MainView move
     @objc func navigationTap() {
@@ -239,7 +308,7 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                         "uid": user.uid,
                     ])
                 }
-
+                
                 DispatchQueue.main.async {
                     // Ensure that self is in a UINavigationController
                     if let navigationController = self.navigationController {
@@ -295,3 +364,4 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
         return hashString
     }
 }
+
