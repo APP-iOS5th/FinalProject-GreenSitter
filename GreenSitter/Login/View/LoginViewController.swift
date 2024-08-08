@@ -13,11 +13,10 @@ import FirebaseFirestore
 import GoogleSignIn
 
 class LoginViewController: UIViewController {
-    let viewController: UIViewController = TestViewController() // 올바른 사용
-    
-    
     var currentNonce: String? //Apple Login Property
-    
+    var users: User?
+    let db = Firestore.firestore()
+        
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "새싹 돌봄이"
@@ -221,13 +220,13 @@ class LoginViewController: UIViewController {
                 }
                 
                 // Firebase Database에 사용자 정보 저장
-                let db = Firestore.firestore()
                 let userRef = db.collection("users").document(user.uid)
                 
                 userRef.setData([
                     "uid": user.uid,
                     "email": user.email ?? "",
-                    "displayName": user.displayName ?? ""
+                    "displayName": user.displayName ?? "",
+                    "location": users?.location ?? ""
                 ]) { error in
                     if let error = error {
                         print("Firestore Save Error: \(error.localizedDescription)")
@@ -239,8 +238,8 @@ class LoginViewController: UIViewController {
                 DispatchQueue.main.async {
                     // Ensure that self is in a UINavigationController
                     if let navigationController = self.navigationController {
-                        let testViewController = TestViewController()
-                        navigationController.pushViewController(testViewController, animated: true)
+                        let setLocationViewController = SetLocationViewController()
+                        navigationController.pushViewController(setLocationViewController, animated: true)
                     } else {
                         print("Error: The current view controller is not embedded in a UINavigationController.")
                     }
@@ -250,13 +249,15 @@ class LoginViewController: UIViewController {
     }
 
 
+
     
     //MARK: - MainView move
     @objc func navigationTap() {
         
     }
-    
 }
+
+
 //MARK: - AppleLogin
 extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     //Apple의 응답을 처리
@@ -272,9 +273,8 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
-        
     }
-    
+
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
             guard let nonce = currentNonce else {
@@ -312,8 +312,8 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                 DispatchQueue.main.async {
                     // Ensure that self is in a UINavigationController
                     if let navigationController = self.navigationController {
-                        let testViewController = TestViewController()
-                        navigationController.pushViewController(testViewController, animated: true)
+                        let setLocationViewController = SetLocationViewController()
+                        navigationController.pushViewController(setLocationViewController, animated: true)
                     } else {
                         print("Error: The current view controller is not embedded in a UINavigationController.")
                     }
@@ -321,6 +321,7 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
             }
         }
     }
+
     //로그인 실패 처리코드
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         print("Apple 로그인 실패: \(error)")

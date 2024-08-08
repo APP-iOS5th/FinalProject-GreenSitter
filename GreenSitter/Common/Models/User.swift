@@ -14,8 +14,9 @@ struct User: Codable {
     let updateDate: Date
     let profileImage: String
     let nickname: String
-    let location: Location?
+    var location: String?
     let platform: String
     let levelPoint: Level
     let aboutMe: String
 }
+

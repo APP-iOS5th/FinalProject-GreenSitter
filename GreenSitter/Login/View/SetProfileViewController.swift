@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TestViewController: UIViewController {
+class SetProfileViewController: UIViewController {
     
     lazy var bodyLabel: UILabel = {
         let label = UILabel()

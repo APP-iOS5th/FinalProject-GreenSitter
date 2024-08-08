@@ -6,9 +6,16 @@
 //
 
 import UIKit
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
 
 class SetLocationViewController: UIViewController, UITextFieldDelegate {
     
+    var user: User?
+    let db = Firestore.firestore()
+    var currentUser: User? // 현재 사용자 객체
+
     lazy var titleLabel: UILabel = {
        let label = UILabel()
         label.text = "위치정보 입력"
@@ -35,7 +42,12 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         textField.frame.size.height = 30
         textField.borderStyle = .roundedRect
         textField.backgroundColor = UIColor(rgbRed: 242, green: 242, blue: 242)
-        textField.placeholder = "경기도 양주시"
+        if let userLocation = user?.location {
+            textField.placeholder = "\(userLocation)"
+        }
+        else {
+            textField.placeholder = "현재 위치가져오기 실패"
+        }
         textField.clearsOnBeginEditing = true //편집시 기존텍스트필드값 지우기
         textField.translatesAutoresizingMaskIntoConstraints = false
         
@@ -76,19 +88,28 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let currentUser = Auth.auth().currentUser {
+            print("Current User ID: \(currentUser.uid)")
+            print("Current User Email: \(currentUser.email ?? "No Email")")
+            print("Current User Display Name: \(currentUser.displayName ?? "No Display Name")")
+            print("Current User Photo URL: \(currentUser.photoURL?.absoluteString ?? "No Photo URL")")
+        } else {
+            print("No user is currently logged in.")
+        }
         
-        view.backgroundColor = .white
 
+        print("User 객체 상태: \(String(describing: user))")
+
+        view.backgroundColor = .white
+        
         view.addSubview(titleLabel)
         view.addSubview(bodyLabel)
         view.addSubview(locationTextField)
         view.addSubview(nextButton)
         view.addSubview(skipButton)
         
-        print("Button Background Color at Load: \(nextButton.backgroundColor?.description ?? "No Color")")
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
@@ -108,21 +129,70 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             
             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
-
-            
-            
         ])
+
     }
+    
+    
+    
+    func fetchUserFromFirestore(userId: String, completion: @escaping (User?) -> Void) {
+        let userRef = db.collection("users").document(userId)
+        userRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                do {
+                    let user = try document.data(as: User.self)
+                    completion(user)
+                } catch let error {
+                    print("User Decoding Error: \(error)")
+                    completion(nil)
+                }
+            } else {
+                print("Firestore에 User가 존재하지 않음.")
+                completion(nil)
+            }
+        }
+    }
+    
+    //위치 정보 저장
+    func saveUserToFirestore(user: User, userId: String) {
+        let userRef = db.collection("users").document(userId)
+        let userData: [String: Any] = [
+            "location": user.location ?? ""
+        ]
+        userRef.setData(userData) { error in
+            if let error = error {
+                print("Firestore Writing Error: \(error)")
+            } else {
+                print("Location data saved")
+            }
+        }
+    }
+
     
     @objc func nextTap() {
-        print("클릭")
+        guard let enterLocation = locationTextField.text, !enterLocation.isEmpty else {
+            print("위치 정보가 비어 있습니다.")
+            return
+        }
 
-
+        guard let user = user else {
+            print("User 객체가 없습니다.")
+            return
+        }
+        
+        
+        // userId를 UUID 문자열로 변환
+        let userId = user.id.uuidString
+        saveUserToFirestore(user: user, userId: userId)
+        let setProfileViewController = SetProfileViewController()
+        navigationController?.pushViewController(setProfileViewController, animated: true)
+        
     }
+
     
     @objc func skipTap() {
-        print("클릭")
-
+        let setProfileViewController = SetProfileViewController()
+        navigationController?.pushViewController(setProfileViewController, animated: true)
     }
 }
 
