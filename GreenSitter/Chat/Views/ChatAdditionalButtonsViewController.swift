@@ -29,21 +29,12 @@ class ChatAdditionalButtonsViewController: UIViewController {
         return additionalButtonStackView
     }()
     
-    private lazy var picker: PHPickerViewController = {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 10
-        configuration.filter = .any(of: [.images, .livePhotos])
-        let picker = PHPickerViewController(configuration: configuration)
-        return picker
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black.withAlphaComponent(0.8)
         
         setupUI()
         
-        picker.delegate = self
         viewModel.delegate = self
     }
     
@@ -61,12 +52,13 @@ class ChatAdditionalButtonsViewController: UIViewController {
 //MARK: 앨범 터치 시 포토 피커 관련 함수
 extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
         
         Task {
             let selectedImages = await loadImages(from: results)
             print(selectedImages)
         }
+        
+        picker.dismiss(animated: true)
     }
     
     private func loadImages(from results: [PHPickerResult]) async -> [UIImage] {
@@ -96,9 +88,48 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
     }
 }
 
+extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let editedImage = info[.editedImage] as? UIImage
+        let originalImage = info[.originalImage] as? UIImage
+        let image = editedImage ?? originalImage
+        
+        guard let image = image else {
+            print("error")
+            dismiss(animated: true)
+            return
+        }
+        
+        print(image)
+        dismiss(animated: true)
+    }
+}
+
 //MARK: viewModel에 전달할 additionalButton 함수
 extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDelegate {
     func presentPhotoPicker() {
-        present(picker, animated: true)
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 10
+        configuration.filter = .any(of: [.images, .livePhotos])
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        
+        DispatchQueue.main.async {
+            self.present(picker, animated: true)
+        }
+    }
+    
+    func presentCamera() {
+        print("camera")
+//        let camera = UIImagePickerController()
+//        camera.sourceType = .camera
+//        camera.allowsEditing = true
+//        camera.cameraDevice = .front
+//        camera.cameraCaptureMode = .photo
+//        camera.delegate = self
+//        
+//        DispatchQueue.main.async {
+//            self.present(camera, animated: true)
+//        }
     }
 }
