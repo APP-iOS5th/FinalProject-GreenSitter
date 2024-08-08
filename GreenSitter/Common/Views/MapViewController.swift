@@ -362,8 +362,6 @@ extension APISampleBaseViewController: CLLocationManagerDelegate {
         case .restricted, .notDetermined:
             print("GPS 권한 설정되지 않음")
             getLocationUsagePermission()
-            showToast(withDuration: 1, delay: 4)
-
         case .denied:
             print("GPS 권한 요청 거부됨")
             getLocationUsagePermission()
