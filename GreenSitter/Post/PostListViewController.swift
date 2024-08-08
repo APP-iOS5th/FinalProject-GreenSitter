@@ -15,11 +15,22 @@ class PostListViewController: UIViewController, UITableViewDataSource {
     private var filteredPosts: [String] = []
     private var selectedButton: UIButton?
     
+    private let addPostButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "plus.circle")
+        button.setImage(image, for: .normal)
+        button.tintColor = .systemGreen
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+        
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupCategoryButtons()
         setupTableView()
+        setupAddPostButton()
         
         filterPosts(for: "새싹 돌봐드립니다.")
     }
@@ -46,7 +57,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         view.addSubview(categoryStackView)
         
         NSLayoutConstraint.activate([
-            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
             categoryStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             categoryStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryStackView.heightAnchor.constraint(equalToConstant: 50)
@@ -54,6 +65,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         
     }
     
+
     func setupTableView() {
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -67,6 +79,18 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         ])
     }
     
+    func setupAddPostButton() {
+        view.addSubview(addPostButton)
+        addPostButton.addTarget(self, action: #selector(addPostButtonTapped), for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            addPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            addPostButton.widthAnchor.constraint(equalToConstant: 40),
+            addPostButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+    }
+    
     @objc func categoryButtonTapped(_ sender: UIButton) {
         selectedButton?.setTitleColor(.black, for: .normal)
         sender.setTitleColor(.systemGreen, for: .normal)
@@ -75,6 +99,10 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         guard let category = sender.titleLabel?.text else { return }
         filterPosts(for: category)
     }
+    
+    @objc func addPostButtonTapped() {
+            print("Plus button tapped")
+        }
     
     func filterPosts(for category: String) {
         if category == "새싹 돌봐드립니다." {
@@ -94,6 +122,8 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         cell.textLabel?.text = filteredPosts[indexPath.row]
         return cell
     }
+    
+    
 }
 
 #Preview {
