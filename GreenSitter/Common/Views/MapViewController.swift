@@ -107,9 +107,6 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if mapController?.isEngineActive == true {
-            addViews()
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
