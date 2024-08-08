@@ -44,6 +44,25 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         filterPosts(for: "새싹 돌봐드립니다.")
     }
     
+//    func setupNavigationBar() {
+//        // 네비게이션 바 배경 색상 설정
+//        navigationController?.navigationBar.barTintColor = .white
+//        
+//        // 네비게이션 바 타이틀 텍스트 색상 설정
+//        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+//        
+//        // 상태 바 스타일 설정
+//        navigationController?.navigationBar.barStyle = .default
+//        
+//        // 플러스 버튼을 네비게이션 바에 추가
+//        let addPostButton = UIBarButtonItem(customView: addPostButton)
+//        navigationItem.rightBarButtonItem = addPostButton
+//        
+//        // 플러스 버튼의 타겟 설정
+//        setupAddPostButton()
+//    }
+    
+    
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
         careProviderButton.setTitle("새싹 돌봐드립니다.", for: .normal)
@@ -66,7 +85,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         view.addSubview(categoryStackView)
         
         NSLayoutConstraint.activate([
-            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
             categoryStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             categoryStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryStackView.heightAnchor.constraint(equalToConstant: 50)
@@ -78,7 +97,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         view.addSubview(searchPostButton)
         searchPostButton.addTarget(self, action: #selector(searchPostButtonTapped), for: .touchUpInside)
         NSLayoutConstraint.activate([
-            searchPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
+            searchPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             searchPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
             searchPostButton.widthAnchor.constraint(equalToConstant: 40),
             searchPostButton.heightAnchor.constraint(equalToConstant: 40)
@@ -104,13 +123,15 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         view.addSubview(addPostButton)
         addPostButton.addTarget(self, action: #selector(addPostButtonTapped), for: .touchUpInside)
         NSLayoutConstraint.activate([
-            addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -20),
+            addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             addPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             addPostButton.widthAnchor.constraint(equalToConstant: 40),
             addPostButton.heightAnchor.constraint(equalToConstant: 40)
         ])
         
     }
+    
+    
     
     @objc func categoryButtonTapped(_ sender: UIButton) {
         selectedButton?.setTitleColor(.black, for: .normal)
