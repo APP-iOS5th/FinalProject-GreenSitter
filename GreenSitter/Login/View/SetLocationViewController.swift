@@ -15,9 +15,9 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     var user: User?
     let db = Firestore.firestore()
     var currentUser: User? // 현재 사용자 객체
-
+    
     lazy var titleLabel: UILabel = {
-       let label = UILabel()
+        let label = UILabel()
         label.text = "위치정보 입력"
         label.font = UIFont.boldSystemFont(ofSize: 30)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -25,7 +25,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     }()
     
     lazy var bodyLabel: UILabel = {
-       let label = UILabel()
+        let label = UILabel()
         label.text = """
     주변의 새싹 돌봄이 ☘️
     새싹 돌봄이를 찾는 분들을
@@ -87,7 +87,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if let currentUser = Auth.auth().currentUser {
@@ -99,9 +99,9 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             print("No user is currently logged in.")
         }
         
-
+        
         print("User 객체 상태: \(String(describing: user))")
-
+        
         view.backgroundColor = .white
         
         view.addSubview(titleLabel)
@@ -130,28 +130,9 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
         ])
-
+        
     }
     
-    
-    
-    func fetchUserFromFirestore(userId: String, completion: @escaping (User?) -> Void) {
-        let userRef = db.collection("users").document(userId)
-        userRef.getDocument { (document, error) in
-            if let document = document, document.exists {
-                do {
-                    let user = try document.data(as: User.self)
-                    completion(user)
-                } catch let error {
-                    print("User Decoding Error: \(error)")
-                    completion(nil)
-                }
-            } else {
-                print("Firestore에 User가 존재하지 않음.")
-                completion(nil)
-            }
-        }
-    }
     
     //위치 정보 저장
     func saveUserToFirestore(user: User, userId: String) {
@@ -167,19 +148,17 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
-
     
     @objc func nextTap() {
         guard let enterLocation = locationTextField.text, !enterLocation.isEmpty else {
             print("위치 정보가 비어 있습니다.")
             return
         }
-
+        
         guard let user = user else {
             print("User 객체가 없습니다.")
             return
         }
-        
         
         // userId를 UUID 문자열로 변환
         let userId = user.id.uuidString
@@ -188,7 +167,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         navigationController?.pushViewController(setProfileViewController, animated: true)
         
     }
-
     
     @objc func skipTap() {
         let setProfileViewController = SetProfileViewController()
