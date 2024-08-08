@@ -288,7 +288,7 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
         toastButton.titleLabel?.font = .systemFont(ofSize: 13)
         toastButton.setTitle("설정", for: .normal)
         toastButton.setTitleColor(.white, for: .normal)
-        toastButton.backgroundColor = .gray
+        toastButton.backgroundColor = UIColor(named: "DominentColor")
         toastButton.layer.cornerRadius = 4
         toastButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         toastButton.translatesAutoresizingMaskIntoConstraints = false
