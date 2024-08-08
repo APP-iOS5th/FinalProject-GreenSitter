@@ -12,6 +12,11 @@ class ChatListViewController: UIViewController {
     private var isLoggedIn = true
     private var hasChats = true
     
+    // 샘플 채팅 데이터
+    let sampleData = SampleChatData.chatRooms
+    // 임시 유저 id
+    let userId = "2-1"
+    
     // container
     private lazy var container: UIView = {
         let view = UIView()
@@ -37,7 +42,7 @@ class ChatListViewController: UIViewController {
         attributedTitle.font = UIFont.preferredFont(forTextStyle: .title3)
         configuration.attributedTitle = attributedTitle
         // 버튼 색상
-        configuration.baseBackgroundColor = UIColor(red: 128/255, green: 188/255, blue: 86/255, alpha: 1.0)
+        configuration.baseBackgroundColor = .appGreen
         configuration.baseForegroundColor = .white
         // padding
         configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)

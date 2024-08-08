@@ -6,8 +6,16 @@
 //
 
 import Foundation
+import UIKit
 
-struct SampleData {
+// 주조색, 보조색
+extension UIColor {
+    static let appGreen = UIColor(red: 128/255, green: 188/255, blue: 86/255, alpha: 1.0)
+    static let appYellow = UIColor(red: 248/255, green: 215/255, blue: 103/255, alpha: 1.0)
+    static let appBrown = UIColor(red: 136/255, green: 111/255, blue: 101/255, alpha: 1.0)
+}
+
+struct SampleChatData {
     static let chatRooms: [ChatRoom] = [
         ChatRoom(
             id: UUID(uuidString: "1-1")!,
@@ -22,6 +30,8 @@ struct SampleData {
             sitterProfileImage: "https://example.com/image2.jpg",
             ownerStatus: true,
             sitterStatus: true,
+            notification: true,
+            partnerLocation: nil,
             messages: [
                 Message(
                     id: UUID(uuidString: "3-1")!,
@@ -66,6 +76,8 @@ struct SampleData {
             sitterProfileImage: "https://example.com/image5.jpg",
             ownerStatus: true,
             sitterStatus: true,
+            notification: false,
+            partnerLocation: nil,
             messages: [
                 Message(
                     id: UUID(uuidString: "3-3")!,
@@ -110,6 +122,8 @@ struct SampleData {
             sitterProfileImage: "https://example.com/image7.jpg",
             ownerStatus: true,
             sitterStatus: true,
+            notification: true,
+            partnerLocation: nil,
             messages: [
                 Message(
                     id: UUID(uuidString: "3-5")!,
