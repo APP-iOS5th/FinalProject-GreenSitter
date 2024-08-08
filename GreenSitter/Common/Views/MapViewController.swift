@@ -156,9 +156,9 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
     
     func addViews() {
         //여기에서 그릴 View(KakaoMap, Roadview)들을 추가한다.
-        let defaultPosition: MapPoint = MapPoint(longitude: 127.108678, latitude: 37.402001)
+        let defaultPosition: MapPoint = MapPoint(longitude: 126.9779, latitude: 37.5663)    // 서울 시청을 default position
         //지도(KakaoMap)를 그리기 위한 viewInfo를 생성
-        let mapviewInfo: MapviewInfo = MapviewInfo(viewName: "mapview", viewInfoName: "map", defaultPosition: defaultPosition, defaultLevel: 7)
+        let mapviewInfo: MapviewInfo = MapviewInfo(viewName: "mapview", viewInfoName: "map", defaultPosition: defaultPosition, defaultLevel: 15)    // 줌 레벨 15로 설정
         
         //KakaoMap 추가.
         mapController?.addView(mapviewInfo)
