@@ -9,8 +9,8 @@ import UIKit
 
 class ChatListViewController: UIViewController {
     // 로그인 여부를 나타내는 변수
-    private var isLoggedIn = false
-    private var hasChats = false
+    private var isLoggedIn = true
+    private var hasChats = true
     
     // container
     private lazy var container: UIView = {
@@ -241,6 +241,12 @@ class ChatListViewController: UIViewController {
         isLoggedIn = true
         hasChats = true
         viewDidLoad()
+    }
+    
+    // MARK: - deinit
+    deinit {
+        // 옵저버 해제
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("UserDidLoginNotification"), object: nil)
     }
     
 }
