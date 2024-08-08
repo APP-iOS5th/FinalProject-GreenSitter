@@ -120,16 +120,15 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
     }
     
     func presentCamera() {
-        print("camera")
-//        let camera = UIImagePickerController()
-//        camera.sourceType = .camera
-//        camera.allowsEditing = true
-//        camera.cameraDevice = .front
-//        camera.cameraCaptureMode = .photo
-//        camera.delegate = self
-//        
-//        DispatchQueue.main.async {
-//            self.present(camera, animated: true)
-//        }
+        let camera = UIImagePickerController()
+        camera.sourceType = .camera
+        camera.allowsEditing = true
+        camera.cameraDevice = .front
+        camera.cameraCaptureMode = .photo
+        camera.delegate = self
+        
+        DispatchQueue.main.async {
+            self.present(camera, animated: true)
+        }
     }
 }
