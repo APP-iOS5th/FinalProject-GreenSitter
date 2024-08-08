@@ -35,6 +35,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .systemBackground //시스템이 색을 지정
         
         setupCategoryButtons()
         setupTableView()
@@ -66,7 +67,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
         careProviderButton.setTitle("새싹 돌봐드립니다.", for: .normal)
-        careProviderButton.setTitleColor(.black, for: .normal)
+        careProviderButton.setTitleColor(UIColor(resource: .sitterText), for: .normal)
         careProviderButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
         
         let careSeekerButton = UIButton()
