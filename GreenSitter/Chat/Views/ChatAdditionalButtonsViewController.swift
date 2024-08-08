@@ -101,7 +101,7 @@ extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, 
         }
         
         print(image)
-        dismiss(animated: true)
+        picker.dismiss(animated: true)
     }
 }
 
@@ -129,6 +129,13 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
         
         DispatchQueue.main.async {
             self.present(camera, animated: true)
+        }
+    }
+    
+    func presentMakePlan() {
+        let makePlan = MakePlanViewController()
+        DispatchQueue.main.async {
+            self.present(makePlan, animated: true)
         }
     }
 }

@@ -10,6 +10,7 @@ import Foundation
 protocol ChatAdditionalButtonsViewModelDelegate {
     func presentPhotoPicker()
     func presentCamera()
+    func presentMakePlan()
 }
 
 class ChatAdditionalButtonsViewModel {
@@ -34,6 +35,6 @@ class ChatAdditionalButtonsViewModel {
     }
     
     func planButtonTapped() {
-        print("PlanButton Tapped")
+        delegate?.presentMakePlan()
     }
 }
