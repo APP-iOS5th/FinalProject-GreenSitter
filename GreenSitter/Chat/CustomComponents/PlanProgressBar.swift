@@ -8,9 +8,18 @@
 import UIKit
 
 class PlanProgressBar: UIView {
-    init() {
+    
+    var progress: Int = 0 {
+        didSet {
+            updateUI()
+        }
+    }
+    
+    init(progress: Int) {
         super.init(frame: .zero)
+        self.progress = progress
         setupUI()
+        updateUI()
     }
     
     required init(coder: NSCoder) {
@@ -19,25 +28,22 @@ class PlanProgressBar: UIView {
     
     private func setupUI() {
         let progressLine = UIProgressView()
-         progressLine.trackTintColor = .progressGray
-         progressLine.progressTintColor = .progressBlue
-         progressLine.progress = 0.5
+        progressLine.trackTintColor = .progressGray
+        progressLine.progressTintColor = .progressBlue
+        progressLine.progress = 0.5
         progressLine.translatesAutoresizingMaskIntoConstraints = false
         
         let dateTimeIcon = UIImageView(image: UIImage(systemName: "checkmark.circle.fill")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal))
-        dateTimeIcon.backgroundColor = .white
         dateTimeIcon.clipsToBounds = true
         dateTimeIcon.layer.cornerRadius = 10
         dateTimeIcon.translatesAutoresizingMaskIntoConstraints = false
         
         let placeIcon = UIImageView(image: UIImage(systemName: "smallcircle.filled.circle")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal))
-        placeIcon.backgroundColor = .white
         placeIcon.clipsToBounds = true
         placeIcon.layer.cornerRadius = 10
         placeIcon.translatesAutoresizingMaskIntoConstraints = false
         
         let finalConfirmIcon = UIImageView(image: UIImage(systemName: "circle")?.withTintColor(.progressGray, renderingMode: .alwaysOriginal))
-        finalConfirmIcon.backgroundColor = UIColor(named: "BGSecondary")
         finalConfirmIcon.clipsToBounds = true
         finalConfirmIcon.layer.cornerRadius = 10
         finalConfirmIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -45,21 +51,18 @@ class PlanProgressBar: UIView {
         let dateTimeText = UILabel()
         dateTimeText.text = "날짜 및 시간 선택"
         dateTimeText.font = UIFont.systemFont(ofSize: 10)
-        dateTimeText.textColor = .progressDeactivateGray
         dateTimeText.addCharacterSpacing(-0.025)
         dateTimeText.translatesAutoresizingMaskIntoConstraints = false
         
         let placeText = UILabel()
         placeText.text = "만날 장소 선택"
         placeText.font = UIFont.systemFont(ofSize: 10)
-        placeText.textColor = UIColor(named: "LabelsPrimary")
         placeText.addCharacterSpacing(-0.025)
         placeText.translatesAutoresizingMaskIntoConstraints = false
         
         let finalConfirmText = UILabel()
         finalConfirmText.text = "최종 확인"
         finalConfirmText.font = UIFont.systemFont(ofSize: 10)
-        finalConfirmText.textColor = .progressDeactivateGray
         finalConfirmText.addCharacterSpacing(-0.025)
         finalConfirmText.translatesAutoresizingMaskIntoConstraints = false
         
@@ -102,6 +105,68 @@ class PlanProgressBar: UIView {
             finalConfirmText.centerXAnchor.constraint(equalTo: finalConfirmIcon.centerXAnchor),
             finalConfirmText.topAnchor.constraint(equalTo: finalConfirmIcon.bottomAnchor, constant: 5),
         ])
+    }
+    
+    private func updateUI() {
+        let progressLine = self.subviews.compactMap { $0 as? UIProgressView }.first
+        progressLine?.progress = Float(progress) / 2.0
+        
+        let dateTimeIcon = self.subviews.compactMap { $0 as? UIImageView }[0]
+        let placeIcon = self.subviews.compactMap { $0 as? UIImageView }[1]
+        let finalConfirmIcon = self.subviews.compactMap { $0 as? UIImageView }[2]
+        
+        let dateTimeText = self.subviews.compactMap { $0 as? UILabel }[0]
+        let placeText = self.subviews.compactMap { $0 as? UILabel }[1]
+        let finalConfirmText = self.subviews.compactMap { $0 as? UILabel }[2]
+        
+        switch progress {
+        case 0:
+            dateTimeIcon.image = UIImage(systemName: "smallcircle.filled.circle")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal)
+            dateTimeIcon.backgroundColor = .white
+            placeIcon.image = UIImage(systemName: "circle")?.withTintColor(.progressGray, renderingMode: .alwaysOriginal)
+            placeIcon.backgroundColor = UIColor(named: "BGSecondary")
+            finalConfirmIcon.image = UIImage(systemName: "circle")?.withTintColor(.progressGray, renderingMode: .alwaysOriginal)
+            finalConfirmIcon.backgroundColor = UIColor(named: "BGSecondary")
+            
+            dateTimeText.textColor = UIColor(named: "LabelsPrimary")
+            placeText.textColor = .progressDeactivateGray
+            finalConfirmText.textColor = .progressDeactivateGray
+        case 1:
+            dateTimeIcon.image = UIImage(systemName: "checkmark.circle.fill")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal)
+            dateTimeIcon.backgroundColor = .white
+            placeIcon.image = UIImage(systemName: "smallcircle.filled.circle")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal)
+            placeIcon.backgroundColor = .white
+            finalConfirmIcon.image = UIImage(systemName: "circle")?.withTintColor(.progressGray, renderingMode: .alwaysOriginal)
+            finalConfirmIcon.backgroundColor = UIColor(named: "BGSecondary")
+            
+            dateTimeText.textColor = .progressDeactivateGray
+            placeText.textColor = UIColor(named: "LabelsPrimary")
+            finalConfirmText.textColor = .progressDeactivateGray
+        case 2:
+            dateTimeIcon.image = UIImage(systemName: "checkmark.circle.fill")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal)
+            dateTimeIcon.backgroundColor = .white
+            placeIcon.image = UIImage(systemName: "checkmark.circle.fill")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal)
+            placeIcon.backgroundColor = .white
+            finalConfirmIcon.image = UIImage(systemName: "smallcircle.filled.circle")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal)
+            finalConfirmIcon.backgroundColor = .white
+            
+            dateTimeText.textColor = .progressDeactivateGray
+            placeText.textColor = .progressDeactivateGray
+            finalConfirmText.textColor = UIColor(named: "LabelsPrimary")
+        case 3:
+            dateTimeIcon.image = UIImage(systemName: "checkmark.circle.fill")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal)
+            dateTimeIcon.backgroundColor = .white
+            placeIcon.image = UIImage(systemName: "checkmark.circle.fill")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal)
+            placeIcon.backgroundColor = .white
+            finalConfirmIcon.image = UIImage(systemName: "checkmark.circle.fill")?.withTintColor(.progressBlue, renderingMode: .alwaysOriginal)
+            finalConfirmIcon.backgroundColor = .white
+            
+            dateTimeText.textColor = .progressDeactivateGray
+            placeText.textColor = .progressDeactivateGray
+            finalConfirmText.textColor = .progressDeactivateGray
+        default:
+            break
+        }
     }
 }
 

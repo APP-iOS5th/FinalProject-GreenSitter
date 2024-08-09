@@ -29,7 +29,7 @@ class MakePlanViewController: UIViewController {
     }()
     
     private lazy var planProgressBar: PlanProgressBar = {
-        let planProgressBar = PlanProgressBar()
+        let planProgressBar = PlanProgressBar(progress: 0)
         planProgressBar.translatesAutoresizingMaskIntoConstraints = false
         return planProgressBar
     }()
