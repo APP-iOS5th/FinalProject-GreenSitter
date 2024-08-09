@@ -15,6 +15,7 @@ class SetProfileViewController: UIViewController {
     let storage = Storage.storage()
     var users: User?
     let db = Firestore.firestore()
+    var selectButton: UIButton? //선택한 버튼을 저장할 변수
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -104,8 +105,6 @@ class SetProfileViewController: UIViewController {
         return stackView
     }()
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -117,6 +116,14 @@ class SetProfileViewController: UIViewController {
         view.addSubview(nickNameTextField)
         view.addSubview(nextButton)
         view.addSubview(skipButton)
+        
+        imageButton1.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
+        imageButton2.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
+        imageButton3.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
+        imageButton4.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
+        imageButton5.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
+        imageButton6.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
+
         
         setupImage()
 
@@ -148,6 +155,7 @@ class SetProfileViewController: UIViewController {
             skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
         ])
     }
+    
     
     func setupImage() {
         let imageUrls = [
@@ -186,15 +194,39 @@ class SetProfileViewController: UIViewController {
         }
     }
     
-
+    //MARK: - 선택 이미지
+    @objc func imageButtonTap(_ sender: UIButton) {
+        //이전 버튼 선택해제
+        selectButton?.layer.borderWidth = 0
+        
+        //새로운 버튼을 선택
+        selectButton = sender
+    }
     
     //MARK: - nextButton을 눌렀을때 닉네임을 파이어베이스에 저장
     @objc func nextTap() {
-        //MARK: - 파이어베이스 저장하
+        //MARK: - 파이어베이스 저장
         guard let nickname = nickNameTextField.text, !nickname.isEmpty else { return }
+        guard let selectButton = selectButton else { return }
         
+        let imageUrls = [
+            "gs://greensitter-6dedd.appspot.com/꽃1.png",
+            "gs://greensitter-6dedd.appspot.com/꽃2.png",
+            "gs://greensitter-6dedd.appspot.com/꽃3.png",
+            "gs://greensitter-6dedd.appspot.com/썩은 씨앗4.png",
+            "gs://greensitter-6dedd.appspot.com/썩은씨앗5.png",
+            "gs://greensitter-6dedd.appspot.com/씨앗1.png"
+        ]
+        
+        //선택된 버튼에 맞는 url 찾기
+        guard let selectedButtonIndex = [imageButton1, imageButton2, imageButton3, imageButton4, imageButton5, imageButton6].firstIndex(of: selectButton) else { return }
+        let selectedImageUrl = imageUrls[selectedButtonIndex]
+
+        // Firestore에 사용자 데이터 저장
         let userData: [String: Any] = [
-            "nikname": nickname
+            "nikname": nickname,
+            "profileImage": selectedImageUrl
+
         ]
         
         guard let user = Auth.auth().currentUser else {
