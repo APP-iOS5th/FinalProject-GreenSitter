@@ -21,6 +21,7 @@ class LoginViewController: UIViewController {
         let label = UILabel()
         label.text = "새싹 돌봄이"
         label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.textColor = .labelsPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -33,6 +34,7 @@ class LoginViewController: UIViewController {
     돌봐드립니다
 """
         label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.textColor = .labelsPrimary
         label.numberOfLines = 0 // 여러 줄 텍스트를 지원
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

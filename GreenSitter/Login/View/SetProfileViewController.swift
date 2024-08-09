@@ -21,6 +21,7 @@ class SetProfileViewController: UIViewController {
         let label = UILabel()
         label.text = "프로필 정보 입력"
         label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.textColor = .labelsPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -45,7 +46,7 @@ class SetProfileViewController: UIViewController {
         let textField = UITextField()
         textField.frame.size.height = 30
         textField.borderStyle = .roundedRect
-        textField.backgroundColor = UIColor(rgbRed: 242, green: 242, blue: 242)
+        textField.backgroundColor = UIColor(named: "SeparatorsOpaque")
         textField.placeholder = "닉네임을 입력해주세요"
         textField.clearsOnBeginEditing = true //편집시 기존텍스트필드값 지우기
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -54,7 +55,7 @@ class SetProfileViewController: UIViewController {
         let label = UILabel()
         label.text = "닉네임 "
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .black
+        label.textColor = .labelsPrimary
         label.sizeToFit()
         
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: label.frame.width + 10, height: textField.frame.height))
@@ -71,7 +72,7 @@ class SetProfileViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("다음", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(rgbRed: 110, green: 190, blue: 70) // RGB 값으로 설정
+        button.backgroundColor = UIColor(named: "DominentColor")
         button.layer.cornerRadius = 10
         button.addTarget(self, action: #selector(nextTap), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

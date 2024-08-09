@@ -19,6 +19,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "위치정보 입력"
+        label.textColor = .labelsPrimary
         label.font = UIFont.boldSystemFont(ofSize: 30)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -33,6 +34,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
 """
         label.font = UIFont.systemFont(ofSize: 20)
         label.numberOfLines = 0 // 여러 줄 텍스트를 지원
+        label.textColor = .labelsPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -41,7 +43,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         let textField = UITextField()
         textField.frame.size.height = 30
         textField.borderStyle = .roundedRect
-        textField.backgroundColor = UIColor(rgbRed: 242, green: 242, blue: 242)
+        textField.backgroundColor = UIColor(named: "SeparatorsOpaque")
         if let userLocation = user?.location {
             textField.placeholder = "\(userLocation)"
         }
@@ -55,7 +57,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         let label = UILabel()
         label.text = "위치 "
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .black
+        label.textColor = .labelsPrimary
         label.sizeToFit()
         
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: label.frame.width + 10, height: textField.frame.height))
@@ -72,7 +74,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         let button = UIButton(type: .system)
         button.setTitle("다음", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(rgbRed: 110, green: 190, blue: 70) // RGB 값으로 설정
+        button.backgroundColor = UIColor(named: "DominentColor")
         button.layer.cornerRadius = 10
         button.addTarget(self, action: #selector(nextTap), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -176,8 +178,3 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     }
 }
 
-extension UIColor {
-    convenience init(rgbRed: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat = 1.0) {
-        self.init(red: rgbRed / 255.0, green: green / 255.0, blue: blue / 255.0, alpha: alpha)
-    }
-}
