@@ -134,37 +134,33 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     }
     
     
-    //위치 정보 저장
-    func saveUserToFirestore(user: User, userId: String) {
-        let userRef = db.collection("users").document(userId)
-        let userData: [String: Any] = [
-            "location": user.location ?? ""
-        ]
-        userRef.setData(userData) { error in
-            if let error = error {
-                print("Firestore Writing Error: \(error)")
-            } else {
-                print("Location data saved")
-            }
-        }
-    }
-    
+
     @objc func nextTap() {
         guard let enterLocation = locationTextField.text, !enterLocation.isEmpty else {
             print("위치 정보가 비어 있습니다.")
             return
         }
         
-        guard let user = user else {
-            print("User 객체가 없습니다.")
+        let userData: [String: Any] = [
+            "location": enterLocation
+        ]
+        
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
             return
         }
         
-        // userId를 UUID 문자열로 변환
-        let userId = user.id.uuidString
-        saveUserToFirestore(user: user, userId: userId)
-        let setProfileViewController = SetProfileViewController()
-        navigationController?.pushViewController(setProfileViewController, animated: true)
+        db.collection("users").document(user.uid).setData(userData, merge: true) { error in
+            if let error = error {
+                print("Firestore Writing Error: \(error)")
+            } else {
+                print("Location successfully saved!")
+            }
+        }
+        DispatchQueue.main.async {
+            let setProfileViewController = SetProfileViewController()
+            self.navigationController?.pushViewController(setProfileViewController, animated: true)
+        }
         
     }
     
