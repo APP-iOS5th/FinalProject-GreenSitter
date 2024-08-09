@@ -15,7 +15,7 @@ class ChatListViewController: UIViewController {
     
     // 샘플 채팅 데이터
     let chatRooms = SampleChatData.chatRooms
-    // 임시 유저 id
+    // 샘플 유저 id
     let userId = UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!
     
     // container
@@ -205,7 +205,7 @@ class ChatListViewController: UIViewController {
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
-        let labelView = UIView()
+        let labelView = UIStackView()
         labelView.translatesAutoresizingMaskIntoConstraints = false
         
         let titleLabel = UILabel()

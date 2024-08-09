@@ -5,6 +5,7 @@
 //  Created by 박지혜 on 8/8/24.
 //
 
+//import FirebaseFirestore
 import UIKit
 
 class ChatTableViewCell: UITableViewCell {
@@ -15,7 +16,7 @@ class ChatTableViewCell: UITableViewCell {
         imageView.frame = CGRect(x: 0, y: 4, width: 52, height: 52)
         imageView.layer.cornerRadius = imageView.frame.height/2
         // 임시 색상 처리
-        imageView.layer.backgroundColor = UIColor(.dominent).cgColor
+//        imageView.layer.backgroundColor = UIColor(.dominent).cgColor
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -122,10 +123,10 @@ class ChatTableViewCell: UITableViewCell {
     }
     
     // MARK: - Cell 구성
-    func configure(chatRoom: ChatRoom, userId: UUID) {
+    func configure(chatRoom: ChatRoom, userId: UUID/*, db: Firestore*/) {
         // 프로필 이미지 설정
         let profileImage = chatRoom.ownerId == userId ? chatRoom.ownerProfileImage : chatRoom.sitterProfileImage
-        profileImageView.image = UIImage(named: profileImage)
+        self.fetchProfileImage(profileImageString: profileImage, userId: userId)
         
         // 닉네임
         let nickname = chatRoom.ownerId == userId ? chatRoom.ownerNickname : chatRoom.sitterNickname
@@ -167,6 +168,47 @@ class ChatTableViewCell: UITableViewCell {
             circleView.backgroundColor = .dominent
             unreadCountLabel.text = "\(unreadCount)"
         }
+    }
+    
+    // MARK: - 프로필 이미지 가져오기
+    private func fetchProfileImage(profileImageString: String, userId: UUID) {
+        // Firestore에서 프로필 이미지 가져오기
+//        let db = Firestore.firestore()
+//        let userId = userId
+//
+//        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+//            guard let self = self, let document = document, document.exists,
+//                  let data = document.data(),
+//                  let profileImageUrl = data["profileImage"] as? String,
+//                  let url = URL(string: profileImageString) else {
+//                return
+//            }
+//
+//            self.downloadImage(from: url)
+//        }
+        
+        // 임시 데이터
+        guard let profileImageUrl = URL(string: profileImageString) else {
+            return
+        }
+        self.downloadImage(from: profileImageUrl)
+    }
+    
+    private func downloadImage(from url: URL) {
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self, let data = data, error == nil else {
+                print("Failed to download image: \(error?.localizedDescription ?? "")")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                if let image = UIImage(data: data) {
+                    self.profileImageView.image = image
+                } else {
+                    print("Failed to convert data to image")
+                }
+            }
+        }.resume()
     }
     
     // MARK: - 메세지 시간 포맷 설정
