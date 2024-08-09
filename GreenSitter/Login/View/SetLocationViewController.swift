@@ -132,23 +132,28 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         ])
         
     }
-    
-    
-
+    //MARK: - NextButton Method
     @objc func nextTap() {
         guard let enterLocation = locationTextField.text, !enterLocation.isEmpty else {
+            //위치정보를 입력하지 않을때
+            let userLocation = user?.location ?? "위치 정보 없음"
             print("위치 정보가 비어 있습니다.")
+            updateLocationInFirestore(location: userLocation)
             return
         }
-        
-        let userData: [String: Any] = [
-            "location": enterLocation
-        ]
-        
+        updateLocationInFirestore(location: enterLocation)
+    }
+    
+    //MARK: - 파이어베이스 위치정보 저장
+    private func updateLocationInFirestore(location: String) {
         guard let user = Auth.auth().currentUser else {
             print("Error: Firebase authResult is nil.")
             return
         }
+        
+        let userData: [String: Any] = [
+            "location": location
+        ]
         
         db.collection("users").document(user.uid).setData(userData, merge: true) { error in
             if let error = error {
@@ -161,9 +166,10 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             let setProfileViewController = SetProfileViewController()
             self.navigationController?.pushViewController(setProfileViewController, animated: true)
         }
-        
+
     }
     
+    //MARK: - SkipButton Method
     @objc func skipTap() {
         let setProfileViewController = SetProfileViewController()
         navigationController?.pushViewController(setProfileViewController, animated: true)
