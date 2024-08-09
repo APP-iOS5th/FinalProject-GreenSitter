@@ -9,6 +9,8 @@ import UIKit
 
 class MakePlanViewController: UIViewController {
 
+    private var pages: [UIViewController] = []
+    
     private lazy var navigationBar : UINavigationBar = {
         let backButton = UIButton()
         backButton.setTitle(" Back", for: .normal)
@@ -34,6 +36,32 @@ class MakePlanViewController: UIViewController {
         return planProgressBar
     }()
     
+    private lazy var pageViewController: UIPageViewController = {
+        let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+        pages = [dateTimeViewController, placeViewController, finalConfirmViewController]
+        pageViewController.setViewControllers([pages[0]], direction: .forward, animated: true)
+        pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        return pageViewController
+    }()
+    
+    private lazy var dateTimeViewController: UIViewController = {
+        let dateTimeViewController = UIViewController()
+        dateTimeViewController.view.backgroundColor = .red
+        return dateTimeViewController
+    }()
+    
+    private lazy var placeViewController: UIViewController = {
+        let placeViewController = UIViewController()
+        placeViewController.view.backgroundColor = .blue
+        return placeViewController
+    }()
+    
+    private lazy var finalConfirmViewController: UIViewController = {
+        let finalConfirmViewController = UIViewController()
+        finalConfirmViewController.view.backgroundColor = .green
+        return finalConfirmViewController
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "BGSecondary")
@@ -42,8 +70,13 @@ class MakePlanViewController: UIViewController {
     }
     
     private func setupUI() {
+        addChild(pageViewController)
+        
         view.addSubview(navigationBar)
         view.addSubview(planProgressBar)
+        view.addSubview(pageViewController.view)
+        
+        pageViewController.didMove(toParent: self)
         
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
@@ -51,10 +84,23 @@ class MakePlanViewController: UIViewController {
             navigationBar.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             navigationBar.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             
-            planProgressBar.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 16),
+            planProgressBar.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
             planProgressBar.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 30),
             planProgressBar.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -30),
+            planProgressBar.heightAnchor.constraint(equalToConstant: 80),
             
+            pageViewController.view.topAnchor.constraint(equalTo: planProgressBar.bottomAnchor, constant: 60),
+            pageViewController.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 30),
+            pageViewController.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -30),
+            pageViewController.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
         ])
+    }
+    
+    private func gotoNextPage() {
+        if let currentViewController = pageViewController.viewControllers?.first,
+           let currentIndex = pages.firstIndex(of: currentViewController) {
+            let nextIndex = (currentIndex + 1) % pages.count
+            pageViewController.setViewControllers([pages[nextIndex]], direction: .forward, animated: true, completion: nil)
+        }
     }
 }

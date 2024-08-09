@@ -79,7 +79,7 @@ class PlanProgressBar: UIView {
             progressLine.heightAnchor.constraint(equalToConstant: 1),
             progressLine.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 48),
             progressLine.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -48),
-            progressLine.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 16),
+            progressLine.centerYAnchor.constraint(equalTo: centerYAnchor),
             
             dateTimeIcon.heightAnchor.constraint(equalToConstant: 20),
             dateTimeIcon.widthAnchor.constraint(equalToConstant: 20),
