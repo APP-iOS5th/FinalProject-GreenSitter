@@ -37,7 +37,7 @@ class PlanProgressBar: UIView {
         placeIcon.translatesAutoresizingMaskIntoConstraints = false
         
         let finalConfirmIcon = UIImageView(image: UIImage(systemName: "circle")?.withTintColor(.progressGray, renderingMode: .alwaysOriginal))
-        finalConfirmIcon.backgroundColor = .secondarySystemBackground
+        finalConfirmIcon.backgroundColor = UIColor(named: "BGSecondary")
         finalConfirmIcon.clipsToBounds = true
         finalConfirmIcon.layer.cornerRadius = 10
         finalConfirmIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -52,7 +52,7 @@ class PlanProgressBar: UIView {
         let placeText = UILabel()
         placeText.text = "만날 장소 선택"
         placeText.font = UIFont.systemFont(ofSize: 10)
-        placeText.textColor = .black
+        placeText.textColor = UIColor(named: "LabelsPrimary")
         placeText.addCharacterSpacing(-0.025)
         placeText.translatesAutoresizingMaskIntoConstraints = false
         
@@ -94,13 +94,13 @@ class PlanProgressBar: UIView {
             finalConfirmIcon.centerYAnchor.constraint(equalTo: progressLine.centerYAnchor),
             
             dateTimeText.centerXAnchor.constraint(equalTo: dateTimeIcon.centerXAnchor),
-            dateTimeText.topAnchor.constraint(equalTo: dateTimeIcon.bottomAnchor),
+            dateTimeText.topAnchor.constraint(equalTo: dateTimeIcon.bottomAnchor, constant: 5),
             
             placeText.centerXAnchor.constraint(equalTo: placeIcon.centerXAnchor),
-            placeText.topAnchor.constraint(equalTo: placeIcon.bottomAnchor),
+            placeText.topAnchor.constraint(equalTo: placeIcon.bottomAnchor, constant: 5),
             
             finalConfirmText.centerXAnchor.constraint(equalTo: finalConfirmIcon.centerXAnchor),
-            finalConfirmText.topAnchor.constraint(equalTo: finalConfirmIcon.bottomAnchor),
+            finalConfirmText.topAnchor.constraint(equalTo: finalConfirmIcon.bottomAnchor, constant: 5),
         ])
     }
 }
