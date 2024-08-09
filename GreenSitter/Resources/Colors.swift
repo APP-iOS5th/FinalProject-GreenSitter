@@ -36,4 +36,8 @@ extension UIColor {
     static var progressBlue: UIColor {
         return UIColor(hexCode: "3686D0")
     }
+    
+    static var progressDeactivateGray: UIColor {
+        return UIColor(hexCode: "717171")
+    }
 }

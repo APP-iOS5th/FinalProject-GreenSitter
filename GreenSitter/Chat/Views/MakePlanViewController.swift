@@ -52,8 +52,8 @@ class MakePlanViewController: UIViewController {
             navigationBar.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             
             planProgressBar.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 16),
-            planProgressBar.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 24),
-            planProgressBar.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -24),
+            planProgressBar.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 30),
+            planProgressBar.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -30),
             
         ])
     }
