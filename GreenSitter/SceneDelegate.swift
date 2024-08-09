@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // UIWindow 및 루트 뷰 컨트롤러 설정
         window = UIWindow(windowScene: windowScene)
-        let viewController = MapViewController()
+        let viewController = KakaoMapViewController()
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }
