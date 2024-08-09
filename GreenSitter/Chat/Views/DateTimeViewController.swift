@@ -9,6 +9,17 @@ import UIKit
 
 class DateTimeViewController: UIViewController {
     
+    init(viewModel: MakePlanViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private var viewModel: MakePlanViewModel
+    
     private var instructionText: UILabel = {
        let instructionText = UILabel()
         instructionText.text = "새싹 돌봄이와\n약속날짜/시간을 정해주세요."
@@ -21,7 +32,6 @@ class DateTimeViewController: UIViewController {
     
     private var dateLabel: UILabel = {
         let dateLabel = UILabel()
-        dateLabel.text = "Aug 15, 2024"
         dateLabel.textAlignment = .center
         dateLabel.textColor = .systemBlue
         dateLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
@@ -34,7 +44,6 @@ class DateTimeViewController: UIViewController {
     
     private var timeLabel: UILabel = {
         let timeLabel = UILabel()
-        timeLabel.text = "12:43 AM"
         timeLabel.textAlignment = .center
         timeLabel.textColor = .systemBlue
         timeLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
@@ -77,6 +86,10 @@ class DateTimeViewController: UIViewController {
         view.backgroundColor = UIColor(named: "BGSecondary")
         
         datePicker.addTarget(self, action: #selector(handleDatePicker(_:)), for: .valueChanged)
+        nextButton.addAction(UIAction { [weak self] _ in
+            self?.viewModel.progress = 1
+            self?.viewModel.gotoNextPage()
+        }, for: .touchUpInside)
         setupUI()
     }
 
@@ -111,6 +124,20 @@ class DateTimeViewController: UIViewController {
             nextButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        
+        let dateFormatter = DateFormatter()
+        
+        dateFormatter.dateStyle = .medium
+        let dateString = dateFormatter.string(from: viewModel.planDate)
+        
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
+        let timeString = dateFormatter.string(from: viewModel.planDate)
+        
+        dateLabel.text = dateString
+        timeLabel.text = timeString
+        
+        datePicker.date = viewModel.planDate
     }
     
     @objc

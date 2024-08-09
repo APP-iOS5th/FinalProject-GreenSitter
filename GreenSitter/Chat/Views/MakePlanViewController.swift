@@ -8,6 +8,8 @@
 import UIKit
 
 class MakePlanViewController: UIViewController {
+    
+    private var viewModel = MakePlanViewModel()
 
     private var pages: [UIViewController] = []
     
@@ -45,7 +47,7 @@ class MakePlanViewController: UIViewController {
     }()
     
     private lazy var dateTimeViewController: DateTimeViewController = {
-        let dateTimeViewController = DateTimeViewController()
+        let dateTimeViewController = DateTimeViewController(viewModel: viewModel)
         return dateTimeViewController
     }()
     
@@ -66,6 +68,8 @@ class MakePlanViewController: UIViewController {
         view.backgroundColor = UIColor(named: "BGSecondary")
         
         setupUI()
+        
+        viewModel.delegate = self
     }
     
     private func setupUI() {
@@ -94,12 +98,15 @@ class MakePlanViewController: UIViewController {
             pageViewController.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
         ])
     }
-    
-    private func gotoNextPage() {
-        if let currentViewController = pageViewController.viewControllers?.first,
-           let currentIndex = pages.firstIndex(of: currentViewController) {
-            let nextIndex = (currentIndex + 1) % pages.count
-            pageViewController.setViewControllers([pages[nextIndex]], direction: .forward, animated: true, completion: nil)
-        }
+}
+
+extension MakePlanViewController: MakePlanViewModelDelegate {
+    func gotoNextPage() {
+        planProgressBar.progress = viewModel.progress
+        //        if let currentViewController = pageViewController.viewControllers?.first,
+        //           let currentIndex = pages.firstIndex(of: currentViewController) {
+        //            let nextIndex = (currentIndex + 1) % pages.count
+        //            pageViewController.setViewControllers([pages[nextIndex]], direction: .forward, animated: true, completion: nil)
+        //        }
     }
 }
