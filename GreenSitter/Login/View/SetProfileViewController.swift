@@ -123,10 +123,10 @@ class SetProfileViewController: UIViewController {
         imageButton4.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         imageButton5.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         imageButton6.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
-
+        
         
         setupImage()
-
+        
         // 제약 조건 설정
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
@@ -134,7 +134,7 @@ class SetProfileViewController: UIViewController {
             
             imageStackView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             imageStackView1.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            imageStackView1.widthAnchor.constraint(equalToConstant: 320),  
+            imageStackView1.widthAnchor.constraint(equalToConstant: 320),
             imageStackView1.heightAnchor.constraint(equalToConstant: 100),
             
             imageStackView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -221,12 +221,12 @@ class SetProfileViewController: UIViewController {
         //선택된 버튼에 맞는 url 찾기
         guard let selectedButtonIndex = [imageButton1, imageButton2, imageButton3, imageButton4, imageButton5, imageButton6].firstIndex(of: selectButton) else { return }
         let selectedImageUrl = imageUrls[selectedButtonIndex]
-
+        
         // Firestore에 사용자 데이터 저장
         let userData: [String: Any] = [
             "nikname": nickname,
             "profileImage": selectedImageUrl
-
+            
         ]
         
         guard let user = Auth.auth().currentUser else {
@@ -241,12 +241,17 @@ class SetProfileViewController: UIViewController {
                 print("Nickname successfully saved!")
             }
         }
-
+//        프로필 뷰로이동
+//        DispatchQueue.main.async {
+//            let profileViewController = ProfileViewController()
+//            self.navigationController?.pushViewController(profileViewController, animated: true)
+//        }
+        
     }
-
+    // 메인뷰로 이동
     @objc func skipTap() {
-//        let setProfileViewController = SetProfileViewController()
-//        navigationController?.pushViewController(setProfileViewController, animated: true)
+        //        let postListViewController = PostListViewController()
+        //        navigationController?.pushViewController(postListViewController, animated: true)
     }
     
     
