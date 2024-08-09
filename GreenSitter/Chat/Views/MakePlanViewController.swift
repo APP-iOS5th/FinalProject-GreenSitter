@@ -44,9 +44,8 @@ class MakePlanViewController: UIViewController {
         return pageViewController
     }()
     
-    private lazy var dateTimeViewController: UIViewController = {
-        let dateTimeViewController = UIViewController()
-        dateTimeViewController.view.backgroundColor = .red
+    private lazy var dateTimeViewController: DateTimeViewController = {
+        let dateTimeViewController = DateTimeViewController()
         return dateTimeViewController
     }()
     
@@ -89,7 +88,7 @@ class MakePlanViewController: UIViewController {
             planProgressBar.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -30),
             planProgressBar.heightAnchor.constraint(equalToConstant: 80),
             
-            pageViewController.view.topAnchor.constraint(equalTo: planProgressBar.bottomAnchor, constant: 60),
+            pageViewController.view.topAnchor.constraint(equalTo: planProgressBar.bottomAnchor, constant: 20),
             pageViewController.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 30),
             pageViewController.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -30),
             pageViewController.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
