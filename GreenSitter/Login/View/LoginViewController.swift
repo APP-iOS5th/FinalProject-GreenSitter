@@ -293,7 +293,7 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                                                       idToken: String(data: appleIDCredential.identityToken!, encoding: .utf8)!,
                                                       rawNonce: currentNonce!)
             // Sign in with Firebase.
-            Auth.auth().signIn(with: credential) { (authResult, error) in
+            Auth.auth().signIn(with: credential) { [self] (authResult, error) in
                 if (error != nil) {
                     //로그인 오류 처리
                     print("Apple 로그인 오류: \(error?.localizedDescription)")
@@ -306,6 +306,9 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                     
                     userRef.setData([
                         "uid": user.uid,
+                        "email": user.email ?? "",
+                        "displayName": user.displayName ?? "",
+                        "location": users?.location ?? ""
                     ])
                 }
                 
