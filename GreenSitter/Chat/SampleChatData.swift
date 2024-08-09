@@ -18,12 +18,12 @@ extension UIColor {
 struct SampleChatData {
     static let chatRooms: [ChatRoom] = [
         ChatRoom(
-            id: UUID(uuidString: "1-1")!,
+            id: UUID(uuidString: "150e8400-e29b-41d4-a716-446655440001")!,
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
-            ownerId: UUID(uuidString: "2-1")!,
-            sitterId: UUID(uuidString: "2-2")!,
+            ownerId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
+            sitterId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440002")!,
             ownerNickname: "Owner1",
             sitterNickname: "Sitter1",
             ownerProfileImage: "https://example.com/image1.jpg",
@@ -34,11 +34,11 @@ struct SampleChatData {
             partnerLocation: nil,
             messages: [
                 Message(
-                    id: UUID(uuidString: "3-1")!,
+                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440001")!,
                     enabled: true,
                     createDate: Date(),
                     updateDate: Date(),
-                    userId: UUID(uuidString: "2-1")!,
+                    userId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
                     read: true,
                     messageType: .text,
                     text: "Hello!",
@@ -46,11 +46,11 @@ struct SampleChatData {
                     plan: nil
                 ),
                 Message(
-                    id: UUID(uuidString: "3-2")!,
+                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440002")!,
                     enabled: true,
                     createDate: Date(),
                     updateDate: Date(),
-                    userId: UUID(uuidString: "2-2")!,
+                    userId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440002")!,
                     read: false,
                     messageType: .image,
                     text: nil,
@@ -58,18 +58,18 @@ struct SampleChatData {
                     plan: nil
                 )
             ],
-            postId: UUID(uuidString: "4-1")!,
+            postId: UUID(uuidString: "450e8400-e29b-41d4-a716-446655440001")!,
             postImage: "https://example.com/post1.jpg",
             postTitle: "Post Title 1",
             postStatus: .beforeTrade
         ),
         ChatRoom(
-            id: UUID(uuidString: "1-2")!,
+            id: UUID(uuidString: "150e8400-e29b-41d4-a716-446655440002")!,
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
-            ownerId: UUID(uuidString: "2-1")!,
-            sitterId: UUID(uuidString: "2-3")!,
+            ownerId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
+            sitterId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440003")!,
             ownerNickname: "Owner2",
             sitterNickname: "Sitter2",
             ownerProfileImage: "https://example.com/image4.jpg",
@@ -80,11 +80,11 @@ struct SampleChatData {
             partnerLocation: nil,
             messages: [
                 Message(
-                    id: UUID(uuidString: "3-3")!,
+                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440003")!,
                     enabled: true,
                     createDate: Date(),
                     updateDate: Date(),
-                    userId: UUID(uuidString: "2-1")!,
+                    userId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
                     read: true,
                     messageType: .plan,
                     text: "Hello!",
@@ -92,11 +92,11 @@ struct SampleChatData {
                     plan: nil
                 ),
                 Message(
-                    id: UUID(uuidString: "3-4")!,
+                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440004")!,
                     enabled: true,
                     createDate: Date(),
                     updateDate: Date(),
-                    userId: UUID(uuidString: "2-3")!,
+                    userId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440003")!,
                     read: true,
                     messageType: .plan,
                     text: nil,
@@ -104,18 +104,18 @@ struct SampleChatData {
                     plan: nil
                 )
             ],
-            postId: UUID(uuidString: "4-2")!,
+            postId: UUID(uuidString: "450e8400-e29b-41d4-a716-446655440002")!,
             postImage: "https://example.com/post2.jpg",
             postTitle: "Post Title 2",
             postStatus: .inTrade
         ),
         ChatRoom(
-            id: UUID(uuidString: "1-3")!,
+            id: UUID(uuidString: "150e8400-e29b-41d4-a716-446655440003")!,
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
-            ownerId: UUID(uuidString: "2-4")!,
-            sitterId: UUID(uuidString: "2-1")!,
+            ownerId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440004")!,
+            sitterId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
             ownerNickname: "Owner3",
             sitterNickname: "Sitter3",
             ownerProfileImage: "https://example.com/image6.jpg",
@@ -126,11 +126,11 @@ struct SampleChatData {
             partnerLocation: nil,
             messages: [
                 Message(
-                    id: UUID(uuidString: "3-5")!,
+                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440005")!,
                     enabled: true,
                     createDate: Date(),
                     updateDate: Date(),
-                    userId: UUID(uuidString: "2-4")!,
+                    userId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440004")!,
                     read: false,
                     messageType: .text,
                     text: "See you later!",
@@ -138,7 +138,7 @@ struct SampleChatData {
                     plan: nil
                 )
             ],
-            postId: UUID(uuidString: "4-3")!,
+            postId: UUID(uuidString: "450e8400-e29b-41d4-a716-446655440003")!,
             postImage: "https://example.com/post3.jpg",
             postTitle: "Post Title 3",
             postStatus: .inTrade

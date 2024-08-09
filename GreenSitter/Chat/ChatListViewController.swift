@@ -8,14 +8,15 @@
 import UIKit
 
 class ChatListViewController: UIViewController {
+
     // 로그인 여부를 나타내는 변수
     private var isLoggedIn = true
     private var hasChats = true
     
     // 샘플 채팅 데이터
-    let sampleData = SampleChatData.chatRooms
+    let chatRooms = SampleChatData.chatRooms
     // 임시 유저 id
-    let userId = "2-1"
+    let userId = UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!
     
     // container
     private lazy var container: UIView = {
@@ -69,6 +70,16 @@ class ChatListViewController: UIViewController {
         return label
     }()
     
+    // 테이블 뷰
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.dataSource = self
+        tableView.register(ChatTableViewCell.self, forCellReuseIdentifier: "ChatTableViewCell")
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return tableView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -88,7 +99,8 @@ class ChatListViewController: UIViewController {
                 
                 // 버튼 클릭 시 홈 화면으로 이동
                 goToHomeButton.addAction(UIAction { [weak self] _ in
-                    self?.navigateToHome()}, for: .touchUpInside)
+                    self?.navigateToHome()
+                }, for: .touchUpInside)
             }
         } else {
             // MARK: - 비로그인
@@ -101,6 +113,16 @@ class ChatListViewController: UIViewController {
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
+        
+        self.view.addSubview(tableView)
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            tableView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        ])
     }
     
     // MARK: - 로그인/채팅 목록 있음 Methods
@@ -254,4 +276,19 @@ class ChatListViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("UserDidLoginNotification"), object: nil)
     }
     
+}
+
+// MARK: - UITableViewDataSource
+extension ChatListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return chatRooms.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatTableViewCell", for: indexPath) as! ChatTableViewCell
+        let chatRoom = chatRooms[indexPath.row]
+        cell.configure(chatRoom: chatRoom, userId: userId)
+        
+        return cell
+    }
 }

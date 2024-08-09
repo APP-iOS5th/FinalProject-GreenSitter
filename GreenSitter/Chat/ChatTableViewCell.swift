@@ -106,7 +106,7 @@ class ChatTableViewCell: UITableViewCell {
     }
     
     // MARK: - Cell 구성
-    private func configure(chatRoom: ChatRoom, userId: UUID) {
+    func configure(chatRoom: ChatRoom, userId: UUID) {
         // 프로필 이미지 설정
         let profileImage = chatRoom.ownerId == userId ? chatRoom.ownerProfileImage : chatRoom.sitterProfileImage
         profileImageView.image = UIImage(named: profileImage)
@@ -167,14 +167,15 @@ class ChatTableViewCell: UITableViewCell {
     
     // MARK: - Setup UI
     private func setupUI() {
-        leftStackView.addArrangedSubview(userNicknameLabel)
-        leftStackView.addArrangedSubview(lastMessageLabel)
-        leftStackView.addArrangedSubview(userLocationLabel)
-        leftStackView.addArrangedSubview(notificationImageView)
+        leftStackView.addSubview(userNicknameLabel)
+        leftStackView.addSubview(lastMessageLabel)
+        leftStackView.addSubview(userLocationLabel)
+        leftStackView.addSubview(notificationImageView)
         
-        rightStackView.addArrangedSubview(dateLabel)
-        rightStackView.addArrangedSubview(unreadCountLabel)
+        rightStackView.addSubview(dateLabel)
+        rightStackView.addSubview(unreadCountLabel)
         
+        contentView.addSubview(profileImageView)
         contentView.addSubview(leftStackView)
         contentView.addSubview(rightStackView)
         
@@ -217,9 +218,9 @@ class ChatTableViewCell: UITableViewCell {
 
 }
 
-//#Preview {
-//    let cell = ChatTableViewCell()
-//    return cell
-//}
+#Preview {
+    let cell = ChatTableViewCell()
+    return cell
+}
 
 
