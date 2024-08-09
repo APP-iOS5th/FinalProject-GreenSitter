@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct careProvider {
+    let name: String
+    let title: String
+    let content: String
+}
