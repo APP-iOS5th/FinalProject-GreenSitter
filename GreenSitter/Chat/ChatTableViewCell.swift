@@ -51,7 +51,7 @@ class ChatTableViewCell: UITableViewCell {
     // 알림 여부
     private lazy var notificationImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .black
+        imageView.tintColor = .secondaryLabel
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -149,9 +149,11 @@ class ChatTableViewCell: UITableViewCell {
     private func timeAgo(from date: Date) -> String {
         let now = Date()
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.minute, .hour, .day], from: date, to: now)
+        let components = calendar.dateComponents([.second, .minute, .hour, .day], from: date, to: now)
         
-        if let minute = components.minute, minute < 60 {
+        if let second = components.second, second < 60 {
+            return "\(second)초 전"
+        } else if let minute = components.minute, minute < 60 {
             return "\(minute)분 전"
         } else if let hour = components.hour, hour < 24 {
             return "\(hour)시간 전"
@@ -191,11 +193,11 @@ class ChatTableViewCell: UITableViewCell {
             userNicknameLabel.topAnchor.constraint(equalTo: leftStackView.topAnchor, constant: 10),
             userNicknameLabel.leadingAnchor.constraint(equalTo: leftStackView.leadingAnchor),
             
-            userLocationLabel.leadingAnchor.constraint(equalTo: userNicknameLabel.trailingAnchor, constant: 5),
+            userLocationLabel.leadingAnchor.constraint(equalTo: userNicknameLabel.trailingAnchor, constant: 10),
             userLocationLabel.centerYAnchor.constraint(equalTo: userNicknameLabel.centerYAnchor),
             
-            notificationImageView.leadingAnchor.constraint(equalTo: userLocationLabel.trailingAnchor, constant: 5),
-            notificationImageView.trailingAnchor.constraint(equalTo: leftStackView.trailingAnchor, constant: -10),
+            notificationImageView.leadingAnchor.constraint(equalTo: userLocationLabel.trailingAnchor, constant: 10),
+            notificationImageView.centerYAnchor.constraint(equalTo: userNicknameLabel.centerYAnchor),
             
             lastMessageLabel.topAnchor.constraint(equalTo: userNicknameLabel.bottomAnchor, constant: 5),
             lastMessageLabel.bottomAnchor.constraint(equalTo: leftStackView.bottomAnchor, constant: -10),
