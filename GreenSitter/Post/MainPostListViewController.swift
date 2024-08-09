@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PostListViewController: UIViewController, UITableViewDataSource {
+class PostListViewController: UIViewController {
     
     private let categoryStackView = UIStackView()
     private let tableView = UITableView()
@@ -28,14 +28,16 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         let button = UIButton(type: .system)
         let image = UIImage(systemName: "magnifyingglass")
         button.setImage(image, for: .normal)
-        button.tintColor = .systemGray
+        button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
+    private let postTableViewController = PostTableViewController() // tableview
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemBackground //시스템이 색을 지정
+        self.view.backgroundColor = .systemBackground // 시스템이 색을 지정
         
         setupCategoryButtons()
         setupTableView()
@@ -43,26 +45,9 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         setupSearchPostButton()
         
         filterPosts(for: "새싹 돌봐드립니다.")
+        
+        setupPostTableViewController()
     }
-    
-//    func setupNavigationBar() {
-//        // 네비게이션 바 배경 색상 설정
-//        navigationController?.navigationBar.barTintColor = .white
-//        
-//        // 네비게이션 바 타이틀 텍스트 색상 설정
-//        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-//        
-//        // 상태 바 스타일 설정
-//        navigationController?.navigationBar.barStyle = .default
-//        
-//        // 플러스 버튼을 네비게이션 바에 추가
-//        let addPostButton = UIBarButtonItem(customView: addPostButton)
-//        navigationItem.rightBarButtonItem = addPostButton
-//        
-//        // 플러스 버튼의 타겟 설정
-//        setupAddPostButton()
-//    }
-    
     
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
@@ -72,7 +57,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         
         let careSeekerButton = UIButton()
         careSeekerButton.setTitle("새싹돌봄이를 찾습니다.", for: .normal)
-        careSeekerButton.setTitleColor(.black, for: .normal)
+        careSeekerButton.setTitleColor(UIColor(resource: .sitterText), for: .normal)
         careSeekerButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
         
         categoryButtonTapped(careProviderButton)
@@ -91,7 +76,6 @@ class PostListViewController: UIViewController, UITableViewDataSource {
             categoryStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryStackView.heightAnchor.constraint(equalToConstant: 50)
         ])
-        
     }
     
     func setupSearchPostButton() {
@@ -103,9 +87,7 @@ class PostListViewController: UIViewController, UITableViewDataSource {
             searchPostButton.widthAnchor.constraint(equalToConstant: 40),
             searchPostButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-        
     }
-    
     
     func setupTableView() {
         tableView.dataSource = self
@@ -122,29 +104,36 @@ class PostListViewController: UIViewController, UITableViewDataSource {
     
     func setupAddPostButton() {
         view.addSubview(addPostButton)
-        addPostButton.addTarget(self, action: #selector(addPostButtonTapped), for: .touchUpInside)
+        /*addPostButton.addTarget(self, action: #selector(addPostButtonTapped), for: .touchUpInside)*/
         NSLayoutConstraint.activate([
             addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             addPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             addPostButton.widthAnchor.constraint(equalToConstant: 40),
             addPostButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-        
     }
     
-    
+    func setupPostTableViewController() {
+        addChild(postTableViewController)
+        view.addSubview(postTableViewController.view)
+        postTableViewController.didMove(toParent: self)
+        
+        postTableViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            postTableViewController.view.topAnchor.constraint(equalTo: categoryStackView.bottomAnchor),
+            postTableViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            postTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            postTableViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
     
     @objc func categoryButtonTapped(_ sender: UIButton) {
-        selectedButton?.setTitleColor(.black, for: .normal)
+        selectedButton?.setTitleColor(UIColor.label, for: .normal)
         sender.setTitleColor(.systemGreen, for: .normal)
         selectedButton = sender
         
         guard let category = sender.titleLabel?.text else { return }
         filterPosts(for: category)
-    }
-    
-    @objc func addPostButtonTapped() {
-        print("Plus button tapped")
     }
     
     @objc func searchPostButtonTapped() {
@@ -159,21 +148,24 @@ class PostListViewController: UIViewController, UITableViewDataSource {
         }
         tableView.reloadData()
     }
-    
+}
+// MARK: extension
+extension PostListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredPosts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+        let cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
         cell.textLabel?.text = filteredPosts[indexPath.row]
         return cell
     }
-    
-    
 }
-
+// MARK: Preview
 #Preview {
     return UINavigationController(rootViewController: PostListViewController())
 }
+
+
+
 
