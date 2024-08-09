@@ -101,7 +101,7 @@ struct SampleChatData {
                     messageType: .plan,
                     text: nil,
                     image: nil,
-                    plan: nil
+                    plan: Plan(planId: UUID(), enabled: true, createDate: Date(), updateDate: Date(), planDate: Date(), planPlace: nil, contract: nil, ownerNotification: true, sitterNotification: true, isAccepted: true)
                 )
             ],
             postId: UUID(uuidString: "450e8400-e29b-41d4-a716-446655440002")!,

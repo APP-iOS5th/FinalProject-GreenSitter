@@ -289,6 +289,8 @@ extension ChatListViewController: UITableViewDataSource {
         let chatRoom = chatRooms[indexPath.row]
         cell.configure(chatRoom: chatRoom, userId: userId)
         
+        // TODO: - 메세지 시간 업데이트
+        
         return cell
     }
 }
