@@ -9,14 +9,7 @@ import CoreLocation
 import UIKit
 import KakaoMapsSDK
 
-class MapViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-}
-
-class APISampleBaseViewController: UIViewController, MapControllerDelegate {
+class MapViewController: UIViewController, MapControllerDelegate {
     
     var mapContainer: KMViewContainer?  // 카카오 맵 SDK에서 지도를 표시하기 위해 사용하는 UIView
     var mapController: KMController?    // SDK의 인증 및 엔진과의 연결을 관리
@@ -28,6 +21,8 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
     var locationManager: CLLocationManager!
     var latitude: CLLocationDegrees?
     var longitude: CLLocationDegrees?
+    
+    var shapeLayer: ShapeLayer?
     
     init() {
         self._observerAdded = false
@@ -77,26 +72,11 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
             latitude = location.coordinate.latitude
             longitude = location.coordinate.longitude
         }
-        
-//        let currentLocation = CLLocation(latitude: latitude, longitude: longitude)
-//        let geocoder = CLGeocoder()
-//        let locale = Locale(identifier: "Ko-kr")
-//        geocoder.reverseGeocodeLocation(currentLocation, preferredLocale: locale) { (placemarks, error) in
-//            if let address: [CLPlacemark] = placemarks {
-//                if let country: String = address.last?.country {
-//                    print(country)
-//                }
-//                if let administrativeArea: String = address.last?.administrativeArea {
-//                    print(administrativeArea)   // 도시 (서울 특별시)
-//                }
-//                if let locality: String = address.last?.locality { print(locality) }    // 동, 구 (관악구)
-//                if let name: String = address.last?.name { print(name) }    // 상세 주소 (남부순환로 ...)
-//            }
-//        }
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+//        super.viewWillAppear(animated)
         addObservers()
         _appear = true
         
@@ -106,17 +86,17 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+//        super.viewDidAppear(animated)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+//        super.viewWillDisappear(animated)
         _appear = false
         mapController?.pauseEngine()  // 렌더링 중지.
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+//        super.viewDidDisappear(animated)
         removeObservers()
         mapController?.resetEngine()  // 엔진 정지. 추가되었던 ViewBase들이 삭제된다.
     }
@@ -171,11 +151,16 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
         // KakaoMap 객체 가져오기
         mapView = mapController?.getView(viewName) as? KakaoMap
         
-        let manager = mapView?.getShapeManager()
-
-        // 레이어의 이름과 렌더링 우선순위를 지정하여 ShapeLayer를 생성한다.
-        // 생성된 Layer가 리턴된다.
-        let layer = manager?.addShapeLayer(layerID: "shapeLayer", zOrder: 10001, passType: .route)
+        if let mapView {
+            // Shape Layer 생성
+            createShapeLayer(mapView)
+            
+            // Polygon Style Set 생성
+            createPolygonStyleSet(mapView)
+            
+            
+            createPolygonShape()
+        }
         
         // 초기 위치가 있다면 지도 위치 업데이트
         updateMapPosition()
@@ -186,24 +171,120 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
         print("Failed to add view \(viewName) with info \(viewInfoName).")
     }
     
-    func updateMapPosition() {
-        if mapView == nil {
-            mapView = mapController?.getView("mapview") as? KakaoMap
+    // Shape Layer 생성 함수
+    func createShapeLayer(_ mapView: KakaoMap) {
+        let manager = mapView.getShapeManager()
+
+        // 레이어의 이름과 렌더링 우선순위를 지정하여 ShapeLayer를 생성한다.
+        // 생성된 Layer가 리턴된다.
+        shapeLayer = manager.addShapeLayer(layerID: "shapeLayer", zOrder: 10001, passType: .route)
+        shapeLayer?.visible = true // 레이어를 보이도록 설정
+        print("ShapeLayer created and set to visible.")
+    }
+    
+    // Polygon Style Set 생성 함수
+    func createPolygonStyleSet(_ mapView: KakaoMap) {
+        let manager = mapView.getShapeManager()
+
+        // 레벨별 스타일을 생성.
+        let perLevelStyle1 = PerLevelPolygonStyle(color: UIColor(red: 0.9, green: 0.7, blue: 0.3, alpha: 1.0), strokeWidth: 1, strokeColor: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0), level: 0)
+        
+        let perLevelStyle2 = PerLevelPolygonStyle(color: UIColor(red: 0.9, green: 0.2, blue: 0.6, alpha: 1.0), strokeWidth: 1, strokeColor: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0), level: 0)
+        
+        // 각 레벨별 스타일로 구성된 2개의 Polygon Style
+        let shapeStyle1 = PolygonStyle(styles: [perLevelStyle1])
+        let shapeStyle2 = PolygonStyle(styles: [perLevelStyle2])
+        
+        // PolygonStyle을 PolygonStyleSet에 추가.
+        let shapeStyleSet = PolygonStyleSet(styleSetID: "shapeStyleSet", styles: [shapeStyle1, shapeStyle2])
+        print("PolygonStyleSet created: \(shapeStyleSet)")
+        manager.addPolygonStyleSet(shapeStyleSet)
+    }
+    
+    // Polygon Shape 생성 함수
+    func createPolygonShape() {
+        guard let layer = shapeLayer else {
+            print("ShapeLayer is not initialized.")
+            return
         }
         
-        if let latitude = latitude, let longitude = longitude, let mapView = mapView {
-            print("Updating map position to latitude: \(latitude), longitude: \(longitude)") // Debug log
-            let currentPosition = MapPoint(longitude: longitude, latitude: latitude)
-            let cameraUpdate = CameraUpdate.make(
-                target: currentPosition,
-                zoomLevel: 15,
-                rotation: 1.7,
-                tilt: 0.0,
-                mapView: mapView
-            )
-            mapView.moveCamera(cameraUpdate)
+        print("ShapeLayer: \(String(describing: shapeLayer))")
+        
+        // PolygonShape 생성 옵션 설정
+        let options = PolygonShapeOptions(shapeID: "CircleShape", styleID: "shapeStyleSet", zOrder: 1)
+        
+        // Polygon의 외곽 포인트 배열 생성 (MapPoint)
+        let mapPoints = Primitives.getCirclePoints(radius: 50, numPoints: 36, cw: true, center: MapPoint(longitude: 126.9779, latitude: 37.5663))
+        
+        if mapPoints.isEmpty {
+            print("Error: Points array for polygon is empty.")
+            return
         }
+        
+        // MapPoint 배열 디버깅
+        for point in mapPoints {
+            print("MapPoint - Longitude: \(point.wgsCoord.longitude), Latitude: \(point.wgsCoord.latitude)")
+        }
+        
+        // MapPoint 배열을 CGPoint 배열로 변환
+        let cgPoints = mapPoints.map { CGPoint(x: $0.wgsCoord.longitude, y: $0.wgsCoord.latitude) }
+        
+        // CGPoint 배열 디버깅
+        for point in cgPoints {
+            print("CGPoint - x: \(point.x), y: \(point.y)")
+        }
+        
+        // Polygon 객체 생성 및 추가
+        let polygon = Polygon(exteriorRing: cgPoints, hole: nil, styleIndex: 0)
+        options.polygons.append(polygon)
+        
+        // PolygonShape를 구성하는 Polygon의 기준점 설정
+        options.basePosition = MapPoint(longitude: 126.9779, latitude: 37.5663)
+        
+        // 추가 Polygon 객체 생성
+        let mapPoints2 = mapPoints.map { (p: MapPoint) -> MapPoint in
+            var coord = p.wgsCoord
+            coord.longitude += 0.000898
+            return MapPoint(longitude: coord.longitude, latitude: coord.latitude)
+        }
+        
+        // MapPoint 배열을 CGPoint 배열로 변환
+        let cgPoints2 = mapPoints2.map { CGPoint(x: $0.wgsCoord.longitude, y: $0.wgsCoord.latitude) }
+        
+        let polygon2 = Polygon(exteriorRing: cgPoints2, hole: nil, styleIndex: 1)
+        options.polygons.append(polygon2)
+        
+        // PolygonShape를 Layer에 추가하고 반환 값을 변수에 저장
+        let shape = layer.addPolygonShape(options) { shape in
+            if let shape = shape {
+                shape.show()
+                print("PolygonShape isShow: \(shape.isShow)")
+                print("PolygonShape created and shown successfully.")
+            } else {
+                print("Error: Invalid PolygonShapeOptions.")
+            }
+        }
+        
+        if shape == nil {
+            print("PolygonShape creation failed.")
+        }
+        
+        // 모든 PolygonShape를 보이도록 설정
+        layer.showAllPolygonShapes()
     }
+
+    
+    func updateMapPosition() {
+        guard let latitude = latitude, let longitude = longitude, let mapView = mapView else {
+            print("Latitude, Longitude or mapView is not initialized.")
+            return
+        }
+        
+        let cameraUpdate = CameraUpdate.make(target: MapPoint(longitude: longitude, latitude: latitude), zoomLevel: 15, mapView: mapView)
+        mapView.moveCamera(cameraUpdate)
+        print("Updating map position to latitude: \(latitude), longitude: \(longitude)")
+    }
+
     
     //Container 뷰가 리사이즈 되었을때 호출된다. 변경된 크기에 맞게 ViewBase들의 크기를 조절할 필요가 있는 경우 여기에서 수행한다.
     func containerDidResized(_ size: CGSize) {
@@ -215,25 +296,25 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
         
     }
     
-    func addObservers(){
+    func addObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         _observerAdded = true
     }
     
-    func removeObservers(){
+    func removeObservers() {
         NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
         
         _observerAdded = false
     }
     
-    @objc func willResignActive(){
+    @objc func willResignActive() {
         mapController?.pauseEngine()  //뷰가 inactive 상태로 전환되는 경우 렌더링 중인 경우 렌더링을 중단.
     }
     
-    @objc func didBecomeActive(){
+    @objc func didBecomeActive() {
         mapController?.activateEngine() //뷰가 active 상태가 되면 렌더링 시작. 엔진은 미리 시작된 상태여야 함.
     }
     
@@ -260,7 +341,7 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
     }
     
     
-    //MARK: - ToastMessage
+    // MARK: - ToastMessage
     
     func showToast(withDuration: Double, delay: Double) {
         let toastLabelWidth: CGFloat = 380
@@ -355,7 +436,7 @@ class APISampleBaseViewController: UIViewController, MapControllerDelegate {
     }
 }
 
-extension APISampleBaseViewController: CLLocationManagerDelegate {
+extension MapViewController: CLLocationManagerDelegate {
     
     func getLocationUsagePermission() {
         self.locationManager.requestWhenInUseAuthorization()
@@ -378,6 +459,7 @@ extension APISampleBaseViewController: CLLocationManagerDelegate {
     }
     
      // MARK: - CLLocationManagerDelegate
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let myLocation = locations.first {
             self.latitude = myLocation.coordinate.latitude
@@ -394,5 +476,23 @@ extension APISampleBaseViewController: CLLocationManagerDelegate {
 
 
 #Preview {
-    APISampleBaseViewController()
+    MapViewController()
 }
+
+
+
+//        let currentLocation = CLLocation(latitude: latitude, longitude: longitude)
+//        let geocoder = CLGeocoder()
+//        let locale = Locale(identifier: "Ko-kr")
+//        geocoder.reverseGeocodeLocation(currentLocation, preferredLocale: locale) { (placemarks, error) in
+//            if let address: [CLPlacemark] = placemarks {
+//                if let country: String = address.last?.country {
+//                    print(country)
+//                }
+//                if let administrativeArea: String = address.last?.administrativeArea {
+//                    print(administrativeArea)   // 도시 (서울 특별시)
+//                }
+//                if let locality: String = address.last?.locality { print(locality) }    // 동, 구 (관악구)
+//                if let name: String = address.last?.name { print(name) }    // 상세 주소 (남부순환로 ...)
+//            }
+//        }
