@@ -80,10 +80,11 @@ class ChatListViewController: UIViewController {
         return tableView
     }()
     
+    // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .systemBackground
+        self.view.backgroundColor = .bgSecondary
         
         // 로그인 이벤트 수신
         NotificationCenter.default.addObserver(self, selector: #selector(userDidLogin), name: NSNotification.Name("UserDidLoginNotification"), object: nil)
@@ -106,6 +107,13 @@ class ChatListViewController: UIViewController {
             // MARK: - 비로그인
             presentLoginViewController()
         }
+    }
+    
+    // MARK: - viewwillAppear
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        self.tableView.reloadData()
     }
     
     // MARK: - Setup ChatList UI
