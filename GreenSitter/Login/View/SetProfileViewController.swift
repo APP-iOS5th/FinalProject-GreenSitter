@@ -7,9 +7,14 @@
 
 import UIKit
 import FirebaseStorage
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
 
 class SetProfileViewController: UIViewController {
     let storage = Storage.storage()
+    var users: User?
+    let db = Firestore.firestore()
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -181,14 +186,38 @@ class SetProfileViewController: UIViewController {
         }
     }
     
-    @objc func nextTap() {
 
+    
+    //MARK: - nextButton을 눌렀을때 닉네임을 파이어베이스에 저장
+    @objc func nextTap() {
+        //MARK: - 파이어베이스 저장하
+        guard let nickname = nickNameTextField.text, !nickname.isEmpty else { return }
+        
+        let userData: [String: Any] = [
+            "nikname": nickname
+        ]
+        
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
+            return
         }
+        
+        db.collection("users").document(user.uid).setData(userData, merge: true) { error in
+            if let error = error {
+                print("Firestore Writing Error: \(error)")
+            } else {
+                print("Nickname successfully saved!")
+            }
+        }
+
+    }
 
     @objc func skipTap() {
 //        let setProfileViewController = SetProfileViewController()
 //        navigationController?.pushViewController(setProfileViewController, animated: true)
     }
+    
+    
 }
 
 
