@@ -13,13 +13,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow window to the provided UIWindowScene scene.
-        // If using a storyboard, the window property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see application:configurationForConnectingSceneSession instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = ViewController()
+        
+        // Home(커뮤니티)
+        let firstViewController = PostListViewController()
+        let firstNavigationController = UINavigationController(rootViewController: firstViewController)
+        firstNavigationController.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house.fill"), tag: 0)
+        
+        // Map
+        let secondViewController = CareFinderMapViewController()
+        let secondNavigationController = UINavigationController(rootViewController: secondViewController)
+        secondNavigationController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
+        
+        // Chat
+        let thirdViewController = ChatListViewController()
+        let thirdNavigationController = UINavigationController(rootViewController: thirdViewController)
+        thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
+        
+        // Profile
+        let fourthViewController = ProfileViewController()
+        let fourthNavigationController = UINavigationController(rootViewController: fourthViewController)
+        fourthNavigationController.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.fill"), tag: 3)
+        
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController]
+        
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
 
