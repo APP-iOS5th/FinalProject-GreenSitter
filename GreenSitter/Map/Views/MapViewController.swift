@@ -144,14 +144,17 @@ class MapViewController: UIViewController, MapControllerDelegate {
         mapController?.addView(mapviewInfo)
     }
     
+    
     //addView 성공 이벤트 delegate. 추가적으로 수행할 작업을 진행한다.
     func addViewSucceeded(_ viewName: String, viewInfoName: String) {
         print("View \(viewName) with info \(viewInfoName) added successfully.")
         
         // KakaoMap 객체 가져오기
         mapView = mapController?.getView(viewName) as? KakaoMap
-        
         if let mapView {
+            // 뷰 add 도중에 resize 이벤트가 발생한 경우 이벤트를 받지 못했을 수 있음. 원하는 뷰 사이즈로 재조정.
+            mapView.viewRect = mapContainer!.bounds
+            
             // Shape Layer 생성
             createShapeLayer(mapView)
             
@@ -187,16 +190,15 @@ class MapViewController: UIViewController, MapControllerDelegate {
         let manager = mapView.getShapeManager()
 
         // 레벨별 스타일을 생성.
-        let perLevelStyle1 = PerLevelPolygonStyle(color: UIColor(red: 0.9, green: 0.7, blue: 0.3, alpha: 1.0), strokeWidth: 1, strokeColor: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0), level: 0)
-        
-        let perLevelStyle2 = PerLevelPolygonStyle(color: UIColor(red: 0.9, green: 0.2, blue: 0.6, alpha: 1.0), strokeWidth: 1, strokeColor: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0), level: 0)
+        let sitterShapeStyleLevel = PerLevelPolygonStyle(color: UIColor(.dominent), strokeWidth: 1, strokeColor: UIColor(.separatorsOpaque), level: 0)
+        let ownerShapeStyleLevel = PerLevelPolygonStyle(color: UIColor(.complementary), strokeWidth: 1, strokeColor: UIColor(.separatorsOpaque), level: 0)
         
         // 각 레벨별 스타일로 구성된 2개의 Polygon Style
-        let shapeStyle1 = PolygonStyle(styles: [perLevelStyle1])
-        let shapeStyle2 = PolygonStyle(styles: [perLevelStyle2])
+        let sitterShapeStyle = PolygonStyle(styles: [sitterShapeStyleLevel])
+        let ownerShapeStyle = PolygonStyle(styles: [ownerShapeStyleLevel])
         
         // PolygonStyle을 PolygonStyleSet에 추가.
-        let shapeStyleSet = PolygonStyleSet(styleSetID: "shapeStyleSet", styles: [shapeStyle1, shapeStyle2])
+        let shapeStyleSet = PolygonStyleSet(styleSetID: "shapeStyleSet", styles: [sitterShapeStyle, ownerShapeStyle])
         print("PolygonStyleSet created: \(shapeStyleSet)")
         manager.addPolygonStyleSet(shapeStyleSet)
     }
@@ -208,51 +210,18 @@ class MapViewController: UIViewController, MapControllerDelegate {
             return
         }
         
-        print("ShapeLayer: \(String(describing: shapeLayer))")
-        
         // PolygonShape 생성 옵션 설정
         let options = PolygonShapeOptions(shapeID: "CircleShape", styleID: "shapeStyleSet", zOrder: 1)
         
-        // Polygon의 외곽 포인트 배열 생성 (MapPoint)
-        let mapPoints = Primitives.getCirclePoints(radius: 50, numPoints: 36, cw: true, center: MapPoint(longitude: 126.9779, latitude: 37.5663))
-        
-        if mapPoints.isEmpty {
-            print("Error: Points array for polygon is empty.")
-            return
-        }
-        
-        // MapPoint 배열 디버깅
-        for point in mapPoints {
-            print("MapPoint - Longitude: \(point.wgsCoord.longitude), Latitude: \(point.wgsCoord.latitude)")
-        }
-        
-        // MapPoint 배열을 CGPoint 배열로 변환
-        let cgPoints = mapPoints.map { CGPoint(x: $0.wgsCoord.longitude, y: $0.wgsCoord.latitude) }
-        
-        // CGPoint 배열 디버깅
-        for point in cgPoints {
-            print("CGPoint - x: \(point.x), y: \(point.y)")
-        }
-        
+        let circlePoints: [CGPoint] = Primitives.getCirclePoints(radius: 50, numPoints: 36, cw: true)
+
         // Polygon 객체 생성 및 추가
-        let polygon = Polygon(exteriorRing: cgPoints, hole: nil, styleIndex: 0)
+        let polygon = Polygon(exteriorRing: circlePoints, hole: nil, styleIndex: 0)
+        let polygon2 = Polygon(exteriorRing: circlePoints, hole: nil, styleIndex: 1)
         options.polygons.append(polygon)
         
         // PolygonShape를 구성하는 Polygon의 기준점 설정
-        options.basePosition = MapPoint(longitude: 126.9779, latitude: 37.5663)
-        
-        // 추가 Polygon 객체 생성
-        let mapPoints2 = mapPoints.map { (p: MapPoint) -> MapPoint in
-            var coord = p.wgsCoord
-            coord.longitude += 0.000898
-            return MapPoint(longitude: coord.longitude, latitude: coord.latitude)
-        }
-        
-        // MapPoint 배열을 CGPoint 배열로 변환
-        let cgPoints2 = mapPoints2.map { CGPoint(x: $0.wgsCoord.longitude, y: $0.wgsCoord.latitude) }
-        
-        let polygon2 = Polygon(exteriorRing: cgPoints2, hole: nil, styleIndex: 1)
-        options.polygons.append(polygon2)
+        options.basePosition = MapPoint(longitude: 127.06, latitude: 37.903)
         
         // PolygonShape를 Layer에 추가하고 반환 값을 변수에 저장
         let shape = layer.addPolygonShape(options) { shape in
@@ -375,7 +344,7 @@ class MapViewController: UIViewController, MapControllerDelegate {
         toastButton.titleLabel?.font = .systemFont(ofSize: 13)
         toastButton.setTitle("설정", for: .normal)
         toastButton.setTitleColor(.white, for: .normal)
-        toastButton.backgroundColor = UIColor(named: "DominentColor")
+        toastButton.backgroundColor = UIColor(.dominent)
         toastButton.layer.cornerRadius = 4
         toastButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         toastButton.translatesAutoresizingMaskIntoConstraints = false
