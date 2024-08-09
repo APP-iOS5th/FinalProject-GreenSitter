@@ -151,19 +151,23 @@ class MapViewController: UIViewController, MapControllerDelegate {
         
         // KakaoMap 객체 가져오기
         mapView = mapController?.getView(viewName) as? KakaoMap
-        if let mapView {
-            // 뷰 add 도중에 resize 이벤트가 발생한 경우 이벤트를 받지 못했을 수 있음. 원하는 뷰 사이즈로 재조정.
-            mapView.viewRect = mapContainer!.bounds
-            
-            // Shape Layer 생성
-            createShapeLayer(mapView)
-            
-            // Polygon Style Set 생성
-            createPolygonStyleSet(mapView)
-            
-            
-            createPolygonShape()
+        
+        guard let mapView else {
+            print("MapView is nil")
+            return
         }
+
+        // 뷰 add 도중에 resize 이벤트가 발생한 경우 이벤트를 받지 못했을 수 있음. 원하는 뷰 사이즈로 재조정.
+        mapView.viewRect = mapContainer!.bounds
+        
+        // Shape Layer 생성
+        createShapeLayer(mapView)
+        
+        // Polygon Style Set 생성
+        createPolygonStyleSet(mapView)
+        
+        
+        createPolygonShape()
         
         // 초기 위치가 있다면 지도 위치 업데이트
         updateMapPosition()
@@ -203,44 +207,65 @@ class MapViewController: UIViewController, MapControllerDelegate {
         manager.addPolygonStyleSet(shapeStyleSet)
     }
     
-    // Polygon Shape 생성 함수
     func createPolygonShape() {
         guard let layer = shapeLayer else {
             print("ShapeLayer is not initialized.")
             return
         }
+         
+        // 첫 번째 PolygonShape 생성
+        let options1 = PolygonShapeOptions(shapeID: "CircleShape1", styleID: "shapeStyleSet", zOrder: 1)
+        let circlePoints1: [CGPoint] = Primitives.getCirclePoints(radius: 500, numPoints: 36, cw: true) // 500m 반지름
+        let polygon1 = Polygon(exteriorRing: circlePoints1, hole: nil, styleIndex: 0)
+        options1.polygons.append(polygon1)
         
-        // PolygonShape 생성 옵션 설정
-        let options = PolygonShapeOptions(shapeID: "CircleShape", styleID: "shapeStyleSet", zOrder: 1)
-        
-        let circlePoints: [CGPoint] = Primitives.getCirclePoints(radius: 50, numPoints: 36, cw: true)
+        // basePosition을 500m 반경 내 임의의 지점으로 설정
+        let randomPosition1 = randomLocation(from: CLLocationCoordinate2D(latitude: 37.903, longitude: 127.06), within: 500)
+        options1.basePosition = MapPoint(longitude: randomPosition1.longitude, latitude: randomPosition1.latitude)
 
-        // Polygon 객체 생성 및 추가
-        let polygon = Polygon(exteriorRing: circlePoints, hole: nil, styleIndex: 0)
-        let polygon2 = Polygon(exteriorRing: circlePoints, hole: nil, styleIndex: 1)
-        options.polygons.append(polygon)
-        
-        // PolygonShape를 구성하는 Polygon의 기준점 설정
-        options.basePosition = MapPoint(longitude: 127.06, latitude: 37.903)
-        
-        // PolygonShape를 Layer에 추가하고 반환 값을 변수에 저장
-        let shape = layer.addPolygonShape(options) { shape in
+        let shape1 = layer.addPolygonShape(options1) { shape in
             if let shape = shape {
                 shape.show()
-                print("PolygonShape isShow: \(shape.isShow)")
-                print("PolygonShape created and shown successfully.")
-            } else {
-                print("Error: Invalid PolygonShapeOptions.")
+                print("PolygonShape1 isShow: \(shape.isShow)")
             }
         }
+
+        // 두 번째 PolygonShape 생성
+        let options2 = PolygonShapeOptions(shapeID: "CircleShape2", styleID: "shapeStyleSet", zOrder: 1)
+        let circlePoints2: [CGPoint] = Primitives.getCirclePoints(radius: 500, numPoints: 36, cw: true) // 500m 반지름
+        let polygon2 = Polygon(exteriorRing: circlePoints2, hole: nil, styleIndex: 1)
+        options2.polygons.append(polygon2)
         
-        if shape == nil {
-            print("PolygonShape creation failed.")
+        // basePosition을 500m 반경 내 임의의 지점으로 설정
+        let randomPosition2 = randomLocation(from: CLLocationCoordinate2D(latitude: 37.903, longitude: 127.06), within: 500)
+        options2.basePosition = MapPoint(longitude: randomPosition2.longitude, latitude: randomPosition2.latitude)
+
+        let shape2 = layer.addPolygonShape(options2) { shape in
+            if let shape = shape {
+                shape.show()
+                print("PolygonShape2 isShow: \(shape.isShow)")
+            }
         }
         
         // 모든 PolygonShape를 보이도록 설정
         layer.showAllPolygonShapes()
     }
+
+    // 임의의 위치를 생성하는 함수
+    func randomLocation(from location: CLLocationCoordinate2D, within radius: Double) -> CLLocationCoordinate2D {
+        let distance = Double.random(in: 0...radius)
+        let bearing = Double.random(in: 0..<360)
+        let earthRadius = 6371000.0
+        let bearingRad = bearing * .pi / 180
+        let lat1 = location.latitude * .pi / 180
+        let lon1 = location.longitude * .pi / 180
+        let lat2 = asin(sin(lat1) * cos(distance / earthRadius) + cos(lat1) * sin(distance / earthRadius) * cos(bearingRad))
+        let lon2 = lon1 + atan2(sin(bearingRad) * sin(distance / earthRadius) * cos(lat1), cos(distance / earthRadius) - sin(lat1) * sin(lat2))
+        let newLat = lat2 * 180 / .pi
+        let newLon = lon2 * 180 / .pi
+        return CLLocationCoordinate2D(latitude: newLat, longitude: newLon)
+    }
+
 
     
     func updateMapPosition() {
