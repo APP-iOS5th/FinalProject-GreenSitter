@@ -15,8 +15,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        let postListViewController = PostListViewController()
-        window?.rootViewController = postListViewController
+        let MainpostListViewController = MainPostListViewController()
+        window?.rootViewController = MainpostListViewController
         window?.makeKeyAndVisible()
     }
 
