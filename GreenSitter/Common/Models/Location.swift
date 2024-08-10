@@ -21,7 +21,6 @@ struct Location: Codable, Identifiable {
 
 extension Location {
     static let seoulLocation = Location(enabled: true, createDate: Date(), updateDate: Date(), latitude: 37.566, longitude: 126.97)
-        
     static let sampleLocation = Location(enabled: true, createDate: Date(), updateDate: Date(), latitude: 37.903, longitude: 127.06)
 }
 
