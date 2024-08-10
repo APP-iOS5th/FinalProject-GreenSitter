@@ -15,8 +15,6 @@ class ChatTableViewCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.frame = CGRect(x: 0, y: 4, width: 52, height: 52)
         imageView.layer.cornerRadius = imageView.frame.height/2
-        // 임시 색상 처리
-//        imageView.layer.backgroundColor = UIColor(.dominent).cgColor
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -133,15 +131,24 @@ class ChatTableViewCell: UITableViewCell {
         userNicknameLabel.text = nickname
         
         // 위치
-//        if let location = chatRoom.partnerLocation {
-//            // TODO: - 지번 주소로 변경
-//            userLocationLabel.text = location
-//            
+//        guard let ownerLocation = chatRoom.ownerLocation else {
+//            return
 //        }
+//        
+//        guard let sitterLocation = chatRoom.sitterLocation else {
+//            return
+//        }
+        
+//        let location = chatRoom.ownerId == userId ? ownerLocation : sitterLocation
+//        userLocationLabel.text = location
+//            // TODO: - 지번 주소로 변경
+        
+        // 임시 위치 데이터
         userLocationLabel.text = "상도동"
         
         // 알림 여부
-        notificationImageView.image = chatRoom.notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
+        let notification = chatRoom.ownerId == userId ? chatRoom.ownerNotification : chatRoom.sitterNotification
+        notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
         if let text = chatRoom.messages.last?.text {
@@ -163,10 +170,14 @@ class ChatTableViewCell: UITableViewCell {
         
         // 안 읽은 메세지 수
         /// read = false인 메세지 수
-        let unreadCount = chatRoom.messages.filter { !$0.read }.count
+        let unreadCount = chatRoom.messages.filter { $0.receiverUserId == userId && !$0.read }.count
         if unreadCount > 0 {
             circleView.backgroundColor = .dominent
             unreadCountLabel.text = "\(unreadCount)"
+        // 안 읽은 메세지 수가 0일 때 초기화
+        } else if unreadCount == 0 {
+            circleView.backgroundColor = .clear
+            unreadCountLabel.text = ""
         }
     }
     
@@ -213,27 +224,25 @@ class ChatTableViewCell: UITableViewCell {
     
     // MARK: - 메세지 시간 포맷 설정
     // 현재 시간과 메세지가 온 시간 차이를 구하는 함수
-    // TODO: - 테스트 필요
     private func timeAgo(from date: Date) -> String {
         let now = Date()
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.second, .minute, .hour, .day], from: date, to: now)
+        let components = calendar.dateComponents([.second, .minute, .hour, .day, .month, .year], from: date, to: now)
         
-        if let second = components.second, second == 0 {
-            return "지금"
-        } else if let second = components.second, second > 0 && second < 60 {
-            return "\(second)초 전"
-        } else if let minute = components.minute, minute < 60 {
-            return "\(minute)분 전"
-        } else if let hour = components.hour, hour < 24 {
+        if let year = components.year, year > 0 {
+            return "\(year)년 전"
+        } else if let month = components.month, month > 0 {
+            return "\(month)개월 전"
+        } else if let week = components.second, week / (60 * 60 * 24 * 7) > 0 {
+            return "\(week)주 전"
+        } else if let hour = components.hour, hour > 0 {
             return "\(hour)시간 전"
-        } else if let day =  components.day, day < 7 {
-            return "\(day)일 전"
+        } else if let minute = components.minute, minute > 0 {
+            return "\(minute)분 전"
+        } else if let second = components.second, second > 0 {
+            return "\(second)초 전"
         } else {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .short
-            formatter.timeStyle = .none
-            return formatter.string(from: date)
+            return "지금"
         }
     }
     
@@ -254,18 +263,18 @@ class ChatTableViewCell: UITableViewCell {
         contentView.addSubview(rightStackView)
         
         NSLayoutConstraint.activate([
-            profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             profileImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             profileImageView.widthAnchor.constraint(equalToConstant: 52),
             profileImageView.heightAnchor.constraint(equalToConstant: 52),
             
+            leftStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            leftStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             leftStackView.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
             leftStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             leftStackView.widthAnchor.constraint(equalToConstant: 200),
-            leftStackView.heightAnchor.constraint(equalToConstant: 60),
             
-            userNicknameLabel.topAnchor.constraint(equalTo: leftStackView.topAnchor, constant: 10),
+            userNicknameLabel.topAnchor.constraint(equalTo: leftStackView.topAnchor, constant: 20),
             userNicknameLabel.leadingAnchor.constraint(equalTo: leftStackView.leadingAnchor),
             
             userLocationLabel.leadingAnchor.constraint(equalTo: userNicknameLabel.trailingAnchor, constant: 10),
@@ -277,16 +286,17 @@ class ChatTableViewCell: UITableViewCell {
             notificationImageView.heightAnchor.constraint(equalToConstant: 15),
             
             lastMessageLabel.topAnchor.constraint(equalTo: userNicknameLabel.bottomAnchor, constant: 5),
-            lastMessageLabel.bottomAnchor.constraint(equalTo: leftStackView.bottomAnchor, constant: -10),
+            lastMessageLabel.bottomAnchor.constraint(equalTo: leftStackView.bottomAnchor, constant: -20),
             lastMessageLabel.leadingAnchor.constraint(equalTo: leftStackView.leadingAnchor),
             lastMessageLabel.trailingAnchor.constraint(equalTo: leftStackView.trailingAnchor),
 
+            rightStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            rightStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             rightStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             rightStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             rightStackView.widthAnchor.constraint(equalToConstant: 45),
-            rightStackView.heightAnchor.constraint(equalToConstant: 60),
             
-            dateLabel.topAnchor.constraint(equalTo: rightStackView.topAnchor, constant: 10),
+            dateLabel.topAnchor.constraint(equalTo: rightStackView.topAnchor, constant: 20),
             dateLabel.leadingAnchor.constraint(equalTo: rightStackView.leadingAnchor),
             dateLabel.trailingAnchor.constraint(equalTo: rightStackView.trailingAnchor),
             dateLabel.centerXAnchor.constraint(equalTo: rightStackView.centerXAnchor),
@@ -304,10 +314,3 @@ class ChatTableViewCell: UITableViewCell {
     }
 
 }
-
-#Preview {
-    let cell = ChatTableViewCell()
-    return cell
-}
-
-

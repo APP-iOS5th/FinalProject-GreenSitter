@@ -20,8 +20,10 @@ struct ChatRoom: Codable {
     let sitterProfileImage: String
     let ownerStatus: Bool
     let sitterStatus: Bool
-    let notification: Bool
-    let partnerLocation: Location?
+    let ownerNotification: Bool
+    let sitterNotification: Bool
+    let ownerLocation: Location?
+    let sitterLocation: Location?
     let messages: [Message]
     let postId: UUID
     let postImage: String
