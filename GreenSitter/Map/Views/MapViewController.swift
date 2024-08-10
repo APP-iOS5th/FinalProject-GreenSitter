@@ -20,6 +20,9 @@ class MapViewController: UIViewController {
         return mapView
     }()
 
+    private var overlayPostMapping: [MKCircle: Post] = [:]
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -59,8 +62,14 @@ class MapViewController: UIViewController {
             )
             
             let circle = MKCircle(center: randomCenter, radius: 500)
+
+            // Associate the circle with the post BEFORE adding the overlay to the map view
+            overlayPostMapping[circle] = post
+            print("dict after add: \(overlayPostMapping)")
+            
             mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
             
+
             // 원래의 circleCenter 위치에 마커 추가 (테스트 용)
             let originalMarker = MKPointAnnotation()
             originalMarker.coordinate = circleCenter
@@ -125,15 +134,26 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let circleOverlay = overlay as? MKCircle {
             let circleRenderer = MKCircleRenderer(circle: circleOverlay)
-            circleRenderer.fillColor = UIColor.red.withAlphaComponent(0.3)
-            circleRenderer.strokeColor = UIColor.red
+            print("rendererFor methods: dict: \(overlayPostMapping)")
+            // Retrieve the associated Post object from the dictionary
+            if let post = overlayPostMapping[circleOverlay] {
+                switch post.postType {
+                case .lookingForSitter:
+                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.3) // Use appropriate color
+                case .offeringToSitter:
+                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3) // Use appropriate color
+                }
+            } else {
+                print("post is nil")
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3) // Default color
+            }
+
+            circleRenderer.strokeColor = UIColor.separatorsOpaque
             circleRenderer.lineWidth = 2
             return circleRenderer
         }
         return MKOverlayRenderer()
     }
-    
-    
 
 }
 
