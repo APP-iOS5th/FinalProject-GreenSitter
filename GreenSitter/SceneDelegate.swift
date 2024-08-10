@@ -5,7 +5,7 @@
 //  Created by Yungui Lee on 8/7/24.
 //
 
-import KakaoMapsSDK
+//import KakaoMapsSDK
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -15,12 +15,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        // Kakao SDK 초기화
-        SDKInitializer.InitSDK(appKey: Bundle.main.kakaoNativeAppKey)
+//        // Kakao SDK 초기화
+//        SDKInitializer.InitSDK(appKey: Bundle.main.kakaoNativeAppKey)
 
         // UIWindow 및 루트 뷰 컨트롤러 설정
         window = UIWindow(windowScene: windowScene)
-        let viewController = KakaoMapViewController()
+        let viewController = MapViewController()
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }
