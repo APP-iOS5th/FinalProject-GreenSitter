@@ -7,11 +7,9 @@
 
 import UIKit
 
-class PostListViewController: UIViewController {
+class MainPostListViewController: UIViewController, UITableViewDataSource {
     
     private let categoryStackView = UIStackView()
-    private let tableView = UITableView()
-    private var posts: [String] = ["화분 관리해드려요"]
     private var filteredPosts: [String] = []
     private var selectedButton: UIButton?
     
@@ -19,7 +17,7 @@ class PostListViewController: UIViewController {
         let button = UIButton(type: .system)
         let image = UIImage(systemName: "plus.circle")
         button.setImage(image, for: .normal)
-        button.tintColor = .systemGreen
+        button.tintColor = .dominent
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -33,34 +31,32 @@ class PostListViewController: UIViewController {
         return button
     }()
     
-    private let postTableViewController = PostTableViewController() // tableview
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemBackground // 시스템이 색을 지정
+        self.view.backgroundColor = .systemBackground
         
         setupCategoryButtons()
-        setupTableView()
         setupAddPostButton()
         setupSearchPostButton()
-        
-        filterPosts(for: "새싹 돌봐드립니다.")
-        
-        setupPostTableViewController()
+        setupTableView()
     }
     
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
         careProviderButton.setTitle("새싹 돌봐드립니다.", for: .normal)
-        careProviderButton.setTitleColor(UIColor(resource: .sitterText), for: .normal)
+        careProviderButton.setTitleColor(.labelsPrimary, for: .normal)
         careProviderButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
         
         let careSeekerButton = UIButton()
         careSeekerButton.setTitle("새싹돌봄이를 찾습니다.", for: .normal)
-        careSeekerButton.setTitleColor(UIColor(resource: .sitterText), for: .normal)
+        careSeekerButton.setTitleColor(.labelsPrimary, for: .normal)
         careSeekerButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
-        
-        categoryButtonTapped(careProviderButton)
         
         categoryStackView.axis = .horizontal
         categoryStackView.distribution = .fillEqually
@@ -76,11 +72,19 @@ class PostListViewController: UIViewController {
             categoryStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryStackView.heightAnchor.constraint(equalToConstant: 50)
         ])
+        
+        categoryButtonTapped(careProviderButton)
     }
     
     func setupSearchPostButton() {
         view.addSubview(searchPostButton)
-        searchPostButton.addTarget(self, action: #selector(searchPostButtonTapped), for: .touchUpInside)
+        
+        let searchPostButtonAction = UIAction {[weak self] _ in
+            print("searchPostButton Tapped")
+        }
+        
+        searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
+        
         NSLayoutConstraint.activate([
             searchPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             searchPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
@@ -89,22 +93,15 @@ class PostListViewController: UIViewController {
         ])
     }
     
-    func setupTableView() {
-        tableView.dataSource = self
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(tableView)
-        
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: categoryStackView.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
-    
     func setupAddPostButton() {
         view.addSubview(addPostButton)
-        /*addPostButton.addTarget(self, action: #selector(addPostButtonTapped), for: .touchUpInside)*/
+        
+        let addPostButtonAction = UIAction { [weak self] _ in
+            print("addPostButton Tapped")
+        }
+        
+        addPostButton.addAction(addPostButtonAction, for: .touchUpInside)
+        
         NSLayoutConstraint.activate([
             addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             addPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
@@ -113,59 +110,50 @@ class PostListViewController: UIViewController {
         ])
     }
     
-    func setupPostTableViewController() {
-        addChild(postTableViewController)
-        view.addSubview(postTableViewController.view)
-        postTableViewController.didMove(toParent: self)
+    func setupTableView() {
+        tableView.dataSource = self
+        view.addSubview(tableView)
         
-        postTableViewController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            postTableViewController.view.topAnchor.constraint(equalTo: categoryStackView.bottomAnchor),
-            postTableViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            postTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            postTableViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.topAnchor.constraint(equalTo: categoryStackView.bottomAnchor, constant: 10),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
     @objc func categoryButtonTapped(_ sender: UIButton) {
-        selectedButton?.setTitleColor(UIColor.label, for: .normal)
-        sender.setTitleColor(.systemGreen, for: .normal)
+        selectedButton?.setTitleColor(.labelsPrimary, for: .normal)
+        sender.setTitleColor(.complementary, for: .normal)
         selectedButton = sender
         
         guard let category = sender.titleLabel?.text else { return }
         filterPosts(for: category)
     }
     
-    @objc func searchPostButtonTapped() {
-        print("Search button tapped")
-    }
-    
     func filterPosts(for category: String) {
         if category == "새싹 돌봐드립니다." {
-            filteredPosts = posts.filter { $0.contains("주기적으로") || $0.contains("관리해드려요") }
+            filteredPosts = ["화분 관리해드려요", "꽃을 주기적으로 관리해드려요"]
+        } else if category == "새싹돌봄이를 찾습니다." {
+            filteredPosts = ["경비실 화분 관리해주실 분", "출장가는 동안 식물 관리 부탁드려요"]
         } else {
-            filteredPosts = posts.filter { !$0.contains("주기적으로") && !$0.contains("관리해드려요") }
+            filteredPosts = []
         }
         tableView.reloadData()
     }
-}
-// MARK: extension
-extension PostListViewController: UITableViewDataSource {
+    
+    // MARK: - UITableViewDataSource
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredPosts.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
+        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
         cell.textLabel?.text = filteredPosts[indexPath.row]
         return cell
     }
 }
-// MARK: Preview
-#Preview {
-    return UINavigationController(rootViewController: PostListViewController())
-}
-
 
 
 
