@@ -23,7 +23,8 @@ class MapViewController: UIViewController {
 
     private var overlayPostMapping: [MKCircle: Post] = [:]
 
-    
+    private var currentDetailViewController: AnnotationDetailViewController?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -72,27 +73,22 @@ class MapViewController: UIViewController {
             
 
             // 원래의 circleCenter 위치에 마커 추가 (테스트 용)
-            let originalMarker = MKPointAnnotation()
-            originalMarker.coordinate = circleCenter
-            originalMarker.title = "실제 위치: \(post.postTitle)"
+//            let originalMarker = MKPointAnnotation()
+//            originalMarker.coordinate = circleCenter
+//            originalMarker.title = "실제 위치: \(post.postTitle)"
             
             // Release 버전에서는 randomcenter 만 사용
-            let randomCenterMarker = MKPointAnnotation()
-            randomCenterMarker.coordinate = randomCenter
-            randomCenterMarker.title = post.postTitle
-            randomCenterMarker.subtitle = post.postBody
+//            let randomCenterMarker = MKPointAnnotation()
+//            randomCenterMarker.coordinate = randomCenter
+//            randomCenterMarker.title = post.postTitle
+//            randomCenterMarker.subtitle = post.postBody
+
+//            mapView.addAnnotation(originalMarker)
+//            mapView.addAnnotation(randomCenterMarker)
             
-            
-            
-            mapView.addAnnotation(originalMarker)
-            mapView.addAnnotation(randomCenterMarker)
+            let pin = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
+            mapView.addAnnotation(pin)
         }
-    }
-    
-    // 커스텀한 어노테이션
-    func addCustomPin(postType: PostType?, coordinate: CLLocationCoordinate2D) {
-       let pin = CustomAnnotation(postType: postType, coordinate: coordinate)
-        mapView.addAnnotation(pin)
     }
     
     
@@ -212,56 +208,71 @@ extension MapViewController: MKMapViewDelegate {
     // MARK: - MKMAPVIEW DELEGATE
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        let identifier = "mapAnnotation"
         
+        guard let annotation = annotation as? CustomAnnotation else {
+            return nil
+        }
+           
+        var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: CustomAnnotationView.identifier)
         
-        if annotation is MKPointAnnotation {
-            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+        if annotationView == nil {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: CustomAnnotationView.identifier)
+            annotationView?.canShowCallout = false
+            annotationView?.contentMode = .scaleAspectFit
             
-            if annotationView == nil {
-                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                annotationView?.canShowCallout = false
-            } else {
-                annotationView?.annotation = annotation
-            }
-            
-            // annotationView를 MKMarkerAnnotationView로 캐스팅하여 markerTintColor를 설정
-            if let markerAnnotationView = annotationView as? MKMarkerAnnotationView {
-                if let annotation = annotation as? MKPointAnnotation {
-                    if let post = overlayPostMapping.first(where: { $0.key.coordinate.latitude == annotation.coordinate.latitude && $0.key.coordinate.longitude == annotation.coordinate.longitude })?.value {
-                        // Post의 타입에 따라 색상을 다르게 설정합니다.
-                        switch post.postType {
-                        case .lookingForSitter:
-                            markerAnnotationView.markerTintColor = UIColor.complementary // 오버레이와 같은 색상
-                        case .offeringToSitter:
-                            markerAnnotationView.markerTintColor = UIColor.dominent // 오버레이와 같은 색상
-                        }
-                    } else {
-                        markerAnnotationView.markerTintColor = UIColor.gray // 기본 색상
-                    }
-                }
-            }
-            
-            return annotationView
+        } else {
+            annotationView?.annotation = annotation
         }
         
-        return nil
+        let sesacImage: UIImage!
+        let size = CGSize(width: 40, height: 40)
+        UIGraphicsBeginImageContext(size)
+        
+        switch annotation.postType {
+        case .lookingForSitter:
+            sesacImage = UIImage(named: "lookingForSitterIcon")
+        case .offeringToSitter:
+            sesacImage = UIImage(named: "offeringToSitterIcon")
+        default:
+            sesacImage = UIImage(systemName: "mappin.circle.fill")
+        }
+        
+        sesacImage.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        annotationView?.image = resizedImage
+        
+        return annotationView
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         guard let annotationCoordinate = view.annotation?.coordinate else { return }
-        
-        // Set the map region to center on the selected annotation
         let region = MKCoordinateRegion(center: annotationCoordinate, latitudinalMeters: 1000, longitudinalMeters: 1000)
         mapView.setRegion(region, animated: true)
         
-        // Retrieve the associated Post object
-        if let annotation = view.annotation as? MKPointAnnotation,
+        // 기존의 시트가 표시된 상태라면 닫음
+        if let currentDetailViewController = currentDetailViewController {
+            currentDetailViewController.dismiss(animated: false) {
+                self.presentAnnotationDetail(for: view)
+            }
+        } else {
+            presentAnnotationDetail(for: view)
+        }
+    }
+    
+    private func presentAnnotationDetail(for view: MKAnnotationView) {
+        // 어노테이션에 연결된 Post를 가져옴
+        if let annotation = view.annotation as? CustomAnnotation,
            let post = overlayPostMapping.first(where: { $0.key.coordinate.latitude == annotation.coordinate.latitude && $0.key.coordinate.longitude == annotation.coordinate.longitude })?.value {
-
-            // Present the half-sheet view controller
+            
+            // 이미지 확대 애니메이션 추가
+            UIView.animate(withDuration: 0.3) {
+                view.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
+            }
+            
+            // 새 하프 시트 뷰 컨트롤러 생성 및 표시
             let postDetailViewController = AnnotationDetailViewController()
             postDetailViewController.post = post
+            postDetailViewController.delegate = self  // Set delegate
             postDetailViewController.modalPresentationStyle = .pageSheet
             if let sheet = postDetailViewController.sheetPresentationController {
                 sheet.detents = [.custom { context in
@@ -269,9 +280,9 @@ extension MapViewController: MKMapViewDelegate {
                 }]
             }
             present(postDetailViewController, animated: true, completion: nil)
+            currentDetailViewController = postDetailViewController
         }
     }
-
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let circleOverlay = overlay as? MKCircle {
@@ -346,11 +357,26 @@ extension MapViewController: CLLocationManagerDelegate {
     
 }
 
+extension MapViewController: AnnotationDetailViewControllerDelegate {
+    func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController) {
+        if let selectedAnnotationView = mapView.selectedAnnotations.compactMap({ mapView.view(for: $0) }).first {
+            UIView.animate(withDuration: 0.1) {
+                selectedAnnotationView.transform = CGAffineTransform.identity
+            }
+        }
+        // 시트가 닫혔으므로 currentDetailViewController를 nil로 설정
+        currentDetailViewController = nil
+    }
+}
 
-
+// MARK: - Delegate Protocol
+protocol AnnotationDetailViewControllerDelegate: AnyObject {
+    func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController)
+}
 
 class AnnotationDetailViewController: UIViewController {
     var post: Post?
+    weak var delegate: AnnotationDetailViewControllerDelegate?
 
     private let titleLabel = UILabel()
     private let bodyLabel = UILabel()
@@ -385,5 +411,10 @@ class AnnotationDetailViewController: UIViewController {
         guard let post = post else { return }
         titleLabel.text = post.postTitle
         bodyLabel.text = post.postBody
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        delegate?.annotationDetailViewControllerDidDismiss(self)
     }
 }
