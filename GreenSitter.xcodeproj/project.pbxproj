@@ -45,6 +45,7 @@
 		97934E4F2C633FA700B38E0A /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E4E2C633FA700B38E0A /* Bundle.swift */; };
 		97934E562C659E3000B38E0A /* APIKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97934E552C659E3000B38E0A /* APIKey.plist */; };
 		97934E5A2C65EDBD00B38E0A /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E592C65EDBD00B38E0A /* MapViewController.swift */; };
+		97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E652C68614E00B38E0A /* CustomAnnotation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +89,7 @@
 		97934E522C635D5700B38E0A /* GreenSitter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GreenSitter.entitlements; sourceTree = "<group>"; };
 		97934E552C659E3000B38E0A /* APIKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APIKey.plist; sourceTree = "<group>"; };
 		97934E592C65EDBD00B38E0A /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		97934E652C68614E00B38E0A /* CustomAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,6 +258,7 @@
 			children = (
 				97934E282C62FDF700B38E0A /* KakaoMapViewController.swift */,
 				97934E592C65EDBD00B38E0A /* MapViewController.swift */,
+				97934E652C68614E00B38E0A /* CustomAnnotation.swift */,
 				97934E402C62FFDB00B38E0A /* CareFinderMapViewController.swift */,
 			);
 			path = Views;
@@ -347,6 +350,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				97934E3D2C62FFB600B38E0A /* PostListViewController.swift in Sources */,
+				97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */,
 				97934E4F2C633FA700B38E0A /* Bundle.swift in Sources */,
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
 				97934E1F2C62FABD00B38E0A /* Pin.swift in Sources */,

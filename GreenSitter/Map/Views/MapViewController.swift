@@ -17,6 +17,7 @@ class MapViewController: UIViewController {
         let mapView = MKMapView()
         mapView.delegate = self
         mapView.translatesAutoresizingMaskIntoConstraints = false
+        mapView.showsUserLocation = true
         return mapView
     }()
 
@@ -29,7 +30,7 @@ class MapViewController: UIViewController {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        
+        locationManager.startUpdatingLocation()
         view.addSubview(mapView)
 
         setupMapUI(with: Post.samplePosts)  // 나중에 실제 서버 데이터로 변경
@@ -81,9 +82,17 @@ class MapViewController: UIViewController {
             randomCenterMarker.title = post.postTitle
             randomCenterMarker.subtitle = post.postBody
             
+            
+            
             mapView.addAnnotation(originalMarker)
             mapView.addAnnotation(randomCenterMarker)
         }
+    }
+    
+    // 커스텀한 어노테이션
+    func addCustomPin(postType: PostType?, coordinate: CLLocationCoordinate2D) {
+       let pin = CustomAnnotation(postType: postType, coordinate: coordinate)
+        mapView.addAnnotation(pin)
     }
     
     
@@ -205,14 +214,32 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         let identifier = "mapAnnotation"
         
+        
         if annotation is MKPointAnnotation {
             var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
             
             if annotationView == nil {
                 annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                annotationView?.canShowCallout = true
+                annotationView?.canShowCallout = false
             } else {
                 annotationView?.annotation = annotation
+            }
+            
+            // annotationView를 MKMarkerAnnotationView로 캐스팅하여 markerTintColor를 설정
+            if let markerAnnotationView = annotationView as? MKMarkerAnnotationView {
+                if let annotation = annotation as? MKPointAnnotation {
+                    if let post = overlayPostMapping.first(where: { $0.key.coordinate.latitude == annotation.coordinate.latitude && $0.key.coordinate.longitude == annotation.coordinate.longitude })?.value {
+                        // Post의 타입에 따라 색상을 다르게 설정합니다.
+                        switch post.postType {
+                        case .lookingForSitter:
+                            markerAnnotationView.markerTintColor = UIColor.complementary // 오버레이와 같은 색상
+                        case .offeringToSitter:
+                            markerAnnotationView.markerTintColor = UIColor.dominent // 오버레이와 같은 색상
+                        }
+                    } else {
+                        markerAnnotationView.markerTintColor = UIColor.gray // 기본 색상
+                    }
+                }
             }
             
             return annotationView
@@ -285,6 +312,7 @@ extension MapViewController: CLLocationManagerDelegate {
         switch manager.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
             print("GPS 권한 설정됨")
+            locationManager.startUpdatingLocation()
         case .restricted, .notDetermined:
             print("GPS 권한 설정되지 않음")
             getLocationUsagePermission()
