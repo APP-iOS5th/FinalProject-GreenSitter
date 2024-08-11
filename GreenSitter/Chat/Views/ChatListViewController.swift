@@ -14,7 +14,7 @@ class ChatListViewController: UIViewController {
     private var hasChats = true
     
     // 샘플 채팅 데이터
-    let chatRooms = SampleChatData.chatRooms
+    var chatRooms = SampleChatData.chatRooms
     // 샘플 유저 id
     let userId = UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!
     
@@ -300,5 +300,19 @@ extension ChatListViewController: UITableViewDataSource {
         // TODO: - 메세지 시간 업데이트
         
         return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension ChatListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // TODO: - Firestore 데이터 삭제로 수정
+            // 임시 데이터
+            chatRooms.remove(at: indexPath.row)
+            
+            // tableView에서 cell 삭제
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
     }
 }
