@@ -347,7 +347,7 @@ class KakaoMapViewController: UIViewController, MapControllerDelegate {
     
     // MARK: - ToastMessage
     
-    func showToast(withDuration: Double, delay: Double) {
+    private func showToast(withDuration: Double, delay: Double) {
         let toastLabelWidth: CGFloat = 380
         let toastLabelHeight: CGFloat = 80
         
