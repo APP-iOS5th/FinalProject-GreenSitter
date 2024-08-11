@@ -18,12 +18,12 @@ extension UIColor {
 struct SampleChatData {
     static let chatRooms: [ChatRoom] = [
         ChatRoom(
-            id: UUID(uuidString: "150e8400-e29b-41d4-a716-446655440001")!,
+            id: "150e8400-e29b-41d4-a716-446655440001",
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
-            ownerId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
-            sitterId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440002")!,
+            ownerId: "250e8400-e29b-41d4-a716-446655440001",
+            sitterId: "250e8400-e29b-41d4-a716-446655440002",
             ownerNickname: "Owner1",
             sitterNickname: "Sitter1",
             ownerProfileImage: "https://picsum.photos/300",
@@ -36,12 +36,12 @@ struct SampleChatData {
             sitterLocation: nil,
             messages: [
                 Message(
-                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440001")!,
+                    id: "350e8400-e29b-41d4-a716-446655440001",
                     enabled: true,
                     createDate: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
                     updateDate: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
-                    senderUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
-                    receiverUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440002")!,
+                    senderUserId: "250e8400-e29b-41d4-a716-446655440001",
+                    receiverUserId: "250e8400-e29b-41d4-a716-446655440002",
                     read: true,
                     messageType: .text,
                     text: "Hello!",
@@ -49,12 +49,12 @@ struct SampleChatData {
                     plan: nil
                 ),
                 Message(
-                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440002")!,
+                    id: "350e8400-e29b-41d4-a716-446655440002",
                     enabled: true,
                     createDate: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
                     updateDate: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
-                    senderUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440002")!,
-                    receiverUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
+                    senderUserId: "250e8400-e29b-41d4-a716-446655440002",
+                    receiverUserId: "250e8400-e29b-41d4-a716-446655440001",
                     read: false,
                     messageType: .image,
                     text: nil,
@@ -62,18 +62,18 @@ struct SampleChatData {
                     plan: nil
                 )
             ],
-            postId: UUID(uuidString: "450e8400-e29b-41d4-a716-446655440001")!,
+            postId: "450e8400-e29b-41d4-a716-446655440001",
             postImage: "https://example.com/post1.jpg",
             postTitle: "Post Title 1",
             postStatus: .beforeTrade
         ),
         ChatRoom(
-            id: UUID(uuidString: "150e8400-e29b-41d4-a716-446655440002")!,
+            id: "150e8400-e29b-41d4-a716-446655440002",
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
-            ownerId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
-            sitterId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440003")!,
+            ownerId: "250e8400-e29b-41d4-a716-446655440001",
+            sitterId: "250e8400-e29b-41d4-a716-446655440003",
             ownerNickname: "Owner2",
             sitterNickname: "Sitter2",
             ownerProfileImage: "https://picsum.photos/300",
@@ -86,12 +86,12 @@ struct SampleChatData {
             sitterLocation: nil,
             messages: [
                 Message(
-                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440003")!,
+                    id: "350e8400-e29b-41d4-a716-446655440003",
                     enabled: true,
                     createDate: Calendar.current.date(byAdding: .month, value: -1, to: Date())!,
                     updateDate: Calendar.current.date(byAdding: .month, value: -1, to: Date())!,
-                    senderUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
-                    receiverUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440003")!,
+                    senderUserId: "250e8400-e29b-41d4-a716-446655440001",
+                    receiverUserId: "250e8400-e29b-41d4-a716-446655440003",
                     read: true,
                     messageType: .plan,
                     text: "Hello!",
@@ -99,12 +99,12 @@ struct SampleChatData {
                     plan: nil
                 ),
                 Message(
-                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440004")!,
+                    id: "350e8400-e29b-41d4-a716-446655440004",
                     enabled: true,
                     createDate: Calendar.current.date(byAdding: .month, value: -1, to: Date())!,
                     updateDate: Calendar.current.date(byAdding: .month, value: -1, to: Date())!,
-                    senderUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440003")!,
-                    receiverUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
+                    senderUserId: "250e8400-e29b-41d4-a716-446655440003",
+                    receiverUserId: "250e8400-e29b-41d4-a716-446655440001",
                     read: true,
                     messageType: .plan,
                     text: nil,
@@ -112,18 +112,18 @@ struct SampleChatData {
                     plan: Plan(planId: UUID(), enabled: true, createDate: Date(), updateDate: Date(), planDate: Date(), planPlace: nil, contract: nil, ownerNotification: true, sitterNotification: true, isAccepted: true)
                 )
             ],
-            postId: UUID(uuidString: "450e8400-e29b-41d4-a716-446655440002")!,
+            postId: "450e8400-e29b-41d4-a716-446655440002",
             postImage: "https://example.com/post2.jpg",
             postTitle: "Post Title 2",
             postStatus: .inTrade
         ),
         ChatRoom(
-            id: UUID(uuidString: "150e8400-e29b-41d4-a716-446655440003")!,
+            id: "150e8400-e29b-41d4-a716-446655440003",
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
-            ownerId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440004")!,
-            sitterId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
+            ownerId: "250e8400-e29b-41d4-a716-446655440004",
+            sitterId: "250e8400-e29b-41d4-a716-446655440001",
             ownerNickname: "Owner3",
             sitterNickname: "Sitter3",
             ownerProfileImage: "https://picsum.photos/300",
@@ -136,12 +136,12 @@ struct SampleChatData {
             sitterLocation: nil,
             messages: [
                 Message(
-                    id: UUID(uuidString: "350e8400-e29b-41d4-a716-446655440005")!,
+                    id: "350e8400-e29b-41d4-a716-446655440005",
                     enabled: true,
                     createDate: Calendar.current.date(byAdding: .year, value: -1, to: Date())!,
                     updateDate: Calendar.current.date(byAdding: .year, value: -1, to: Date())!,
-                    senderUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440004")!,
-                    receiverUserId: UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!,
+                    senderUserId: "250e8400-e29b-41d4-a716-446655440004",
+                    receiverUserId: "250e8400-e29b-41d4-a716-446655440001",
                     read: false,
                     messageType: .text,
                     text: "See you later!",
@@ -149,7 +149,7 @@ struct SampleChatData {
                     plan: nil
                 )
             ],
-            postId: UUID(uuidString: "450e8400-e29b-41d4-a716-446655440003")!,
+            postId: "450e8400-e29b-41d4-a716-446655440003",
             postImage: "https://example.com/post3.jpg",
             postTitle: "Post Title 3",
             postStatus: .inTrade

@@ -8,7 +8,6 @@
 import UIKit
 
 class ChatListViewController: UIViewController {
-
     // 로그인 여부를 나타내는 변수
     private var isLoggedIn = true
     private var hasChats = true
@@ -17,6 +16,8 @@ class ChatListViewController: UIViewController {
     var chatRooms = SampleChatData.chatRooms
     // 샘플 유저 id
     let userId = UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!
+    
+//    private var chatListViewModel = ChatListViewModel()
     
     // container
     private lazy var container: UIView = {
@@ -74,6 +75,7 @@ class ChatListViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(ChatTableViewCell.self, forCellReuseIdentifier: "ChatTableViewCell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -93,6 +95,10 @@ class ChatListViewController: UIViewController {
             // MARK: - 로그인/채팅방 있음
             if hasChats {
                 setupChatListUI()
+                
+//                chatListViewModel.updateUI = { [weak self] in
+//                    self?.tableView.reloadData()
+//                }
                 
             } else {
                 // MARK: - 로그인/채팅방 없음
@@ -307,12 +313,10 @@ extension ChatListViewController: UITableViewDataSource {
 extension ChatListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // TODO: - Firestore 데이터 삭제로 수정
-            // 임시 데이터
-            chatRooms.remove(at: indexPath.row)
-            
-            // tableView에서 cell 삭제
-            tableView.deleteRows(at: [indexPath], with: .automatic)
+//            Task {
+//                await chatListViewModel.deleteChatRoom(at: indexPath.row)
+//            }
+            print("delete")
         }
     }
 }

@@ -8,12 +8,12 @@
 import Foundation
 
 struct Message: Codable {
-    let id: UUID
+    let id: String
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
-    let senderUserId: UUID
-    let receiverUserId: UUID
+    let senderUserId: String
+    let receiverUserId: String
     let read: Bool
     let messageType: MessageType
     let text: String?
