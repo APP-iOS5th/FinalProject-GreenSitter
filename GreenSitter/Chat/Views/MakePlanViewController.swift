@@ -40,7 +40,7 @@ class MakePlanViewController: UIViewController {
     
     private lazy var pageViewController: UIPageViewController = {
         let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        pages = [dateTimeViewController, placeViewController, finalConfirmViewController]
+        pages = [dateTimeViewController, planPlaceViewController, finalConfirmViewController]
         pageViewController.setViewControllers([pages[0]], direction: .forward, animated: true)
         pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
         return pageViewController
@@ -51,10 +51,9 @@ class MakePlanViewController: UIViewController {
         return dateTimeViewController
     }()
     
-    private lazy var placeViewController: UIViewController = {
-        let placeViewController = UIViewController()
-        placeViewController.view.backgroundColor = .blue
-        return placeViewController
+    private lazy var planPlaceViewController: UIViewController = {
+        let planPlaceViewController = PlanPlaceViewController(viewModel: viewModel)
+        return planPlaceViewController
     }()
     
     private lazy var finalConfirmViewController: UIViewController = {
@@ -103,10 +102,6 @@ class MakePlanViewController: UIViewController {
 extension MakePlanViewController: MakePlanViewModelDelegate {
     func gotoNextPage() {
         planProgressBar.progress = viewModel.progress
-        if let currentViewController = pageViewController.viewControllers?.first,
-           let currentIndex = pages.firstIndex(of: currentViewController) {
-            let nextIndex = (currentIndex + 1) % pages.count
-            pageViewController.setViewControllers([pages[nextIndex]], direction: .forward, animated: true, completion: nil)
-        }
+        pageViewController.setViewControllers([pages[viewModel.progress]], direction: .forward, animated: true, completion: nil)
     }
 }
