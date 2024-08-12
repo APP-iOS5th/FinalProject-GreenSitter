@@ -121,7 +121,7 @@ class ChatTableViewCell: UITableViewCell {
     }
     
     // MARK: - Cell 구성
-    func configure(chatRoom: ChatRoom, userId: UUID/*, db: Firestore*/) {
+    func configure(chatRoom: ChatRoom, userId: String/*, db: Firestore*/) {
         // 프로필 이미지 설정
         let profileImage = chatRoom.ownerId == userId ? chatRoom.ownerProfileImage : chatRoom.sitterProfileImage
         self.fetchProfileImage(profileImageString: profileImage, userId: userId)
@@ -182,7 +182,7 @@ class ChatTableViewCell: UITableViewCell {
     }
     
     // MARK: - 프로필 이미지 가져오기
-    private func fetchProfileImage(profileImageString: String, userId: UUID) {
+    private func fetchProfileImage(profileImageString: String, userId: String) {
         // Firestore에서 프로필 이미지 가져오기
 //        let db = Firestore.firestore()
 //        let userId = userId

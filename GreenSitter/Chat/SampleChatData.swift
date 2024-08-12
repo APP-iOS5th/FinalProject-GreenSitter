@@ -8,13 +8,6 @@
 import Foundation
 import UIKit
 
-// 주조색, 보조색
-extension UIColor {
-    static let appGreen = UIColor(red: 128/255, green: 188/255, blue: 86/255, alpha: 1.0)
-    static let appYellow = UIColor(red: 248/255, green: 215/255, blue: 103/255, alpha: 1.0)
-    static let appBrown = UIColor(red: 136/255, green: 111/255, blue: 101/255, alpha: 1.0)
-}
-
 struct SampleChatData {
     static let chatRooms: [ChatRoom] = [
         ChatRoom(
@@ -32,8 +25,10 @@ struct SampleChatData {
             sitterStatus: true,
             ownerNotification: true,
             sitterNotification: true,
-            ownerLocation: nil,
-            sitterLocation: nil,
+            ownerLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            ,
+            sitterLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            ,
             messages: [
                 Message(
                     id: "350e8400-e29b-41d4-a716-446655440001",
@@ -82,8 +77,10 @@ struct SampleChatData {
             sitterStatus: true,
             ownerNotification: false,
             sitterNotification: false,
-            ownerLocation: nil,
-            sitterLocation: nil,
+            ownerLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            ,
+            sitterLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            ,
             messages: [
                 Message(
                     id: "350e8400-e29b-41d4-a716-446655440003",
@@ -109,7 +106,7 @@ struct SampleChatData {
                     messageType: .plan,
                     text: nil,
                     image: nil,
-                    plan: Plan(planId: UUID(), enabled: true, createDate: Date(), updateDate: Date(), planDate: Date(), planPlace: nil, contract: nil, ownerNotification: true, sitterNotification: true, isAccepted: true)
+                    plan: Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: Date(), planPlace: nil, contract: nil, ownerNotification: true, sitterNotification: true, isAccepted: true)
                 )
             ],
             postId: "450e8400-e29b-41d4-a716-446655440002",
@@ -132,8 +129,10 @@ struct SampleChatData {
             sitterStatus: true,
             ownerNotification: true,
             sitterNotification: true,
-            ownerLocation: nil,
-            sitterLocation: nil,
+            ownerLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            ,
+            sitterLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            ,
             messages: [
                 Message(
                     id: "350e8400-e29b-41d4-a716-446655440005",
@@ -154,6 +153,192 @@ struct SampleChatData {
             postTitle: "Post Title 3",
             postStatus: .inTrade
         )
+    ]
+    
+    static let exampleUsers = [
+    User(
+        id: "250e8400-e29b-41d4-a716-446655440001",
+        enabled: true,
+        createDate: Date(),
+        updateDate: Date(),
+        profileImage: "https://picsum.photos/300",
+        nickname: "JohnDoe",
+        location: Location(
+            locationId: UUID().uuidString,
+            enabled: true,
+            createDate: Date(),
+            updateDate: Date(),
+            exactLongitude: -122.4194,
+            exactLatitude: 37.7749,
+            optionLongitude: nil,
+            optionLatitude: nil
+        ),
+        platform: "apple",
+        levelPoint: 1,
+        aboutMe: "A passionate developer with a love for Swift and iOS.",
+        chatNotification: true
+    ),
+    User(
+        id: "250e8400-e29b-41d4-a716-446655440002",
+        enabled: true,
+        createDate: Date(),
+        updateDate: Date(),
+        profileImage: "https://picsum.photos/300",
+        nickname: "JaneDoe",
+        location: Location(
+            locationId: UUID().uuidString,
+            enabled: true,
+            createDate: Date(),
+            updateDate: Date(),
+            exactLongitude: -118.2437,
+            exactLatitude: 34.0522,
+            optionLongitude: nil,
+            optionLatitude: nil
+        ),
+        platform: "apple",
+        levelPoint: 7,
+        aboutMe: "A tech enthusiast who loves exploring new technologies.",
+        chatNotification: false
+       ),
+       User(
+        id: "250e8400-e29b-41d4-a716-446655440003",
+        enabled: true,
+        createDate: Date(),
+        updateDate: Date(),
+        profileImage: "https://picsum.photos/300",
+        nickname: "AliceSmith",
+        location: Location(
+            locationId: UUID().uuidString,
+            enabled: true,
+            createDate: Date(),
+            updateDate: Date(),
+            exactLongitude: -74.0060,
+            exactLatitude: 40.7128,
+            optionLongitude: nil,
+            optionLatitude: nil
+        ),
+        platform: "apple",
+        levelPoint: 12,
+        aboutMe: "A digital nomad traveling the world while working remotely.",
+        chatNotification: true
+       )
+    ]
+    
+    static let examplePosts = [
+    Post(
+        id: UUID().uuidString,
+        enabled: true,
+        createDate: Date(),
+        updateDate: Date(),
+        userId: "250e8400-e29b-41d4-a716-446655440002",
+        profileImage: "https://picsum.photos/300",
+        nickname: "JaneDoe",
+        userLocation: Location(
+            locationId: UUID().uuidString,
+            enabled: true,
+            createDate: Date(),
+            updateDate: Date(),
+            exactLongitude: -118.2437,
+            exactLatitude: 34.0522,
+            optionLongitude: nil,
+            optionLatitude: nil
+        ),
+        userNotification: false,
+        postType: .offeringToSitter,
+        postTitle: "offering for a pet sitter",
+        postBody: "offering for a responsible pet sitter to take care of my dog while I'm away.",
+        postImages: [
+            "https://picsum.photos/300",
+            "https://picsum.photos/300"
+        ],
+        postStatus: .beforeTrade,
+        place: Location(
+            locationId: UUID().uuidString,
+            enabled: true,
+            createDate: Date(),
+            updateDate: Date(),
+            exactLongitude: -122.4194,
+            exactLatitude: 37.7749,
+            optionLongitude: nil,
+            optionLatitude: nil
+        )
+    ),
+    Post(
+        id: UUID().uuidString,
+        enabled: true,
+        createDate: Date(),
+        updateDate: Date(),
+        userId: "250e8400-e29b-41d4-a716-446655440003",
+        profileImage: "https://picsum.photos/300",
+        nickname: "AliceSmith",
+        userLocation: Location(
+            locationId: UUID().uuidString,
+            enabled: true,
+            createDate: Date(),
+            updateDate: Date(),
+            exactLongitude: -74.0060,
+            exactLatitude: 40.7128,
+            optionLongitude: nil,
+            optionLatitude: nil
+        ),
+        userNotification: true,
+        postType: .offeringToSitter,
+        postTitle: "Offering a pet sitting service",
+        postBody: "Offering professional pet sitting services. Experienced and reliable.",
+        postImages: [
+            "https://picsum.photos/300",
+            "https://picsum.photos/300"
+        ],
+        postStatus: .inTrade,
+        place: Location(
+            locationId: UUID().uuidString,
+            enabled: true,
+            createDate: Date(),
+            updateDate: Date(),
+            exactLongitude: -118.2437,
+            exactLatitude: 34.0522,
+            optionLongitude: nil,
+            optionLatitude: nil
+        )
+    ),
+    Post(
+        id: UUID().uuidString,
+        enabled: true,
+        createDate: Date(),
+        updateDate: Date(),
+        userId: "250e8400-e29b-41d4-a716-446655440003",
+        profileImage: "https://picsum.photos/300",
+        nickname: "AliceSmith",
+        userLocation: Location(
+            locationId: UUID().uuidString,
+            enabled: true,
+            createDate: Date(),
+            updateDate: Date(),
+            exactLongitude: -74.0060,
+            exactLatitude: 40.7128,
+            optionLongitude: nil,
+            optionLatitude: nil
+        ),
+        userNotification: true,
+        postType: .lookingForSitter,
+        postTitle: "Need a pet sitter for the weekend",
+        postBody: "Looking for someone to take care of my cat over the weekend. Please contact me if interested.",
+        postImages: [
+            "https://picsum.photos/300",
+            "https://picsum.photos/300"
+        ],
+        postStatus: .completedTrade,
+        place: Location(
+            locationId: UUID().uuidString,
+            enabled: true,
+            createDate: Date(),
+            updateDate: Date(),
+            exactLongitude: -118.2437,
+            exactLatitude: 34.0522,
+            optionLongitude: nil,
+            optionLatitude: nil
+        )
+    )
     ]
 }
 

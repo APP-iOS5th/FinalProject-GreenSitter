@@ -8,7 +8,7 @@
 import Foundation
 
 struct Plan: Codable {
-    let planId: UUID
+    let planId: String
     let enabled: Bool
     let createDate: Date
     let updateDate: Date

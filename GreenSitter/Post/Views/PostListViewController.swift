@@ -8,7 +8,7 @@
 import UIKit
 
 class PostListViewController: UIViewController {
-//    private var firestoreManager = FirestoreManager()
+    private var postViewModel = PostViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,11 @@ class PostListViewController: UIViewController {
         button.tintColor = .white
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        button.addAction(UIAction { [weak self] _ in
+            Task {
+                await self?.postViewModel.buttonTapped()
+            }
+        }, for: .touchUpInside)
 
         self.view.addSubview(button)
         
@@ -33,10 +37,16 @@ class PostListViewController: UIViewController {
             button.widthAnchor.constraint(equalToConstant: 200),
             button.heightAnchor.constraint(equalToConstant: 50)
         ])
+        
+        // ChatDetailView로 이동
+        postViewModel.onChatButtonTapped = { [weak self] chatRoom in
+            self?.navigateToChatDetail()
+        }
     }
     
-    // 버튼 클릭 시 호출될 메서드
-    @objc func buttonTapped() {
-        print("버튼이 클릭되었습니다!")
+    private func navigateToChatDetail() {
+        let chatDetailViewController = ChatDetailViewController()
+        self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
+
 }

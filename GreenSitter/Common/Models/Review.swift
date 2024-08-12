@@ -8,12 +8,12 @@
 import Foundation
 
 struct Review: Codable {
-    let id: UUID
+    let id: String
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
-    let userId: UUID
-    let postId: UUID
+    let userId: String
+    let postId: String
     let rating: Rating
     let reviewText: String?
     let reviewImage: String?

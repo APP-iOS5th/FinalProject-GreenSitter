@@ -12,12 +12,7 @@ class ChatListViewController: UIViewController {
     private var isLoggedIn = true
     private var hasChats = true
     
-    // 샘플 채팅 데이터
-    var chatRooms = SampleChatData.chatRooms
-    // 샘플 유저 id
-    let userId = UUID(uuidString: "250e8400-e29b-41d4-a716-446655440001")!
-    
-//    private var chatListViewModel = ChatListViewModel()
+    private var chatListViewModel = ChatListViewModel()
     
     // container
     private lazy var container: UIView = {
@@ -44,7 +39,7 @@ class ChatListViewController: UIViewController {
         attributedTitle.font = UIFont.preferredFont(forTextStyle: .title3)
         configuration.attributedTitle = attributedTitle
         // 버튼 색상
-        configuration.baseBackgroundColor = .appGreen
+        configuration.baseBackgroundColor = .dominent
         configuration.baseForegroundColor = .white
         // padding
         configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
@@ -96,9 +91,9 @@ class ChatListViewController: UIViewController {
             if hasChats {
                 setupChatListUI()
                 
-//                chatListViewModel.updateUI = { [weak self] in
-//                    self?.tableView.reloadData()
-//                }
+                chatListViewModel.updateUI = { [weak self] in
+                    self?.tableView.reloadData()
+                }
                 
             } else {
                 // MARK: - 로그인/채팅방 없음
@@ -295,13 +290,13 @@ class ChatListViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension ChatListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chatRooms.count
+        return chatListViewModel.chatRooms.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatTableViewCell", for: indexPath) as! ChatTableViewCell
-        let chatRoom = chatRooms[indexPath.row]
-        cell.configure(chatRoom: chatRoom, userId: userId)
+        let chatRoom = chatListViewModel.chatRooms[indexPath.row]
+        cell.configure(chatRoom: chatRoom, userId: chatListViewModel.userId)
         
         // TODO: - 메세지 시간 업데이트
         
@@ -313,9 +308,9 @@ extension ChatListViewController: UITableViewDataSource {
 extension ChatListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-//            Task {
-//                await chatListViewModel.deleteChatRoom(at: indexPath.row)
-//            }
+            Task {
+                await chatListViewModel.deleteChatRoom(at: indexPath.row)
+            }
             print("delete")
         }
     }

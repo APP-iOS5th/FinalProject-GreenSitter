@@ -8,14 +8,14 @@
 import Foundation
 
 struct Pin: Codable {
-    let pinId: UUID
+    let pinId: String
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
     let pinType: PostType
-    let postId: UUID
+    let postId: String
     let postTitle: String
-    let userId: UUID
+    let userId: String
     let nickname: String
     let profileImage: String
 }
