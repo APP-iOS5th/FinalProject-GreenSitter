@@ -8,11 +8,11 @@
 import Foundation
 
 struct Message: Codable {
-    let id: UUID
+    let id: String
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
-    let userId: UUID
+    let userId: String
     let read: Bool
     let messageType: MessageType
     let text: String?

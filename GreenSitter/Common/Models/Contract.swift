@@ -8,12 +8,12 @@
 import Foundation
 
 struct Contract: Codable {
-    let contractId: UUID
+    let contractId: String
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
-    let ownerId: UUID
-    let sitterId: UUID
+    let ownerId: String
+    let sitterId: String
     let ownerNickname: String
     let sitterNickname: String
     let ownerProfileImage: String
