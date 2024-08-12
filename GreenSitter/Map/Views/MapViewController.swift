@@ -203,9 +203,11 @@ class MapViewController: UIViewController {
 
 }
 
+
+// MARK: - MKMAPVIEW DELEGATE
+
 extension MapViewController: MKMapViewDelegate {
     
-    // MARK: - MKMAPVIEW DELEGATE
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
@@ -310,10 +312,10 @@ extension MapViewController: MKMapViewDelegate {
 
 }
 
+// MARK: - CLLOCATION MANAGER DELEGATE
 
 extension MapViewController: CLLocationManagerDelegate {
     
-    // MARK: - CLLOCATION MANAGER DELEGATE
     
     func getLocationUsagePermission() {
         self.locationManager.requestWhenInUseAuthorization()
@@ -357,6 +359,8 @@ extension MapViewController: CLLocationManagerDelegate {
     
 }
 
+// MARK: - AnnotationDetailViewControllerDelegate
+
 extension MapViewController: AnnotationDetailViewControllerDelegate {
     func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController) {
         if let selectedAnnotationView = mapView.selectedAnnotations.compactMap({ mapView.view(for: $0) }).first {
@@ -366,55 +370,5 @@ extension MapViewController: AnnotationDetailViewControllerDelegate {
         }
         // 시트가 닫혔으므로 currentDetailViewController를 nil로 설정
         currentDetailViewController = nil
-    }
-}
-
-// MARK: - Delegate Protocol
-protocol AnnotationDetailViewControllerDelegate: AnyObject {
-    func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController)
-}
-
-class AnnotationDetailViewController: UIViewController {
-    var post: Post?
-    weak var delegate: AnnotationDetailViewControllerDelegate?
-
-    private let titleLabel = UILabel()
-    private let bodyLabel = UILabel()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = .white
-        setupUI()
-        configure(with: post)
-    }
-
-    private func setupUI() {
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        bodyLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        view.addSubview(titleLabel)
-        view.addSubview(bodyLabel)
-
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-
-            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
-            bodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            bodyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-        ])
-    }
-
-    private func configure(with post: Post?) {
-        guard let post = post else { return }
-        titleLabel.text = post.postTitle
-        bodyLabel.text = post.postBody
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        delegate?.annotationDetailViewControllerDidDismiss(self)
     }
 }
