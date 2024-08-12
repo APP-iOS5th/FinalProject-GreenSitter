@@ -22,7 +22,7 @@ class ProfileTableViewCell: UITableViewCell {
     }()
     
     lazy var actionButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.setTitleColor(UIColor(named: "SeparatorsOpaque"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

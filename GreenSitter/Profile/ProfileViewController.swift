@@ -215,7 +215,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //MARK: - 닉네임 변경 Method
     @objc func changeNicknameButtonTap() {
-        
+        let nickname = NicknameViewController()
+        present(nickname, animated: true)
     }
     
     //MARK: - 위치 변경 Method
