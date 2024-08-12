@@ -103,10 +103,10 @@ class MakePlanViewController: UIViewController {
 extension MakePlanViewController: MakePlanViewModelDelegate {
     func gotoNextPage() {
         planProgressBar.progress = viewModel.progress
-        //        if let currentViewController = pageViewController.viewControllers?.first,
-        //           let currentIndex = pages.firstIndex(of: currentViewController) {
-        //            let nextIndex = (currentIndex + 1) % pages.count
-        //            pageViewController.setViewControllers([pages[nextIndex]], direction: .forward, animated: true, completion: nil)
-        //        }
+        if let currentViewController = pageViewController.viewControllers?.first,
+           let currentIndex = pages.firstIndex(of: currentViewController) {
+            let nextIndex = (currentIndex + 1) % pages.count
+            pageViewController.setViewControllers([pages[nextIndex]], direction: .forward, animated: true, completion: nil)
+        }
     }
 }

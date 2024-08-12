@@ -20,6 +20,12 @@ class DateTimeViewController: UIViewController {
     
     private var viewModel: MakePlanViewModel
     
+    private var scrollView: UIScrollView = {
+       let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
     private var instructionText: UILabel = {
        let instructionText = UILabel()
         instructionText.text = "새싹 돌봄이와\n약속날짜/시간을 정해주세요."
@@ -94,16 +100,22 @@ class DateTimeViewController: UIViewController {
     }
 
     private func setupUI() {
-        view.addSubview(instructionText)
-        view.addSubview(dateLabel)
-        view.addSubview(timeLabel)
-        view.addSubview(datePicker)
+        view.addSubview(scrollView)
+        scrollView.addSubview(instructionText)
+        scrollView.addSubview(dateLabel)
+        scrollView.addSubview(timeLabel)
+        scrollView.addSubview(datePicker)
         view.addSubview(nextButton)
         
         NSLayoutConstraint.activate([
-            instructionText.topAnchor.constraint(equalTo: view.topAnchor),
-            instructionText.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            instructionText.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            instructionText.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            instructionText.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            instructionText.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             
             dateLabel.topAnchor.constraint(equalTo: instructionText.bottomAnchor, constant: 40),
             dateLabel.trailingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: -6),
@@ -111,18 +123,19 @@ class DateTimeViewController: UIViewController {
             dateLabel.heightAnchor.constraint(equalToConstant: 40),
             
             timeLabel.topAnchor.constraint(equalTo: instructionText.bottomAnchor, constant: 40),
-            timeLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            timeLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             timeLabel.widthAnchor.constraint(equalToConstant: 90),
             timeLabel.heightAnchor.constraint(equalToConstant: 40),
             
             datePicker.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 20),
-            datePicker.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            datePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            datePicker.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            datePicker.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            datePicker.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -60),
             
-            nextButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
+            nextButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             nextButton.heightAnchor.constraint(equalToConstant: 44),
-            nextButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            nextButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            nextButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)
         ])
         
         let dateFormatter = DateFormatter()
@@ -151,8 +164,9 @@ class DateTimeViewController: UIViewController {
         dateFormatter.timeStyle = .short
         let timeString = dateFormatter.string(from: sender.date)
         
-        let dateLabel = self.view.subviews.compactMap { $0 as? UILabel }[1]
-        let timeLabel = self.view.subviews.compactMap { $0 as? UILabel }[2]
+        let scrollView = self.view.subviews.compactMap { $0 as? UIScrollView }[0]
+        let dateLabel = scrollView.subviews.compactMap { $0 as? UILabel }[1]
+        let timeLabel = scrollView.subviews.compactMap { $0 as? UILabel }[2]
         
         DispatchQueue.main.async {
             dateLabel.text = dateString
