@@ -10,7 +10,8 @@ import Foundation
 class PostViewModel {
     private var firestoreManager = FirestoreManager()
     
-    var user = SampleChatData.exampleUsers[1]
+    // 임시 데이터
+    var user = SampleChatData.exampleUsers[0]
     var post = SampleChatData.examplePosts[2]
     
     var onChatButtonTapped: ((ChatRoom) -> Void)?

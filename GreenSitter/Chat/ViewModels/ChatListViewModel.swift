@@ -13,9 +13,8 @@ class ChatListViewModel {
 
     // 샘플 유저 id
     let userId = "250e8400-e29b-41d4-a716-446655440001"
-    
-    // 샘플 채팅 데이터
-    var chatRooms: [ChatRoom] = SampleChatData.chatRooms {
+
+    var chatRooms: [ChatRoom] = [] {
         didSet {
             updateUI?()
         }
@@ -24,7 +23,7 @@ class ChatListViewModel {
     var updateUI: (() -> Void)?
     
     func fetchChatRooms() {
-        firestoreManager.fetchChatRooms { [weak self] chatRooms in
+        firestoreManager.fetchChatRooms(userId: userId) { [weak self] chatRooms in
             self?.chatRooms = chatRooms
         }
     }

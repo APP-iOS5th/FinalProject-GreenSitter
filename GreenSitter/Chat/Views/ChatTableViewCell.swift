@@ -123,23 +123,15 @@ class ChatTableViewCell: UITableViewCell {
     // MARK: - Cell 구성
     func configure(chatRoom: ChatRoom, userId: String/*, db: Firestore*/) {
         // 프로필 이미지 설정
-        let profileImage = chatRoom.ownerId == userId ? chatRoom.ownerProfileImage : chatRoom.sitterProfileImage
+        let profileImage = chatRoom.ownerId == userId ? chatRoom.sitterProfileImage : chatRoom.ownerProfileImage
         self.fetchProfileImage(profileImageString: profileImage, userId: userId)
         
         // 닉네임
-        let nickname = chatRoom.ownerId == userId ? chatRoom.ownerNickname : chatRoom.sitterNickname
+        let nickname = chatRoom.ownerId == userId ? chatRoom.sitterNickname: chatRoom.ownerNickname
         userNicknameLabel.text = nickname
         
         // 위치
-//        guard let ownerLocation = chatRoom.ownerLocation else {
-//            return
-//        }
-//        
-//        guard let sitterLocation = chatRoom.sitterLocation else {
-//            return
-//        }
-        
-//        let location = chatRoom.ownerId == userId ? ownerLocation : sitterLocation
+//        let location = chatRoom.ownerId == userId ? chatRoom.sitterLocation : chatRoom.ownerLocation
 //        userLocationLabel.text = location
 //            // TODO: - 지번 주소로 변경
         
@@ -147,7 +139,7 @@ class ChatTableViewCell: UITableViewCell {
         userLocationLabel.text = "상도동"
         
         // 알림 여부
-        let notification = chatRoom.ownerId == userId ? chatRoom.ownerNotification : chatRoom.sitterNotification
+        let notification = chatRoom.ownerId == userId ? chatRoom.sitterNotification : chatRoom.ownerNotification
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용

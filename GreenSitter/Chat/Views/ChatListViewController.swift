@@ -90,7 +90,7 @@ class ChatListViewController: UIViewController {
             // MARK: - 로그인/채팅방 있음
             if hasChats {
                 setupChatListUI()
-                
+                chatListViewModel.fetchChatRooms()
                 chatListViewModel.updateUI = { [weak self] in
                     self?.tableView.reloadData()
                 }
@@ -297,8 +297,6 @@ extension ChatListViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatTableViewCell", for: indexPath) as! ChatTableViewCell
         let chatRoom = chatListViewModel.chatRooms[indexPath.row]
         cell.configure(chatRoom: chatRoom, userId: chatListViewModel.userId)
-        
-        // TODO: - 메세지 시간 업데이트
         
         return cell
     }
