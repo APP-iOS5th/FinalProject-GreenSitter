@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DateTimeViewController: UIViewController {
+class PlanDateTimeViewController: UIViewController {
     
     init(viewModel: MakePlanViewModel) {
         self.viewModel = viewModel
@@ -93,6 +93,11 @@ class DateTimeViewController: UIViewController {
         
         datePicker.addTarget(self, action: #selector(handleDatePicker(_:)), for: .valueChanged)
         nextButton.addAction(UIAction { [weak self] _ in
+            guard let selectedDate = self?.datePicker.date else {
+                print("date did not selected")
+                return
+            }
+            self?.viewModel.planDate = selectedDate
             self?.viewModel.progress = 1
             self?.viewModel.gotoNextPage()
         }, for: .touchUpInside)

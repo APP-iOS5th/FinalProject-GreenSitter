@@ -46,8 +46,8 @@ class MakePlanViewController: UIViewController {
         return pageViewController
     }()
     
-    private lazy var dateTimeViewController: DateTimeViewController = {
-        let dateTimeViewController = DateTimeViewController(viewModel: viewModel)
+    private lazy var dateTimeViewController: PlanDateTimeViewController = {
+        let dateTimeViewController = PlanDateTimeViewController(viewModel: viewModel)
         return dateTimeViewController
     }()
     
