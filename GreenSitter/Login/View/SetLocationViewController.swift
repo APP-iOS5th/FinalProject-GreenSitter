@@ -18,7 +18,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "위치정보 입력"
+        label.text = "위치정보 입력 "
         label.textColor = .labelsPrimary
         label.font = UIFont.boldSystemFont(ofSize: 30)
         label.translatesAutoresizingMaskIntoConstraints = false

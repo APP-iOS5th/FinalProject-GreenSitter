@@ -8,7 +8,7 @@
 import Foundation
 
 struct Location: Codable {
-    let locationId: UUID
+    let locationId: String
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
