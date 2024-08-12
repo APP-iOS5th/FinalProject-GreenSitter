@@ -216,9 +216,19 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     //MARK: - 닉네임 변경 Method
     @objc func changeNicknameButtonTap() {
         let nickname = NicknameViewController()
+
         present(nickname, animated: true)
+
+        if let presentationController = nickname.presentationController as? UISheetPresentationController {
+            presentationController.detents = [
+                UISheetPresentationController.Detent.custom { _ in
+                    return 213 // 원하는 높이로 조정
+                }
+            ]
+            presentationController.preferredCornerRadius = 20 // 모서리 둥글기 설정 (선택 사항)
+        }
     }
-    
+
     //MARK: - 위치 변경 Method
     @objc func changeLocationButtonTap() {
         
