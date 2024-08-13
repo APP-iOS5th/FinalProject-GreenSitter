@@ -46,23 +46,29 @@ class MapViewController: UIViewController {
     
     private func bindViewModel() {
         // current Location 기준으로 1000m 안 카메라 세팅
-        viewModel.$currentLocation.sink { [weak self] location in
-            guard let location = location else { return }   // Published<Location?>.Publisher Output
-            
-            let region = MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
-                latitudinalMeters: 1000,
-                longitudinalMeters: 1000
-            )
-            self?.mapView.setRegion(region, animated: true)
-        }.store(in: &cancellables)
-        
-        // showToast 호출
-        viewModel.$isLocationAuthorized.sink { [weak self] isAuthorized in
-            if !isAuthorized {
-                self?.showToast(withDuration: 1, delay: 4)
+        viewModel.$currentLocation
+            .compactMap { $0 }  // nil 이 아닌 경우만 처리
+            .sink { [weak self] location in
+                print("Updated Location: \(location.latitude), \(location.longitude), Address: \(location.address)")
+
+                let region = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
+                    latitudinalMeters: 1000,
+                    longitudinalMeters: 1000
+                )
+                self?.mapView.setRegion(region, animated: true)
             }
-        }.store(in: &cancellables)
+            .store(in: &cancellables)
+        
+        // 권한 거부 시 토스트 메시지 표시
+        viewModel.$isLocationAuthorized
+            .sink { [weak self] isAuthorized in
+                print("isLocationAuthorized: \(isAuthorized)")
+
+                if !isAuthorized {
+                    self?.showToast(withDuration: 1, delay: 4)
+                }
+            }.store(in: &cancellables)
     }
     
     

@@ -34,7 +34,7 @@ class MapViewModel: NSObject, ObservableObject {
     
     // Kakao API 사용해서, 행정동명 주소 업데이트
     private func updateLocation(with location: CLLocation) {
-        var currentLocation = Location(
+        self.currentLocation = Location(
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
@@ -42,11 +42,12 @@ class MapViewModel: NSObject, ObservableObject {
             longitude: location.coordinate.longitude
         )
         
-        KakaoAPIService.shared.fetchRegionInfo(for: currentLocation) { [weak self] result in
+        KakaoAPIService.shared.fetchRegionInfo(for: self.currentLocation!) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let updatedLocation):
                     self?.currentLocation?.address = updatedLocation.address
+                    //self?.currentLocation = updatedLocation
                     print("Updated Address: \(updatedLocation.address)")
                 case .failure(let error):
                     print("Error fetching region info: \(error)")
@@ -78,6 +79,7 @@ extension MapViewModel: CLLocationManagerDelegate {
             startUpdatingLocation()
         case .restricted, .notDetermined:
             print("isLocationAuthorized: restriceted or notDetermined")
+            useDefaultLocation()
         case .denied:
             isLocationAuthorized = false
             useDefaultLocation()
@@ -88,6 +90,8 @@ extension MapViewModel: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
+            print("DidUpdateLocations called with location: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+
             updateLocation(with: location)  // 위치 정보를 currentLocation에 저장
         }
     }
