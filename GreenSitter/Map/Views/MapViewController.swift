@@ -36,7 +36,6 @@ class MapViewController: UIViewController {
 
         setupMapUI(with: Post.samplePosts)  // 나중에 실제 서버 데이터로 변경
 
-//        let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -329,6 +328,18 @@ extension MapViewController: CLLocationManagerDelegate {
             let latitude = myLocation.coordinate.latitude
             let longitude = myLocation.coordinate.longitude
             
+            var currentLocation = Location(enabled: true, createDate: Date(), updateDate: Date(), latitude: latitude, longitude: longitude)
+            
+            KakaoAPIService.shared.fetchRegionInfo(for: currentLocation) { result in
+                switch result {
+                case .success(let updatedLocation):
+                    currentLocation.address = updatedLocation.address
+                    print("Updated Address: \(updatedLocation.address)")
+                case .failure(let error):
+                    print("Error fetching region info: \(error)")
+                }
+            }
+            
             let region = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
                 latitudinalMeters: 1000,
@@ -342,6 +353,8 @@ extension MapViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Failed to find user's location: \(error.localizedDescription)")
         setDefaultCameraPosition()
+        let defaultLocation = Location(enabled: true, createDate: Date(), updateDate: Date())
+        print("Set default Location Info: \(defaultLocation)")
     }
     private func setDefaultCameraPosition() {
         let seoulCityHallCoordinate = CLLocationCoordinate2D(latitude: 37.566, longitude: 126.97)
