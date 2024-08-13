@@ -15,6 +15,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     let db = Firestore.firestore()
     var user: User?
     let storage = Storage.storage()
+    var sectionTitle = ["내 정보", "계정"]
+    var textFieldContainer: UIView?
     
     lazy var circleView: UIView = {
         let view = UIView()
@@ -55,7 +57,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }()
     
     
-    var sectionTitle = ["내 정보", "계정"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,6 +70,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.addSubview(tableView)
         
         fetchUserFirebase()
+        setupTextField()
         
         NSLayoutConstraint.activate([
             
@@ -268,7 +270,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
     }
-
+    
     
     //MARK: - 위치 변경 Method
     @objc func changeLocationButtonTap() {
@@ -277,7 +279,72 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //MARK: - 레벨에대한 상세정보 Method
     @objc func inpoButtonTap() {
+        textFieldContainer?.isHidden = false // 텍스트 필드가 있는 컨테이너를 표시
+    }
+    
+    private func setupTextField() {
+        //Container 설정
+        let container = UIView()
+        container.backgroundColor = UIColor.white
+        container.layer.cornerRadius = 10
+        container.layer.shadowColor = UIColor.black.cgColor
+        container.layer.shadowOffset = CGSize(width: 0, height: 2)
+        container.layer.shadowOpacity = 0.2
+        container.layer.shadowRadius = 4
+        container.translatesAutoresizingMaskIntoConstraints = false
         
+        let textTitle = UILabel()
+        textTitle.text = "단계란 무엇인가요?"
+        textTitle.font = UIFont.boldSystemFont(ofSize: 14)
+        textTitle.translatesAutoresizingMaskIntoConstraints = false
+        
+        let textBody = UILabel()
+        textBody.text = """
+단계는 새싹 거래 간 후기 별점을 보고,새싹
+캐릭터가 점점 성장하는 시스템입니다.
+후기에 따라 단계는 하락할 수도 있습니다.
+"""
+        textBody.numberOfLines = 0 // 여러 줄 텍스트를 지원
+        textBody.font = UIFont.systemFont(ofSize: 14)
+        textBody.translatesAutoresizingMaskIntoConstraints = false
+        
+        let confirmButton = UIButton(type: .system)
+        confirmButton.setTitle("확인", for: .normal)
+        confirmButton.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
+        confirmButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        container.addSubview(textTitle)
+        container.addSubview(textBody)
+        container.addSubview(confirmButton)
+        
+        view.addSubview(container) // 'container'를 메인 뷰에 추가합니다.
+        
+        NSLayoutConstraint.activate([
+            container.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            container.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            container.widthAnchor.constraint(equalToConstant: 300),
+            container.heightAnchor.constraint(equalToConstant: 200),
+            
+            textTitle.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
+            textTitle.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
+            textTitle.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
+            
+            textBody.topAnchor.constraint(equalTo: textTitle.bottomAnchor, constant: 8),
+            textBody.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
+            textBody.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
+            
+            confirmButton.topAnchor.constraint(equalTo: textBody.bottomAnchor, constant: 16),
+            confirmButton.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            confirmButton.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -16)
+        ])
+        
+        container.isHidden = true // 초기에는 숨김 상태로 설정
+        textFieldContainer = container
+    }
+    
+    
+    @objc func confirmButtonTapped() {
+        textFieldContainer?.isHidden = true
     }
     
     //MARK: - Logout Method
