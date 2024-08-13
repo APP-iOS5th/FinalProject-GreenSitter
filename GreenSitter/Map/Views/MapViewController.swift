@@ -71,20 +71,6 @@ class MapViewController: UIViewController {
             
             mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
             
-
-            // 원래의 circleCenter 위치에 마커 추가 (테스트 용)
-//            let originalMarker = MKPointAnnotation()
-//            originalMarker.coordinate = circleCenter
-//            originalMarker.title = "실제 위치: \(post.postTitle)"
-            
-            // Release 버전에서는 randomcenter 만 사용
-//            let randomCenterMarker = MKPointAnnotation()
-//            randomCenterMarker.coordinate = randomCenter
-//            randomCenterMarker.title = post.postTitle
-//            randomCenterMarker.subtitle = post.postBody
-
-//            mapView.addAnnotation(originalMarker)
-//            mapView.addAnnotation(randomCenterMarker)
             
             let pin = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
             mapView.addAnnotation(pin)
@@ -355,8 +341,17 @@ extension MapViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Failed to find user's location: \(error.localizedDescription)")
+        setDefaultCameraPosition()
     }
-    
+    private func setDefaultCameraPosition() {
+        let seoulCityHallCoordinate = CLLocationCoordinate2D(latitude: 37.566, longitude: 126.97)
+        let region = MKCoordinateRegion(
+            center: seoulCityHallCoordinate,
+            latitudinalMeters: 1000,
+            longitudinalMeters: 1000
+        )
+        mapView.setRegion(region, animated: true)
+    }
 }
 
 // MARK: - AnnotationDetailViewControllerDelegate
