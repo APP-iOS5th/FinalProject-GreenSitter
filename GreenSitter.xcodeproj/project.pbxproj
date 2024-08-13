@@ -190,6 +190,7 @@
 		97934DEB2C62F74600B38E0A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */,
 				97934E142C62F8DF00B38E0A /* SearchMapViewModel.swift */,
 				97934E162C62F8E300B38E0A /* PlaceListViewModel.swift */,
 				97934E182C62F8E700B38E0A /* ReviewListViewModel.swift */,
@@ -272,7 +273,6 @@
 		97934E512C6345B200B38E0A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
