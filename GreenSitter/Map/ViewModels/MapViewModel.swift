@@ -5,8 +5,8 @@
 //  Created by Yungui Lee on 8/13/24.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 import MapKit
 
 // MARK: - 사용자의 현재 위치 정보 가져오기, 위치 권한 관리

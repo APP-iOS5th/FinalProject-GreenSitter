@@ -5,14 +5,13 @@
 //  Created by Yungui Lee on 8/9/24.
 //
 
-import CoreLocation
+import Combine
 import MapKit
 import UIKit
 
 class MapViewController: UIViewController {
-
-    let locationManager = CLLocationManager()
-
+    
+    private let viewModel = MapViewModel()  // 위치 정보 관리 뷰모델
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.delegate = self
@@ -21,76 +20,54 @@ class MapViewController: UIViewController {
         return mapView
     }()
 
+    // 커스텀 어노테이션, 오버레이 만들기 위한 Dictionary
     private var overlayPostMapping: [MKCircle: Post] = [:]
-
+    
+    // 선택한 어노테이션 관리
     private var currentDetailViewController: AnnotationDetailViewController?
-
+    private var cancellables = Set<AnyCancellable>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.startUpdatingLocation()
+        setupUI()
+        bindViewModel()
+        setupMarkerAndOverlay(with: Post.samplePosts)  // TODO: 실제 서버 post 데이터로 변경
+    }
+    
+    private func setupUI() {
         view.addSubview(mapView)
-
-        setupMapUI(with: Post.samplePosts)  // 나중에 실제 서버 데이터로 변경
-
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
     
-    override func viewIsAppearing(_ animated: Bool) {
-        super.viewIsAppearing(animated)
-        locationManager.requestLocation()
-    }
-    
-    // Post 객체 배열을 사용하여 지도에 마커 및 오버레이 추가
-    func setupMapUI(with posts: [Post]) {
-        for post in posts {
-            guard let latitude = post.location?.latitude,
-                  let longitude = post.location?.longitude else { continue }
+    private func bindViewModel() {
+        // current Location 기준으로 1000m 안 카메라 세팅
+        viewModel.$currentLocation.sink { [weak self] location in
+            guard let location = location else { return }   // Published<Location?>.Publisher Output
             
-            let circleCenter = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            let randomOffset = generateRandomOffset(for: circleCenter, radius: 500)
-            let randomCenter = CLLocationCoordinate2D(
-                latitude: circleCenter.latitude + randomOffset.latitudeDelta,
-                longitude: circleCenter.longitude + randomOffset.longitudeDelta
+            let region = MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
+                latitudinalMeters: 1000,
+                longitudinalMeters: 1000
             )
-            
-            let circle = MKCircle(center: randomCenter, radius: 500)
-
-            // Associate the circle with the post BEFORE adding the overlay to the map view
-            overlayPostMapping[circle] = post
-//            print("dict after add: \(overlayPostMapping)")
-            
-            mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
-            
-            
-            let pin = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
-            mapView.addAnnotation(pin)
-        }
-    }
-    
-    
-    // 실제 위치(center) 기준으로 반경 내의 무작위 좌표를 새로운 중심점으로 설정
-    func generateRandomOffset(for center: CLLocationCoordinate2D, radius: Double) -> (latitudeDelta: Double, longitudeDelta: Double) {
-        let earthRadius: Double = 6378137 // meters
-        let dLat = (radius / earthRadius) * (180 / .pi)
-        let dLong = dLat / cos(center.latitude * .pi / 180)
+            self?.mapView.setRegion(region, animated: true)
+        }.store(in: &cancellables)
         
-        let randomLatDelta = Double.random(in: -dLat...dLat)
-        let randomLongDelta = Double.random(in: -dLong...dLong)
-        
-        return (latitudeDelta: randomLatDelta, longitudeDelta: randomLongDelta)
+        // showToast 호출
+        viewModel.$isLocationAuthorized.sink { [weak self] isAuthorized in
+            if !isAuthorized {
+                self?.showToast(withDuration: 1, delay: 4)
+            }
+        }.store(in: &cancellables)
     }
     
     
     // MARK: - 위치 권한 거부 시 나오는 Toast message
+    
     func showToast(withDuration: Double, delay: Double) {
         let toastLabelWidth: CGFloat = 380
         let toastLabelHeight: CGFloat = 80
@@ -185,7 +162,47 @@ class MapViewController: UIViewController {
             toastView.removeFromSuperview()
         })
     }
+    
+    
 
+    // MARK: - Post 객체 배열을 사용하여 지도에 마커 및 오버레이 추가
+    
+    func setupMarkerAndOverlay(with posts: [Post]) {
+        for post in posts {
+            guard let latitude = post.location?.latitude,
+                  let longitude = post.location?.longitude else { continue }
+            
+            let circleCenter = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            let randomOffset = generateRandomOffset(for: circleCenter, radius: 500)
+            let randomCenter = CLLocationCoordinate2D(
+                latitude: circleCenter.latitude + randomOffset.latitudeDelta,
+                longitude: circleCenter.longitude + randomOffset.longitudeDelta
+            )
+            
+            let circle = MKCircle(center: randomCenter, radius: 500)
+            
+            // 맵 뷰에 오버레이 추가하기 전에, post 값을 circle 키에 넣기
+            overlayPostMapping[circle] = post
+//            print("dict after add: \(overlayPostMapping)")
+            
+            mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
+            
+            let annotation = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
+            mapView.addAnnotation(annotation)  // MKAnnotationView
+        }
+    }
+    
+    // 실제 위치(center) 기준으로 반경 내의 무작위 좌표를 새로운 중심점으로 설정
+    func generateRandomOffset(for center: CLLocationCoordinate2D, radius: Double) -> (latitudeDelta: Double, longitudeDelta: Double) {
+        let earthRadius: Double = 6378137 // meters
+        let dLat = (radius / earthRadius) * (180 / .pi)
+        let dLong = dLat / cos(center.latitude * .pi / 180)
+        
+        let randomLatDelta = Double.random(in: -dLat...dLat)
+        let randomLongDelta = Double.random(in: -dLong...dLong)
+        
+        return (latitudeDelta: randomLatDelta, longitudeDelta: randomLongDelta)
+    }
 }
 
 
@@ -193,9 +210,8 @@ class MapViewController: UIViewController {
 
 extension MapViewController: MKMapViewDelegate {
     
-
+    // MKAnnotationView
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        
         guard let annotation = annotation as? CustomAnnotation else {
             return nil
         }
@@ -206,11 +222,11 @@ extension MapViewController: MKMapViewDelegate {
             annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: CustomAnnotationView.identifier)
             annotationView?.canShowCallout = false
             annotationView?.contentMode = .scaleAspectFit
-            
         } else {
             annotationView?.annotation = annotation
         }
         
+        // postType 따라서 어노테이션에 이미지 다르게 적용
         let sesacImage: UIImage!
         let size = CGSize(width: 40, height: 40)
         UIGraphicsBeginImageContext(size)
@@ -231,6 +247,7 @@ extension MapViewController: MKMapViewDelegate {
         return annotationView
     }
     
+    // MKAnnotationView 터치 이벤트 관리
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         guard let annotationCoordinate = view.annotation?.coordinate else { return }
         let region = MKCoordinateRegion(center: annotationCoordinate, latitudinalMeters: 1000, longitudinalMeters: 1000)
@@ -271,17 +288,20 @@ extension MapViewController: MKMapViewDelegate {
         }
     }
     
+    // MKOverlayRenderer
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let circleOverlay = overlay as? MKCircle {
             let circleRenderer = MKCircleRenderer(circle: circleOverlay)
 //            print("rendererFor methods: dict: \(overlayPostMapping)")
-            // Retrieve the associated Post object from the dictionary
+            
+            // 딕셔너리로부터 해당 circleOverlay에 저장된 Post 가져오기
             if let post = overlayPostMapping[circleOverlay] {
+                // 오버레이 색 적용
                 switch post.postType {
                 case .lookingForSitter:
-                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.3) // Use appropriate color
+                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.3)
                 case .offeringToSitter:
-                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3) // Use appropriate color
+                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3)
                 }
             } else {
                 print("post is nil")
@@ -297,77 +317,8 @@ extension MapViewController: MKMapViewDelegate {
 
 }
 
-// MARK: - CLLOCATION MANAGER DELEGATE
 
-extension MapViewController: CLLocationManagerDelegate {
-    
-    
-    func getLocationUsagePermission() {
-        self.locationManager.requestWhenInUseAuthorization()
-    }
-    
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        switch manager.authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse:
-            print("GPS 권한 설정됨")
-            locationManager.startUpdatingLocation()
-        case .restricted, .notDetermined:
-            print("GPS 권한 설정되지 않음")
-            getLocationUsagePermission()
-        case .denied:
-            print("GPS 권한 요청 거부됨")
-            getLocationUsagePermission()
-            showToast(withDuration: 1, delay: 4)
-        default:
-            print("GPS: Default")
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let myLocation = locations.first {
-            let latitude = myLocation.coordinate.latitude
-            let longitude = myLocation.coordinate.longitude
-            
-            var currentLocation = Location(enabled: true, createDate: Date(), updateDate: Date(), latitude: latitude, longitude: longitude)
-            
-            KakaoAPIService.shared.fetchRegionInfo(for: currentLocation) { result in
-                switch result {
-                case .success(let updatedLocation):
-                    currentLocation.address = updatedLocation.address
-                    print("Updated Address: \(updatedLocation.address)")
-                case .failure(let error):
-                    print("Error fetching region info: \(error)")
-                }
-            }
-            
-            let region = MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
-                latitudinalMeters: 1000,
-                longitudinalMeters: 1000
-            )
-            
-            mapView.setRegion(region, animated: true)
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Failed to find user's location: \(error.localizedDescription)")
-        setDefaultCameraPosition()
-        let defaultLocation = Location(enabled: true, createDate: Date(), updateDate: Date())
-        print("Set default Location Info: \(defaultLocation)")
-    }
-    private func setDefaultCameraPosition() {
-        let seoulCityHallCoordinate = CLLocationCoordinate2D(latitude: 37.566, longitude: 126.97)
-        let region = MKCoordinateRegion(
-            center: seoulCityHallCoordinate,
-            latitudinalMeters: 1000,
-            longitudinalMeters: 1000
-        )
-        mapView.setRegion(region, animated: true)
-    }
-}
-
-// MARK: - AnnotationDetailViewControllerDelegate
+// MARK: - ANNOTATION DETAIL VIEW CONTROLLER DELEGATE
 
 extension MapViewController: AnnotationDetailViewControllerDelegate {
     func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController) {
