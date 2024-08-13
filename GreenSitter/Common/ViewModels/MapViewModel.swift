@@ -9,11 +9,17 @@ import CoreLocation
 import Foundation
 import MapKit
 
+enum LocationAuthorizationStatus {
+    case authorized
+    case denied
+    case restrictedOrNotDetermined
+}
+
 // MARK: - 사용자의 현재 위치 정보 가져오기, 위치 권한 관리
 
 class MapViewModel: NSObject, ObservableObject {
     @Published var currentLocation: Location?   // 사용자의 현재 위치 정보 (위도, 경도, '주소')
-    @Published var isLocationAuthorized: Bool = false   // 위치 권한 허용 여부
+    @Published var isLocationAuthorized: LocationAuthorizationStatus = .restrictedOrNotDetermined   // 위치 권한 허용 여부
     
     private var locationManager: CLLocationManager = CLLocationManager()
     
@@ -27,10 +33,6 @@ class MapViewModel: NSObject, ObservableObject {
     func startUpdatingLocation() {
         locationManager.startUpdatingLocation() // 사용자 현재 위치 보고 시작해서 delegate 에게 알리기
     }
-    
-//    func requestLocation() {
-//        locationManager.requestLocation()
-//    }
     
     // Kakao API 사용해서, 행정동명 주소 업데이트
     private func updateLocation(with location: CLLocation) {
@@ -75,13 +77,14 @@ extension MapViewModel: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
-            isLocationAuthorized = true
+            isLocationAuthorized = .authorized
             startUpdatingLocation()
         case .restricted, .notDetermined:
+            isLocationAuthorized = .restrictedOrNotDetermined
             print("isLocationAuthorized: restriceted or notDetermined")
             useDefaultLocation()
         case .denied:
-            isLocationAuthorized = false
+            isLocationAuthorized = .denied
             useDefaultLocation()
         default:
             break

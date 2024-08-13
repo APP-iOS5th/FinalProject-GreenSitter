@@ -62,12 +62,16 @@ class MapViewController: UIViewController {
         
         // 권한 거부 시 토스트 메시지 표시
         viewModel.$isLocationAuthorized
-            .sink { [weak self] isAuthorized in
-                print("isLocationAuthorized: \(isAuthorized)")
-
-                if !isAuthorized {
+            .sink { [weak self] status in
+                switch status {
+                case .denied:
                     self?.showToast(withDuration: 1, delay: 4)
+                case .restrictedOrNotDetermined:
+                    print("Authorization Status: Restricted or NotDetermined, No Toast")
+                case .authorized:
+                    print("Authorization Status: Authorized")
                 }
+
             }.store(in: &cancellables)
     }
     
