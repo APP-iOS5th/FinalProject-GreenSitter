@@ -62,7 +62,7 @@ class ChatListViewModel {
         do {
             let idString = chatRoom.id
             try await firestoreManager.deleteChatRoom(docId: idString, userId: userId, chatRoom: &chatRoom)
-            chatRooms.remove(at: index)
+            self.chatRooms?.remove(at: index)
         } catch {
             print("Error deleting chat room: \(error.localizedDescription)")
         }
