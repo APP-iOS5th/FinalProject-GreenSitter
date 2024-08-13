@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		3B596DEC2C6B274400C71851 /* AboutMeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DEB2C6B274400C71851 /* AboutMeViewController.swift */; };
+		3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */; };
+		3B596DFA2C6B461200C71851 /* CareInfoTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF92C6B461200C71851 /* CareInfoTableCell.swift */; };
+		3B596DFC2C6B461A00C71851 /* SystemTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DFB2C6B461A00C71851 /* SystemTableCell.swift */; };
+		3B596DFF2C6B462B00C71851 /* InformationTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */; };
 		3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */; };
 		3B6D2C602C69DFB20076B1DA /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */; };
 		3B91206D2C65B8A900A6F23F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B91206C2C65B8A900A6F23F /* GoogleService-Info.plist */; };
@@ -48,6 +52,10 @@
 
 /* Begin PBXFileReference section */
 		3B596DEB2C6B274400C71851 /* AboutMeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutMeViewController.swift; sourceTree = "<group>"; };
+		3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionTableCell.swift; sourceTree = "<group>"; };
+		3B596DF92C6B461200C71851 /* CareInfoTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareInfoTableCell.swift; sourceTree = "<group>"; };
+		3B596DFB2C6B461A00C71851 /* SystemTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemTableCell.swift; sourceTree = "<group>"; };
+		3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationTableCell.swift; sourceTree = "<group>"; };
 		3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
 		3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
 		3B91206C2C65B8A900A6F23F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -103,6 +111,10 @@
 			isa = PBXGroup;
 			children = (
 				3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */,
+				3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */,
+				3B596DF92C6B461200C71851 /* CareInfoTableCell.swift */,
+				3B596DFB2C6B461A00C71851 /* SystemTableCell.swift */,
+				3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */,
 			);
 			path = ProfileCell;
 			sourceTree = "<group>";
@@ -328,8 +340,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				97934E3D2C62FFB600B38E0A /* PostListViewController.swift in Sources */,
+				3B596DFA2C6B461200C71851 /* CareInfoTableCell.swift in Sources */,
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
 				97934E1F2C62FABD00B38E0A /* Pin.swift in Sources */,
+				3B596DFC2C6B461A00C71851 /* SystemTableCell.swift in Sources */,
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
@@ -354,11 +368,13 @@
 				97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */,
 				97934E052C62F89F00B38E0A /* LevelPoint.swift in Sources */,
 				97934E012C62F89200B38E0A /* ChatRoom.swift in Sources */,
+				3B596DFF2C6B462B00C71851 /* InformationTableCell.swift in Sources */,
 				97934E032C62F89700B38E0A /* Message.swift in Sources */,
 				97934E1D2C62F8F000B38E0A /* ReviewViewModel.swift in Sources */,
 				3B6D2C602C69DFB20076B1DA /* NicknameViewController.swift in Sources */,
 				97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */,
 				97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */,
+				3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */,
 				97934E392C62FF9200B38E0A /* LoginViewController.swift in Sources */,
 				97934E192C62F8E700B38E0A /* ReviewListViewModel.swift in Sources */,
 			);
