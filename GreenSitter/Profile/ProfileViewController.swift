@@ -56,27 +56,27 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     var sectionTitle = ["내 정보", "계정"]
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         view.backgroundColor = UIColor(named: "BGSecondary") /*.white*/
         navigationItem.title = "프로필"
-
+        
         view.addSubview(circleView)
         view.addSubview(imageButton)
         view.addSubview(profileButton)
         view.addSubview(tableView)
         
         fetchUserFirebase()
-
+        
         NSLayoutConstraint.activate([
             
             circleView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             circleView.centerYAnchor.constraint(equalTo: view.topAnchor, constant: 180),
             circleView.widthAnchor.constraint(equalToConstant: 120),
             circleView.heightAnchor.constraint(equalToConstant: 120),
-
+            
             imageButton.centerXAnchor.constraint(equalTo: circleView.centerXAnchor),
             imageButton.centerYAnchor.constraint(equalTo: circleView.centerYAnchor),
             imageButton.widthAnchor.constraint(equalToConstant: 100),
@@ -114,7 +114,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
         let cornerRadius: CGFloat = 10
-         var maskedCorners: CACornerMask = []
+        var maskedCorners: CACornerMask = []
         
         if indexPath.row == 0 {
             // 첫 번째 셀: 상단 모서리를 둥글게
@@ -178,7 +178,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 cell.iconImageView.isHidden = false
             }
         }
-
+        
         // 셀의 모서리 설정
         let isFirstRow = indexPath.row == 0
         let isLastRow = indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1
@@ -201,8 +201,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.contentView.layer.borderColor = UIColor.lightGray.cgColor
         cell.contentView.layer.borderWidth = 1.0
         cell.contentView.backgroundColor = .white
-  
-
+        
+        
         return cell
     }
     
@@ -224,9 +224,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     //MARK: - 닉네임 변경 Method
     @objc func changeNicknameButtonTap() {
         let nickname = NicknameViewController()
-
+        
         present(nickname, animated: true)
-
+        
         if let presentationController = nickname.presentationController as? UISheetPresentationController {
             presentationController.detents = [
                 UISheetPresentationController.Detent.custom { _ in
@@ -237,25 +237,39 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
-    //MARK: - Image Change Method
+    //MARK: - 이미지 라이브러리로 가는 Method
     @objc func changeImageTap() {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
         present(imagePicker, animated: true, completion: nil)
-
+        
     }
     
+    //MARK: - Image Change Method
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let editedImage = info[.editedImage] as? UIImage {
-            imageButton.setImage(editedImage, for: .normal)
-        }
-        else if let originalImage = info[.originalImage] as? UIImage {
-            imageButton.setImage(originalImage, for: .normal)
-        }
         dismiss(animated: true, completion: nil)
+        
+        if let editedImage = info[.editedImage] as? UIImage {
+            uploadImage(image: editedImage) { [weak self] imageURL in
+                guard let self = self else { return }
+                if let imageURL = imageURL {
+                    self.updateNickname(imageURL)
+                    self.imageButton.setImage(editedImage, for: .normal)
+                }
+            }
+        } else if let originalImage = info[.originalImage] as? UIImage {
+            uploadImage(image: originalImage) { [weak self] imageURL in
+                guard let self = self else { return }
+                if let imageURL = imageURL {
+                    self.updateNickname(imageURL)
+                    self.imageButton.setImage(originalImage, for: .normal)
+                }
+            }
+        }
     }
 
+    
     //MARK: - 위치 변경 Method
     @objc func changeLocationButtonTap() {
         
@@ -277,25 +291,69 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     //MARK: - 파이어베이스 데이터 불러오기
-        func fetchUserFirebase() {
-            guard let userId = Auth.auth().currentUser?.uid else {
-                print("User ID is not available")
+    func fetchUserFirebase() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User ID is not available")
+            return
+        }
+        
+        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Error getting document: \(error)")
                 return
             }
             
-            db.collection("users").document(userId).getDocument { [weak self] (document, error) in
-                guard let self = self else { return }
-                
+            if let document = document, document.exists, let data = document.data() {
+                print("Document data: \(data)") // Firestore에서 가져온 데이터 출력
+            } else {
+                print("Document does not exist")
+            }
+        }
+    }
+    //MARK: - 변경된 사진을 파이어베이스에 저장
+    func updateNickname(_ profileImage: String) {
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
+            return
+        }
+        
+        let userData: [String: Any] = ["profileImage": profileImage]
+        db.collection("users").document(user.uid).setData(userData, merge: true) { error in
+            if let error = error {
+                print("Firestore Writing Error: \(error)")
+            } else {
+                print("Nickname successfully saved!")
+            }
+        }
+    }
+    
+    //MARK: - 이미지 파일 스토리지 업로드
+    func uploadImage(image: UIImage, completion: @escaping(String?) -> Void) {
+        let storageRef = storage.reference().child("gs://greensitter-6dedd.appspot.com/\(UUID().uuidString).jpg")
+        
+        guard let imageData = image.jpegData(compressionQuality: 0.75) else {
+            print("Error: Unable to convert UIImage to Data")
+            completion(nil)
+            return
+        }
+        
+        let uploadTask = storageRef.putData(imageData, metadata: nil) { metadata, error in
+            if let error = error {
+                print("Firebase Storage Error: \(error)")
+                completion(nil)
+                return
+            }
+            // 업로드 완료 후 이미지 다운로드 URL을 가져옴
+            storageRef.downloadURL { url, error in
                 if let error = error {
-                    print("Error getting document: \(error)")
-                    return
-                }
-                
-                if let document = document, document.exists, let data = document.data() {
-                    print("Document data: \(data)") // Firestore에서 가져온 데이터 출력
+                    print("Error getting download URL: \(error)")
+                    completion(nil)
                 } else {
-                    print("Document does not exist")
+                    completion(url?.absoluteString)
                 }
             }
         }
+    }
 }
