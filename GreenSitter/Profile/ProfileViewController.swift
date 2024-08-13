@@ -38,10 +38,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }()
     
     lazy var profileButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.setTitle("내 프로필 보기", for: .normal)
         button.setTitleColor(UIColor(named: "LabelsPrimary"), for: .normal)
         button.backgroundColor = .white
+        button.addTarget(self, action: #selector(myProfilebuttonTap), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -86,7 +87,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             profileButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             profileButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -150),
-            profileButton.widthAnchor.constraint(equalToConstant: 200),
+            profileButton.widthAnchor.constraint(equalToConstant: 130),
             
             tableView.topAnchor.constraint(equalTo: profileButton.bottomAnchor, constant: 30),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
@@ -221,6 +222,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         default:
             break
         }
+    }
+    
+    //MARK: - AboutMeViewController로 이동
+    @objc func myProfilebuttonTap() {
+        let aboutMeViewController = AboutMeViewController()
+        self.navigationController?.pushViewController(aboutMeViewController, animated: true)
     }
     
     //MARK: - 닉네임 변경 Method
