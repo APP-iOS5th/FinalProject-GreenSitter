@@ -17,6 +17,7 @@
 		1543FB3E2C65DDA3002E4CC8 /* PlanDateTimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB3D2C65DDA3002E4CC8 /* PlanDateTimeViewController.swift */; };
 		1543FB402C660A10002E4CC8 /* MakePlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB3F2C660A10002E4CC8 /* MakePlanViewModel.swift */; };
 		1543FB422C69C1DE002E4CC8 /* PlanPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB412C69C1DE002E4CC8 /* PlanPlaceViewController.swift */; };
+		1543FB442C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB432C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
 		97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD62C62F3C600B38E0A /* SceneDelegate.swift */; };
 		97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD82C62F3C600B38E0A /* ViewController.swift */; };
@@ -63,6 +64,7 @@
 		1543FB3D2C65DDA3002E4CC8 /* PlanDateTimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDateTimeViewController.swift; sourceTree = "<group>"; };
 		1543FB3F2C660A10002E4CC8 /* MakePlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePlanViewModel.swift; sourceTree = "<group>"; };
 		1543FB412C69C1DE002E4CC8 /* PlanPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanPlaceViewController.swift; sourceTree = "<group>"; };
+		1543FB432C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalConfirmPlanViewController.swift; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97934DD42C62F3C600B38E0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		97934DD62C62F3C600B38E0A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				1543FB372C6486CF002E4CC8 /* MakePlanViewController.swift */,
 				1543FB3D2C65DDA3002E4CC8 /* PlanDateTimeViewController.swift */,
 				1543FB412C69C1DE002E4CC8 /* PlanPlaceViewController.swift */,
+				1543FB432C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -394,6 +397,7 @@
 				97934E232C62FAC800B38E0A /* Plan.swift in Sources */,
 				97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */,
 				97934E412C62FFDB00B38E0A /* CareFinderMapViewController.swift in Sources */,
+				1543FB442C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift in Sources */,
 				1543FB3A2C64AE9C002E4CC8 /* PlanProgressBar.swift in Sources */,
 				1543FB422C69C1DE002E4CC8 /* PlanPlaceViewController.swift in Sources */,
 				1543FB402C660A10002E4CC8 /* MakePlanViewModel.swift in Sources */,

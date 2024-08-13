@@ -57,8 +57,7 @@ class MakePlanViewController: UIViewController {
     }()
     
     private lazy var finalConfirmViewController: UIViewController = {
-        let finalConfirmViewController = UIViewController()
-        finalConfirmViewController.view.backgroundColor = .green
+        let finalConfirmViewController = FinalConfirmPlanViewController(viewModel: viewModel)
         return finalConfirmViewController
     }()
     

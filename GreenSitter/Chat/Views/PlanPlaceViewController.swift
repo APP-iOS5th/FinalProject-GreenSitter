@@ -22,6 +22,8 @@ class PlanPlaceViewController: UIViewController {
     
     private var isDealHereButtonSelected: Bool = false
     
+    private var planPlace: Location? = Location(locationId: UUID(), enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 99.9999, exactLatitude: 99.9999, optionLongitude: nil, optionLatitude: nil)
+    
     private var scrollView: UIScrollView = {
        let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -112,6 +114,11 @@ class PlanPlaceViewController: UIViewController {
         }, for: .touchUpInside)
         
         nextButton.addAction(UIAction { [weak self] _ in
+            guard let planPlace = self?.planPlace else {
+                print("planPlace is nil")
+                return
+            }
+            self?.viewModel.planPlace = planPlace
             self?.viewModel.progress = 2
             self?.viewModel.gotoNextPage()
         }, for: .touchUpInside)
