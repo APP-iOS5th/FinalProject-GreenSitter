@@ -6,8 +6,15 @@
 //
 
 import UIKit
+import FirebaseFirestore
+import FirebaseAuth
+import FirebaseStorage
 
-class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    let db = Firestore.firestore()
+    var user: User?
+    let storage = Storage.storage()
     
     lazy var circleView: UIView = {
         let view = UIView()
@@ -22,6 +29,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let button = UIButton()
         button.setImage(UIImage(named: "로고7"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(changeImageTap), for: .touchUpInside)
         button.layer.cornerRadius = 50
         button.layer.masksToBounds = true
         return button
@@ -60,7 +68,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.addSubview(profileButton)
         view.addSubview(tableView)
         
-
+        fetchUserFirebase()
 
         NSLayoutConstraint.activate([
             
@@ -228,6 +236,25 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             presentationController.preferredCornerRadius = 20 // 모서리 둥글기 설정 (선택 사항)
         }
     }
+    
+    //MARK: - Image Change Method
+    @objc func changeImageTap() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true, completion: nil)
+
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let editedImage = info[.editedImage] as? UIImage {
+            imageButton.setImage(editedImage, for: .normal)
+        }
+        else if let originalImage = info[.originalImage] as? UIImage {
+            imageButton.setImage(originalImage, for: .normal)
+        }
+        dismiss(animated: true, completion: nil)
+    }
 
     //MARK: - 위치 변경 Method
     @objc func changeLocationButtonTap() {
@@ -248,4 +275,27 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func accountDeletion() {
         
     }
+    
+    //MARK: - 파이어베이스 데이터 불러오기
+        func fetchUserFirebase() {
+            guard let userId = Auth.auth().currentUser?.uid else {
+                print("User ID is not available")
+                return
+            }
+            
+            db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    print("Error getting document: \(error)")
+                    return
+                }
+                
+                if let document = document, document.exists, let data = document.data() {
+                    print("Document data: \(data)") // Firestore에서 가져온 데이터 출력
+                } else {
+                    print("Document does not exist")
+                }
+            }
+        }
 }
