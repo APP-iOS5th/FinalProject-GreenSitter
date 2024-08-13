@@ -99,6 +99,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B596DF62C6B45B400C71851 /* ProfileCell */ = {
+			isa = PBXGroup;
+			children = (
+				3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */,
+			);
+			path = ProfileCell;
+			sourceTree = "<group>";
+		};
 		97934DC82C62F3C600B38E0A = {
 			isa = PBXGroup;
 			children = (
@@ -208,8 +216,8 @@
 		97934DEE2C62F75F00B38E0A /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				3B596DF62C6B45B400C71851 /* ProfileCell */,
 				97934E3A2C62FFA800B38E0A /* ProfileViewController.swift */,
-				3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */,
 				3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */,
 				3B596DEB2C6B274400C71851 /* AboutMeViewController.swift */,
 			);
