@@ -17,9 +17,10 @@ struct Location: Codable, Identifiable {
     
     var latitude: Double
     var longitude: Double
+    var placeName: String
     var address: String
     
-    init(enabled: Bool, createDate: Date, updateDate: Date, latitude: Double? = nil, longitude: Double? = nil, address: String? = nil) {
+    init(enabled: Bool, createDate: Date, updateDate: Date, latitude: Double? = nil, longitude: Double? = nil, placeName: String? = nil, address: String? = nil) {
         self.enabled = enabled
         self.createDate = createDate
         self.updateDate = updateDate
@@ -27,6 +28,7 @@ struct Location: Codable, Identifiable {
         // 기본값 설정: 위도와 경도가 nil일 경우 서울 시청으로 설정
         self.latitude = latitude ?? 37.566
         self.longitude = longitude ?? 126.97
+        self.placeName = placeName ?? "서울특별시청"
         self.address = address ?? "서울 중구 세종대로"
     }
 }
