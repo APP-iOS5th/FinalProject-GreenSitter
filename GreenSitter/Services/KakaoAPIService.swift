@@ -9,6 +9,10 @@ import Foundation
 
 class KakaoAPIService {
     
+    static let shared = KakaoAPIService()
+    
+    private init() {}
+    
     let restAPIKey = Bundle.main.kakaoRestAPIKey
     
     func fetchRegionInfo(for location: Location, completion: @escaping (Result<Location, Error>) -> Void) {
