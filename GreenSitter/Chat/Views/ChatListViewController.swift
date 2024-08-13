@@ -90,7 +90,8 @@ class ChatListViewController: UIViewController {
             // MARK: - 로그인/채팅방 있음
             if hasChats {
                 setupChatListUI()
-                chatListViewModel.fetchChatRooms()
+//                chatListViewModel.loadUser()
+                chatListViewModel.loadChatRooms()
                 chatListViewModel.updateUI = { [weak self] in
                     self?.tableView.reloadData()
                 }
@@ -290,12 +291,20 @@ class ChatListViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension ChatListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chatListViewModel.chatRooms.count
+        guard let chatRooms = chatListViewModel.chatRooms else {
+            return 0
+        }
+        return chatRooms.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatTableViewCell", for: indexPath) as! ChatTableViewCell
-        let chatRoom = chatListViewModel.chatRooms[indexPath.row]
+        
+        guard let chatRooms = chatListViewModel.chatRooms else {
+            return cell
+        }
+        
+        let chatRoom = chatRooms[indexPath.row]
         cell.configure(chatRoom: chatRoom, userId: chatListViewModel.userId)
         
         return cell

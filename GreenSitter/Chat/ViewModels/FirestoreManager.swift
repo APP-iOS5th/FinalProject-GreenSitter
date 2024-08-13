@@ -11,13 +11,11 @@ import FirebaseFirestore
 class FirestoreManager {
     private let db = Firestore.firestore()
     
-    var user: User?
-    
     // MARK: - User
     // 사용자 데이터 가져오기
     /// listener를 통한 실시간 데이터 변경사항 반영
-    func fetchUser(id: String, onUpdate: @escaping (User?) -> Void) {
-        let docRef = db.collection("users").document(id)
+    func fetchUser(userId: String, onUpdate: @escaping (User?) -> Void) {
+        let docRef = db.collection("users").document(userId)
         
         docRef.getDocument { [weak self] (document, error) in
             guard self != nil else {
@@ -28,7 +26,6 @@ class FirestoreManager {
             if let document = document, document.exists {
                 do {
                     let userData = try document.data(as: User.self)
-                    self?.user = userData
                     onUpdate(userData)
                 } catch {
                     print("Error decoding user: \(error.localizedDescription)")
@@ -53,8 +50,7 @@ class FirestoreManager {
             
             do {
                 let updatedUser = try document.data(as: User.self)
-                self?.user = updatedUser
-                print("User updated: \(String(describing: self?.user))")
+                print("User updated: \(String(describing: updatedUser))")
             } catch {
                 print("Error decoding user: \(error.localizedDescription)")
             }
@@ -77,8 +73,12 @@ class FirestoreManager {
     /// listener를 통한 실시간 데이터 변경사항 반영
     func fetchChatRooms(userId: String, onUpdate: @escaping ([ChatRoom]) -> Void) {
         // 사용자 아이디와 ownerId가 같은 문서와 사용자 아이디와 sitterId가 같은 문서 필터링
-        let ownerQuery = db.collection("chatRooms").whereField("ownerId", isEqualTo: userId)
-        let sitterQuery = db.collection("chatRooms").whereField("sitterId", isEqualTo: userId)
+        let ownerQuery = db.collection("chatRooms")
+            .whereField("ownerId", isEqualTo: userId)
+            .whereField("ownerEnabled", isEqualTo: true)
+        let sitterQuery = db.collection("chatRooms")
+            .whereField("sitterId", isEqualTo: userId)
+            .whereField("sitterEnabled", isEqualTo: true)
         
         ownerQuery.getDocuments { [weak self] ownerSnapshot, error in
             guard self != nil else {
@@ -114,8 +114,23 @@ class FirestoreManager {
     }
     
     // 채팅방 데이터 삭제
-    func deleteChatRoom(id: String) async throws {
-        let docRef = db.collection("chatRooms").document(id)
-        try await docRef.delete()
+    func deleteChatRoom(docId: String, userId: String, chatRoom: inout ChatRoom) async throws {
+        let docRef = db.collection("chatRooms").document(docId)
+        
+        if userId == chatRoom.ownerId {
+            chatRoom.ownerEnabled = false
+        } else if userId == chatRoom.sitterId {
+            chatRoom.sitterEnabled = false
+        }
+        
+        if chatRoom.ownerEnabled == false && chatRoom.sitterEnabled == false {
+            chatRoom.enabled = false
+        }
+        
+        try await docRef.updateData([
+            "ownerEnabled": chatRoom.ownerEnabled,
+            "sitterEnabled": chatRoom.sitterEnabled,
+            "enabled": chatRoom.enabled
+        ])
     }
 }

@@ -9,19 +9,18 @@ import Foundation
 
 class UserManager {
     static let shared = UserManager()
+
+    var user: User?
     
-    private var firestoreManager = FirestoreManager()
-    private var user: User?
+    private init() {}
+
+}
+
+class ChatRoomManager {
+    static let shared = ChatRoomManager()
+
+    var chatRooms: [ChatRoom]?
     
     private init() {}
     
-    func loadUser(id: String) {
-        firestoreManager.fetchUser(id: id) { [weak self] fetchedUser in
-            guard let self = self else {
-                print("UserManager instance is no longer available")
-                return
-            }
-            self.user = fetchedUser
-        }
-    }
 }

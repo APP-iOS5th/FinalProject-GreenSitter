@@ -21,8 +21,8 @@ struct SampleChatData {
             sitterNickname: "Sitter1",
             ownerProfileImage: "https://picsum.photos/300",
             sitterProfileImage: "https://picsum.photos/300",
-            ownerStatus: true,
-            sitterStatus: true,
+            ownerEnabled: true,
+            sitterEnabled: true,
             ownerNotification: true,
             sitterNotification: true,
             ownerLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
@@ -73,8 +73,8 @@ struct SampleChatData {
             sitterNickname: "Sitter2",
             ownerProfileImage: "https://picsum.photos/300",
             sitterProfileImage: "https://picsum.photos/300",
-            ownerStatus: true,
-            sitterStatus: true,
+            ownerEnabled: true,
+            sitterEnabled: true,
             ownerNotification: false,
             sitterNotification: false,
             ownerLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
@@ -125,8 +125,8 @@ struct SampleChatData {
             sitterNickname: "Sitter3",
             ownerProfileImage: "https://picsum.photos/300",
             sitterProfileImage: "https://picsum.photos/300",
-            ownerStatus: true,
-            sitterStatus: true,
+            ownerEnabled: true,
+            sitterEnabled: true,
             ownerNotification: true,
             sitterNotification: true,
             ownerLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
