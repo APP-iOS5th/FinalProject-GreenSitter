@@ -15,9 +15,9 @@ struct Location: Codable, Identifiable {
     let createDate: Date
     let updateDate: Date
     
-    let latitude: Double
-    let longitude: Double
-    let address: String
+    var latitude: Double
+    var longitude: Double
+    var address: String
     
     init(enabled: Bool, createDate: Date, updateDate: Date, latitude: Double? = nil, longitude: Double? = nil, address: String? = nil) {
         self.enabled = enabled

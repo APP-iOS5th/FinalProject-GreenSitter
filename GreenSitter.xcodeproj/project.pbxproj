@@ -44,9 +44,10 @@
 		97934E432C63003C00B38E0A /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E422C63003C00B38E0A /* Colors.swift */; };
 		97934E4D2C633DAC00B38E0A /* KakaoMapsSDK-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 97934E4C2C633DAC00B38E0A /* KakaoMapsSDK-SPM */; };
 		97934E4F2C633FA700B38E0A /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E4E2C633FA700B38E0A /* Bundle.swift */; };
-		97934E562C659E3000B38E0A /* APIKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97934E552C659E3000B38E0A /* APIKey.plist */; };
+		97934E562C659E3000B38E0A /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97934E552C659E3000B38E0A /* APPKey.plist */; };
 		97934E5A2C65EDBD00B38E0A /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E592C65EDBD00B38E0A /* MapViewController.swift */; };
 		97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E652C68614E00B38E0A /* CustomAnnotation.swift */; };
+		97B4E8932C6AE6AA0028BE1F /* KakaoAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,9 +90,10 @@
 		97934E422C63003C00B38E0A /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		97934E4E2C633FA700B38E0A /* Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
 		97934E522C635D5700B38E0A /* GreenSitter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GreenSitter.entitlements; sourceTree = "<group>"; };
-		97934E552C659E3000B38E0A /* APIKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APIKey.plist; sourceTree = "<group>"; };
+		97934E552C659E3000B38E0A /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
 		97934E592C65EDBD00B38E0A /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		97934E652C68614E00B38E0A /* CustomAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
+		97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoAPIService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,7 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				97934E522C635D5700B38E0A /* GreenSitter.entitlements */,
-				97934E552C659E3000B38E0A /* APIKey.plist */,
+				97934E552C659E3000B38E0A /* APPKey.plist */,
 				97934E342C62FEEA00B38E0A /* GoogleService-Info.plist */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
@@ -201,6 +203,7 @@
 		97934DEC2C62F75300B38E0A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -339,7 +342,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
-				97934E562C659E3000B38E0A /* APIKey.plist in Resources */,
+				97934E562C659E3000B38E0A /* APPKey.plist in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
 				97934E352C62FEEA00B38E0A /* GoogleService-Info.plist in Resources */,
 			);
@@ -358,6 +361,7 @@
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
 				97934E1F2C62FABD00B38E0A /* Pin.swift in Sources */,
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
+				97B4E8932C6AE6AA0028BE1F /* KakaoAPIService.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
