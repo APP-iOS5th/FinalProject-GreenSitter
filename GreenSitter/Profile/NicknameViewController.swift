@@ -6,8 +6,12 @@
 //
 
 import UIKit
-
+import FirebaseFirestore
+import FirebaseAuth
 class NicknameViewController: UIViewController {
+    
+    var user: User?
+    private let db = Firestore.firestore()
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -22,7 +26,6 @@ class NicknameViewController: UIViewController {
         textField.frame.size.height = 30
         textField.borderStyle = .roundedRect
         textField.layer.cornerRadius = 10
-        textField.placeholder = "변경할 닉네임을 입력해주세요"
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
         
@@ -46,17 +49,14 @@ class NicknameViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     override func viewDidLoad() {
         
         
         super.viewDidLoad()
         print("size: \(view.frame.size)") // View의 크기를 확인
-
+        
         view.backgroundColor = .white
-
-
-
         
         view.addSubview(titleLabel)
         view.addSubview(closeButton)
@@ -79,6 +79,7 @@ class NicknameViewController: UIViewController {
             completeButton.widthAnchor.constraint(equalToConstant: 350),
             completeButton.heightAnchor.constraint(equalToConstant: 45)
         ])
+        fetchUserFirebase()
     }
     
     //MARK: - 닫기 버튼 Method
@@ -91,6 +92,34 @@ class NicknameViewController: UIViewController {
         
     }
     
-    
-}
-
+    //MARK: - 파이어베이스 데이터 불러오기
+        func fetchUserFirebase() {
+            guard let userId = Auth.auth().currentUser?.uid else {
+                print("User ID is not available")
+                return
+            }
+            
+            db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    print("Error getting document: \(error)")
+                    return
+                }
+                
+                if let document = document, document.exists, let data = document.data() {
+                    print("Document data: \(data)") // Firestore에서 가져온 데이터 출력
+                    DispatchQueue.main.async {
+                        if let nickname = data["nickname"] as? String {
+                            self.nicknameTextfield.placeholder = nickname
+                            print("Nickname in UITextField: \(nickname)") // 닉네임 출력
+                        } else {
+                            print("No nickname found in data")
+                        }
+                    }
+                } else {
+                    print("Document does not exist")
+                }
+            }
+        }
+    }
