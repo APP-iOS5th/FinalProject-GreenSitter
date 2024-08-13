@@ -48,6 +48,7 @@
 		97934E5A2C65EDBD00B38E0A /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E592C65EDBD00B38E0A /* MapViewController.swift */; };
 		97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E652C68614E00B38E0A /* CustomAnnotation.swift */; };
 		97B4E8932C6AE6AA0028BE1F /* KakaoAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */; };
+		97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -94,6 +95,7 @@
 		97934E592C65EDBD00B38E0A /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		97934E652C68614E00B38E0A /* CustomAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
 		97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoAPIService.swift; sourceTree = "<group>"; };
+		97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -273,6 +275,7 @@
 		97934E512C6345B200B38E0A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */,
 				97934E412C62FFDB00B38E0A /* CareFinderMapViewController.swift in Sources */,
 				97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */,
+				97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */,
 				97934E132C62F8DB00B38E0A /* MapViewModel.swift in Sources */,
 				97934E252C62FACE00B38E0A /* Contract.swift in Sources */,
 				97934E312C62FE2E00B38E0A /* PostTableViewController.swift in Sources */,
