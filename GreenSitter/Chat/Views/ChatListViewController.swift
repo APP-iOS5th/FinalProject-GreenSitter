@@ -310,6 +310,7 @@ extension ChatListViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 extension ChatListViewController: UITableViewDelegate {
+    // 채팅방 삭제
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             Task {
@@ -325,5 +326,22 @@ extension ChatListViewController: UITableViewDelegate {
             
             
         }
+    }
+    
+    // 채팅 디테일로 이동
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let chatRooms = chatListViewModel.chatRooms, indexPath.row >= 0 && indexPath.row < chatRooms.count else {
+            return
+        }
+        
+        let chatViewController = ChatViewController()
+        
+        if chatListViewModel.userId == chatRooms[indexPath.row].ownerId {
+            chatViewController.title = chatRooms[indexPath.row].sitterNickname
+        } else if chatListViewModel.userId == chatRooms[indexPath.row].sitterId {
+            chatViewController.title = chatRooms[indexPath.row].ownerNickname
+        }
+        
+        self.navigationController?.pushViewController(chatViewController, animated: true)
     }
 }

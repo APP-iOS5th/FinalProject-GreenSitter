@@ -15,7 +15,7 @@
 		582F5D132C68D2F000141938 /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582F5D122C68D2F000141938 /* FirestoreManager.swift */; };
 		582F5D172C6900B900141938 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582F5D162C6900B900141938 /* PostViewModel.swift */; };
 		582F5D192C69ABF800141938 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582F5D182C69ABF800141938 /* DataManager.swift */; };
-		582F5D1B2C69EA9A00141938 /* ChatDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582F5D1A2C69EA9A00141938 /* ChatDetailViewController.swift */; };
+		582F5D1B2C69EA9A00141938 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582F5D1A2C69EA9A00141938 /* ChatViewController.swift */; };
 		582F5D1D2C69EAA700141938 /* ChatDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582F5D1C2C69EAA700141938 /* ChatDetailViewModel.swift */; };
 		582F5D212C6A156C00141938 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 582F5D202C6A156C00141938 /* GoogleService-Info.plist */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
@@ -60,7 +60,7 @@
 		582F5D122C68D2F000141938 /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		582F5D162C6900B900141938 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		582F5D182C69ABF800141938 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		582F5D1A2C69EA9A00141938 /* ChatDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailViewController.swift; sourceTree = "<group>"; };
+		582F5D1A2C69EA9A00141938 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		582F5D1C2C69EAA700141938 /* ChatDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailViewModel.swift; sourceTree = "<group>"; };
 		582F5D202C6A156C00141938 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,7 +118,7 @@
 			children = (
 				97934E3E2C62FFC500B38E0A /* ChatListViewController.swift */,
 				582F5D062C64935500141938 /* ChatTableViewCell.swift */,
-				582F5D1A2C69EA9A00141938 /* ChatDetailViewController.swift */,
+				582F5D1A2C69EA9A00141938 /* ChatViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -405,7 +405,7 @@
 				582F5D172C6900B900141938 /* PostViewModel.swift in Sources */,
 				97934E212C62FAC300B38E0A /* Location.swift in Sources */,
 				582F5D1D2C69EAA700141938 /* ChatDetailViewModel.swift in Sources */,
-				582F5D1B2C69EA9A00141938 /* ChatDetailViewController.swift in Sources */,
+				582F5D1B2C69EA9A00141938 /* ChatViewController.swift in Sources */,
 				97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */,
 				97934E052C62F89F00B38E0A /* LevelPoint.swift in Sources */,
 				97934E012C62F89200B38E0A /* ChatRoom.swift in Sources */,

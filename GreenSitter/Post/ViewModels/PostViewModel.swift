@@ -122,6 +122,7 @@ class PostViewModel {
             return nil
         }
         
+        // TODO: - messages는 하위 컬렉션으로 저장
         let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), ownerId: ownerId, sitterId: sitterId, ownerNickname: ownerNickname, sitterNickname: sitterNickname, ownerProfileImage: ownerProfileImage, sitterProfileImage: sitterProfileImage, ownerEnabled: true, sitterEnabled: true, ownerNotification: ownerNotification, sitterNotification: sitterNotification, ownerLocation: ownerLocation, sitterLocation: sitterLocation, messages: [], postId: post.id, postImage: postThumbnail, postTitle: post.postTitle, postStatus: post.postStatus)
         
         return newChat

@@ -45,7 +45,7 @@ class PostListViewController: UIViewController {
     }
     
     private func navigateToChatDetail() {
-        let chatDetailViewController = ChatDetailViewController()
+        let chatDetailViewController = ChatViewController()
         self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
 
