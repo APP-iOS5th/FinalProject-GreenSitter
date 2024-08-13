@@ -8,10 +8,6 @@
 import UIKit
 
 class ChatListViewController: UIViewController {
-    // 로그인 여부를 나타내는 변수
-    private var isLoggedIn = true
-    private var hasChats = true
-    
     private var chatListViewModel = ChatListViewModel()
     
     // container
@@ -85,25 +81,26 @@ class ChatListViewController: UIViewController {
         
         // 로그인 이벤트 수신
         NotificationCenter.default.addObserver(self, selector: #selector(userDidLogin), name: NSNotification.Name("UserDidLoginNotification"), object: nil)
-
-        if isLoggedIn {
-            // MARK: - 로그인/채팅방 있음
-            if hasChats {
-                setupChatListUI()
-//                chatListViewModel.loadUser()
-                chatListViewModel.loadChatRooms()
-                chatListViewModel.updateUI = { [weak self] in
-                    self?.tableView.reloadData()
+        
+        if chatListViewModel.isLoggedIn {
+            chatListViewModel.loadChatRooms { [weak self] in
+                guard let self = self else { return }
+                
+                // MARK: - 로그인/채팅방 있음
+                if self.chatListViewModel.hasChats {
+                    self.chatListViewModel.updateUI = { [weak self] in
+                        self?.setupChatListUI()
+                    }
+                    self.chatListViewModel.updateUI?()
+                    
+                } else {
+                    // MARK: - 로그인/채팅방 없음
+                    setupEmptyChatListUI()
+                    // 버튼 클릭 시 홈 화면으로 이동
+                    goToHomeButton.addAction(UIAction { [weak self] _ in
+                        self?.navigateToHome()
+                    }, for: .touchUpInside)
                 }
-                
-            } else {
-                // MARK: - 로그인/채팅방 없음
-                setupEmptyChatListUI()
-                
-                // 버튼 클릭 시 홈 화면으로 이동
-                goToHomeButton.addAction(UIAction { [weak self] _ in
-                    self?.navigateToHome()
-                }, for: .touchUpInside)
             }
         } else {
             // MARK: - 비로그인
@@ -275,8 +272,8 @@ class ChatListViewController: UIViewController {
     
     // 비로그인이었다가 로그인했을 때
     @objc private func userDidLogin() {
-        isLoggedIn = true
-        hasChats = true
+        chatListViewModel.isLoggedIn = true
+        chatListViewModel.hasChats = true
         viewDidLoad()
     }
     
@@ -316,9 +313,17 @@ extension ChatListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             Task {
-                await chatListViewModel.deleteChatRoom(at: indexPath.row)
+                do {
+                    try await chatListViewModel.deleteChatRoom(at: indexPath.row)
+                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    print("delete")
+                } catch {
+                    print("Error deleting chat room: \(error.localizedDescription)")
+                }
+                
             }
-            print("delete")
+            
+            
         }
     }
 }

@@ -108,8 +108,8 @@ class FirestoreManager {
                 let allChatRooms = Array(ownerChatRooms + sitterChatRooms)
                 
                 onUpdate(allChatRooms)
+
             }
-            
         }
     }
     
