@@ -89,7 +89,23 @@ class NicknameViewController: UIViewController {
     
     //MARK: - 닉네임 변경 메소드
     @objc func completeButtonTap() {
+        guard let nickname = nicknameTextfield.text, !nickname.isEmpty else { return }
+        let userData: [String: Any] = [
+            "nickname": nickname,
+            ]
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
+            return
+        }
         
+        db.collection("users").document(user.uid).setData(userData, merge: true) { error in
+            if let error = error {
+                print("Firestore Writing Error: \(error)")
+            } else {
+                print("Nickname successfully saved!")
+            }
+        }
+        dismiss(animated: true, completion: nil)
     }
     
     //MARK: - 파이어베이스 데이터 불러오기
