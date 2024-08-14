@@ -95,7 +95,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         updatePlaceholder(text: "검색 중...", isPrimary: false)
         updateUI()
         
-        let location = Location(enabled: true, createDate: Date(), updateDate: Date()) // 기본 고정 위치 설정
+        let location = Location.seoulLocation
 
         KakaoAPIService.shared.searchPlacesNearby(query: query, location: location, page: currentPage) { [weak self] result in
             guard let self = self else { return }
@@ -127,7 +127,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         }
         currentPage += 1
 
-        let location = Location(enabled: true, createDate: Date(), updateDate: Date())
+        let location = Location.sampleLocation
 
         KakaoAPIService.shared.searchPlacesNearby(query: query, location: location, page: currentPage) { [weak self] result in
             guard let self = self else { return }

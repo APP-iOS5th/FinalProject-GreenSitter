@@ -37,7 +37,7 @@ class MapViewModel: NSObject, ObservableObject {
     // Kakao API 사용해서, 행정동명 주소 업데이트
     private func updateLocation(with location: CLLocation) {
         self.currentLocation = Location(
-            enabled: true,
+            locationId: UUID().uuidString, enabled: true,
             createDate: Date(),
             updateDate: Date(),
             latitude: location.coordinate.latitude,
@@ -62,7 +62,7 @@ class MapViewModel: NSObject, ObservableObject {
     
     // 위치 권한 거부 시 default position 으로 설정
     private func useDefaultLocation() {
-        let defaultLocation = Location(enabled: true, createDate: Date(), updateDate: Date())
+        let defaultLocation = Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date())
         self.currentLocation = defaultLocation
         print("Using default location: \(defaultLocation)")
     }

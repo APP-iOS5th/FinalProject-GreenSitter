@@ -25,9 +25,9 @@ struct SampleChatData {
             sitterEnabled: true,
             ownerNotification: true,
             sitterNotification: true,
-            ownerLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            ownerLocation: Location.sampleLocation
             ,
-            sitterLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            sitterLocation: Location.seoulLocation
             ,
             messages: [
                 Message(
@@ -77,9 +77,9 @@ struct SampleChatData {
             sitterEnabled: true,
             ownerNotification: false,
             sitterNotification: false,
-            ownerLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            ownerLocation: Location.sampleLocation
             ,
-            sitterLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            sitterLocation: Location.sampleLocation
             ,
             messages: [
                 Message(
@@ -129,9 +129,9 @@ struct SampleChatData {
             sitterEnabled: true,
             ownerNotification: true,
             sitterNotification: true,
-            ownerLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            ownerLocation: Location.sampleLocation
             ,
-            sitterLocation: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0)
+            sitterLocation: Location.sampleLocation
             ,
             messages: [
                 Message(
@@ -163,16 +163,7 @@ struct SampleChatData {
         updateDate: Date(),
         profileImage: "https://picsum.photos/300",
         nickname: "JohnDoe",
-        location: Location(
-            locationId: UUID().uuidString,
-            enabled: true,
-            createDate: Date(),
-            updateDate: Date(),
-            exactLongitude: -122.4194,
-            exactLatitude: 37.7749,
-            optionLongitude: nil,
-            optionLatitude: nil
-        ),
+        location: Location.seoulLocation,
         platform: "apple",
         levelPoint: 1,
         aboutMe: "A passionate developer with a love for Swift and iOS.",
@@ -185,16 +176,7 @@ struct SampleChatData {
         updateDate: Date(),
         profileImage: "https://picsum.photos/300",
         nickname: "JaneDoe",
-        location: Location(
-            locationId: UUID().uuidString,
-            enabled: true,
-            createDate: Date(),
-            updateDate: Date(),
-            exactLongitude: -118.2437,
-            exactLatitude: 34.0522,
-            optionLongitude: nil,
-            optionLatitude: nil
-        ),
+        location: Location.seoulLocation,
         platform: "apple",
         levelPoint: 7,
         aboutMe: "A tech enthusiast who loves exploring new technologies.",
@@ -207,16 +189,7 @@ struct SampleChatData {
         updateDate: Date(),
         profileImage: "https://picsum.photos/300",
         nickname: "AliceSmith",
-        location: Location(
-            locationId: UUID().uuidString,
-            enabled: true,
-            createDate: Date(),
-            updateDate: Date(),
-            exactLongitude: -74.0060,
-            exactLatitude: 40.7128,
-            optionLongitude: nil,
-            optionLatitude: nil
-        ),
+        location: Location.sampleLocation,
         platform: "apple",
         levelPoint: 12,
         aboutMe: "A digital nomad traveling the world while working remotely.",
@@ -233,16 +206,7 @@ struct SampleChatData {
         userId: "250e8400-e29b-41d4-a716-446655440002",
         profileImage: "https://picsum.photos/300",
         nickname: "JaneDoe",
-        userLocation: Location(
-            locationId: UUID().uuidString,
-            enabled: true,
-            createDate: Date(),
-            updateDate: Date(),
-            exactLongitude: -118.2437,
-            exactLatitude: 34.0522,
-            optionLongitude: nil,
-            optionLatitude: nil
-        ),
+        userLocation: Location.sampleLocation,
         userNotification: false,
         postType: .offeringToSitter,
         postTitle: "offering for a pet sitter",
@@ -252,16 +216,7 @@ struct SampleChatData {
             "https://picsum.photos/300"
         ],
         postStatus: .beforeTrade,
-        place: Location(
-            locationId: UUID().uuidString,
-            enabled: true,
-            createDate: Date(),
-            updateDate: Date(),
-            exactLongitude: -122.4194,
-            exactLatitude: 37.7749,
-            optionLongitude: nil,
-            optionLatitude: nil
-        )
+        location: Location.sampleLocation
     ),
     Post(
         id: UUID().uuidString,
@@ -271,16 +226,7 @@ struct SampleChatData {
         userId: "250e8400-e29b-41d4-a716-446655440003",
         profileImage: "https://picsum.photos/300",
         nickname: "AliceSmith",
-        userLocation: Location(
-            locationId: UUID().uuidString,
-            enabled: true,
-            createDate: Date(),
-            updateDate: Date(),
-            exactLongitude: -74.0060,
-            exactLatitude: 40.7128,
-            optionLongitude: nil,
-            optionLatitude: nil
-        ),
+        userLocation: Location.sampleLocation,
         userNotification: true,
         postType: .offeringToSitter,
         postTitle: "Offering a pet sitting service",
@@ -290,16 +236,7 @@ struct SampleChatData {
             "https://picsum.photos/300"
         ],
         postStatus: .inTrade,
-        place: Location(
-            locationId: UUID().uuidString,
-            enabled: true,
-            createDate: Date(),
-            updateDate: Date(),
-            exactLongitude: -118.2437,
-            exactLatitude: 34.0522,
-            optionLongitude: nil,
-            optionLatitude: nil
-        )
+        location: Location.sampleLocation
     ),
     Post(
         id: UUID().uuidString,
@@ -309,16 +246,7 @@ struct SampleChatData {
         userId: "250e8400-e29b-41d4-a716-446655440003",
         profileImage: "https://picsum.photos/300",
         nickname: "AliceSmith",
-        userLocation: Location(
-            locationId: UUID().uuidString,
-            enabled: true,
-            createDate: Date(),
-            updateDate: Date(),
-            exactLongitude: -74.0060,
-            exactLatitude: 40.7128,
-            optionLongitude: nil,
-            optionLatitude: nil
-        ),
+        userLocation: Location.sampleLocation,
         userNotification: true,
         postType: .lookingForSitter,
         postTitle: "Need a pet sitter for the weekend",
@@ -328,16 +256,7 @@ struct SampleChatData {
             "https://picsum.photos/300"
         ],
         postStatus: .completedTrade,
-        place: Location(
-            locationId: UUID().uuidString,
-            enabled: true,
-            createDate: Date(),
-            updateDate: Date(),
-            exactLongitude: -118.2437,
-            exactLatitude: 34.0522,
-            optionLongitude: nil,
-            optionLatitude: nil
-        )
+        location: Location.sampleLocation
     )
     ]
 }

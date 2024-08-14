@@ -93,7 +93,7 @@ class KakaoAPIService {
                     let response = try JSONDecoder().decode(KakaoPlaceSearchResponse.self, from: data)
                     let locations = response.documents.map { document in
                         Location(
-                            enabled: true,
+                            locationId: UUID().uuidString, enabled: true,
                             createDate: Date(),
                             updateDate: Date(),
                             latitude: Double(document.y) ?? 0.0,

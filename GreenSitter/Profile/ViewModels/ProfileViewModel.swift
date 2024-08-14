@@ -40,7 +40,7 @@ extension ProfileViewController {
                         updateDate: Date(),
                         profileImage: profileImage,
                         nickname: nickname,
-                        location: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0),
+                        location: Location.sampleLocation,
                         platform: "iOS",
                         levelPoint: 1, // 예시 값입니다. 실제 값으로 교체하세요.
                         aboutMe: "", chatNotification: false

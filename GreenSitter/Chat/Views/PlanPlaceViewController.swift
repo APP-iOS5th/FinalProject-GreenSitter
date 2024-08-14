@@ -22,7 +22,7 @@ class PlanPlaceViewController: UIViewController {
     
     private var isDealHereButtonSelected: Bool = false
     
-    private var planPlace: Location? = Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 99.9999, exactLatitude: 99.9999, optionLongitude: nil, optionLatitude: nil)
+    private var planPlace: Location? = Location.sampleLocation
     
     private var scrollView: UIScrollView = {
        let scrollView = UIScrollView()
