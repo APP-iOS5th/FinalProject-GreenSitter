@@ -251,7 +251,7 @@ class SetProfileViewController: UIViewController {
     }
     // 메인뷰로 이동
     @objc func skipTap() {
-        let postListViewController = PostListViewController()
+        let postListViewController = MainPostListViewController()
         navigationController?.pushViewController(postListViewController, animated: true)
     }
     

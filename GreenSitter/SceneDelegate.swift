@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         
         // Home(커뮤니티)
-        let firstViewController = PostListViewController()
+        let firstViewController = MainPostListViewController()
         let firstNavigationController = UINavigationController(rootViewController: firstViewController)
         firstNavigationController.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house.fill"), tag: 0)
         
@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         secondNavigationController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
         
         // Chat
-        let thirdViewController = ChatListViewController()
+        let thirdViewController = LoginViewController()
         let thirdNavigationController = UINavigationController(rootViewController: thirdViewController)
         thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
         

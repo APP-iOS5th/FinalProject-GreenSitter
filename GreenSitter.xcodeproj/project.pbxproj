@@ -39,7 +39,6 @@
 		97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E142C62F8DF00B38E0A /* SearchMapViewModel.swift */; };
 		97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E162C62F8E300B38E0A /* PlaceListViewModel.swift */; };
 		97934E192C62F8E700B38E0A /* ReviewListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E182C62F8E700B38E0A /* ReviewListViewModel.swift */; };
-		97934E1B2C62F8EC00B38E0A /* PostTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E1A2C62F8EC00B38E0A /* PostTableViewModel.swift */; };
 		97934E1D2C62F8F000B38E0A /* ReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E1C2C62F8F000B38E0A /* ReviewViewModel.swift */; };
 		97934E1F2C62FABD00B38E0A /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E1E2C62FABD00B38E0A /* Pin.swift */; };
 		97934E212C62FAC300B38E0A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E202C62FAC300B38E0A /* Location.swift */; };
@@ -49,10 +48,7 @@
 		97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E2A2C62FE0F00B38E0A /* SearchMapViewController.swift */; };
 		97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E2C2C62FE1900B38E0A /* PlaceListViewController.swift */; };
 		97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */; };
-		97934E312C62FE2E00B38E0A /* PostTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E302C62FE2E00B38E0A /* PostTableViewController.swift */; };
 		97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E322C62FE3400B38E0A /* ReviewViewController.swift */; };
-		97934E3D2C62FFB600B38E0A /* PostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E3C2C62FFB600B38E0A /* PostListViewController.swift */; };
-		97934E3F2C62FFC500B38E0A /* ChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E3E2C62FFC500B38E0A /* ChatListViewController.swift */; };
 		97934E412C62FFDB00B38E0A /* CareFinderMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E402C62FFDB00B38E0A /* CareFinderMapViewController.swift */; };
 		97934E432C63003C00B38E0A /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E422C63003C00B38E0A /* Colors.swift */; };
 		97D1BE3D2C6C7EB700F7A983 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3C2C6C7EB700F7A983 /* ProfileViewController.swift */; };
@@ -61,6 +57,14 @@
 		97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */; };
 		97D1BE472C6C7F8800F7A983 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE462C6C7F8800F7A983 /* LoginViewModel.swift */; };
 		97D1BE4C2C6C812100F7A983 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97D1BE4B2C6C812000F7A983 /* GoogleService-Info.plist */; };
+		97D1BE592C6C847600F7A983 /* ChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE4F2C6C847600F7A983 /* ChatListViewController.swift */; };
+		97D1BE5A2C6C847600F7A983 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE512C6C847600F7A983 /* AddPostViewController.swift */; };
+		97D1BE5B2C6C847600F7A983 /* MainPostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE522C6C847600F7A983 /* MainPostListViewController.swift */; };
+		97D1BE5C2C6C847600F7A983 /* PostCareProviderListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE532C6C847600F7A983 /* PostCareProviderListViewModel.swift */; };
+		97D1BE5D2C6C847600F7A983 /* PostCareProviderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE542C6C847600F7A983 /* PostCareProviderTableViewController.swift */; };
+		97D1BE5E2C6C847600F7A983 /* PostCareSeekerListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE552C6C847600F7A983 /* PostCareSeekerListViewModel.swift */; };
+		97D1BE5F2C6C847600F7A983 /* PostCareSeekerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE562C6C847600F7A983 /* PostCareSeekerTableViewController.swift */; };
+		97D1BE602C6C847600F7A983 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE572C6C847600F7A983 /* PostDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -94,7 +98,6 @@
 		97934E142C62F8DF00B38E0A /* SearchMapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMapViewModel.swift; sourceTree = "<group>"; };
 		97934E162C62F8E300B38E0A /* PlaceListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceListViewModel.swift; sourceTree = "<group>"; };
 		97934E182C62F8E700B38E0A /* ReviewListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewListViewModel.swift; sourceTree = "<group>"; };
-		97934E1A2C62F8EC00B38E0A /* PostTableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewModel.swift; sourceTree = "<group>"; };
 		97934E1C2C62F8F000B38E0A /* ReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewViewModel.swift; sourceTree = "<group>"; };
 		97934E1E2C62FABD00B38E0A /* Pin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pin.swift; sourceTree = "<group>"; };
 		97934E202C62FAC300B38E0A /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
@@ -104,10 +107,7 @@
 		97934E2A2C62FE0F00B38E0A /* SearchMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMapViewController.swift; sourceTree = "<group>"; };
 		97934E2C2C62FE1900B38E0A /* PlaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceListViewController.swift; sourceTree = "<group>"; };
 		97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewListViewController.swift; sourceTree = "<group>"; };
-		97934E302C62FE2E00B38E0A /* PostTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewController.swift; sourceTree = "<group>"; };
 		97934E322C62FE3400B38E0A /* ReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewViewController.swift; sourceTree = "<group>"; };
-		97934E3C2C62FFB600B38E0A /* PostListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostListViewController.swift; sourceTree = "<group>"; };
-		97934E3E2C62FFC500B38E0A /* ChatListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewController.swift; sourceTree = "<group>"; };
 		97934E402C62FFDB00B38E0A /* CareFinderMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareFinderMapViewController.swift; sourceTree = "<group>"; };
 		97934E422C63003C00B38E0A /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		97D1BE3C2C6C7EB700F7A983 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -116,6 +116,14 @@
 		97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetLocationViewController.swift; sourceTree = "<group>"; };
 		97D1BE462C6C7F8800F7A983 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		97D1BE4B2C6C812000F7A983 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		97D1BE4F2C6C847600F7A983 /* ChatListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatListViewController.swift; sourceTree = "<group>"; };
+		97D1BE512C6C847600F7A983 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
+		97D1BE522C6C847600F7A983 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
+		97D1BE532C6C847600F7A983 /* PostCareProviderListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareProviderListViewModel.swift; sourceTree = "<group>"; };
+		97D1BE542C6C847600F7A983 /* PostCareProviderTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareProviderTableViewController.swift; sourceTree = "<group>"; };
+		97D1BE552C6C847600F7A983 /* PostCareSeekerListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareSeekerListViewModel.swift; sourceTree = "<group>"; };
+		97D1BE562C6C847600F7A983 /* PostCareSeekerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareSeekerTableViewController.swift; sourceTree = "<group>"; };
+		97D1BE572C6C847600F7A983 /* PostDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,8 +204,8 @@
 				97934DEC2C62F75300B38E0A /* Services */,
 				97934DED2C62F75900B38E0A /* Login */,
 				97934DEE2C62F75F00B38E0A /* Profile */,
-				97934DEF2C62F76700B38E0A /* Post */,
-				97934DF02C62F77000B38E0A /* Chat */,
+				97D1BE582C6C847600F7A983 /* Post */,
+				97D1BE502C6C847600F7A983 /* Chat */,
 				97934DF12C62F77500B38E0A /* Map */,
 				97934DF22C62F77F00B38E0A /* Resources */,
 				97934DDD2C62F3C800B38E0A /* Assets.xcassets */,
@@ -241,7 +249,6 @@
 				97934E2A2C62FE0F00B38E0A /* SearchMapViewController.swift */,
 				97934E2C2C62FE1900B38E0A /* PlaceListViewController.swift */,
 				97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */,
-				97934E302C62FE2E00B38E0A /* PostTableViewController.swift */,
 				97934E322C62FE3400B38E0A /* ReviewViewController.swift */,
 			);
 			path = Views;
@@ -254,7 +261,6 @@
 				97934E142C62F8DF00B38E0A /* SearchMapViewModel.swift */,
 				97934E162C62F8E300B38E0A /* PlaceListViewModel.swift */,
 				97934E182C62F8E700B38E0A /* ReviewListViewModel.swift */,
-				97934E1A2C62F8EC00B38E0A /* PostTableViewModel.swift */,
 				97934E1C2C62F8F000B38E0A /* ReviewViewModel.swift */,
 			);
 			path = ViewModels;
@@ -284,22 +290,6 @@
 				3B657B352C6C2EB200935876 /* ViewModels */,
 			);
 			path = Profile;
-			sourceTree = "<group>";
-		};
-		97934DEF2C62F76700B38E0A /* Post */ = {
-			isa = PBXGroup;
-			children = (
-				97934E3C2C62FFB600B38E0A /* PostListViewController.swift */,
-			);
-			path = Post;
-			sourceTree = "<group>";
-		};
-		97934DF02C62F77000B38E0A /* Chat */ = {
-			isa = PBXGroup;
-			children = (
-				97934E3E2C62FFC500B38E0A /* ChatListViewController.swift */,
-			);
-			path = Chat;
 			sourceTree = "<group>";
 		};
 		97934DF12C62F77500B38E0A /* Map */ = {
@@ -334,6 +324,28 @@
 				97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		97D1BE502C6C847600F7A983 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				97D1BE4F2C6C847600F7A983 /* ChatListViewController.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		97D1BE582C6C847600F7A983 /* Post */ = {
+			isa = PBXGroup;
+			children = (
+				97D1BE512C6C847600F7A983 /* AddPostViewController.swift */,
+				97D1BE522C6C847600F7A983 /* MainPostListViewController.swift */,
+				97D1BE532C6C847600F7A983 /* PostCareProviderListViewModel.swift */,
+				97D1BE542C6C847600F7A983 /* PostCareProviderTableViewController.swift */,
+				97D1BE552C6C847600F7A983 /* PostCareSeekerListViewModel.swift */,
+				97D1BE562C6C847600F7A983 /* PostCareSeekerTableViewController.swift */,
+				97D1BE572C6C847600F7A983 /* PostDetailViewController.swift */,
+			);
+			path = Post;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -419,9 +431,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				97D1BE472C6C7F8800F7A983 /* LoginViewModel.swift in Sources */,
-				97934E3D2C62FFB600B38E0A /* PostListViewController.swift in Sources */,
+				97D1BE5C2C6C847600F7A983 /* PostCareProviderListViewModel.swift in Sources */,
 				3B596DFA2C6B461200C71851 /* CustomTableCell.swift in Sources */,
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
+				97D1BE5A2C6C847600F7A983 /* AddPostViewController.swift in Sources */,
 				97934E1F2C62FABD00B38E0A /* Pin.swift in Sources */,
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
@@ -429,22 +442,25 @@
 				97D1BE3D2C6C7EB700F7A983 /* ProfileViewController.swift in Sources */,
 				3B657B472C6C35A900935876 /* AboutMeViewModel.swift in Sources */,
 				3B657B392C6C2F7D00935876 /* ProfileImageViewModel.swift in Sources */,
+				97D1BE602C6C847600F7A983 /* PostDetailViewController.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				97934E292C62FDF700B38E0A /* MapViewController.swift in Sources */,
 				3B596DEC2C6B274400C71851 /* AboutMeViewController.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
 				97934DFB2C62F87D00B38E0A /* User.swift in Sources */,
 				3B657B3B2C6C2F9800935876 /* ProfileViewModel.swift in Sources */,
-				97934E1B2C62F8EC00B38E0A /* PostTableViewModel.swift in Sources */,
-				97934E3F2C62FFC500B38E0A /* ChatListViewController.swift in Sources */,
+				97D1BE5B2C6C847600F7A983 /* MainPostListViewController.swift in Sources */,
+				97D1BE5D2C6C847600F7A983 /* PostCareProviderTableViewController.swift in Sources */,
+				97D1BE5F2C6C847600F7A983 /* PostCareSeekerTableViewController.swift in Sources */,
+				97D1BE592C6C847600F7A983 /* ChatListViewController.swift in Sources */,
 				97934E232C62FAC800B38E0A /* Plan.swift in Sources */,
 				97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */,
 				3B657B372C6C2F3B00935876 /* ProfileTableViewModel.swift in Sources */,
 				97934E412C62FFDB00B38E0A /* CareFinderMapViewController.swift in Sources */,
+				97D1BE5E2C6C847600F7A983 /* PostCareSeekerListViewModel.swift in Sources */,
 				97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */,
 				97934E132C62F8DB00B38E0A /* MapViewModel.swift in Sources */,
 				97934E252C62FACE00B38E0A /* Contract.swift in Sources */,
-				97934E312C62FE2E00B38E0A /* PostTableViewController.swift in Sources */,
 				3B657B3D2C6C321100935876 /* NincknameViewModel.swift in Sources */,
 				97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */,
 				97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */,
