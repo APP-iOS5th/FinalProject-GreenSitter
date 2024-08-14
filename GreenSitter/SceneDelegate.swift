@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         secondNavigationController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
         
         // Chat
-        let thirdViewController = LoginViewController()
+        let thirdViewController = ChatAdditionalButtonsViewController()
         let thirdNavigationController = UINavigationController(rootViewController: thirdViewController)
         thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
         
