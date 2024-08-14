@@ -26,12 +26,13 @@ class ChatViewController: UIViewController {
     }
     
     // MARK: - Setup UI
-    func setupUI() {
+    private func setupUI() {
         self.view.backgroundColor = .white
         self.navigationController?.navigationBar.prefersLargeTitles = false
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(listButtonTapped))
         
         let chatPostViewController = ChatPostViewController()
+        let chatMessageViewController = ChatMessageViewController()
         
         guard let postThumbnailUrl = URL(string: postThumbnail!) else {
             return
@@ -41,17 +42,26 @@ class ChatViewController: UIViewController {
         chatPostViewController.postStatusLabel.text = postStatus?.rawValue
         
         chatPostViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        chatMessageViewController.view.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(chatPostViewController.view)
+        self.view.addSubview(chatMessageViewController.view)
         
         addChild(chatPostViewController)
         chatPostViewController.didMove(toParent: self)
+        addChild(chatMessageViewController)
+        chatMessageViewController.didMove(toParent: self)
         
         NSLayoutConstraint.activate([
             chatPostViewController.view.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
             chatPostViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
             chatPostViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
             chatPostViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            chatPostViewController.view.heightAnchor.constraint(equalToConstant: 100)
+            chatPostViewController.view.heightAnchor.constraint(equalToConstant: 100),
+            
+            chatMessageViewController.view.topAnchor.constraint(equalTo: chatPostViewController.view.bottomAnchor),
+            chatMessageViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
+            chatMessageViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
+            chatMessageViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
         ])
 
     }

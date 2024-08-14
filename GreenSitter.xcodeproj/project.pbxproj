@@ -20,6 +20,7 @@
 		582F5D212C6A156C00141938 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 582F5D202C6A156C00141938 /* GoogleService-Info.plist */; };
 		58E782202C6C2F4B00572554 /* ChatPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E7821F2C6C2F4B00572554 /* ChatPostViewController.swift */; };
 		58E782222C6C36FB00572554 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E782212C6C36FB00572554 /* PostDetailViewController.swift */; };
+		58E782242C6C4F5300572554 /* ChatMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E782232C6C4F5300572554 /* ChatMessageViewController.swift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
 		97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD62C62F3C600B38E0A /* SceneDelegate.swift */; };
 		97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD82C62F3C600B38E0A /* ViewController.swift */; };
@@ -67,6 +68,7 @@
 		582F5D202C6A156C00141938 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		58E7821F2C6C2F4B00572554 /* ChatPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPostViewController.swift; sourceTree = "<group>"; };
 		58E782212C6C36FB00572554 /* PostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
+		58E782232C6C4F5300572554 /* ChatMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageViewController.swift; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97934DD42C62F3C600B38E0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		97934DD62C62F3C600B38E0A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				582F5D062C64935500141938 /* ChatTableViewCell.swift */,
 				582F5D1A2C69EA9A00141938 /* ChatViewController.swift */,
 				58E7821F2C6C2F4B00572554 /* ChatPostViewController.swift */,
+				58E782232C6C4F5300572554 /* ChatMessageViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -409,6 +412,7 @@
 				97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */,
 				58E782222C6C36FB00572554 /* PostDetailViewController.swift in Sources */,
 				97934DFF2C62F88B00B38E0A /* Post.swift in Sources */,
+				58E782242C6C4F5300572554 /* ChatMessageViewController.swift in Sources */,
 				582F5D192C69ABF800141938 /* DataManager.swift in Sources */,
 				582F5D172C6900B900141938 /* PostViewModel.swift in Sources */,
 				97934E212C62FAC300B38E0A /* Location.swift in Sources */,
