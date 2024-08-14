@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MapKit
 
 class AddPostViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     private let backButton: UIButton = {
@@ -59,7 +60,7 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
         view.font = .systemFont(ofSize: 18)
         view.text = textViewPlaceHolder
         view.textColor = .lightGray
-        view.delegate = self // <-
+        view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -73,6 +74,28 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
         label.textAlignment = .right
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    private let deviderLine3: UIImageView = {
+        let line = UIImageView()
+        line.backgroundColor = .lightGray
+        line.translatesAutoresizingMaskIntoConstraints = false
+        return line
+    }()
+    
+    private let mapLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .labelsSecondary
+        label.font = .systemFont(ofSize: 16)
+        label.text = "거래 희망 장소를 선택할 수 있어요."
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let mapView: MKMapView = {
+        let mapView = MKMapView()
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        return mapView
     }()
     
     override func viewDidLoad() {
@@ -97,6 +120,9 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
         view.addSubview(deviderLine2)
         view.addSubview(textView)
         view.addSubview(remainCountLabel)
+        view.addSubview(deviderLine3)
+        view.addSubview(mapLabel)
+        view.addSubview(mapView)
         
         NSLayoutConstraint.activate([
             backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -125,11 +151,24 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
             textView.topAnchor.constraint(equalTo: deviderLine2.bottomAnchor, constant: 20),
             textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            textView.heightAnchor.constraint(equalToConstant: 250),
+            textView.heightAnchor.constraint(equalToConstant: 200),
             
             remainCountLabel.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 5),
             remainCountLabel.trailingAnchor.constraint(equalTo: textView.trailingAnchor),
-            remainCountLabel.heightAnchor.constraint(equalToConstant: 20)
+            remainCountLabel.heightAnchor.constraint(equalToConstant: 20),
+            
+            deviderLine3.bottomAnchor.constraint(equalTo: mapLabel.topAnchor, constant: -10),
+            deviderLine3.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            deviderLine3.widthAnchor.constraint(equalToConstant: 360),
+            deviderLine3.heightAnchor.constraint(equalToConstant: 1),
+            
+            mapLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            mapLabel.bottomAnchor.constraint(equalTo: mapView.topAnchor, constant: -10),
+            
+            mapView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            mapView.heightAnchor.constraint(equalToConstant: 200)
         ])
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapTextView(_:)))
