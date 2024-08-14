@@ -242,7 +242,7 @@ class SetProfileViewController: UIViewController {
                 print("Nickname successfully saved!")
             }
         }
-//        프로필 뷰로이동
+        //        프로필 뷰로이동
         DispatchQueue.main.async {
             let profileViewController = ProfileViewController()
             self.navigationController?.pushViewController(profileViewController, animated: true)
@@ -251,8 +251,8 @@ class SetProfileViewController: UIViewController {
     }
     // 메인뷰로 이동
     @objc func skipTap() {
-        //        let postListViewController = PostListViewController()
-        //        navigationController?.pushViewController(postListViewController, animated: true)
+        let postListViewController = PostListViewController()
+        navigationController?.pushViewController(postListViewController, animated: true)
     }
     
     
