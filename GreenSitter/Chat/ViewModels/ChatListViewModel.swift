@@ -5,7 +5,7 @@
 //  Created by 박지혜 on 8/11/24.
 //
 
-import Foundation
+import UIKit
 
 @MainActor
 class ChatListViewModel {
@@ -48,7 +48,7 @@ class ChatListViewModel {
     }
     
     func deleteChatRoom(at index: Int) async throws {
-        guard var chatRooms = self.chatRooms else {
+        guard let chatRooms = self.chatRooms else {
             return
         }
         
@@ -66,5 +66,22 @@ class ChatListViewModel {
         } catch {
             print("Error deleting chat room: \(error.localizedDescription)")
         }
+    }
+    
+    func downloadImage(from url: URL, to imageView: UIImageView) {
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self, let data = data, error == nil else {
+                print("Failed to download image: \(error?.localizedDescription ?? "")")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                if let image = UIImage(data: data) {
+                    imageView.image = image
+                } else {
+                    print("Failed to convert data to image")
+                }
+            }
+        }.resume()
     }
 }

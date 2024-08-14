@@ -9,6 +9,7 @@
 import UIKit
 
 class ChatTableViewCell: UITableViewCell {
+    var chatListViewModel: ChatListViewModel?
     
     // 프로필 이미지
     private lazy var profileImageView: UIImageView = {
@@ -194,24 +195,7 @@ class ChatTableViewCell: UITableViewCell {
         guard let profileImageUrl = URL(string: profileImageString) else {
             return
         }
-        self.downloadImage(from: profileImageUrl)
-    }
-    
-    private func downloadImage(from url: URL) {
-        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let self = self, let data = data, error == nil else {
-                print("Failed to download image: \(error?.localizedDescription ?? "")")
-                return
-            }
-            
-            DispatchQueue.main.async {
-                if let image = UIImage(data: data) {
-                    self.profileImageView.image = image
-                } else {
-                    print("Failed to convert data to image")
-                }
-            }
-        }.resume()
+        chatListViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
     }
     
     // MARK: - 메세지 시간 포맷 설정
