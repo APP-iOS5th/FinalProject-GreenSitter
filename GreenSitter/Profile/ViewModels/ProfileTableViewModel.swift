@@ -44,7 +44,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             }
             else if indexPath.row == 1 {
                 cell.titleLabel.text = "사는 곳"
-                cell.bodyLabel.text = user?.location
+                cell.bodyLabel.text = "user?.location"
                 cell.actionButton.isHidden = false
                 cell.actionButton.setTitle("변경", for: .normal)
                 cell.actionButton.addTarget(self, action: #selector(changeLocationButtonTap), for: .touchUpInside)

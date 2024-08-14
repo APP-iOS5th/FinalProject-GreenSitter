@@ -27,7 +27,7 @@ extension ProfileViewController {
             if let document = document, document.exists {
                 let data = document.data()
                 let nickname = data?["nickname"] as? String ?? "닉네임 없음"
-                let location = data?["location"] as? String ?? "위치정보없음"
+//                let location = data?["location"] as? String ?? "위치정보없음"
                 let profileImage = data?["profileImage"] as? String ?? ""
 
                 
@@ -40,10 +40,10 @@ extension ProfileViewController {
                         updateDate: Date(),
                         profileImage: profileImage,
                         nickname: nickname,
-                        location: location,
+                        location: Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), exactLongitude: 1.0, exactLatitude: 1.0, optionLongitude: 1.0, optionLatitude: 1.0),
                         platform: "iOS",
-                        levelPoint: .low, // 예시 값입니다. 실제 값으로 교체하세요.
-                        aboutMe: ""
+                        levelPoint: 1, // 예시 값입니다. 실제 값으로 교체하세요.
+                        aboutMe: "", chatNotification: false
                     )
                 } else {
                     self.user?.nickname = nickname

@@ -136,14 +136,14 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     }
     //MARK: - NextButton Method
     @objc func nextTap() {
-        guard let enterLocation = locationTextField.text, !enterLocation.isEmpty else {
-            //위치정보를 입력하지 않을때
-            let userLocation = user?.location ?? "위치 정보 없음"
-            print("위치 정보가 비어 있습니다.")
-            updateLocationInFirestore(location: userLocation)
-            return
-        }
-        updateLocationInFirestore(location: enterLocation)
+//        guard let enterLocation = locationTextField.text, !enterLocation.isEmpty else {
+//            //위치정보를 입력하지 않을때
+//            let userLocation = user?.location ?? "위치 정보 없음"
+//            print("위치 정보가 비어 있습니다.")
+//            updateLocationInFirestore(location: userLocation)
+//            return
+//        }
+//        updateLocationInFirestore(location: enterLocation)
     }
     
     //MARK: - 파이어베이스 위치정보 저장
