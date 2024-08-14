@@ -11,6 +11,9 @@
 		3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */; };
 		3B596DFA2C6B461200C71851 /* CustomTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF92C6B461200C71851 /* CustomTableCell.swift */; };
 		3B596DFF2C6B462B00C71851 /* InformationTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */; };
+		3B657B372C6C2F3B00935876 /* ProfileTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B657B362C6C2F3B00935876 /* ProfileTableViewModel.swift */; };
+		3B657B392C6C2F7D00935876 /* ProfileImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B657B382C6C2F7D00935876 /* ProfileImageViewModel.swift */; };
+		3B657B3B2C6C2F9800935876 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B657B3A2C6C2F9800935876 /* ProfileViewModel.swift */; };
 		3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */; };
 		3B6D2C602C69DFB20076B1DA /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */; };
 		3B91206D2C65B8A900A6F23F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B91206C2C65B8A900A6F23F /* GoogleService-Info.plist */; };
@@ -54,6 +57,9 @@
 		3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionTableCell.swift; sourceTree = "<group>"; };
 		3B596DF92C6B461200C71851 /* CustomTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableCell.swift; sourceTree = "<group>"; };
 		3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationTableCell.swift; sourceTree = "<group>"; };
+		3B657B362C6C2F3B00935876 /* ProfileTableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewModel.swift; sourceTree = "<group>"; };
+		3B657B382C6C2F7D00935876 /* ProfileImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageViewModel.swift; sourceTree = "<group>"; };
+		3B657B3A2C6C2F9800935876 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
 		3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
 		3B91206C2C65B8A900A6F23F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -129,6 +135,9 @@
 		3B657B352C6C2EB200935876 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				3B657B362C6C2F3B00935876 /* ProfileTableViewModel.swift */,
+				3B657B382C6C2F7D00935876 /* ProfileImageViewModel.swift */,
+				3B657B3A2C6C2F9800935876 /* ProfileViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -359,16 +368,19 @@
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
+				3B657B392C6C2F7D00935876 /* ProfileImageViewModel.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				97934E292C62FDF700B38E0A /* MapViewController.swift in Sources */,
 				3B596DEC2C6B274400C71851 /* AboutMeViewController.swift in Sources */,
 				97934E3B2C62FFA800B38E0A /* ProfileViewController.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
 				97934DFB2C62F87D00B38E0A /* User.swift in Sources */,
+				3B657B3B2C6C2F9800935876 /* ProfileViewModel.swift in Sources */,
 				97934E1B2C62F8EC00B38E0A /* PostTableViewModel.swift in Sources */,
 				97934E3F2C62FFC500B38E0A /* ChatListViewController.swift in Sources */,
 				97934E232C62FAC800B38E0A /* Plan.swift in Sources */,
 				97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */,
+				3B657B372C6C2F3B00935876 /* ProfileTableViewModel.swift in Sources */,
 				97934E412C62FFDB00B38E0A /* CareFinderMapViewController.swift in Sources */,
 				97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */,
 				97934E132C62F8DB00B38E0A /* MapViewModel.swift in Sources */,
