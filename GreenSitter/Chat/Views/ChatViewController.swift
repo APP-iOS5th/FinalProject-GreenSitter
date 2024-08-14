@@ -9,6 +9,7 @@ import UIKit
 
 class ChatViewController: UIViewController {
     var chatListViewModel: ChatListViewModel?
+    var postId: String?
     var postThumbnail: String?
     var postTitle: String?
     var postStatus: PostStatus?
@@ -17,17 +18,20 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
 
         setupUI()
+        
+        // 게시물 디테일로 이동하기 위한 Tap Gesture
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        self.view.addGestureRecognizer(tapGesture)
+            
     }
     
+    // MARK: - Setup UI
     func setupUI() {
         self.view.backgroundColor = .white
         self.navigationController?.navigationBar.prefersLargeTitles = false
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(listButtonTapped))
         
         let chatPostViewController = ChatPostViewController()
-        guard let chatPostView = chatPostViewController.view else {
-            return
-        }
         
         guard let postThumbnailUrl = URL(string: postThumbnail!) else {
             return
@@ -36,21 +40,32 @@ class ChatViewController: UIViewController {
         chatPostViewController.postTitleLabel.text = postTitle
         chatPostViewController.postStatusLabel.text = postStatus?.rawValue
         
-        self.view.addSubview(chatPostView)
+        addChild(chatPostViewController)
+        self.view.addSubview(chatPostViewController.view)
+        chatPostViewController.didMove(toParent: self)
         
         NSLayoutConstraint.activate([
-            chatPostView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 100),
-            chatPostView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            chatPostView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            chatPostView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            chatPostView.widthAnchor.constraint(equalToConstant: self.view.bounds.width),
-            chatPostView.heightAnchor.constraint(equalToConstant: 100)
+            chatPostViewController.view.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+            chatPostViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            chatPostViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            chatPostViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            chatPostViewController.view.widthAnchor.constraint(equalToConstant: self.view.bounds.width),
+            chatPostViewController.view.heightAnchor.constraint(equalToConstant: 100)
         ])
 
     }
     
-    @objc func listButtonTapped() {
+    @objc private func listButtonTapped() {
         print("list button")
+    }
+    
+    @objc private func handleTap() {
+        let postDetailViewController = PostDetailViewController()
+        
+        // TODO: - 특정 게시물로 이동
+//        postDetailViewController.postId = postId
+        
+        self.navigationController?.pushViewController(postDetailViewController, animated: true)
     }
 
 }
