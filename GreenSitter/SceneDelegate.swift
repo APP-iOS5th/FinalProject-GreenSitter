@@ -33,7 +33,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
         
         // Profile
-        let fourthViewController = ProfileViewController()
+        let fourthViewController = LoginViewController()
         let fourthNavigationController = UINavigationController(rootViewController: fourthViewController)
         fourthNavigationController.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.fill"), tag: 3)
         
