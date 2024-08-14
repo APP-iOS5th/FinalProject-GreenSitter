@@ -15,6 +15,8 @@ struct Post: Codable {
     let userId: String
     let profileImage: String
     let nickname: String
+    let userLocation: Location
+    let userNotification: Bool
     let postType: PostType
     let postTitle: String
     let postBody: String

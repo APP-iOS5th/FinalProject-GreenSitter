@@ -12,7 +12,8 @@ struct Message: Codable {
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
-    let userId: String
+    let senderUserId: String
+    let receiverUserId: String
     let read: Bool
     let messageType: MessageType
     let text: String?

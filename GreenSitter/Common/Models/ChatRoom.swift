@@ -9,18 +9,22 @@ import Foundation
 
 struct ChatRoom: Codable {
     let id: String
-    let enabled: Bool
+    var enabled: Bool
     let createDate: Date
-    let updateDate: Date
+    var updateDate: Date
     let ownerId: String
     let sitterId: String
     let ownerNickname: String
     let sitterNickname: String
     let ownerProfileImage: String
     let sitterProfileImage: String
-    let ownerStatus: Bool
-    let sitterStatus: Bool
-    let messages: [Message]
+    var ownerEnabled: Bool
+    var sitterEnabled: Bool
+    var ownerNotification: Bool
+    var sitterNotification: Bool
+    let ownerLocation: Location
+    let sitterLocation: Location
+    var messages: [Message]
     let postId: String
     let postImage: String
     let postTitle: String
