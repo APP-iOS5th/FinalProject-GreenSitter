@@ -14,6 +14,7 @@
 		3B657B372C6C2F3B00935876 /* ProfileTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B657B362C6C2F3B00935876 /* ProfileTableViewModel.swift */; };
 		3B657B392C6C2F7D00935876 /* ProfileImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B657B382C6C2F7D00935876 /* ProfileImageViewModel.swift */; };
 		3B657B3B2C6C2F9800935876 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B657B3A2C6C2F9800935876 /* ProfileViewModel.swift */; };
+		3B657B3D2C6C321100935876 /* NincknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B657B3C2C6C321100935876 /* NincknameViewModel.swift */; };
 		3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */; };
 		3B6D2C602C69DFB20076B1DA /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */; };
 		3B91206D2C65B8A900A6F23F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B91206C2C65B8A900A6F23F /* GoogleService-Info.plist */; };
@@ -60,6 +61,7 @@
 		3B657B362C6C2F3B00935876 /* ProfileTableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewModel.swift; sourceTree = "<group>"; };
 		3B657B382C6C2F7D00935876 /* ProfileImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageViewModel.swift; sourceTree = "<group>"; };
 		3B657B3A2C6C2F9800935876 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		3B657B3C2C6C321100935876 /* NincknameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NincknameViewModel.swift; sourceTree = "<group>"; };
 		3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
 		3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
 		3B91206C2C65B8A900A6F23F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 				3B657B362C6C2F3B00935876 /* ProfileTableViewModel.swift */,
 				3B657B382C6C2F7D00935876 /* ProfileImageViewModel.swift */,
 				3B657B3A2C6C2F9800935876 /* ProfileViewModel.swift */,
+				3B657B3C2C6C321100935876 /* NincknameViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -386,6 +389,7 @@
 				97934E132C62F8DB00B38E0A /* MapViewModel.swift in Sources */,
 				97934E252C62FACE00B38E0A /* Contract.swift in Sources */,
 				97934E312C62FE2E00B38E0A /* PostTableViewController.swift in Sources */,
+				3B657B3D2C6C321100935876 /* NincknameViewModel.swift in Sources */,
 				97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */,
 				97934DFF2C62F88B00B38E0A /* Post.swift in Sources */,
 				97934E212C62FAC300B38E0A /* Location.swift in Sources */,
