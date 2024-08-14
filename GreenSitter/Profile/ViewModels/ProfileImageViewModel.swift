@@ -9,6 +9,7 @@ import UIKit
 
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    //MARK: - 이미지 라이브러리로 가는 Method
     @objc func changeImageTap() {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
@@ -16,6 +17,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         present(imagePicker, animated: true, completion: nil)
     }
     
+    //MARK: - Image Change Method
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         dismiss(animated: true, completion: nil)
         

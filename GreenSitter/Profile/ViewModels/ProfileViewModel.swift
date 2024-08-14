@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseStorage
 
 extension ProfileViewController {
-    
+    //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("User ID is not available")
@@ -32,6 +32,7 @@ extension ProfileViewController {
         }
     }
     
+    //MARK: - 변경된 사진을 파이어베이스에 저장
     func updateNickname(_ profileImage: String) {
         guard let user = Auth.auth().currentUser else {
             print("Error: Firebase authResult is nil.")
@@ -48,6 +49,7 @@ extension ProfileViewController {
         }
     }
     
+    //MARK: - 이미지 파일 스토리지 업로드
     func uploadImage(image: UIImage, completion: @escaping(String?) -> Void) {
         let storageRef = storage.reference().child("gs://greensitter-6dedd.appspot.com/\(UUID().uuidString).jpg")
         
@@ -74,10 +76,12 @@ extension ProfileViewController {
         }
     }
     
+    //MARK: - 로그아웃
     func logout() {
         // Implement logout functionality here
     }
     
+    //MARK: - 회원 탈퇴
     func accountDeletion() {
         // Implement account deletion functionality here
     }
