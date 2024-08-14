@@ -104,7 +104,7 @@ class AboutMeViewController: UIViewController{
         tableView.register(IntroductionTableCell.self, forCellReuseIdentifier: "introductionTableCell")
         tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell" )
         tableView.register(InformationTableCell.self, forCellReuseIdentifier: "informationTableCell" )
-        
+        tableView.register(CustomHeaderView.self, forHeaderFooterViewReuseIdentifier: "customHeaderView")
         
         view.addSubview(circleView)
         view.addSubview(profileImage)

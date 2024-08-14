@@ -11,7 +11,10 @@ import FirebaseFirestore
 import FirebaseStorage
 
 extension AboutMeViewController {
-
+    //MARK: - 수정하기
+    @objc func editButtonTapped() {
+        
+    }
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {
         guard let userId = Auth.auth().currentUser?.uid else {

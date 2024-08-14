@@ -24,13 +24,38 @@ extension ProfileViewController {
                 print("Error getting document: \(error)")
                 return
             }
-            if let document = document, document.exists, let data = document.data() {
-                print("Document data: \(data)")
+            if let document = document, document.exists {
+                let data = document.data()
+                let nickname = data?["nickname"] as? String ?? "닉네임 없음"
+                let location = data?["location"] as? String ?? "위치정보없음"
+                let profileImage = data?["profileImage"] as? String ?? ""
+
+                
+                // user 객체가 nil일 경우 User 객체를 초기화
+                if self.user == nil {
+                    self.user = User(
+                        id: userId,
+                        enabled: true,
+                        createDate: Date(),
+                        updateDate: Date(),
+                        profileImage: profileImage,
+                        nickname: nickname,
+                        location: location,
+                        platform: "iOS",
+                        levelPoint: .low, // 예시 값입니다. 실제 값으로 교체하세요.
+                        aboutMe: ""
+                    )
+                } else {
+                    self.user?.nickname = nickname
+                }
+                
+                self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
             } else {
                 print("Document does not exist")
             }
         }
     }
+
     
     //MARK: - 변경된 사진을 파이어베이스에 저장
     func updateNickname(_ profileImage: String) {
