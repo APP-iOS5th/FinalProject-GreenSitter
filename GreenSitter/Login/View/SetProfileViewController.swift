@@ -225,7 +225,7 @@ class SetProfileViewController: UIViewController {
         
         // Firestore에 사용자 데이터 저장
         let userData: [String: Any] = [
-            "nikname": nickname,
+            "nickname": nickname,
             "profileImage": selectedImageUrl
             
         ]
@@ -243,10 +243,10 @@ class SetProfileViewController: UIViewController {
             }
         }
 //        프로필 뷰로이동
-//        DispatchQueue.main.async {
-//            let profileViewController = ProfileViewController()
-//            self.navigationController?.pushViewController(profileViewController, animated: true)
-//        }
+        DispatchQueue.main.async {
+            let profileViewController = ProfileViewController()
+            self.navigationController?.pushViewController(profileViewController, animated: true)
+        }
         
     }
     // 메인뷰로 이동

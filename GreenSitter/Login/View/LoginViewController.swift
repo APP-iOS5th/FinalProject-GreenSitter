@@ -225,10 +225,11 @@ class LoginViewController: UIViewController {
                 let userRef = db.collection("users").document(user.uid)
                 
                 userRef.setData([
-                    "uid": user.uid,
+                    "id": user.uid,
                     "email": user.email ?? "",
                     "displayName": user.displayName ?? "",
-                    "location": users?.location ?? ""
+                    "location": users?.location ?? "",
+                    "enabled": false,  // 콤마 추가
                 ]) { error in
                     if let error = error {
                         print("Firestore Save Error: \(error.localizedDescription)")
