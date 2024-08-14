@@ -7,7 +7,8 @@
 
 import UIKit
 import SwiftUI
-class SearchMapViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate {
+
+class SearchMapViewController: UIViewController, UISearchBarDelegate {
 
     private var locations: [Location] = []
     private var currentPage: Int = 1
@@ -18,7 +19,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.systemBackground
         self.title = "장소 검색"
 
         setupUI()
@@ -27,6 +28,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate, UITableVie
     private func setupUI() {
         let searchBar = UISearchBar()
         searchBar.placeholder = "장소를 검색하세요"
+        searchBar.backgroundColor = UIColor.systemGray6
         searchBar.delegate = self
         navigationItem.titleView = searchBar
         
@@ -141,8 +143,13 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate, UITableVie
             }
         }
     }
+}
 
-    // UITableViewDataSource
+
+extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    // MARK: - UITableViewDataSource
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return locations.count
     }
@@ -175,6 +182,18 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate, UITableVie
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedLocation = locations[indexPath.row]
+        let detailViewController = SearchMapDetailViewController(location: selectedLocation)
+        
+        let navigationController = UINavigationController(rootViewController: detailViewController)
+        navigationController.modalPresentationStyle = .pageSheet
+        
+        present(navigationController, animated: true, completion: nil)
+    }
+
+    // MARK: - UITableViewDelegate
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 40
@@ -188,15 +207,14 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate, UITableVie
         return headerLabel
     }
 
-    // UITableViewDelegate
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == locations.count - 1 { // 마지막 셀에 도달했을 때
             guard let query = (navigationItem.titleView as? UISearchBar)?.text else { return }
             loadMorePlaces(query: query)
         }
     }
+    
 }
-
 
 
 // MARK: - PREVIEWS
