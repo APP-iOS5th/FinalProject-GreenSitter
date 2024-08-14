@@ -116,6 +116,23 @@
 			path = ProfileCell;
 			sourceTree = "<group>";
 		};
+		3B657B342C6C2E9E00935876 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				97934E3A2C62FFA800B38E0A /* ProfileViewController.swift */,
+				3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */,
+				3B596DEB2C6B274400C71851 /* AboutMeViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		3B657B352C6C2EB200935876 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		97934DC82C62F3C600B38E0A = {
 			isa = PBXGroup;
 			children = (
@@ -225,10 +242,9 @@
 		97934DEE2C62F75F00B38E0A /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				3B657B342C6C2E9E00935876 /* View */,
 				3B596DF62C6B45B400C71851 /* ProfileCell */,
-				97934E3A2C62FFA800B38E0A /* ProfileViewController.swift */,
-				3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */,
-				3B596DEB2C6B274400C71851 /* AboutMeViewController.swift */,
+				3B657B352C6C2EB200935876 /* ViewModels */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
