@@ -40,16 +40,17 @@ class ChatViewController: UIViewController {
         chatPostViewController.postTitleLabel.text = postTitle
         chatPostViewController.postStatusLabel.text = postStatus?.rawValue
         
-        addChild(chatPostViewController)
+        chatPostViewController.view.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(chatPostViewController.view)
+        
+        addChild(chatPostViewController)
         chatPostViewController.didMove(toParent: self)
         
         NSLayoutConstraint.activate([
             chatPostViewController.view.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-            chatPostViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            chatPostViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            chatPostViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
+            chatPostViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
             chatPostViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            chatPostViewController.view.widthAnchor.constraint(equalToConstant: self.view.bounds.width),
             chatPostViewController.view.heightAnchor.constraint(equalToConstant: 100)
         ])
 
