@@ -24,6 +24,17 @@
 		3BEFEC752C63547D00E48D1E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC742C63547D00E48D1E /* GoogleSignIn */; };
 		3BEFEC772C63547D00E48D1E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC762C63547D00E48D1E /* GoogleSignInSwift */; };
 		3BEFEC792C63567E00E48D1E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC782C63567E00E48D1E /* FirebaseFirestore */; };
+		1543FB272C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */; };
+		1543FB292C6317EA002E4CC8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1543FB282C6317EA002E4CC8 /* GoogleService-Info.plist */; };
+		1543FB2B2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */; };
+		1543FB2D2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB2C2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift */; };
+		1543FB2F2C636966002E4CC8 /* ChatAdditionalButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB2E2C636966002E4CC8 /* ChatAdditionalButton.swift */; };
+		1543FB382C6486CF002E4CC8 /* MakePlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB372C6486CF002E4CC8 /* MakePlanViewController.swift */; };
+		1543FB3A2C64AE9C002E4CC8 /* PlanProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB392C64AE9C002E4CC8 /* PlanProgressBar.swift */; };
+		1543FB3E2C65DDA3002E4CC8 /* PlanDateTimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB3D2C65DDA3002E4CC8 /* PlanDateTimeViewController.swift */; };
+		1543FB402C660A10002E4CC8 /* MakePlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB3F2C660A10002E4CC8 /* MakePlanViewModel.swift */; };
+		1543FB422C69C1DE002E4CC8 /* PlanPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB412C69C1DE002E4CC8 /* PlanPlaceViewController.swift */; };
+		1543FB442C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1543FB432C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
 		97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD62C62F3C600B38E0A /* SceneDelegate.swift */; };
 		97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD82C62F3C600B38E0A /* ViewController.swift */; };
@@ -49,6 +60,9 @@
 		97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E2C2C62FE1900B38E0A /* PlaceListViewController.swift */; };
 		97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */; };
 		97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E322C62FE3400B38E0A /* ReviewViewController.swift */; };
+		97934E392C62FF9200B38E0A /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E382C62FF9200B38E0A /* LoginViewController.swift */; };
+		97934E3B2C62FFA800B38E0A /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E3A2C62FFA800B38E0A /* ProfileViewController.swift */; };
+		97934E3D2C62FFB600B38E0A /* PostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E3C2C62FFB600B38E0A /* PostListViewController.swift */; };
 		97934E412C62FFDB00B38E0A /* CareFinderMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E402C62FFDB00B38E0A /* CareFinderMapViewController.swift */; };
 		97934E432C63003C00B38E0A /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E422C63003C00B38E0A /* Colors.swift */; };
 		97D1BE3D2C6C7EB700F7A983 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3C2C6C7EB700F7A983 /* ProfileViewController.swift */; };
@@ -81,6 +95,18 @@
 		3B6D2C5D2C69A50F0076B1DA /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
 		3B6D2C5F2C69DFB20076B1DA /* NicknameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
 		3BEFEC6F2C633D5D00E48D1E /* GreenSitter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GreenSitter.entitlements; sourceTree = "<group>"; };
+		1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewController.swift; sourceTree = "<group>"; };
+		1543FB282C6317EA002E4CC8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewModel.swift; sourceTree = "<group>"; };
+		1543FB2C2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonModel.swift; sourceTree = "<group>"; };
+		1543FB2E2C636966002E4CC8 /* ChatAdditionalButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButton.swift; sourceTree = "<group>"; };
+		1543FB352C6447C2002E4CC8 /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
+		1543FB372C6486CF002E4CC8 /* MakePlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePlanViewController.swift; sourceTree = "<group>"; };
+		1543FB392C64AE9C002E4CC8 /* PlanProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanProgressBar.swift; sourceTree = "<group>"; };
+		1543FB3D2C65DDA3002E4CC8 /* PlanDateTimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDateTimeViewController.swift; sourceTree = "<group>"; };
+		1543FB3F2C660A10002E4CC8 /* MakePlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePlanViewModel.swift; sourceTree = "<group>"; };
+		1543FB412C69C1DE002E4CC8 /* PlanPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanPlaceViewController.swift; sourceTree = "<group>"; };
+		1543FB432C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalConfirmPlanViewController.swift; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97934DD42C62F3C600B38E0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		97934DD62C62F3C600B38E0A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -108,6 +134,9 @@
 		97934E2C2C62FE1900B38E0A /* PlaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceListViewController.swift; sourceTree = "<group>"; };
 		97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewListViewController.swift; sourceTree = "<group>"; };
 		97934E322C62FE3400B38E0A /* ReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewViewController.swift; sourceTree = "<group>"; };
+		97934E382C62FF9200B38E0A /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		97934E3A2C62FFA800B38E0A /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		97934E3C2C62FFB600B38E0A /* PostListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostListViewController.swift; sourceTree = "<group>"; };
 		97934E402C62FFDB00B38E0A /* CareFinderMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareFinderMapViewController.swift; sourceTree = "<group>"; };
 		97934E422C63003C00B38E0A /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		97D1BE3C2C6C7EB700F7A983 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -173,7 +202,51 @@
 				3B657B442C6C358900935876 /* AboutMeTableViewModel.swift */,
 				3B657B462C6C35A900935876 /* AboutMeViewModel.swift */,
 			);
+		};
+		1543FB302C636B5E002E4CC8 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */,
+				1543FB3F2C660A10002E4CC8 /* MakePlanViewModel.swift */,
+			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		1543FB312C636B68002E4CC8 /* CustomComponents */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB2E2C636966002E4CC8 /* ChatAdditionalButton.swift */,
+				1543FB392C64AE9C002E4CC8 /* PlanProgressBar.swift */,
+			);
+			path = CustomComponents;
+			sourceTree = "<group>";
+		};
+		1543FB322C636B9F002E4CC8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */,
+				1543FB372C6486CF002E4CC8 /* MakePlanViewController.swift */,
+				1543FB3D2C65DDA3002E4CC8 /* PlanDateTimeViewController.swift */,
+				1543FB412C69C1DE002E4CC8 /* PlanPlaceViewController.swift */,
+				1543FB432C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1543FB332C636BC3002E4CC8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB2C2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		1543FB342C6447C2002E4CC8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB352C6447C2002E4CC8 /* PhotosUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		97934DC82C62F3C600B38E0A = {
@@ -181,6 +254,7 @@
 			children = (
 				97934DD32C62F3C600B38E0A /* GreenSitter */,
 				97934DD22C62F3C600B38E0A /* Products */,
+				1543FB342C6447C2002E4CC8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -211,6 +285,7 @@
 				97934DDD2C62F3C800B38E0A /* Assets.xcassets */,
 				97934DDF2C62F3C800B38E0A /* LaunchScreen.storyboard */,
 				97934DE22C62F3C800B38E0A /* Info.plist */,
+				1543FB282C6317EA002E4CC8 /* GoogleService-Info.plist */,
 			);
 			path = GreenSitter;
 			sourceTree = "<group>";
@@ -290,6 +365,25 @@
 				3B657B352C6C2EB200935876 /* ViewModels */,
 			);
 			path = Profile;
+			sourceTree = "<group>";
+		};
+		97934DEF2C62F76700B38E0A /* Post */ = {
+			isa = PBXGroup;
+			children = (
+				97934E3C2C62FFB600B38E0A /* PostListViewController.swift */,
+			);
+			path = Post;
+			sourceTree = "<group>";
+		};
+		97934DF02C62F77000B38E0A /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				1543FB332C636BC3002E4CC8 /* Models */,
+				1543FB322C636B9F002E4CC8 /* Views */,
+				1543FB302C636B5E002E4CC8 /* ViewModels */,
+				1543FB312C636B68002E4CC8 /* CustomComponents */,
+			);
+			path = Chat;
 			sourceTree = "<group>";
 		};
 		97934DF12C62F77500B38E0A /* Map */ = {
@@ -419,7 +513,7 @@
 			files = (
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
-				97D1BE4C2C6C812100F7A983 /* GoogleService-Info.plist in Resources */,
+				1543FB292C6317EA002E4CC8 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +530,7 @@
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
 				97D1BE5A2C6C847600F7A983 /* AddPostViewController.swift in Sources */,
 				97934E1F2C62FABD00B38E0A /* Pin.swift in Sources */,
+				1543FB382C6486CF002E4CC8 /* MakePlanViewController.swift in Sources */,
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
@@ -444,6 +539,7 @@
 				3B657B392C6C2F7D00935876 /* ProfileImageViewModel.swift in Sources */,
 				97D1BE602C6C847600F7A983 /* PostDetailViewController.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
+				1543FB2B2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift in Sources */,
 				97934E292C62FDF700B38E0A /* MapViewController.swift in Sources */,
 				3B596DEC2C6B274400C71851 /* AboutMeViewController.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
@@ -453,11 +549,19 @@
 				97D1BE5D2C6C847600F7A983 /* PostCareProviderTableViewController.swift in Sources */,
 				97D1BE5F2C6C847600F7A983 /* PostCareSeekerTableViewController.swift in Sources */,
 				97D1BE592C6C847600F7A983 /* ChatListViewController.swift in Sources */,
+				1543FB272C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift in Sources */,
+				97934E3B2C62FFA800B38E0A /* ProfileViewController.swift in Sources */,
+				97934E1B2C62F8EC00B38E0A /* PostTableViewModel.swift in Sources */,
+				1543FB3E2C65DDA3002E4CC8 /* PlanDateTimeViewController.swift in Sources */,
 				97934E232C62FAC800B38E0A /* Plan.swift in Sources */,
 				97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */,
 				3B657B372C6C2F3B00935876 /* ProfileTableViewModel.swift in Sources */,
 				97934E412C62FFDB00B38E0A /* CareFinderMapViewController.swift in Sources */,
 				97D1BE5E2C6C847600F7A983 /* PostCareSeekerListViewModel.swift in Sources */,
+				1543FB442C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift in Sources */,
+				1543FB3A2C64AE9C002E4CC8 /* PlanProgressBar.swift in Sources */,
+				1543FB422C69C1DE002E4CC8 /* PlanPlaceViewController.swift in Sources */,
+				1543FB402C660A10002E4CC8 /* MakePlanViewModel.swift in Sources */,
 				97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */,
 				97934E132C62F8DB00B38E0A /* MapViewModel.swift in Sources */,
 				97934E252C62FACE00B38E0A /* Contract.swift in Sources */,
@@ -477,8 +581,11 @@
 				97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */,
 				3B6D2C602C69DFB20076B1DA /* NicknameViewController.swift in Sources */,
 				97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */,
+				1543FB2D2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift in Sources */,
 				97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */,
 				3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */,
+				1543FB2F2C636966002E4CC8 /* ChatAdditionalButton.swift in Sources */,
+				97934E392C62FF9200B38E0A /* LoginViewController.swift in Sources */,
 				97934E192C62F8E700B38E0A /* ReviewListViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
