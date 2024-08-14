@@ -14,6 +14,8 @@
 		3BCA713D2C64B61100438BD5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 3BCA713C2C64B61100438BD5 /* FirebaseStorage */; };
 		3BEFEC752C63547D00E48D1E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC742C63547D00E48D1E /* GoogleSignIn */; };
 		3BEFEC772C63547D00E48D1E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC762C63547D00E48D1E /* GoogleSignInSwift */; };
+		974FF2522C6C5BA5009277B9 /* SearchMapDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */; };
+		977A52B32C69A84500E375F1 /* AnnotationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977A52B22C69A84500E375F1 /* AnnotationDetailViewController.swift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
 		97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD62C62F3C600B38E0A /* SceneDelegate.swift */; };
 		97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD82C62F3C600B38E0A /* ViewController.swift */; };
@@ -25,7 +27,6 @@
 		97934E012C62F89200B38E0A /* ChatRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E002C62F89200B38E0A /* ChatRoom.swift */; };
 		97934E032C62F89700B38E0A /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E022C62F89700B38E0A /* Message.swift */; };
 		97934E052C62F89F00B38E0A /* LevelPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E042C62F89F00B38E0A /* LevelPoint.swift */; };
-		97934E132C62F8DB00B38E0A /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E122C62F8DB00B38E0A /* MapViewModel.swift */; };
 		97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E142C62F8DF00B38E0A /* SearchMapViewModel.swift */; };
 		97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E162C62F8E300B38E0A /* PlaceListViewModel.swift */; };
 		97934E192C62F8E700B38E0A /* ReviewListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E182C62F8E700B38E0A /* ReviewListViewModel.swift */; };
@@ -34,7 +35,7 @@
 		97934E212C62FAC300B38E0A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E202C62FAC300B38E0A /* Location.swift */; };
 		97934E232C62FAC800B38E0A /* Plan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E222C62FAC800B38E0A /* Plan.swift */; };
 		97934E252C62FACE00B38E0A /* Contract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E242C62FACE00B38E0A /* Contract.swift */; };
-		97934E292C62FDF700B38E0A /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E282C62FDF700B38E0A /* MapViewController.swift */; };
+		97934E292C62FDF700B38E0A /* KakaoMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E282C62FDF700B38E0A /* KakaoMapViewController.swift */; };
 		97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E2A2C62FE0F00B38E0A /* SearchMapViewController.swift */; };
 		97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E2C2C62FE1900B38E0A /* PlaceListViewController.swift */; };
 		97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */; };
@@ -88,9 +89,17 @@
 		97D1BEA82C6C954100F7A983 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEA62C6C954100F7A983 /* DataManager.swift */; };
 		97D1BEA92C6C954100F7A983 /* SampleChatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEA72C6C954100F7A983 /* SampleChatData.swift */; };
 		97D1BEAB2C6C97C600F7A983 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97D1BEAA2C6C97C600F7A983 /* GoogleService-Info.plist */; };
+		97934E4F2C633FA700B38E0A /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E4E2C633FA700B38E0A /* Bundle.swift */; };
+		97934E562C659E3000B38E0A /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97934E552C659E3000B38E0A /* APPKey.plist */; };
+		97934E5A2C65EDBD00B38E0A /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E592C65EDBD00B38E0A /* MapViewController.swift */; };
+		97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934E652C68614E00B38E0A /* CustomAnnotation.swift */; };
+		97B4E8932C6AE6AA0028BE1F /* KakaoAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */; };
+		97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMapDetailViewController.swift; sourceTree = "<group>"; };
+		977A52B22C69A84500E375F1 /* AnnotationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationDetailViewController.swift; sourceTree = "<group>"; };
 		1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewController.swift; sourceTree = "<group>"; };
 		1543FB282C6317EA002E4CC8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewModel.swift; sourceTree = "<group>"; };
@@ -132,7 +141,6 @@
 		97934E002C62F89200B38E0A /* ChatRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoom.swift; sourceTree = "<group>"; };
 		97934E022C62F89700B38E0A /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		97934E042C62F89F00B38E0A /* LevelPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelPoint.swift; sourceTree = "<group>"; };
-		97934E122C62F8DB00B38E0A /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		97934E142C62F8DF00B38E0A /* SearchMapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMapViewModel.swift; sourceTree = "<group>"; };
 		97934E162C62F8E300B38E0A /* PlaceListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceListViewModel.swift; sourceTree = "<group>"; };
 		97934E182C62F8E700B38E0A /* ReviewListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewListViewModel.swift; sourceTree = "<group>"; };
@@ -141,7 +149,7 @@
 		97934E202C62FAC300B38E0A /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		97934E222C62FAC800B38E0A /* Plan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plan.swift; sourceTree = "<group>"; };
 		97934E242C62FACE00B38E0A /* Contract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contract.swift; sourceTree = "<group>"; };
-		97934E282C62FDF700B38E0A /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		97934E282C62FDF700B38E0A /* KakaoMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoMapViewController.swift; sourceTree = "<group>"; };
 		97934E2A2C62FE0F00B38E0A /* SearchMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMapViewController.swift; sourceTree = "<group>"; };
 		97934E2C2C62FE1900B38E0A /* PlaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceListViewController.swift; sourceTree = "<group>"; };
 		97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewListViewController.swift; sourceTree = "<group>"; };
@@ -193,6 +201,11 @@
 		97D1BEA62C6C954100F7A983 /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		97D1BEA72C6C954100F7A983 /* SampleChatData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleChatData.swift; sourceTree = "<group>"; };
 		97D1BEAA2C6C97C600F7A983 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		97934E552C659E3000B38E0A /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
+		97934E592C65EDBD00B38E0A /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		97934E652C68614E00B38E0A /* CustomAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
+		97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoAPIService.swift; sourceTree = "<group>"; };
+		97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,8 +264,9 @@
 		97934DD32C62F3C600B38E0A /* GreenSitter */ = {
 			isa = PBXGroup;
 			children = (
-				3BEFEC6F2C633D5D00E48D1E /* GreenSitter.entitlements */,
-				97D1BEAA2C6C97C600F7A983 /* GoogleService-Info.plist */,
+				97934E522C635D5700B38E0A /* GreenSitter.entitlements */,
+				97934E552C659E3000B38E0A /* APPKey.plist */,
+				97934E342C62FEEA00B38E0A /* GoogleService-Info.plist */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
 				97934DD82C62F3C600B38E0A /* ViewController.swift */,
@@ -302,8 +316,8 @@
 		97934DEA2C62F73A00B38E0A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				97934E282C62FDF700B38E0A /* MapViewController.swift */,
 				97934E2A2C62FE0F00B38E0A /* SearchMapViewController.swift */,
+				974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */,
 				97934E2C2C62FE1900B38E0A /* PlaceListViewController.swift */,
 				97934E2E2C62FE2500B38E0A /* ReviewListViewController.swift */,
 				97934E322C62FE3400B38E0A /* ReviewViewController.swift */,
@@ -314,7 +328,7 @@
 		97934DEB2C62F74600B38E0A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				97934E122C62F8DB00B38E0A /* MapViewModel.swift */,
+				97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */,
 				97934E142C62F8DF00B38E0A /* SearchMapViewModel.swift */,
 				97934E162C62F8E300B38E0A /* PlaceListViewModel.swift */,
 				97934E182C62F8E700B38E0A /* ReviewListViewModel.swift */,
@@ -326,6 +340,7 @@
 		97934DEC2C62F75300B38E0A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -352,7 +367,9 @@
 		97934DF12C62F77500B38E0A /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				97934E402C62FFDB00B38E0A /* CareFinderMapViewController.swift */,
+				97934E502C6345AC00B38E0A /* Views */,
+				97934E512C6345B200B38E0A /* ViewModels */,
+				97934E4E2C633FA700B38E0A /* Bundle.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -498,6 +515,15 @@
 				97D1BE7A2C6C8BBA00F7A983 /* PlanDateTimeViewController.swift */,
 				97D1BE7B2C6C8BBA00F7A983 /* PlanPlaceViewController.swift */,
 			);
+		};
+		97934E502C6345AC00B38E0A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				97934E282C62FDF700B38E0A /* KakaoMapViewController.swift */,
+				97934E592C65EDBD00B38E0A /* MapViewController.swift */,
+				97934E652C68614E00B38E0A /* CustomAnnotation.swift */,
+				977A52B22C69A84500E375F1 /* AnnotationDetailViewController.swift */,
+			);
 			path = Views;
 			sourceTree = "<group>";
 		};
@@ -515,6 +541,11 @@
 			isa = PBXGroup;
 			children = (
 				97D1BEA02C6C93FA00F7A983 /* PostViewModel.swift */,
+			);
+		};
+		97934E512C6345B200B38E0A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -598,6 +629,7 @@
 			files = (
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				97D1BEAB2C6C97C600F7A983 /* GoogleService-Info.plist in Resources */,
+				97934E562C659E3000B38E0A /* APPKey.plist in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -615,12 +647,16 @@
 				3B596DFA2C6B461200C71851 /* CustomTableCell.swift in Sources */,
 				97D1BE922C6C939300F7A983 /* ChatListViewController.swift in Sources */,
 				97934E3D2C62FFB600B38E0A /* (null) in Sources */,
+				97934E3D2C62FFB600B38E0A /* PostListViewController.swift in Sources */,
+				97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */,
+				97934E4F2C633FA700B38E0A /* Bundle.swift in Sources */,
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
 				97D1BE5A2C6C847600F7A983 /* AddPostViewController.swift in Sources */,
 				97934E1F2C62FABD00B38E0A /* Pin.swift in Sources */,
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
 				97D1BE7E2C6C8BBA00F7A983 /* PlanProgressBar.swift in Sources */,
 				97D1BE962C6C93A100F7A983 /* FirestoreManager.swift in Sources */,
+				97B4E8932C6AE6AA0028BE1F /* KakaoAPIService.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
 				97D1BE812C6C8BBA00F7A983 /* ChatAdditionalButtonModel.swift in Sources */,
@@ -629,6 +665,8 @@
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				97934E292C62FDF700B38E0A /* MapViewController.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
+				97934E292C62FDF700B38E0A /* KakaoMapViewController.swift in Sources */,
+				97934E3B2C62FFA800B38E0A /* ProfileViewController.swift in Sources */,
 				97934DFB2C62F87D00B38E0A /* User.swift in Sources */,
 				97D1BE8E2C6C939300F7A983 /* ChatTableViewCell.swift in Sources */,
 				97D1BE5B2C6C847600F7A983 /* MainPostListViewController.swift in Sources */,
@@ -653,7 +691,7 @@
 				97D1BE7F2C6C8BBA00F7A983 /* ChatAdditionalButtonsViewModel.swift in Sources */,
 				97D1BE6B2C6C8B7D00F7A983 /* NincknameViewModel.swift in Sources */,
 				97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */,
-				97934E132C62F8DB00B38E0A /* MapViewModel.swift in Sources */,
+				97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */,
 				97934E252C62FACE00B38E0A /* Contract.swift in Sources */,
 				97D1BE972C6C93A100F7A983 /* ChatListViewModel.swift in Sources */,
 				97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */,
@@ -663,8 +701,11 @@
 				97934DFF2C62F88B00B38E0A /* Post.swift in Sources */,
 				97D1BE912C6C939300F7A983 /* ChatMessageViewController.swift in Sources */,
 				97D1BE982C6C93A100F7A983 /* ChatViewModel.swift in Sources */,
+				97934E5A2C65EDBD00B38E0A /* MapViewController.swift in Sources */,
+				974FF2522C6C5BA5009277B9 /* SearchMapDetailViewController.swift in Sources */,
 				97934E212C62FAC300B38E0A /* Location.swift in Sources */,
 				97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */,
+				977A52B32C69A84500E375F1 /* AnnotationDetailViewController.swift in Sources */,
 				97934E052C62F89F00B38E0A /* LevelPoint.swift in Sources */,
 				97D1BE822C6C8BBA00F7A983 /* ChatAdditionalButtonsViewController.swift in Sources */,
 				97934E012C62F89200B38E0A /* ChatRoom.swift in Sources */,
@@ -830,6 +871,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GreenSitter/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진접근을 허용하시겠습니까?";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -859,6 +902,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GreenSitter/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진접근을 허용하시겠습니까?";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
