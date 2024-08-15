@@ -88,17 +88,17 @@ class LoginViewController: UIViewController {
             bodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
             
             appleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            appleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200),
+            appleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -230),
             appleButton.widthAnchor.constraint(equalToConstant: 300),
             appleButton.heightAnchor.constraint(equalToConstant: 50),
             
             googleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            googleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -120),
+            googleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -150),
             googleButton.widthAnchor.constraint(equalToConstant: 300),
             googleButton.heightAnchor.constraint(equalToConstant: 50),
             
             textButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            textButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
         ])
         
     }
@@ -257,7 +257,8 @@ class LoginViewController: UIViewController {
     
     //MARK: - MainView move
     @objc func navigationTap() {
-        
+        let mainPostListViewController = MainPostListViewController()
+        navigationController?.pushViewController(mainPostListViewController, animated: true)
     }
 }
 
