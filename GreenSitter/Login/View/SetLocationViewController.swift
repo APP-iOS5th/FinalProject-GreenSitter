@@ -44,13 +44,13 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         textField.frame.size.height = 30
         textField.borderStyle = .roundedRect
         textField.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        
         if let userLocation = user?.location {
-            textField.placeholder = "\(userLocation)"
-        }
-        else {
+            textField.placeholder = "\(userLocation.address)"
+        } else {
             textField.placeholder = "현재 위치가져오기 실패"
         }
-        textField.clearsOnBeginEditing = true //편집시 기존텍스트필드값 지우기
+        textField.clearsOnBeginEditing = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         // 위치 텍스트 추가
@@ -66,9 +66,12 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         
         textField.leftView = containerView
         textField.leftViewMode = .always
-        
+
+        textField.isEnabled = false  // 편집 불가능 설정
+
         return textField
     }()
+
     
     lazy var nextButton: UIButton = {
         let button = UIButton(type: .system)
@@ -101,9 +104,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             print("No user is currently logged in.")
         }
         
-        
-        print("User 객체 상태: \(String(describing: user))")
-        
         view.backgroundColor = .white
         
         view.addSubview(titleLabel)
@@ -132,44 +132,52 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
         ])
-        
+        getUserData()
     }
     //MARK: - NextButton Method
     @objc func nextTap() {
-//        guard let enterLocation = locationTextField.text, !enterLocation.isEmpty else {
-//            //위치정보를 입력하지 않을때
-//            let userLocation = user?.location ?? "위치 정보 없음"
-//            print("위치 정보가 비어 있습니다.")
-//            updateLocationInFirestore(location: userLocation)
-//            return
-//        }
-//        updateLocationInFirestore(location: enterLocation)
+        let setProfileViewController = SetProfileViewController()
+        self.navigationController?.pushViewController(setProfileViewController, animated: true)
+        
+    }
+    //MARK: - 위치정보 update
+    func updateLocationTextField(with location: Location) {
+        locationTextField.text = location.address
     }
     
-    //MARK: - 파이어베이스 위치정보 저장
-    private func updateLocationInFirestore(location: String) {
+    //MARK: - 파이어베이스 위치정보 가져오기
+    func getUserData() {
         guard let user = Auth.auth().currentUser else {
-            print("Error: Firebase authResult is nil.")
+            print("No user is currently logged in.")
             return
         }
         
-        let userData: [String: Any] = [
-            "location": location
-        ]
-        
-        db.collection("users").document(user.uid).setData(userData, merge: true) { error in
+        let docRef = db.collection("users").document(user.uid)
+        docRef.getDocument { [weak self] (document, error) in
             if let error = error {
-                print("Firestore Writing Error: \(error)")
+                print("Error getting document: \(error)")
+                return
+            }
+            
+            if let document = document, document.exists {
+                let data = document.data()
+                // Firestore 문서에서 "address" 필드를 가져옵니다.
+                let locationAddress = data?["address"] as? String ?? "현재 위치 가져오기 실패"
+                
+                DispatchQueue.main.async {
+                    self?.locationTextField.placeholder = locationAddress
+                }
+                
+                // 디버깅 로그
+                print("Document data: \(data ?? [:])")
+                
             } else {
-                print("Location successfully saved!")
+                print("Document does not exist")
             }
         }
-        DispatchQueue.main.async {
-            let setProfileViewController = SetProfileViewController()
-            self.navigationController?.pushViewController(setProfileViewController, animated: true)
-        }
-
     }
+    
+    
     
     //MARK: - SkipButton Method
     @objc func skipTap() {

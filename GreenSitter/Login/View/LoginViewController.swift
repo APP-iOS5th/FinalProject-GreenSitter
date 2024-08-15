@@ -230,6 +230,7 @@ class LoginViewController: UIViewController {
                     "displayName": user.displayName ?? "",
                     "location": users?.location ?? "",
                     "enabled": false,  // 콤마 추가
+                    "address": "서울특별시 구로구 온수동"
                 ]) { error in
                     if let error = error {
                         print("Firestore Save Error: \(error.localizedDescription)")
