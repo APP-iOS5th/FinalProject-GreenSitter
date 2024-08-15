@@ -191,6 +191,12 @@ class ProfileViewController: UIViewController {
         
         container.isHidden = true // 초기에는 숨김 상태로 설정
         textFieldContainer = container
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNicknameChanged), name: Notification.Name("NicknameChanged"), object: nil)
+
+    }
+    @objc func handleNicknameChanged() {
+        // 사용자 데이터를 다시 fetch하여 갱신합니다.
+        fetchUserFirebase()
     }
     
 }
