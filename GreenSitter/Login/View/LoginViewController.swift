@@ -257,8 +257,9 @@ class LoginViewController: UIViewController {
     
     //MARK: - MainView move
     @objc func navigationTap() {
-        let mainPostListViewController = MainPostListViewController()
-        navigationController?.pushViewController(mainPostListViewController, animated: true)
+        if let tabBarController = self.tabBarController {
+            tabBarController.selectedIndex = 0 // Home 탭으로 설정
+        }
     }
 }
 
