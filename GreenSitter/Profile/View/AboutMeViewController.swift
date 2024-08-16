@@ -62,7 +62,7 @@ class AboutMeViewController: UIViewController{
     
     lazy var nicknameLabel: UILabel = {
         let label = UILabel()
-        label.text = "지용"
+        label.text = user?.nickname
         label.font = UIFont.boldSystemFont(ofSize: 28)
         label.textColor = UIColor(named: "LabelsPrimary")
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -153,10 +153,12 @@ class AboutMeViewController: UIViewController{
             locationLabel.leadingAnchor.constraint(equalTo: circleView.trailingAnchor, constant: 50),
             locationLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
             
-            tableView.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 60),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -10),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+        fetchUserFirebase()
     }
+    
 }
