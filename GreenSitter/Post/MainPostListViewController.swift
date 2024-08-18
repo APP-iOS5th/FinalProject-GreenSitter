@@ -97,7 +97,17 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
         view.addSubview(addPostButton)
         
         let addPostButtonAction = UIAction { [weak self] _ in
-            print("addPostButton Tapped")
+            guard let self = self else { return }
+            
+            
+            let addPostViewController = AddPostViewController()
+            
+            
+            if let navigationController = self.navigationController {
+                navigationController.pushViewController(addPostViewController, animated: true)
+            } else {
+                print("Navigation controller not found.")
+            }
         }
         
         addPostButton.addAction(addPostButtonAction, for: .touchUpInside)
@@ -109,6 +119,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
             addPostButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
+    
     
     func setupTableView() {
         tableView.dataSource = self
@@ -147,7 +158,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredPosts.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
         cell.textLabel?.text = filteredPosts[indexPath.row]
