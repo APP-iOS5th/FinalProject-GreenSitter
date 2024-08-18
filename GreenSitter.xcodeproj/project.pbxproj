@@ -14,6 +14,8 @@
 		3BCA713D2C64B61100438BD5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 3BCA713C2C64B61100438BD5 /* FirebaseStorage */; };
 		3BEFEC752C63547D00E48D1E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC742C63547D00E48D1E /* GoogleSignIn */; };
 		3BEFEC772C63547D00E48D1E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC762C63547D00E48D1E /* GoogleSignInSwift */; };
+		58F68FE72C7210C700A7F564 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 58F68FE62C7210C700A7F564 /* APPKey.plist */; };
+		58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */; };
 		974FF2522C6C5BA5009277B9 /* SearchMapDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */; };
 		977A52B32C69A84500E375F1 /* AnnotationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977A52B22C69A84500E375F1 /* AnnotationDetailViewController.swift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
@@ -124,6 +126,8 @@
 		58E7821F2C6C2F4B00572554 /* ChatPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPostViewController.swift; sourceTree = "<group>"; };
 		58E782212C6C36FB00572554 /* PostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		58E782232C6C4F5300572554 /* ChatMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageViewController.swift; sourceTree = "<group>"; };
+		58F68FE62C7210C700A7F564 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
+		58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputViewController.swift; sourceTree = "<group>"; };
 		974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMapDetailViewController.swift; sourceTree = "<group>"; };
 		977A52B22C69A84500E375F1 /* AnnotationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationDetailViewController.swift; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -264,6 +268,7 @@
 		97934DD32C62F3C600B38E0A /* GreenSitter */ = {
 			isa = PBXGroup;
 			children = (
+				58F68FE62C7210C700A7F564 /* APPKey.plist */,
 				97D1BED12C6CA7A300F7A983 /* GoogleService-Info.plist */,
 				97D1BEB02C6C9DDD00F7A983 /* GreenSitter.entitlements */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
@@ -420,9 +425,9 @@
 		97D1BE502C6C847600F7A983 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				97D1BEBB2C6C9DF400F7A983 /* Views */,
 				97D1BEA62C6C954100F7A983 /* DataManager.swift */,
 				97D1BEA72C6C954100F7A983 /* SampleChatData.swift */,
+				97D1BEBB2C6C9DF400F7A983 /* Views */,
 				97D1BE712C6C8BB900F7A983 /* CustomComponents */,
 				97D1BE762C6C8BB900F7A983 /* Models */,
 				97D1BE742C6C8BB900F7A983 /* ViewModels */,
@@ -550,6 +555,7 @@
 				97D1BEB82C6C9DF400F7A983 /* MakePlanViewController.swift */,
 				97D1BEB92C6C9DF400F7A983 /* PlanDateTimeViewController.swift */,
 				97D1BEBA2C6C9DF400F7A983 /* PlanPlaceViewController.swift */,
+				58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -631,6 +637,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58F68FE72C7210C700A7F564 /* APPKey.plist in Resources */,
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
 				97D1BED22C6CA7A300F7A983 /* GoogleService-Info.plist in Resources */,
@@ -672,6 +679,7 @@
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				97934E292C62FDF700B38E0A /* KakaoMapViewController.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
+				58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */,
 				97934E292C62FDF700B38E0A /* KakaoMapViewController.swift in Sources */,
 				97D1BEC22C6C9DF400F7A983 /* FinalConfirmPlanViewController.swift in Sources */,
 				97D1BEAD2C6C9D9400F7A983 /* PinShape.swift in Sources */,

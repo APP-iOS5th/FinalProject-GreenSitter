@@ -55,6 +55,10 @@ class ChatPostViewController: UIViewController {
         super.viewDidLoad()
 
         setupUI()
+        
+        // 게시물 디테일로 이동하기 위한 Tap Gesture
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        self.view.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Setup UI
@@ -90,6 +94,16 @@ class ChatPostViewController: UIViewController {
             postStatusLabel.widthAnchor.constraint(equalToConstant: 49),
             postStatusLabel.heightAnchor.constraint(equalToConstant: 20)
         ])
+    }
+    
+    // MARK: - UITapGestureRecognizer action
+    @objc private func handleTap() {
+        let postDetailViewController = PostDetailViewController()
+        
+        // TODO: - 특정 게시물로 이동
+//        postDetailViewController.postId = postId
+        
+        self.navigationController?.pushViewController(postDetailViewController, animated: true)
     }
 
 }
