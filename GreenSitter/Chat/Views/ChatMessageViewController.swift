@@ -8,6 +8,9 @@
 import UIKit
 
 class ChatMessageViewController: UIViewController {
+    // 임시 데이터
+    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!"]
+    
     // 메세지 뷰
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -15,7 +18,7 @@ class ChatMessageViewController: UIViewController {
         tableView.separatorStyle = .none
         // 셀 선택 불가능하게 설정
         tableView.allowsSelection = false
-//        tableView.dataSource = self
+        tableView.dataSource = self
         tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -28,30 +31,37 @@ class ChatMessageViewController: UIViewController {
         setupUI()
     }
     
+    // MARK: - Setup UI
     private func setupUI() {
         self.view.backgroundColor = .bgSecondary
-
+        
+        tableView.register(ChatMessageTableViewCell.self, forCellReuseIdentifier: "ChatMessageCell")
+        
         self.view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
-            tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
+            tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             tableView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         ])
     }
 
 }
 
-//extension ChatMessageViewController: UITableViewDataSource {
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        
-//    }
-//    
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        
-//    }
-//}
+extension ChatMessageViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
+        cell.messageLabel.text = messages[indexPath.row]
+        
+        return cell
+    }
+}
 
 extension ChatMessageViewController: UITableViewDelegate {
     
