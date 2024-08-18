@@ -6,9 +6,12 @@
 //
 
 import UIKit
+import FirebaseFirestore
+import FirebaseAuth
 
 class SelfIntroductionViewController: UIViewController {
     var user: User?
+    let db = Firestore.firestore()
     
     lazy var titleLabel: UILabel = {
         let label =  UILabel()
@@ -76,5 +79,6 @@ class SelfIntroductionViewController: UIViewController {
             completeButton.widthAnchor.constraint(equalToConstant: 350),
             completeButton.heightAnchor.constraint(equalToConstant: 45)
         ])
+        fetchUserFirebase()
     }
 }

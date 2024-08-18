@@ -104,7 +104,7 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
         switch indexPath.section {
         case 0:
             cell = tableView.dequeueReusableCell(withIdentifier: "introductionTableCell", for: indexPath) as! IntroductionTableCell
-            (cell as! IntroductionTableCell).bodyLabel.text = "자기소개"
+            (cell as! IntroductionTableCell).bodyLabel.text = user?.aboutMe
         case 1:
             cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
             if indexPath.row == 0 {
