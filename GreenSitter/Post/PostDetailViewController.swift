@@ -10,6 +10,18 @@ import MapKit
 
 class PostDetailViewController: UIViewController {
     
+    private let scrollView: UIScrollView = {
+        let scrollView =  UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private let contentView: UIView = {
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        return contentView
+    }()
+    
     private let backButton: UIButton = {
         let button = UIButton()
         let image = UIImage(systemName: "arrow.backward")
@@ -54,21 +66,21 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    private let deviderLine1: UIImageView = {
+    private let dividerLine1: UIImageView = {
         let line = UIImageView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
-    private let deviderLine2: UIImageView = {
+    private let dividerLine2: UIImageView = {
         let line = UIImageView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
-    private let deviderLine3: UIImageView = {
+    private let dividerLine3: UIImageView = {
         let line = UIImageView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
@@ -110,13 +122,21 @@ class PostDetailViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.numberOfLines = 0
-        label.text = """
+        
+        let dummyString = """
         저는 병갈고무나무랑 여인초를 키우고 있는데,
         저랑 비슷한 품종의 식물을 키우는 분들 계신가요?
         저는 재택근무 중이라 바쁘신 분들 대신해서
         화분 관리 도와드릴 수 있어요~~
         서로서로 정보 공유도 했으면 좋겠어요 ^^
         """
+        let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = label.font.pointSize / 4
+        let attributes: [NSAttributedString.Key: Any] = [
+                   .paragraphStyle: paragraphStyle,
+                   .font: UIFont.systemFont(ofSize: 14)]
+        let attributedString: NSAttributedString = NSAttributedString(string: dummyString, attributes: attributes)
+        label.attributedText = attributedString
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -161,30 +181,45 @@ class PostDetailViewController: UIViewController {
     }
     
     private func setupLayout() {
-        view.addSubview(backButton)
-        view.addSubview(profileImageView)
-        view.addSubview(usernameLabel)
-        view.addSubview(userLevelLabel)
-        view.addSubview(postTimeLabel)
-        view.addSubview(statusLabel)
-        view.addSubview(postTitleLabel)
-        view.addSubview(pickerImageView)
-        view.addSubview(descriptionLabel)
-        view.addSubview(deviderLine1)
-        view.addSubview(deviderLine2)
-        view.addSubview(deviderLine3)
-        view.addSubview(contactButton)
-        view.addSubview(mapLabel)
-        view.addSubview(mapView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(backButton)
+        contentView.addSubview(profileImageView)
+        contentView.addSubview(usernameLabel)
+        contentView.addSubview(userLevelLabel)
+        contentView.addSubview(postTimeLabel)
+        contentView.addSubview(statusLabel)
+        contentView.addSubview(postTitleLabel)
+        contentView.addSubview(pickerImageView)
+        contentView.addSubview(descriptionLabel)
+        contentView.addSubview(dividerLine1)
+        contentView.addSubview(dividerLine2)
+        contentView.addSubview(dividerLine3)
+        contentView.addSubview(contactButton)
+        contentView.addSubview(mapLabel)
+        contentView.addSubview(mapView)
         
         NSLayoutConstraint.activate([
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -10),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
+            
+            backButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: -10),
+            backButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             backButton.widthAnchor.constraint(equalToConstant: 20),
             backButton.heightAnchor.constraint(equalToConstant: 20),
             
-            profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            profileImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             profileImageView.widthAnchor.constraint(equalToConstant: 50),
             profileImageView.heightAnchor.constraint(equalToConstant: 50),
             
@@ -198,49 +233,51 @@ class PostDetailViewController: UIViewController {
             postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
             
             statusLabel.bottomAnchor.constraint(equalTo: postTimeLabel.bottomAnchor, constant: 40),
-            statusLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            statusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             statusLabel.widthAnchor.constraint(equalToConstant: 40),
             statusLabel.heightAnchor.constraint(equalToConstant: 20),
             
             postTitleLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 50),
-            postTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            postTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            postTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            deviderLine1.bottomAnchor.constraint(equalTo: postTitleLabel.topAnchor, constant: 35),
-            deviderLine1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            deviderLine1.widthAnchor.constraint(equalToConstant: 360),
-            deviderLine1.heightAnchor.constraint(equalToConstant: 1),
+            dividerLine1.bottomAnchor.constraint(equalTo: postTitleLabel.topAnchor, constant: 35),
+            dividerLine1.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            dividerLine1.widthAnchor.constraint(equalToConstant: 360),
+            dividerLine1.heightAnchor.constraint(equalToConstant: 1),
             
-            deviderLine2.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: -20),
-            deviderLine2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            deviderLine2.widthAnchor.constraint(equalToConstant: 360),
-            deviderLine2.heightAnchor.constraint(equalToConstant: 1),
+            dividerLine2.bottomAnchor.constraint(equalTo: dividerLine1.topAnchor, constant: 145),
+            dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            dividerLine2.widthAnchor.constraint(equalToConstant: 360),
+            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
             
-            deviderLine3.bottomAnchor.constraint(equalTo: mapLabel.topAnchor, constant: -10),
-            deviderLine3.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            deviderLine3.widthAnchor.constraint(equalToConstant: 360),
-            deviderLine3.heightAnchor.constraint(equalToConstant: 1),
+            dividerLine3.bottomAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
+            dividerLine3.bottomAnchor.constraint(equalTo: mapLabel.topAnchor, constant: 100),
+            dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            dividerLine3.widthAnchor.constraint(equalToConstant: 360),
+            dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
             pickerImageView.widthAnchor.constraint(equalToConstant: 100),
             pickerImageView.heightAnchor.constraint(equalToConstant: 100),
-            pickerImageView.topAnchor.constraint(equalTo: deviderLine1.bottomAnchor, constant: 20),
-            pickerImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            pickerImageView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
+            pickerImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
-            descriptionLabel.bottomAnchor.constraint(equalTo: deviderLine3.topAnchor, constant: -30),
-            descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            descriptionLabel.bottomAnchor.constraint(equalTo: dividerLine2.topAnchor, constant: 120),
+            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            contactButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-            contactButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            contactButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
+            contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             contactButton.widthAnchor.constraint(equalToConstant: 100),
             contactButton.heightAnchor.constraint(equalToConstant: 40),
             
-            mapLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            mapLabel.bottomAnchor.constraint(equalTo: mapView.topAnchor, constant: -10 ),
+            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabel.bottomAnchor.constraint(equalTo: mapView.topAnchor, constant: 90 ),
             
-            mapView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
-            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+
+            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
+            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapView.heightAnchor.constraint(equalToConstant: 200)
         ])
     }
@@ -279,6 +316,20 @@ extension PostDetailViewController: UIImagePickerControllerDelegate, UINavigatio
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+    }
+}
+
+extension UIColor {
+    class var dominant: UIColor {
+        return UIColor(red: 64/255, green: 219/255, blue: 77/255, alpha: 1.0)
+    }
+    
+    class var complementaryColor: UIColor {
+        return UIColor(red: 219/255, green: 75/255, blue: 64/255, alpha: 1.0)
+    }
+    
+    class var labelsSecondaryColor: UIColor {
+        return UIColor(red: 30/255, green: 30/255, blue: 30/255, alpha: 1.0)
     }
 }
 
