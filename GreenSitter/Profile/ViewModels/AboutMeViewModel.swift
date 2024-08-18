@@ -11,9 +11,19 @@ import FirebaseFirestore
 import FirebaseStorage
 
 extension AboutMeViewController {
-    //MARK: - 수정하기
+    //MARK: - 자기소개 수정하기
     @objc func editButtonTapped() {
+        let selfIntroduction = SelfIntroductionViewController()
+        present(selfIntroduction, animated: true)
         
+        if let presentationController = selfIntroduction.presentationController as? UISheetPresentationController {
+            presentationController.detents = [
+                UISheetPresentationController.Detent.custom { _ in
+                    return 400
+                }
+            ]
+            presentationController.preferredCornerRadius = 20 // 모서리 둥글기 설정 (선택 사항)
+        }
     }
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {

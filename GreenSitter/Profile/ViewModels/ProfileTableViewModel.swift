@@ -71,18 +71,18 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             else if indexPath.row == 1 {
                 cell.titleLabel.text = nil
                 cell.bodyLabel.text = "로그아웃"
-                cell.bodyLabel.textColor = UIColor.systemBlue
-                cell.iconImageView.image = UIImage(systemName: "power")
-                cell.iconImageView.tintColor = UIColor.systemBlue
+                cell.bodyLabel.textColor = .systemBlue
+                cell.iconImageView.image = UIImage(systemName: "rectangle.portrait.and.arrow.forward.fill")
+                cell.iconImageView.tintColor = .systemBlue
                 cell.actionButton.isHidden = true
                 cell.iconImageView.isHidden = false
             }
             else if indexPath.row == 2 {
                 cell.titleLabel.text = nil
                 cell.bodyLabel.text = "탈퇴하기"
-                cell.bodyLabel.textColor = UIColor.red
+                cell.bodyLabel.textColor = .systemRed
                 cell.iconImageView.image = UIImage(systemName: "person.crop.circle.badge.xmark")
-                cell.iconImageView.tintColor = UIColor.red
+                cell.iconImageView.tintColor = .systemRed
                 cell.actionButton.isHidden = true
                 cell.iconImageView.isHidden = false
             }

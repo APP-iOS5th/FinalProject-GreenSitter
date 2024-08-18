@@ -126,15 +126,15 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
         case 3:
             cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
             if indexPath.row == 0 {
-                (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "heart.fill")
-                (cell as! CustomTableCell).iconImage.tintColor = .systemRed
-                (cell as! CustomTableCell).textsLabel.text = "회원 탈퇴"
-                (cell as! CustomTableCell).textsLabel.textColor = .systemRed
-            } else {
-                (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "list.bullet.clipboard.fill")
+                (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "rectangle.portrait.and.arrow.forward.fill")
                 (cell as! CustomTableCell).iconImage.tintColor = .systemBlue
                 (cell as! CustomTableCell).textsLabel.text = "로그아웃"
                 (cell as! CustomTableCell).textsLabel.textColor = .systemBlue
+            } else {
+                (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "person.crop.circle.badge.xmark")
+                (cell as! CustomTableCell).iconImage.tintColor = .systemRed
+                (cell as! CustomTableCell).textsLabel.text = "회원탈퇴"
+                (cell as! CustomTableCell).textsLabel.textColor = .systemRed
             }
         case 4:
             cell = tableView.dequeueReusableCell(withIdentifier: "informationTableCell", for: indexPath) as! InformationTableCell
