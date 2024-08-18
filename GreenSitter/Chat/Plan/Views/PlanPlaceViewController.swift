@@ -47,7 +47,7 @@ class PlanPlaceViewController: UIViewController {
         placeText.font = UIFont.systemFont(ofSize: 17)
         placeText.textColor = .systemGreen
         placeText.translatesAutoresizingMaskIntoConstraints = false
-        placeText.text = "서울특별시 종로구 사직로8길 1"
+        placeText.text = viewModel.planPlace?.placeName
         return placeText
     }()
     
@@ -72,6 +72,9 @@ class PlanPlaceViewController: UIViewController {
         dealHereButton.addAction(UIAction { [weak self] _ in
             self?.dealHereButtonTapped()
         }, for: .touchUpInside)
+        if viewModel.planPlace == nil {
+            dealHereButton.isHidden = true
+        }
         return dealHereButton
     }()
     

@@ -207,6 +207,7 @@ class FinalConfirmPlanViewController: UIViewController {
             }
             self?.viewModel.ownerNotification = isNotificationSwitchOn
             self?.viewModel.progress = 3
+            self?.viewModel.sendPlan()
             self?.dismiss(animated: true)
         }, for: .touchUpInside)
         return offeringButton
@@ -367,7 +368,7 @@ class FinalConfirmPlanViewController: UIViewController {
         dateLabel.text = dateString
         timeLabel.text = timeString
         
-        placeText.text = "서울특별시 종로구 사직로8길 1"
+        placeText.text = viewModel.planPlace?.placeName
     }
     
 }
