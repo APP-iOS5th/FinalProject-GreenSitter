@@ -20,27 +20,31 @@ class FinalConfirmPlanViewController: UIViewController {
     
     private var viewModel: MakePlanViewModel
     
-    private var scrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
        let scrollView = UIScrollView()
+        scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 10)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
-    private var cautionTextStackView: UIStackView = {
+    private lazy var cautionTextStackView: UIStackView = {
        let cautionTitleLabel = UILabel()
-        cautionTitleLabel.text = "서로를 배려하는 소비자/새싹 돌봄이로 노력해주세요!\n"
+        cautionTitleLabel.text = "서로 배려하는 소비자/새싹 돌봄이로 노력해주세요!\n"
+        cautionTitleLabel.addCharacterSpacing(-0.043)
         cautionTitleLabel.numberOfLines = 3
         cautionTitleLabel.textColor = .systemGreen
         cautionTitleLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         cautionTitleLabel.lineBreakMode = .byCharWrapping
         let firstLabel = UILabel()
         firstLabel.text = "1. 약속 시간을 지켜주세요."
+        firstLabel.addCharacterSpacing(-0.043)
         firstLabel.numberOfLines = 2
         firstLabel.textColor = UIColor(named: "LabelsPrimary")
         firstLabel.font = UIFont.systemFont(ofSize: 15)
         firstLabel.lineBreakMode = .byCharWrapping
         let secondLabel = UILabel()
-        secondLabel.text = "2. 만일 약속 시간보다 늦으면, 사전에 연락해주세요."
+        secondLabel.text = "2. 약속 시간보다 늦으면, 사전에 연락해주세요."
+        secondLabel.addCharacterSpacing(-0.043)
         secondLabel.numberOfLines = 2
         secondLabel.textColor = UIColor(named: "LabelsPrimary")
         secondLabel.font = UIFont.systemFont(ofSize: 15)
@@ -58,7 +62,7 @@ class FinalConfirmPlanViewController: UIViewController {
         return cautionTextStackView
     }()
     
-    private var dateTimeTitle: UILabel = {
+    private lazy var dateTimeTitle: UILabel = {
        let dateTimeTitle = UILabel()
         dateTimeTitle.text = "약속 날짜 / 시간"
         dateTimeTitle.addCharacterSpacing(-0.043)
@@ -67,7 +71,7 @@ class FinalConfirmPlanViewController: UIViewController {
         return dateTimeTitle
     }()
     
-    private var dateLabel: UILabel = {
+    private lazy var dateLabel: UILabel = {
         let dateLabel = UILabel()
         dateLabel.textAlignment = .center
         dateLabel.textColor = .systemBlue
@@ -79,7 +83,7 @@ class FinalConfirmPlanViewController: UIViewController {
         return dateLabel
     }()
     
-    private var timeLabel: UILabel = {
+    private lazy var timeLabel: UILabel = {
         let timeLabel = UILabel()
         timeLabel.textAlignment = .center
         timeLabel.textColor = .systemBlue
@@ -91,7 +95,7 @@ class FinalConfirmPlanViewController: UIViewController {
         return timeLabel
     }()
     
-    private var placeTitle: UILabel = {
+    private lazy var placeTitle: UILabel = {
        let placeTitle = UILabel()
         placeTitle.text = "약속 장소"
         placeTitle.addCharacterSpacing(-0.043)
@@ -100,7 +104,7 @@ class FinalConfirmPlanViewController: UIViewController {
         return placeTitle
     }()
     
-    private var placeText: UILabel = {
+    private lazy var placeText: UILabel = {
         let placeText = UILabel()
         placeText.textAlignment = .center
         placeText.font = UIFont.systemFont(ofSize: 17)
@@ -109,7 +113,7 @@ class FinalConfirmPlanViewController: UIViewController {
         return placeText
     }()
     
-    private var dealHereText: UILabel = {
+    private lazy var dealHereText: UILabel = {
         let dealHereText = UILabel()
         dealHereText.text = "여기서 거래할게요!"
         dealHereText.textAlignment = .center
@@ -119,7 +123,7 @@ class FinalConfirmPlanViewController: UIViewController {
         return dealHereText
     }()
     
-    private var dealHereView: UIView = {
+    private lazy var dealHereView: UIView = {
         let dealHereView = UIView()
         dealHereView.layer.cornerRadius = 10
         dealHereView.layer.borderWidth = 1
@@ -130,24 +134,26 @@ class FinalConfirmPlanViewController: UIViewController {
         return dealHereView
     }()
     
-    private var imageView: UIImageView = {
+    private lazy var imageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "tree"))
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    private var transportAdviceStackView: UIStackView = {
+    private lazy var transportAdviceStackView: UIStackView = {
         let transportAdviceLabel = UILabel()
-        transportAdviceLabel.text = "해당 식물이 크거나 무거워 이동이 필요할 수 있습니다.\n차량 등 적절한 운송 수단을 고려해주세요."
+        transportAdviceLabel.text = "해당 식물이 크거나 무거워 운송 수단이 필요할 수 있습니다.\n차량 등 적절한 운송 수단을 고려해주세요."
         transportAdviceLabel.numberOfLines = 3
+        transportAdviceLabel.addCharacterSpacing(-0.043)
+        transportAdviceLabel.lineBreakMode = .byCharWrapping
         transportAdviceLabel.textColor = .systemRed
         transportAdviceLabel.font = UIFont.systemFont(ofSize: 15)
         transportAdviceLabel.addCharacterSpacing(-0.043)
         
         let transportAdviceStackView = UIStackView()
         transportAdviceStackView.backgroundColor = UIColor(named: "FillTertiary")
-        transportAdviceStackView.layoutMargins = UIEdgeInsets(top: 14, left: 4, bottom: 14, right: 4)
+        transportAdviceStackView.layoutMargins = UIEdgeInsets(top: 14, left: 10, bottom: 14, right: 10)
         transportAdviceStackView.isLayoutMarginsRelativeArrangement = true
         transportAdviceStackView.layer.cornerRadius = 12
         transportAdviceStackView.clipsToBounds = true
@@ -156,13 +162,13 @@ class FinalConfirmPlanViewController: UIViewController {
         return transportAdviceStackView
     }()
     
-    private var notificationSwitch: UISwitch = {
+    private lazy var notificationSwitch: UISwitch = {
         let notificationSwitch = UISwitch()
         notificationSwitch.isOn = true
         return notificationSwitch
     }()
     
-    private var notificationStackView: UIStackView = {
+    private lazy var notificationStackView: UIStackView = {
         let notificationLabel = UILabel()
         notificationLabel.text = "약속 시간 30분 전 알림"
         notificationLabel.textColor = UIColor(named: "LabelsPrimary")
@@ -180,25 +186,47 @@ class FinalConfirmPlanViewController: UIViewController {
         return notificationStackView
     }()
     
-    private var offeringButton: UIButton = {
+    private lazy var bottomPaddingView: UIView = {
+       let bottomPaddingView = UIView()
+        bottomPaddingView.backgroundColor = .clear
+        bottomPaddingView.translatesAutoresizingMaskIntoConstraints = false
+        return bottomPaddingView
+    }()
+    
+    private lazy var offeringButton: UIButton = {
         let offeringButton = UIButton()
         offeringButton.setTitle("약속 제안하기", for: .normal)
         offeringButton.backgroundColor = UIColor(named: "DominentColor")
         offeringButton.layer.cornerRadius = 10
         offeringButton.clipsToBounds = true
+        offeringButton.translatesAutoresizingMaskIntoConstraints = false
+        offeringButton.addAction(UIAction { [weak self] _ in
+            guard let isNotificationSwitchOn = self?.notificationSwitch.isOn else {
+                print("notificationSwitch is wrong")
+                return
+            }
+            self?.viewModel.ownerNotification = isNotificationSwitchOn
+            self?.viewModel.progress = 3
+            self?.dismiss(animated: true)
+        }, for: .touchUpInside)
         return offeringButton
     }()
     
-    private var editingButton: UIButton = {
+    private lazy var editingButton: UIButton = {
         let editingButton = UIButton()
         editingButton.setTitle("수정하기", for: .normal)
         editingButton.backgroundColor = .systemBlue
         editingButton.layer.cornerRadius = 10
         editingButton.clipsToBounds = true
+        editingButton.translatesAutoresizingMaskIntoConstraints = false
+        editingButton.addAction(UIAction { [weak self] _ in
+            self?.viewModel.progress = 0
+            self?.viewModel.backtoPreviousPage()
+        }, for: .touchUpInside)
         return editingButton
     }()
     
-    private var buttonStackView: UIStackView = {
+    private lazy var buttonStackView: UIStackView = {
         let buttonStackView = UIStackView()
         buttonStackView.axis = .vertical
         buttonStackView.spacing = 10
@@ -206,7 +234,6 @@ class FinalConfirmPlanViewController: UIViewController {
         buttonStackView.backgroundColor = UIColor(named: "BGPrimary")
         buttonStackView.layoutMargins = UIEdgeInsets(top: 16, left: 30, bottom: 16, right: 30)
         buttonStackView.isLayoutMarginsRelativeArrangement = true
-        buttonStackView.layer.cornerRadius = 20
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
         return buttonStackView
     }()
@@ -216,22 +243,24 @@ class FinalConfirmPlanViewController: UIViewController {
 
         view.backgroundColor = UIColor(named: "BGSecondary")
         
-        offeringButton.addAction(UIAction { [weak self] _ in
-
-            guard let isNotificationSwitchOn = self?.notificationSwitch.isOn else {
-                print("notificationSwitch is wrong")
-                return
-            }
-            self?.viewModel.ownerNotification = isNotificationSwitchOn
-            self?.viewModel.progress = 3
-            self?.dismiss(animated: true)
-        }, for: .touchUpInside)
-        
-        editingButton.addAction(UIAction { [weak self] _ in
-            self?.viewModel.progress = 0
-            self?.viewModel.gotoNextPage()
-        }, for: .touchUpInside)
         setupUI()
+        updateLabel()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        let maskPath = UIBezierPath(roundedRect: buttonStackView.bounds, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: 20, height: 20))
+        let maskLayer = CAShapeLayer()
+        maskLayer.frame = view.bounds
+        maskLayer.path = maskPath.cgPath
+        
+        buttonStackView.layer.mask = maskLayer
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateLabel()
     }
 
     private func setupUI() {
@@ -246,6 +275,7 @@ class FinalConfirmPlanViewController: UIViewController {
         scrollView.addSubview(imageView)
         scrollView.addSubview(transportAdviceStackView)
         scrollView.addSubview(notificationStackView)
+        scrollView.addSubview(bottomPaddingView)
         
         dealHereView.addSubview(placeText)
         dealHereView.addSubview(dealHereText)
@@ -259,35 +289,33 @@ class FinalConfirmPlanViewController: UIViewController {
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             cautionTextStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            cautionTextStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            cautionTextStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            cautionTextStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            cautionTextStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             
             dateTimeTitle.topAnchor.constraint(equalTo: cautionTextStackView.bottomAnchor, constant: 35),
-            dateTimeTitle.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            dateTimeTitle.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            dateTimeTitle.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 30),
+            dateTimeTitle.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             
             dateLabel.topAnchor.constraint(equalTo: dateTimeTitle.bottomAnchor, constant: 15),
-//            dateLabel.trailingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: -6),
-            dateLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            dateLabel.trailingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: -6),
             dateLabel.widthAnchor.constraint(equalToConstant: 130),
             dateLabel.heightAnchor.constraint(equalToConstant: 40),
             
             timeLabel.topAnchor.constraint(equalTo: dateTimeTitle.bottomAnchor, constant: 15),
-            timeLabel.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor, constant: 6),
-//            timeLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            timeLabel.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             timeLabel.widthAnchor.constraint(equalToConstant: 90),
             timeLabel.heightAnchor.constraint(equalToConstant: 40),
             
             placeTitle.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 25),
-            placeTitle.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            placeTitle.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            placeTitle.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            placeTitle.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             
             dealHereView.topAnchor.constraint(equalTo: placeTitle.bottomAnchor, constant: 15),
-            dealHereView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            dealHereView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            dealHereView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            dealHereView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             dealHereView.heightAnchor.constraint(equalToConstant: 150),
             
             placeText.centerXAnchor.constraint(equalTo: dealHereView.centerXAnchor),
@@ -302,21 +330,31 @@ class FinalConfirmPlanViewController: UIViewController {
             imageView.heightAnchor.constraint(equalToConstant: 200),
             
             transportAdviceStackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 40),
-            transportAdviceStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            transportAdviceStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            transportAdviceStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            transportAdviceStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             
             notificationStackView.topAnchor.constraint(equalTo: transportAdviceStackView.bottomAnchor, constant: 40),
-            notificationStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            notificationStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            notificationStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -124),
+            notificationStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            notificationStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             
-            buttonStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            offeringButton.heightAnchor.constraint(equalToConstant: 44),
+            editingButton.heightAnchor.constraint(equalToConstant: 44),
+            
+            bottomPaddingView.heightAnchor.constraint(equalToConstant: 150),
+            bottomPaddingView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            bottomPaddingView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+            bottomPaddingView.topAnchor.constraint(equalTo: notificationStackView.bottomAnchor),
+            bottomPaddingView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            
+            buttonStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            buttonStackView.heightAnchor.constraint(equalToConstant: 130)
             
         ])
         
+    }
+    
+    private func updateLabel() {
         let dateFormatter = DateFormatter()
         
         dateFormatter.dateStyle = .medium
@@ -330,8 +368,6 @@ class FinalConfirmPlanViewController: UIViewController {
         timeLabel.text = timeString
         
         placeText.text = "서울특별시 종로구 사직로8길 1"
-        
     }
-
+    
 }
-
