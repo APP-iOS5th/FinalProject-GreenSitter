@@ -63,7 +63,7 @@ class AboutMeViewController: UIViewController{
     lazy var nicknameLabel: UILabel = {
         let label = UILabel()
         label.text = user?.nickname
-        label.font = UIFont.boldSystemFont(ofSize: 28)
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textColor = UIColor(named: "LabelsPrimary")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -80,7 +80,7 @@ class AboutMeViewController: UIViewController{
     lazy var locationLabel: UILabel = {
         let label = UILabel()
         label.text = "경기도 양주시"
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 15)
         label.textColor = UIColor(named: "SeparatorsOpaque")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
