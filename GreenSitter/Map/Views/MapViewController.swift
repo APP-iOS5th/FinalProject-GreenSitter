@@ -27,6 +27,37 @@ class MapViewController: UIViewController {
     private var currentDetailViewController: AnnotationDetailViewController?
     private var cancellables = Set<AnyCancellable>()
     
+    // zoom control, user location buttons
+    private lazy var zoomInButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "plus"), for: .normal)
+        button.backgroundColor = .systemGray6
+        button.layer.cornerRadius = 4
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(zoomIn), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var zoomOutButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "minus"), for: .normal)
+        button.backgroundColor = .systemGray6
+        button.layer.cornerRadius = 4
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(zoomOut), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var userLocationButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "location.fill"), for: .normal)
+        button.backgroundColor = .systemGray6
+        button.layer.cornerRadius = 4
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(centerUserLocation), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -36,13 +67,46 @@ class MapViewController: UIViewController {
     
     private func setupUI() {
         view.addSubview(mapView)
+        view.addSubview(zoomInButton)
+        view.addSubview(zoomOutButton)
+        view.addSubview(userLocationButton)
+        
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            zoomInButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            zoomInButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            zoomInButton.widthAnchor.constraint(equalToConstant: 50),
+            zoomInButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            zoomOutButton.topAnchor.constraint(equalTo: zoomInButton.bottomAnchor, constant: 8),
+            zoomOutButton.leadingAnchor.constraint(equalTo: zoomInButton.leadingAnchor),
+            zoomOutButton.widthAnchor.constraint(equalTo: zoomInButton.widthAnchor),
+            zoomOutButton.heightAnchor.constraint(equalTo: zoomInButton.heightAnchor),
+            
+            userLocationButton.topAnchor.constraint(equalTo: zoomOutButton.bottomAnchor, constant: 8),
+            userLocationButton.leadingAnchor.constraint(equalTo: zoomOutButton.leadingAnchor),
+            userLocationButton.widthAnchor.constraint(equalTo: zoomInButton.widthAnchor),
+            userLocationButton.heightAnchor.constraint(equalTo: zoomInButton.heightAnchor),
         ])
     }
+    
+    @objc private func zoomIn() {
+        
+    }
+    
+    @objc private func zoomOut() {
+        
+    }
+    
+    @objc private func centerUserLocation() {
+        
+    }
+    
+    
     
     private func bindViewModel() {
         // current Location 기준으로 1000m 안 카메라 세팅
