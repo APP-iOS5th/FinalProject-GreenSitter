@@ -26,7 +26,7 @@ struct ChatRoom: Codable {
     let sitterLocation: Location
     var messages: [Message]
     let postId: String
-    let postImage: String
+    let postImage: String?
     let postTitle: String
     let postStatus: PostStatus
 }

@@ -8,11 +8,8 @@
 import UIKit
 
 class ChatViewController: UIViewController {
-    var chatViewModel: ChatViewViewModel?
-    var postId: String?
-    var postThumbnail: String?
-    var postTitle: String?
-    var postStatus: PostStatus?
+    private var chatViewModel = ChatViewModel()
+    var chatRoom: ChatRoom?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,12 +28,13 @@ class ChatViewController: UIViewController {
         let chatMessageViewController = ChatMessageViewController()
         let messageInputViewController = MessageInputViewController()
         
-        guard let postThumbnailUrl = URL(string: postThumbnail!) else {
-            return
+        if let firstImageUrlString = chatRoom?.postImage,
+           let postThumbnailUrl = URL(string: firstImageUrlString) {
+            chatViewModel.downloadImage(from: postThumbnailUrl, to: chatPostViewController.postThumbnailView)
         }
-        chatViewModel?.downloadImage(from: postThumbnailUrl, to: chatPostViewController.postThumbnailView)
-        chatPostViewController.postTitleLabel.text = postTitle
-        chatPostViewController.postStatusLabel.text = postStatus?.rawValue
+
+        chatPostViewController.postTitleLabel.text = chatRoom?.postTitle
+        chatPostViewController.postStatusLabel.text = chatRoom?.postStatus.rawValue
         
         chatPostViewController.view.translatesAutoresizingMaskIntoConstraints = false
         chatMessageViewController.view.translatesAutoresizingMaskIntoConstraints = false

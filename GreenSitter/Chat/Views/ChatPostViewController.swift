@@ -8,7 +8,7 @@
 import UIKit
 
 class ChatPostViewController: UIViewController {
-    var chatViewModel: ChatViewViewModel?
+    var chatViewModel: ChatViewModel?
     
     // 게시물 이미지
     lazy var postThumbnailView: UIImageView = {
@@ -78,11 +78,10 @@ class ChatPostViewController: UIViewController {
             postThumbnailView.heightAnchor.constraint(equalToConstant: 80),
             
             stackView.topAnchor.constraint(equalTo: postThumbnailView.topAnchor, constant: 10),
-            stackView.bottomAnchor.constraint(equalTo: postThumbnailView.topAnchor, constant: -10),
+            stackView.bottomAnchor.constraint(equalTo: postThumbnailView.bottomAnchor, constant: -10),
             stackView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             stackView.leadingAnchor.constraint(equalTo: postThumbnailView.trailingAnchor, constant: 10),
             stackView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
-            stackView.heightAnchor.constraint(equalToConstant: 70),
             
             postTitleLabel.topAnchor.constraint(equalTo: stackView.topAnchor),
             postTitleLabel.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),

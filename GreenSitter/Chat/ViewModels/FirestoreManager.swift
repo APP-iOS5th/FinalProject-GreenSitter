@@ -60,12 +60,38 @@ class FirestoreManager {
     // MARK: - ChatRoom
     // 채팅방 데이터 저장
     func saveChatRoom(_ chatRoom: ChatRoom) async throws {
+        let ownerId = chatRoom.ownerId
+        let sitterId = chatRoom.sitterId
+        let postId = chatRoom.postId
+        
+        // 중복 검사
+        if await chatRoomExists(ownerId: ownerId, sitterId: sitterId, postId: postId) {
+            print("Chat room with ownerId \(ownerId), sitterId \(sitterId), and postId \(postId) already exists")
+            return
+        }
+        
         let documentRef = db.collection("chatRooms").document(chatRoom.id)
         
         do {
             try await documentRef.setData(from: chatRoom)
         } catch let error {
             print("Save chat room data error: \(error.localizedDescription)")
+        }
+    }
+    
+    // 채팅방 중복 체크
+    func chatRoomExists(ownerId: String, sitterId: String, postId: String) async -> Bool {
+        let query = db.collection("chatRooms")
+            .whereField("ownerId", isEqualTo: ownerId)
+            .whereField("sitterId", isEqualTo: sitterId)
+            .whereField("postId", isEqualTo: postId)
+        
+        do {
+            let snapshot = try await query.getDocuments()
+            return !snapshot.isEmpty
+        } catch {
+            print("Error checking if chat room exists: \(error.localizedDescription)")
+            return false
         }
     }
     

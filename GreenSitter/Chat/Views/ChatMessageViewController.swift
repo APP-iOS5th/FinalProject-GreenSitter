@@ -8,7 +8,7 @@
 import UIKit
 
 class ChatMessageViewController: UIViewController {
-    var chatViewModel: ChatViewViewModel?
+    var chatViewModel: ChatViewModel?
     
     // 임시 데이터
     var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!", "어디까지 나오는지 테스트해보자아아아아아아아아아아아아아아아앙아아아아아", "읽었어?"]

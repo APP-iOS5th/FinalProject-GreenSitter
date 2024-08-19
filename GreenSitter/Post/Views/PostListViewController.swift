@@ -40,12 +40,13 @@ class PostListViewController: UIViewController {
         
         // ChatDetailView로 이동
         postViewModel.onChatButtonTapped = { [weak self] chatRoom in
-            self?.navigateToChatDetail()
+            self?.navigateToChatDetail(chatRoom: chatRoom)
         }
     }
     
-    private func navigateToChatDetail() {
+    private func navigateToChatDetail(chatRoom: ChatRoom) {
         let chatDetailViewController = ChatViewController()
+        chatDetailViewController.chatRoom = chatRoom
         self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
 

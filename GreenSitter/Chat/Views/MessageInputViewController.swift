@@ -8,7 +8,7 @@
 import UIKit
 
 class MessageInputViewController: UIViewController {
-    var chatViewModel: ChatViewViewModel?
+    var chatViewModel: ChatViewModel?
     
     // 메세지 패딩
     private lazy var messagePaddingView: UIView = {
@@ -69,8 +69,6 @@ class MessageInputViewController: UIViewController {
         self.view.addSubview(sendButton)
         
         NSLayoutConstraint.activate([
-            plusButton.topAnchor.constraint(equalTo: self.view.topAnchor),
-            plusButton.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
             plusButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             plusButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             plusButton.widthAnchor.constraint(equalToConstant: 34),
@@ -84,12 +82,9 @@ class MessageInputViewController: UIViewController {
             messageInputField.centerYAnchor.constraint(equalTo: messagePaddingView.centerYAnchor),
             
             messagePaddingView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            messagePaddingView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
             messagePaddingView.leadingAnchor.constraint(equalTo: plusButton.trailingAnchor, constant: 5),
             messagePaddingView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             
-            sendButton.topAnchor.constraint(equalTo: self.view.topAnchor),
-            sendButton.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
             sendButton.leadingAnchor.constraint(equalTo: messagePaddingView.trailingAnchor, constant: 5),
             sendButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             sendButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),

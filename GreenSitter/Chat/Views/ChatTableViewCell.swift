@@ -9,7 +9,7 @@
 import UIKit
 
 class ChatTableViewCell: UITableViewCell {
-    var chatViewModel: ChatViewViewModel?
+    var chatViewModel: ChatViewModel?
     
     // 프로필 이미지
     private lazy var profileImageView: UIImageView = {

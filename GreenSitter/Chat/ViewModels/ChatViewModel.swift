@@ -8,7 +8,7 @@
 import UIKit
 
 @MainActor
-class ChatViewViewModel {
+class ChatViewModel {
     private var firestoreManager = FirestoreManager()
     
     // 로그인 여부를 나타내는 변수
@@ -16,7 +16,7 @@ class ChatViewViewModel {
     var hasChats = false
     
     // 임시 유저 id
-    let userId = "250e8400-e29b-41d4-a716-446655440003"
+    let userId = "250e8400-e29b-41d4-a716-446655440001"
     var user: User? {
         didSet {
 //            isLoggedIn = user != nil

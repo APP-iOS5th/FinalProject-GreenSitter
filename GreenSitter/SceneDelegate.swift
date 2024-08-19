@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         
         // Home(커뮤니티)
-        let firstViewController = MainPostListViewController()
+        let firstViewController = PostListViewController()
         let firstNavigationController = UINavigationController(rootViewController: firstViewController)
         firstNavigationController.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house.fill"), tag: 0)
         

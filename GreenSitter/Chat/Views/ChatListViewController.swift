@@ -8,7 +8,7 @@
 import UIKit
 
 class ChatListViewController: UIViewController {
-    private var chatViewModel = ChatViewViewModel()
+    private var chatViewModel = ChatViewModel()
     
     // container
     private lazy var container: UIView = {
@@ -337,11 +337,10 @@ extension ChatListViewController: UITableViewDelegate {
         }
         
         let chatViewController = ChatViewController()
-        chatViewController.chatViewModel = chatViewModel
-        chatViewController.postId = chatRooms[indexPath.row].postId
-        chatViewController.postThumbnail = chatRooms[indexPath.row].postImage
-        chatViewController.postTitle = chatRooms[indexPath.row].postTitle
-        chatViewController.postStatus = chatRooms[indexPath.row].postStatus
+//        chatViewController.postId = chatRooms[indexPath.row].postId
+//        chatViewController.postThumbnail = chatRooms[indexPath.row].postImage
+//        chatViewController.postTitle = chatRooms[indexPath.row].postTitle
+//        chatViewController.postStatus = chatRooms[indexPath.row].postStatus
         
         if chatViewModel.userId == chatRooms[indexPath.row].ownerId {
             chatViewController.title = chatRooms[indexPath.row].sitterNickname
