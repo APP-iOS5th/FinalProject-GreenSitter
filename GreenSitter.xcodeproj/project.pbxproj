@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B57780B2C733533000643C9 /* ReviewSendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B57780A2C733533000643C9 /* ReviewSendTableViewCell.swift */; };
+		3B57780D2C73356E000643C9 /* ReviewPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B57780C2C73356E000643C9 /* ReviewPostTableViewCell.swift */; };
 		3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */; };
 		3B596DFA2C6B461200C71851 /* CustomTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF92C6B461200C71851 /* CustomTableCell.swift */; };
 		3B596DFF2C6B462B00C71851 /* InformationTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */; };
@@ -115,6 +117,8 @@
 		1543FB3F2C660A10002E4CC8 /* MakePlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakePlanViewModel.swift; sourceTree = "<group>"; };
 		1543FB412C69C1DE002E4CC8 /* PlanPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanPlaceViewController.swift; sourceTree = "<group>"; };
 		1543FB432C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalConfirmPlanViewController.swift; sourceTree = "<group>"; };
+		3B57780A2C733533000643C9 /* ReviewSendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSendTableViewCell.swift; sourceTree = "<group>"; };
+		3B57780C2C73356E000643C9 /* ReviewPostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPostTableViewCell.swift; sourceTree = "<group>"; };
 		3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionTableCell.swift; sourceTree = "<group>"; };
 		3B596DF92C6B461200C71851 /* CustomTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableCell.swift; sourceTree = "<group>"; };
 		3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationTableCell.swift; sourceTree = "<group>"; };
@@ -252,6 +256,8 @@
 				3B596DF92C6B461200C71851 /* CustomTableCell.swift */,
 				3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */,
 				3B6DE1AF2C72D483009DD41A /* CareRecordTableViewCell.swift */,
+				3B57780A2C733533000643C9 /* ReviewSendTableViewCell.swift */,
+				3B57780C2C73356E000643C9 /* ReviewPostTableViewCell.swift */,
 			);
 			path = ProfileCell;
 			sourceTree = "<group>";
@@ -718,6 +724,7 @@
 				97D1BE9F2C6C93CD00F7A983 /* ProfileViewController.swift in Sources */,
 				97D1BE7F2C6C8BBA00F7A983 /* ChatAdditionalButtonsViewModel.swift in Sources */,
 				97D1BE6B2C6C8B7D00F7A983 /* NincknameViewModel.swift in Sources */,
+				3B57780B2C733533000643C9 /* ReviewSendTableViewCell.swift in Sources */,
 				97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */,
 				97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */,
 				97934E252C62FACE00B38E0A /* Contract.swift in Sources */,
@@ -725,6 +732,7 @@
 				97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */,
 				97D1BEBC2C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift in Sources */,
 				97D1BEA52C6C93FA00F7A983 /* PostListViewController.swift in Sources */,
+				3B57780D2C73356E000643C9 /* ReviewPostTableViewCell.swift in Sources */,
 				97D1BE9D2C6C93CD00F7A983 /* AboutMeViewController.swift in Sources */,
 				97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */,
 				97934DFF2C62F88B00B38E0A /* Post.swift in Sources */,

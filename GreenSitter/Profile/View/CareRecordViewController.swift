@@ -14,7 +14,7 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
     let db = Firestore.firestore()
     
     var post: [Post] = []
-
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
@@ -23,10 +23,10 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.register(CareRecordTableViewCell.self, forCellReuseIdentifier: "cell")
         return tableView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         view.backgroundColor = UIColor(named: "BGSecondary")
         navigationItem.title = "돌봄 기록"
         
@@ -76,5 +76,4 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
         
         return cell
     }
-//
 }

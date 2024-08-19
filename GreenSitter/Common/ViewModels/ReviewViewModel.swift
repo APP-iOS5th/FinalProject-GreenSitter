@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+extension ReviewViewController {
+    
+    @objc func selectButtonTap() {
+        
+    }
+}

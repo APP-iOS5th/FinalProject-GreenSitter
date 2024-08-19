@@ -202,9 +202,14 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
     
     //MARK: - cell 클릭시 발생하는 이벤트
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 && indexPath.row == 1 {
+        if indexPath.section == 1 && indexPath.row == 0 {
+           let reviewViewController = ReviewViewController()
+           navigationController?.pushViewController(reviewViewController, animated: true)
+       }
+        else if indexPath.section == 1 && indexPath.row == 1 {
             let careRecordViewController = CareRecordViewController()
             navigationController?.pushViewController(careRecordViewController, animated: true)
         }
+
     }
 }
