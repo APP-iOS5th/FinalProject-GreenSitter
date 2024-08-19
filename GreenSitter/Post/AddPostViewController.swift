@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import PhotosUI
 import MapKit
 
-class AddPostViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
-    
+class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewControllerDelegate {
+
     private let scrollView: UIScrollView = {
         let scrollView =  UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -20,15 +21,6 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
         let contentView = UIView()
         contentView.translatesAutoresizingMaskIntoConstraints = false
         return contentView
-    }()
-    
-    private let backButton: UIButton = {
-        let button = UIButton()
-        let image = UIImage(systemName: "arrow.backward")
-        button.setImage(image, for: .normal)
-        button.tintColor = .black
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
     }()
     
     private let titleTextField: UITextField = {
@@ -47,13 +39,30 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
         return line
     }()
     
+    private let imageScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private let imageStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     private let pickerImageView: UIImageView = {
-        let image = UIImageView()
-        image.backgroundColor = .lightGray
-        image.tintColor = .gray
-        image.image = UIImage(systemName: "photo.on.rectangle.fill")
-        image.translatesAutoresizingMaskIntoConstraints = false
-        return image
+        let imageView = UIImageView()
+        imageView.backgroundColor = .lightGray
+        imageView.tintColor = .gray
+        imageView.image = UIImage(systemName: "photo.on.rectangle.fill")
+        imageView.isUserInteractionEnabled = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
     
     private let dividerLine2: UIImageView = {
@@ -98,15 +107,26 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
     
     private let mapLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .labelsSecondary
+        label.textColor = .secondaryLabel
         label.font = .systemFont(ofSize: 16)
         label.text = "거래 희망 장소를 선택할 수 있어요."
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
+    private let mapIconView: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(systemName: "map.fill")
+        imageView.image = image
+        imageView.tintColor = .gray
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
     private let mapView: MKMapView = {
         let mapView = MKMapView()
+        mapView.isHidden = true
         mapView.translatesAutoresizingMaskIntoConstraints = false
         return mapView
     }()
@@ -115,7 +135,7 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
         let button = UIButton()
         button.setTitle("작성완료", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .dominent
+        button.backgroundColor = .dominant
         button.layer.cornerRadius = 20
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -128,7 +148,6 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(pickerImageViewTapped))
         pickerImageView.addGestureRecognizer(tapGesture)
-        pickerImageView.isUserInteractionEnabled = true // 이미지 뷰 상호작용 활성화
     }
     
     @objc private func pickerImageViewTapped() {
@@ -139,15 +158,17 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        contentView.addSubview(backButton)
         contentView.addSubview(titleTextField)
         contentView.addSubview(dividerLine1)
-        contentView.addSubview(pickerImageView)
+        contentView.addSubview(imageScrollView)
+        imageScrollView.addSubview(imageStackView)
+        imageStackView.addArrangedSubview(pickerImageView)
         contentView.addSubview(dividerLine2)
         contentView.addSubview(textView)
         contentView.addSubview(remainCountLabel)
         contentView.addSubview(dividerLine3)
         contentView.addSubview(mapLabel)
+        contentView.addSubview(mapIconView)
         contentView.addSubview(mapView)
         contentView.addSubview(saveButton)
         
@@ -164,11 +185,6 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
             
-            backButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: -20),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            backButton.widthAnchor.constraint(equalToConstant: 20),
-            backButton.heightAnchor.constraint(equalToConstant: 20),
-            
             titleTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             titleTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
             
@@ -177,12 +193,21 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
             dividerLine1.widthAnchor.constraint(equalToConstant: 360),
             dividerLine1.heightAnchor.constraint(equalToConstant: 1),
             
+            imageScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
+            imageScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            imageScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            imageScrollView.heightAnchor.constraint(equalToConstant: 100),
+            
+            imageStackView.topAnchor.constraint(equalTo: imageScrollView.topAnchor),
+            imageStackView.bottomAnchor.constraint(equalTo: imageScrollView.bottomAnchor),
+            imageStackView.leadingAnchor.constraint(equalTo: imageScrollView.leadingAnchor),
+            imageStackView.trailingAnchor.constraint(equalTo: imageScrollView.trailingAnchor),
+            imageStackView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
+            
             pickerImageView.widthAnchor.constraint(equalToConstant: 100),
             pickerImageView.heightAnchor.constraint(equalToConstant: 100),
-            pickerImageView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
-            pickerImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
-            dividerLine2.topAnchor.constraint(equalTo: pickerImageView.bottomAnchor, constant: 20),
+            dividerLine2.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: 20),
             dividerLine2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             dividerLine2.widthAnchor.constraint(equalToConstant: 360),
             dividerLine2.heightAnchor.constraint(equalToConstant: 1),
@@ -201,105 +226,75 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate &
             dividerLine3.widthAnchor.constraint(equalToConstant: 360),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            mapLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            mapLabel.bottomAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 30),
+            mapLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 48),
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
+            
+            mapIconView.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
+            mapIconView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            mapIconView.widthAnchor.constraint(equalToConstant: 24),
+            mapIconView.heightAnchor.constraint(equalToConstant: 24),
             
             mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 20),
-            mapView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            mapView.heightAnchor.constraint(equalToConstant: 250),
-           
-            saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 10),
-            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            saveButton.widthAnchor.constraint(equalToConstant: 100),
-            saveButton.heightAnchor.constraint(equalToConstant: 50),
+            mapView.heightAnchor.constraint(equalToConstant: 200),
             
+            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30),
+            saveButton.heightAnchor.constraint(equalToConstant: 45)
         ])
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapTextView(_:)))
-        view.addGestureRecognizer(tapGesture)
-    }
-    
-    @objc private func didTapTextView(_ sender: Any) {
-        view.endEditing(true)
-    }
-    
-    private func updateCountLabel(characterCount: Int) {
-        remainCountLabel.text = "\(characterCount)/700"
-        remainCountLabel.asColor(targetString: "\(characterCount)", color: characterCount == 0 ? .lightGray : .blue)
     }
     
     func presentImagePickerController() {
-        let imagePickerController = UIImagePickerController()
-        imagePickerController.delegate = self
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 10
+        configuration.filter = .images
         
-        let alert = UIAlertController(title: "사진 선택", message: "사진을 가져올 곳을 선택하세요.", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "카메라", style: .default, handler: { _ in
-            if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                imagePickerController.sourceType = .camera
-                self.present(imagePickerController, animated: true, completion: nil)
-            } else {
-                print("카메라 사용 불가")
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true, completion: nil)
+        
+        for result in results {
+            if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
+                result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
+                    guard let self = self, let image = object as? UIImage else {
+                        return
+                    }
+                    
+                    DispatchQueue.main.async {
+                        let imageView = UIImageView(image: image)
+                        imageView.contentMode = .scaleAspectFill
+                        imageView.clipsToBounds = true
+                        imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+                        imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+                        self.imageStackView.addArrangedSubview(imageView)
+                    }
+                }
             }
-        }))
-        alert.addAction(UIAlertAction(title: "사진 라이브러리", style: .default, handler: { _ in
-            imagePickerController.sourceType = .photoLibrary
-            self.present(imagePickerController, animated: true, completion: nil)
-        }))
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-        
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[.originalImage] as? UIImage {
-            pickerImageView.image = selectedImage
         }
-        dismiss(animated: true, completion: nil)
     }
     
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
-    }
-}
-
-extension AddPostViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.text == textViewPlaceHolder {
+        if textView.textColor == .lightGray {
             textView.text = nil
             textView.textColor = .black
         }
     }
-
+    
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if textView.text.isEmpty {
             textView.text = textViewPlaceHolder
             textView.textColor = .lightGray
-            updateCountLabel(characterCount: 0)
         }
     }
-
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        let inputString = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let oldString = textView.text, let newRange = Range(range, in: oldString) else { return true }
-        let newString = oldString.replacingCharacters(in: newRange, with: inputString).trimmingCharacters(in: .whitespacesAndNewlines)
-
-        let characterCount = newString.count
-        guard characterCount <= 700 else { return false }
-        updateCountLabel(characterCount: characterCount)
-
-        return true
-    }
-}
-
-extension UILabel {
-    func asColor(targetString: String, color: UIColor?) {
-        let fullText = text ?? ""
-        let range = (fullText as NSString).range(of: targetString)
-        let attributedString = NSMutableAttributedString(string: fullText)
-        attributedString.addAttribute(.foregroundColor, value: color as Any, range: range)
-        attributedText = attributedString
+    
+    func textViewDidChange(_ textView: UITextView) {
+        remainCountLabel.text = "\(textView.text.count)/700"
     }
 }
 
