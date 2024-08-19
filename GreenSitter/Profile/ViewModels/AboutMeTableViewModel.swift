@@ -105,23 +105,35 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
         case 0:
             cell = tableView.dequeueReusableCell(withIdentifier: "introductionTableCell", for: indexPath) as! IntroductionTableCell
             (cell as! IntroductionTableCell).bodyLabel.text = user?.aboutMe ?? ""
+            (cell as! IntroductionTableCell).bodyLabel.textColor = .black
+
+            
         case 1:
             cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
             if indexPath.row == 0 {
                 (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "heart.fill")
+                (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
                 (cell as! CustomTableCell).textsLabel.text = "돌봄 후기"
+                (cell as! CustomTableCell).textsLabel.textColor = .black
             } else {
                 (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "list.bullet.clipboard.fill")
+                (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
                 (cell as! CustomTableCell).textsLabel.text = "돌봄 기록"
+                (cell as! CustomTableCell).textsLabel.textColor = .black
             }
         case 2:
             cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
             if indexPath.row == 0 {
                 (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "leaf.fill")
+                (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
                 (cell as! CustomTableCell).textsLabel.text = "내가 맡긴 식물"
+                (cell as! CustomTableCell).textsLabel.textColor = .black
+
             } else {
                 (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "list.bullet.rectangle.fill")
+                (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
                 (cell as! CustomTableCell).textsLabel.text = "내가 쓴 돌봄 후기"
+                (cell as! CustomTableCell).textsLabel.textColor = .black
             }
         case 3:
             cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
