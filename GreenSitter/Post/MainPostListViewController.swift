@@ -26,7 +26,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
         let button = UIButton(type: .system)
         let image = UIImage(systemName: "magnifyingglass")
         button.setImage(image, for: .normal)
-        button.tintColor = .black
+        button.tintColor = .labelsPrimary
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
