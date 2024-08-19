@@ -12,9 +12,12 @@ class SearchMapDetailViewController: UIViewController {
 
     private let location: Location
     private let mapView = MKMapView()
+    
+    private var makePlanViewModel: MakePlanViewModel?
 
-    init(location: Location) {
+    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil) {
         self.location = location
+        self.makePlanViewModel = makePlanViewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -127,6 +130,15 @@ class SearchMapDetailViewController: UIViewController {
 
     @objc private func confirmButtonTapped() {
         // TODO: 확인 버튼 동작 구현
-        dismiss(animated: true, completion: nil)
+        //plan에서 필요한 기능
+        self.makePlanViewModel?.planPlace = location
+        self.makePlanViewModel?.isPlaceSelected = true
+        guard let parentViewController = self.presentingViewController else { return }
+        self.dismiss(animated: true) {
+            parentViewController.dismiss(animated: true)
+        }
+        
+        
+//        dismiss(animated: true, completion: nil)
     }
 }

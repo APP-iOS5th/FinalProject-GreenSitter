@@ -20,10 +20,6 @@ class PlanPlaceViewController: UIViewController {
     
     private var viewModel: MakePlanViewModel
     
-    private var isDealHereButtonSelected: Bool = false
-    
-    private lazy var planPlace: Location? = Location.sampleLocation
-    
     private lazy var scrollView: UIScrollView = {
        let scrollView = UIScrollView()
         scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 76, right: 10)
@@ -109,15 +105,10 @@ class PlanPlaceViewController: UIViewController {
         nextButton.layer.cornerRadius = 10
         nextButton.translatesAutoresizingMaskIntoConstraints = false
         nextButton.addAction(UIAction { [weak self] _ in
-            guard let planPlace = self?.planPlace else {
-                print("planPlace is nil")
-                return
-            }
-            self?.viewModel.planPlace = planPlace
             self?.viewModel.progress = 2
             self?.viewModel.gotoNextPage()
         }, for: .touchUpInside)
-        nextButton.isEnabled = isDealHereButtonSelected
+        nextButton.isEnabled = viewModel.isPlaceSelected
         return nextButton
     }()
     
@@ -134,6 +125,14 @@ class PlanPlaceViewController: UIViewController {
         view.backgroundColor = UIColor(named: "BGSecondary")
         
         setupUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if viewModel.isPlaceSelected {
+            updatePlaceLabel()
+        }
     }
 
     private func setupUI() {
@@ -191,9 +190,22 @@ class PlanPlaceViewController: UIViewController {
         ])
     }
     
+    private func updatePlaceLabel() {
+        DispatchQueue.main.async {
+            self.dealHereButton.layer.borderColor = UIColor.systemGreen.cgColor
+            self.dealHereButton.layer.borderWidth = 4
+            self.placeText.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+            self.dealHereText.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+            self.nextButton.backgroundColor = UIColor(named: "DominentColor")
+            self.placeText.text = self.viewModel.planPlace?.placeName
+        }
+        self.viewModel.isPlaceSelected = true
+        self.nextButton.isEnabled = true
+    }
+    
     private func dealHereButtonTapped(){
         DispatchQueue.main.async {
-            if self.isDealHereButtonSelected {
+            if self.viewModel.isPlaceSelected {
                 self.dealHereButton.layer.borderColor = UIColor(named: "SeparatorsNonOpaque")?.cgColor
                 self.dealHereButton.layer.borderWidth = 1
                 self.placeText.font = UIFont.systemFont(ofSize: 17)
@@ -206,13 +218,16 @@ class PlanPlaceViewController: UIViewController {
                 self.dealHereText.font = UIFont.systemFont(ofSize: 17, weight: .bold)
                 self.nextButton.backgroundColor = UIColor(named: "DominentColor")
             }
-            self.isDealHereButtonSelected.toggle()
-            self.nextButton.isEnabled = self.isDealHereButtonSelected
+            self.viewModel.isPlaceSelected.toggle()
+            self.nextButton.isEnabled = self.viewModel.isPlaceSelected
         }
-        
     }
     
     private func anotherPlaceButtonTapped(){
-        
+        let searchMapViewController = SearchMapViewController()
+        searchMapViewController.makePlanViewModel = viewModel
+        let navigationController = UINavigationController(rootViewController: searchMapViewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true, completion: nil)
     }
 }

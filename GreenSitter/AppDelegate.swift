@@ -10,7 +10,7 @@ import FirebaseCore
 import GoogleSignIn
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate/*, UNUserNotificationCenterDelegate*/ {
     
     
     
@@ -26,6 +26,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Show the app's signed-in state.
           }
         }
+        
+        
+        //MARK: - Push Notification
+        //push notificatioin 시도 중
+//        UNUserNotificationCenter.current().delegate = self
+//        let authOptions: UNAuthorizationOptions = [.badge, .sound]
+//        UNUserNotificationCenter.current().requestAuthorization(
+//            options: authOptions,
+//            completionHandler: { _, _ in }
+//        )
         return true
 
     }
