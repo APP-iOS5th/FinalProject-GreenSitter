@@ -22,15 +22,16 @@ class PlanPlaceViewController: UIViewController {
     
     private var isDealHereButtonSelected: Bool = false
     
-    private var planPlace: Location? = Location.sampleLocation
+    private lazy var planPlace: Location? = Location.sampleLocation
     
-    private var scrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
        let scrollView = UIScrollView()
+        scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 76, right: 10)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
-    private var instructionText: UILabel = {
+    private lazy var instructionText: UILabel = {
        let instructionText = UILabel()
         instructionText.text = "새싹 돌봄이와\n만날 장소를 정해주세요."
         instructionText.font = UIFont.systemFont(ofSize: 20, weight: .bold)
@@ -40,16 +41,17 @@ class PlanPlaceViewController: UIViewController {
         return instructionText
     }()
     
-    private var placeText: UILabel = {
+    private lazy var placeText: UILabel = {
         let placeText = UILabel()
         placeText.textAlignment = .center
         placeText.font = UIFont.systemFont(ofSize: 17)
         placeText.textColor = .systemGreen
         placeText.translatesAutoresizingMaskIntoConstraints = false
+        placeText.text = viewModel.planPlace?.placeName
         return placeText
     }()
     
-    private var dealHereText: UILabel = {
+    private lazy var dealHereText: UILabel = {
         let dealHereText = UILabel()
         dealHereText.text = "여기서 거래할게요!"
         dealHereText.textAlignment = .center
@@ -59,7 +61,7 @@ class PlanPlaceViewController: UIViewController {
         return dealHereText
     }()
     
-    private var dealHereButton: UIButton = {
+    private lazy var dealHereButton: UIButton = {
         let dealHereButton = UIButton()
         dealHereButton.layer.cornerRadius = 10
         dealHereButton.layer.borderWidth = 1
@@ -67,10 +69,16 @@ class PlanPlaceViewController: UIViewController {
         dealHereButton.clipsToBounds = true
         dealHereButton.backgroundColor = UIColor(named: "BGPrimary")
         dealHereButton.translatesAutoresizingMaskIntoConstraints = false
+        dealHereButton.addAction(UIAction { [weak self] _ in
+            self?.dealHereButtonTapped()
+        }, for: .touchUpInside)
+        if viewModel.planPlace == nil {
+            dealHereButton.isHidden = true
+        }
         return dealHereButton
     }()
     
-    private var anotherPlaceText: UILabel = {
+    private lazy var anotherPlaceText: UILabel = {
         let anotherPlaceText = UILabel()
         anotherPlaceText.text = "그 외 장소에서 거래할게요!"
         anotherPlaceText.textAlignment = .center
@@ -80,7 +88,7 @@ class PlanPlaceViewController: UIViewController {
         return anotherPlaceText
     }()
     
-    private var anotherPlaceButton: UIButton = {
+    private lazy var anotherPlaceButton: UIButton = {
         let anotherPlaceButton = UIButton()
         anotherPlaceButton.layer.cornerRadius = 10
         anotherPlaceButton.layer.borderWidth = 1
@@ -88,31 +96,18 @@ class PlanPlaceViewController: UIViewController {
         anotherPlaceButton.clipsToBounds = true
         anotherPlaceButton.backgroundColor = UIColor(named: "BGPrimary")
         anotherPlaceButton.translatesAutoresizingMaskIntoConstraints = false
+        anotherPlaceButton.addAction(UIAction { [weak self] _ in
+            self?.anotherPlaceButtonTapped()
+        }, for: .touchUpInside)
         return anotherPlaceButton
     }()
     
-    private var nextButton: UIButton = {
+    private lazy var nextButton: UIButton = {
         let nextButton = UIButton()
         nextButton.setTitle("다음", for: .normal)
         nextButton.backgroundColor = .systemGray3
         nextButton.layer.cornerRadius = 10
         nextButton.translatesAutoresizingMaskIntoConstraints = false
-        return nextButton
-    }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = UIColor(named: "BGSecondary")
-        
-        dealHereButton.addAction(UIAction { [weak self] _ in
-            self?.dealHereButtonTapped()
-        }, for: .touchUpInside)
-        
-        anotherPlaceButton.addAction(UIAction { [weak self] _ in
-            self?.anotherPlaceButtonTapped()
-        }, for: .touchUpInside)
-        
         nextButton.addAction(UIAction { [weak self] _ in
             guard let planPlace = self?.planPlace else {
                 print("planPlace is nil")
@@ -122,6 +117,22 @@ class PlanPlaceViewController: UIViewController {
             self?.viewModel.progress = 2
             self?.viewModel.gotoNextPage()
         }, for: .touchUpInside)
+        nextButton.isEnabled = isDealHereButtonSelected
+        return nextButton
+    }()
+    
+    private lazy var bottomPaddingView: UIView = {
+       let bottomPaddingView = UIView()
+        bottomPaddingView.backgroundColor = .clear
+        bottomPaddingView.translatesAutoresizingMaskIntoConstraints = false
+        return bottomPaddingView
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = UIColor(named: "BGSecondary")
+        
         setupUI()
     }
 
@@ -130,6 +141,7 @@ class PlanPlaceViewController: UIViewController {
         scrollView.addSubview(instructionText)
         scrollView.addSubview(dealHereButton)
         scrollView.addSubview(anotherPlaceButton)
+        scrollView.addSubview(bottomPaddingView)
         
         dealHereButton.addSubview(placeText)
         dealHereButton.addSubview(dealHereText)
@@ -141,15 +153,15 @@ class PlanPlaceViewController: UIViewController {
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            instructionText.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 40),
-            instructionText.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            instructionText.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            instructionText.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            instructionText.layoutMarginsGuide.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            instructionText.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             
-            dealHereButton.topAnchor.constraint(equalTo: instructionText.bottomAnchor, constant: 60),
-            dealHereButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            dealHereButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            dealHereButton.topAnchor.constraint(equalTo: instructionText.bottomAnchor, constant: 40),
+            dealHereButton.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            dealHereButton.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             dealHereButton.heightAnchor.constraint(equalToConstant: 150),
             
             placeText.centerXAnchor.constraint(equalTo: dealHereButton.centerXAnchor),
@@ -159,21 +171,24 @@ class PlanPlaceViewController: UIViewController {
             dealHereText.centerYAnchor.constraint(equalTo: dealHereButton.centerYAnchor, constant: 16),
             
             anotherPlaceButton.topAnchor.constraint(equalTo: dealHereButton.bottomAnchor, constant: 20),
-            anotherPlaceButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            anotherPlaceButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            anotherPlaceButton.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            anotherPlaceButton.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             anotherPlaceButton.heightAnchor.constraint(equalToConstant: 150),
             
             anotherPlaceText.centerXAnchor.constraint(equalTo: anotherPlaceButton.centerXAnchor),
             anotherPlaceText.centerYAnchor.constraint(equalTo: anotherPlaceButton.centerYAnchor),
             
-            nextButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            bottomPaddingView.heightAnchor.constraint(equalToConstant: 76),
+            bottomPaddingView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            bottomPaddingView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+            bottomPaddingView.topAnchor.constraint(equalTo: anotherPlaceButton.bottomAnchor),
+            bottomPaddingView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            
+            nextButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             nextButton.heightAnchor.constraint(equalToConstant: 44),
-            nextButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            nextButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)
+            nextButton.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            nextButton.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30)
         ])
-        
-        placeText.text = "서울특별시 종로구 사직로8길 1"
-        nextButton.isEnabled = isDealHereButtonSelected
     }
     
     private func dealHereButtonTapped(){
@@ -201,4 +216,3 @@ class PlanPlaceViewController: UIViewController {
         
     }
 }
-

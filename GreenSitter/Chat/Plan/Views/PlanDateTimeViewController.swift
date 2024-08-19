@@ -20,13 +20,14 @@ class PlanDateTimeViewController: UIViewController {
     
     private var viewModel: MakePlanViewModel
     
-    private var scrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
        let scrollView = UIScrollView()
+        scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 76, right: 10)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
-    private var instructionText: UILabel = {
+    private lazy var instructionText: UILabel = {
        let instructionText = UILabel()
         instructionText.text = "새싹 돌봄이와\n약속날짜/시간을 정해주세요."
         instructionText.font = UIFont.systemFont(ofSize: 20, weight: .bold)
@@ -36,7 +37,7 @@ class PlanDateTimeViewController: UIViewController {
         return instructionText
     }()
     
-    private var dateLabel: UILabel = {
+    private lazy var dateLabel: UILabel = {
         let dateLabel = UILabel()
         dateLabel.textAlignment = .center
         dateLabel.textColor = .systemBlue
@@ -48,7 +49,7 @@ class PlanDateTimeViewController: UIViewController {
         return dateLabel
     }()
     
-    private var timeLabel: UILabel = {
+    private lazy var timeLabel: UILabel = {
         let timeLabel = UILabel()
         timeLabel.textAlignment = .center
         timeLabel.textColor = .systemBlue
@@ -60,11 +61,13 @@ class PlanDateTimeViewController: UIViewController {
         return timeLabel
     }()
     
-    private var datePicker: UIDatePicker = {
+    private lazy var datePicker: UIDatePicker = {
        let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .inline
         datePicker.datePickerMode = .dateAndTime
+        datePicker.minuteInterval = 5
         datePicker.minimumDate = Date()
+        datePicker.date = viewModel.planDate
         datePicker.backgroundColor = UIColor(named: "BGPrimary")
         datePicker.layer.cornerRadius = 13
         datePicker.clipsToBounds = true
@@ -73,25 +76,26 @@ class PlanDateTimeViewController: UIViewController {
         datePicker.layer.shadowColor = UIColor.systemGray.cgColor
         datePicker.layer.shadowOffset = CGSize(width: 5, height: 5)
         datePicker.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.addAction(UIAction { [weak self] _ in
+            self?.updateLabel()
+        }, for: .valueChanged)
         return datePicker
     }()
     
-    private var nextButton: UIButton = {
+    private lazy var bottomPaddingView: UIView = {
+       let bottomPaddingView = UIView()
+        bottomPaddingView.backgroundColor = .clear
+        bottomPaddingView.translatesAutoresizingMaskIntoConstraints = false
+        return bottomPaddingView
+    }()
+    
+    private lazy var nextButton: UIButton = {
         let nextButton = UIButton()
         nextButton.setTitle("다음", for: .normal)
         nextButton.backgroundColor = UIColor(named: "DominentColor")
         nextButton.layer.cornerRadius = 10
         nextButton.clipsToBounds = true
         nextButton.translatesAutoresizingMaskIntoConstraints = false
-        return nextButton
-    }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = UIColor(named: "BGSecondary")
-        
-        datePicker.addTarget(self, action: #selector(handleDatePicker(_:)), for: .valueChanged)
         nextButton.addAction(UIAction { [weak self] _ in
             guard let selectedDate = self?.datePicker.date else {
                 print("date did not selected")
@@ -101,7 +105,16 @@ class PlanDateTimeViewController: UIViewController {
             self?.viewModel.progress = 1
             self?.viewModel.gotoNextPage()
         }, for: .touchUpInside)
+        return nextButton
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = UIColor(named: "BGSecondary")
+        
         setupUI()
+        updateLabel()
     }
 
     private func setupUI() {
@@ -110,17 +123,18 @@ class PlanDateTimeViewController: UIViewController {
         scrollView.addSubview(dateLabel)
         scrollView.addSubview(timeLabel)
         scrollView.addSubview(datePicker)
+        scrollView.addSubview(bottomPaddingView)
         view.addSubview(nextButton)
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             instructionText.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            instructionText.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            instructionText.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            instructionText.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            instructionText.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             
             dateLabel.topAnchor.constraint(equalTo: instructionText.bottomAnchor, constant: 40),
             dateLabel.trailingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: -6),
@@ -128,54 +142,40 @@ class PlanDateTimeViewController: UIViewController {
             dateLabel.heightAnchor.constraint(equalToConstant: 40),
             
             timeLabel.topAnchor.constraint(equalTo: instructionText.bottomAnchor, constant: 40),
-            timeLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            timeLabel.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             timeLabel.widthAnchor.constraint(equalToConstant: 90),
             timeLabel.heightAnchor.constraint(equalToConstant: 40),
             
             datePicker.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 20),
-            datePicker.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            datePicker.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            datePicker.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -60),
+            datePicker.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            datePicker.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
             
-            nextButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            bottomPaddingView.heightAnchor.constraint(equalToConstant: 76),
+            bottomPaddingView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            bottomPaddingView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+            bottomPaddingView.topAnchor.constraint(equalTo: datePicker.bottomAnchor),
+            bottomPaddingView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            
+            nextButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             nextButton.heightAnchor.constraint(equalToConstant: 44),
-            nextButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            nextButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)
+            nextButton.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+            nextButton.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30)
         ])
-        
-        let dateFormatter = DateFormatter()
-        
-        dateFormatter.dateStyle = .medium
-        let dateString = dateFormatter.string(from: viewModel.planDate)
-        
-        dateFormatter.dateStyle = .none
-        dateFormatter.timeStyle = .short
-        let timeString = dateFormatter.string(from: viewModel.planDate)
-        
-        dateLabel.text = dateString
-        timeLabel.text = timeString
-        
-        datePicker.date = viewModel.planDate
     }
     
-    @objc
-    private func handleDatePicker(_ sender: UIDatePicker) {
+    private func updateLabel() {
         let dateFormatter = DateFormatter()
         
         dateFormatter.dateStyle = .medium
-        let dateString = dateFormatter.string(from: sender.date)
+        let dateString = dateFormatter.string(from: datePicker.date)
         
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
-        let timeString = dateFormatter.string(from: sender.date)
-        
-        let scrollView = self.view.subviews.compactMap { $0 as? UIScrollView }[0]
-        let dateLabel = scrollView.subviews.compactMap { $0 as? UILabel }[1]
-        let timeLabel = scrollView.subviews.compactMap { $0 as? UILabel }[2]
+        let timeString = dateFormatter.string(from: datePicker.date)
         
         DispatchQueue.main.async {
-            dateLabel.text = dateString
-            timeLabel.text = timeString
+            self.dateLabel.text = dateString
+            self.timeLabel.text = timeString
         }
     }
 }
