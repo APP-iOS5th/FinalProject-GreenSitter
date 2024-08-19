@@ -9,11 +9,13 @@ import UIKit
 
 class ChatMessageViewController: UIViewController {
     // 임시 데이터
-    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!"]
+    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!", "어디까지 나오는지 테스트해보자아아아아아아아아아아아아아아아앙아아아아아"]
+    var receive: [Bool] = [false, true, false, false, true, true]
     
     // 메세지 뷰
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = .bgSecondary
         // 셀 구분선 제거
         tableView.separatorStyle = .none
         // 셀 선택 불가능하게 설정
@@ -57,7 +59,9 @@ extension ChatMessageViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
+        cell.backgroundColor = .clear
         cell.messageLabel.text = messages[indexPath.row]
+        cell.isIncoming = receive[indexPath.row]
         
         return cell
     }

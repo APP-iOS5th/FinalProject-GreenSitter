@@ -36,7 +36,7 @@ class MessageInputViewController: UIViewController {
         let largeConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular, scale: .large)
         let largeSymbolImage = UIImage(systemName: "plus.circle.fill", withConfiguration: largeConfig)
         button.setImage(largeSymbolImage, for: .normal)
-        button.tintColor = .fillTertiary
+        button.tintColor = .fillSecondary
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
