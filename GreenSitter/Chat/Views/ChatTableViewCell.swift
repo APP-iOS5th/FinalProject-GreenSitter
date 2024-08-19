@@ -9,7 +9,7 @@
 import UIKit
 
 class ChatTableViewCell: UITableViewCell {
-    var chatListViewModel: ChatListViewModel?
+    var chatViewModel: ChatViewViewModel?
     
     // 프로필 이미지
     private lazy var profileImageView: UIImageView = {
@@ -195,7 +195,7 @@ class ChatTableViewCell: UITableViewCell {
         guard let profileImageUrl = URL(string: profileImageString) else {
             return
         }
-        chatListViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
+        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
     }
     
     // MARK: - 메세지 시간 포맷 설정

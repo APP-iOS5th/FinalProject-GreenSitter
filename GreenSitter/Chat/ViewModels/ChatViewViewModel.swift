@@ -1,5 +1,5 @@
 //
-//  ChatListViewModel.swift
+//  ChatViewModel.swift
 //  GreenSitter
 //
 //  Created by 박지혜 on 8/11/24.
@@ -8,7 +8,7 @@
 import UIKit
 
 @MainActor
-class ChatListViewModel {
+class ChatViewViewModel {
     private var firestoreManager = FirestoreManager()
     
     // 로그인 여부를 나타내는 변수

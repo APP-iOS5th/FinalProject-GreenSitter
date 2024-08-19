@@ -8,7 +8,7 @@
 import UIKit
 
 class ChatListViewController: UIViewController {
-    private var chatListViewModel = ChatListViewModel()
+    private var chatViewModel = ChatViewViewModel()
     
     // container
     private lazy var container: UIView = {
@@ -82,16 +82,16 @@ class ChatListViewController: UIViewController {
         // 로그인 이벤트 수신
         NotificationCenter.default.addObserver(self, selector: #selector(userDidLogin), name: NSNotification.Name("UserDidLoginNotification"), object: nil)
         
-        if chatListViewModel.isLoggedIn {
-            chatListViewModel.loadChatRooms { [weak self] in
+        if chatViewModel.isLoggedIn {
+            chatViewModel.loadChatRooms { [weak self] in
                 guard let self = self else { return }
                 
                 // MARK: - 로그인/채팅방 있음
-                if self.chatListViewModel.hasChats {
-                    self.chatListViewModel.updateUI = { [weak self] in
+                if self.chatViewModel.hasChats {
+                    self.chatViewModel.updateUI = { [weak self] in
                         self?.setupChatListUI()
                     }
-                    self.chatListViewModel.updateUI?()
+                    self.chatViewModel.updateUI?()
                     
                 } else {
                     // MARK: - 로그인/채팅방 없음
@@ -272,8 +272,8 @@ class ChatListViewController: UIViewController {
     
     // 비로그인이었다가 로그인했을 때
     @objc private func userDidLogin() {
-        chatListViewModel.isLoggedIn = true
-        chatListViewModel.hasChats = true
+        chatViewModel.isLoggedIn = true
+        chatViewModel.hasChats = true
         viewDidLoad()
     }
     
@@ -288,7 +288,7 @@ class ChatListViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension ChatListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let chatRooms = chatListViewModel.chatRooms else {
+        guard let chatRooms = chatViewModel.chatRooms else {
             return 0
         }
         return chatRooms.count
@@ -297,14 +297,14 @@ extension ChatListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatTableViewCell", for: indexPath) as! ChatTableViewCell
         
-        cell.chatListViewModel = chatListViewModel
+        cell.chatViewModel = chatViewModel
         
-        guard let chatRooms = chatListViewModel.chatRooms else {
+        guard let chatRooms = chatViewModel.chatRooms else {
             return cell
         }
         
         let chatRoom = chatRooms[indexPath.row]
-        cell.configure(chatRoom: chatRoom, userId: chatListViewModel.userId)
+        cell.configure(chatRoom: chatRoom, userId: chatViewModel.userId)
         
         return cell
     }
@@ -317,7 +317,7 @@ extension ChatListViewController: UITableViewDelegate {
         if editingStyle == .delete {
             Task {
                 do {
-                    try await chatListViewModel.deleteChatRoom(at: indexPath.row)
+                    try await chatViewModel.deleteChatRoom(at: indexPath.row)
                     self.tableView.deleteRows(at: [indexPath], with: .automatic)
                     print("delete")
                 } catch {
@@ -332,20 +332,20 @@ extension ChatListViewController: UITableViewDelegate {
     
     // 채팅 디테일로 이동
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let chatRooms = chatListViewModel.chatRooms, indexPath.row >= 0 && indexPath.row < chatRooms.count else {
+        guard let chatRooms = chatViewModel.chatRooms, indexPath.row >= 0 && indexPath.row < chatRooms.count else {
             return
         }
         
         let chatViewController = ChatViewController()
-        chatViewController.chatListViewModel = chatListViewModel
+        chatViewController.chatViewModel = chatViewModel
         chatViewController.postId = chatRooms[indexPath.row].postId
         chatViewController.postThumbnail = chatRooms[indexPath.row].postImage
         chatViewController.postTitle = chatRooms[indexPath.row].postTitle
         chatViewController.postStatus = chatRooms[indexPath.row].postStatus
         
-        if chatListViewModel.userId == chatRooms[indexPath.row].ownerId {
+        if chatViewModel.userId == chatRooms[indexPath.row].ownerId {
             chatViewController.title = chatRooms[indexPath.row].sitterNickname
-        } else if chatListViewModel.userId == chatRooms[indexPath.row].sitterId {
+        } else if chatViewModel.userId == chatRooms[indexPath.row].sitterId {
             chatViewController.title = chatRooms[indexPath.row].ownerNickname
         }
         

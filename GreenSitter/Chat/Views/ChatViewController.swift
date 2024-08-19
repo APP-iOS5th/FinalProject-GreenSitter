@@ -8,7 +8,7 @@
 import UIKit
 
 class ChatViewController: UIViewController {
-    var chatListViewModel: ChatListViewModel?
+    var chatViewModel: ChatViewViewModel?
     var postId: String?
     var postThumbnail: String?
     var postTitle: String?
@@ -34,7 +34,7 @@ class ChatViewController: UIViewController {
         guard let postThumbnailUrl = URL(string: postThumbnail!) else {
             return
         }
-        chatListViewModel?.downloadImage(from: postThumbnailUrl, to: chatPostViewController.postThumbnailView)
+        chatViewModel?.downloadImage(from: postThumbnailUrl, to: chatPostViewController.postThumbnailView)
         chatPostViewController.postTitleLabel.text = postTitle
         chatPostViewController.postStatusLabel.text = postStatus?.rawValue
         

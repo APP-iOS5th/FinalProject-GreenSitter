@@ -8,7 +8,7 @@
 import UIKit
 
 class ChatPostViewController: UIViewController {
-    var chatListViewModel: ChatListViewModel?
+    var chatViewModel: ChatViewViewModel?
     
     // 게시물 이미지
     lazy var postThumbnailView: UIImageView = {

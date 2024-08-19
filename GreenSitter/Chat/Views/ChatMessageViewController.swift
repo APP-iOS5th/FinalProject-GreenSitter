@@ -8,9 +8,12 @@
 import UIKit
 
 class ChatMessageViewController: UIViewController {
+    var chatViewModel: ChatViewViewModel?
+    
     // 임시 데이터
-    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!", "어디까지 나오는지 테스트해보자아아아아아아아아아아아아아아아앙아아아아아"]
-    var receive: [Bool] = [false, true, false, false, true, true]
+    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!", "어디까지 나오는지 테스트해보자아아아아아아아아아아아아아아아앙아아아아아", "읽었어?"]
+    var isIncoming: [Bool] = [false, true, false, false, true, true, false]
+    var isRead: [Bool] = [true, true, true, true, true, true, false]
     
     // 메세지 뷰
     private lazy var tableView: UITableView = {
@@ -61,7 +64,8 @@ extension ChatMessageViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
         cell.backgroundColor = .clear
         cell.messageLabel.text = messages[indexPath.row]
-        cell.isIncoming = receive[indexPath.row]
+        cell.isIncoming = isIncoming[indexPath.row]
+        cell.isRead = isRead[indexPath.row]
         
         return cell
     }

@@ -8,6 +8,8 @@
 import UIKit
 
 class MessageInputViewController: UIViewController {
+    var chatViewModel: ChatViewViewModel?
+    
     // 메세지 패딩
     private lazy var messagePaddingView: UIView = {
         let paddingView = UIView()

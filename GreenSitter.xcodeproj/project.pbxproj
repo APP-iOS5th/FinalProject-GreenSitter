@@ -76,8 +76,7 @@
 		97D1BE872C6C934100F7A983 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC712C63543500E48D1E /* FirebaseAuth */; };
 		97D1BE882C6C934100F7A983 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC782C63567E00E48D1E /* FirebaseFirestore */; };
 		97D1BE962C6C93A100F7A983 /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE932C6C93A100F7A983 /* FirestoreManager.swift */; };
-		97D1BE972C6C93A100F7A983 /* ChatListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE942C6C93A100F7A983 /* ChatListViewModel.swift */; };
-		97D1BE982C6C93A100F7A983 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE952C6C93A100F7A983 /* ChatViewModel.swift */; };
+		97D1BE972C6C93A100F7A983 /* ChatViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE942C6C93A100F7A983 /* ChatViewViewModel.swift */; };
 		97D1BE9D2C6C93CD00F7A983 /* AboutMeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE992C6C93CD00F7A983 /* AboutMeViewController.swift */; };
 		97D1BE9E2C6C93CD00F7A983 /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE9A2C6C93CD00F7A983 /* NicknameViewController.swift */; };
 		97D1BE9F2C6C93CD00F7A983 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE9B2C6C93CD00F7A983 /* ProfileViewController.swift */; };
@@ -189,8 +188,7 @@
 		97D1BE732C6C8BB900F7A983 /* MakePlanViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MakePlanViewModel.swift; sourceTree = "<group>"; };
 		97D1BE752C6C8BB900F7A983 /* ChatAdditionalButtonModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonModel.swift; sourceTree = "<group>"; };
 		97D1BE932C6C93A100F7A983 /* FirestoreManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
-		97D1BE942C6C93A100F7A983 /* ChatListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatListViewModel.swift; sourceTree = "<group>"; };
-		97D1BE952C6C93A100F7A983 /* ChatViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		97D1BE942C6C93A100F7A983 /* ChatViewViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewViewModel.swift; sourceTree = "<group>"; };
 		97D1BE992C6C93CD00F7A983 /* AboutMeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutMeViewController.swift; sourceTree = "<group>"; };
 		97D1BE9A2C6C93CD00F7A983 /* NicknameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
 		97D1BE9B2C6C93CD00F7A983 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -509,8 +507,7 @@
 		97D1BE742C6C8BB900F7A983 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				97D1BE942C6C93A100F7A983 /* ChatListViewModel.swift */,
-				97D1BE952C6C93A100F7A983 /* ChatViewModel.swift */,
+				97D1BE942C6C93A100F7A983 /* ChatViewViewModel.swift */,
 				97D1BE932C6C93A100F7A983 /* FirestoreManager.swift */,
 				97D1BE722C6C8BB900F7A983 /* ChatAdditionalButtonsViewModel.swift */,
 				97D1BE732C6C8BB900F7A983 /* MakePlanViewModel.swift */,
@@ -709,14 +706,13 @@
 				97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */,
 				97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */,
 				97934E252C62FACE00B38E0A /* Contract.swift in Sources */,
-				97D1BE972C6C93A100F7A983 /* ChatListViewModel.swift in Sources */,
+				97D1BE972C6C93A100F7A983 /* ChatViewViewModel.swift in Sources */,
 				97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */,
 				97D1BEBC2C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift in Sources */,
 				97D1BEA52C6C93FA00F7A983 /* PostListViewController.swift in Sources */,
 				97D1BE9D2C6C93CD00F7A983 /* AboutMeViewController.swift in Sources */,
 				97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */,
 				97934DFF2C62F88B00B38E0A /* Post.swift in Sources */,
-				97D1BE982C6C93A100F7A983 /* ChatViewModel.swift in Sources */,
 				97934E5A2C65EDBD00B38E0A /* MapViewController.swift in Sources */,
 				974FF2522C6C5BA5009277B9 /* SearchMapDetailViewController.swift in Sources */,
 				97934E212C62FAC300B38E0A /* Location.swift in Sources */,
