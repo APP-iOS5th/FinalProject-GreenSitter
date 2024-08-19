@@ -42,7 +42,7 @@ extension AboutMeViewController {
                 let data = document.data()
                 let nickname = data?["nickname"] as? String ?? "닉네임 없음"
                 let profileImage = data?["profileImage"] as? String ?? ""
-                let aboutMe = data?["aboutMe"] as? String ?? "자기소개 db없음"
+                let aboutMe = data?["aboutMe"] as? String ?? "자기 소개를 입력해주세요"
                 
                 // user 객체가 nil일 경우 User 객체를 초기화
                 if self.user == nil {

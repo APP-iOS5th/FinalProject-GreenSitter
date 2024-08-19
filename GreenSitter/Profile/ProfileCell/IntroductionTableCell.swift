@@ -12,6 +12,8 @@ class IntroductionTableCell: UITableViewCell {
     lazy var bodyLabel: UILabel = {
         let label = UILabel()
         label.text = "자기소개"
+        label.numberOfLines = 0 // 여러 줄로 설정
+        label.lineBreakMode = .byWordWrapping // 단어 단위로 줄바꿈 설정
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor(named: "SeparatorsOpaque")
         return label
