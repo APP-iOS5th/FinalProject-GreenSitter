@@ -81,7 +81,7 @@
 		97D1BEA52C6C93FA00F7A983 /* PostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */; };
 		97D1BEA82C6C954100F7A983 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEA62C6C954100F7A983 /* DataManager.swift */; };
 		97D1BEA92C6C954100F7A983 /* SampleChatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEA72C6C954100F7A983 /* SampleChatData.swift */; };
-		97D1BEAF2C6C9DB100F7A983 /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEAE2C6C9DB100F7A983 /* Bundle.swift */; };
+		97D1BEAF2C6C9DB100F7A983 /* BundleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEAE2C6C9DB100F7A983 /* BundleExtension.swift */; };
 		97D1BEBC2C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEB12C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift */; };
 		97D1BEBD2C6C9DF400F7A983 /* ChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEB22C6C9DF400F7A983 /* ChatListViewController.swift */; };
 		97D1BEBE2C6C9DF400F7A983 /* ChatMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEB32C6C9DF400F7A983 /* ChatMessageViewController.swift */; };
@@ -191,7 +191,7 @@
 		97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostListViewController.swift; sourceTree = "<group>"; };
 		97D1BEA62C6C954100F7A983 /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		97D1BEA72C6C954100F7A983 /* SampleChatData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleChatData.swift; sourceTree = "<group>"; };
-		97D1BEAE2C6C9DB100F7A983 /* Bundle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
+		97D1BEAE2C6C9DB100F7A983 /* BundleExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BundleExtension.swift; sourceTree = "<group>"; };
 		97D1BEB02C6C9DDD00F7A983 /* GreenSitter.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = GreenSitter.entitlements; sourceTree = "<group>"; };
 		97D1BEB12C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewController.swift; sourceTree = "<group>"; };
 		97D1BEB22C6C9DF400F7A983 /* ChatListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatListViewController.swift; sourceTree = "<group>"; };
@@ -272,6 +272,7 @@
 		15F316332C71FB4B00F30B72 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				97D1BEAE2C6C9DB100F7A983 /* BundleExtension.swift */,
 				15F316342C71FB6C00F30B72 /* ColorExtension.swift */,
 				15F316362C71FB7D00F30B72 /* UILabelExtension.swift */,
 			);
@@ -412,7 +413,6 @@
 		97934DF12C62F77500B38E0A /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				97D1BEAE2C6C9DB100F7A983 /* Bundle.swift */,
 				97934E502C6345AC00B38E0A /* Views */,
 				97934E512C6345B200B38E0A /* ViewModels */,
 			);
@@ -699,7 +699,7 @@
 				97934E4F2C633FA700B38E0A /* (null) in Sources */,
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
 				97D1BE5A2C6C847600F7A983 /* AddPostViewController.swift in Sources */,
-				97D1BEAF2C6C9DB100F7A983 /* Bundle.swift in Sources */,
+				97D1BEAF2C6C9DB100F7A983 /* BundleExtension.swift in Sources */,
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
 				97D1BE7E2C6C8BBA00F7A983 /* PlanProgressBar.swift in Sources */,
 				97D1BE962C6C93A100F7A983 /* FirestoreManager.swift in Sources */,
