@@ -94,7 +94,6 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
         }
         
         picker.dismiss(animated: true)
-        self.dismiss(animated: true)
     }
     
     private func loadImages(from results: [PHPickerResult]) async -> [UIImage] {
@@ -131,11 +130,7 @@ extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, 
             if let image = info[.originalImage] as? UIImage {
                 print(image)
             }
-            self.dismiss(animated: true)
         }
-    }
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        self.dismiss(animated: true)
     }
 }
 
@@ -148,8 +143,11 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
         
+        guard let viewController = self.presentingViewController else { return }
         DispatchQueue.main.async {
-            self.present(picker, animated: true)
+            self.dismiss(animated: false) {
+                viewController.present(picker, animated: true)
+            }
         }
     }
     
@@ -160,15 +158,20 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
         camera.cameraCaptureMode = .photo
         camera.delegate = self
         
+        guard let viewController = self.presentingViewController else { return }
         DispatchQueue.main.async {
-            self.present(camera, animated: true)
+            self.dismiss(animated: true) {
+                viewController.present(camera, animated: true)
+            }
         }
     }
     
     func presentMakePlan() {
-        let makePlan = MakePlanViewController()
+        guard let viewController = self.presentingViewController else { return }
         DispatchQueue.main.async {
-            self.present(makePlan, animated: true)
+            self.dismiss(animated: true) {
+                viewController.present(MakePlanViewController(), animated: true)
+            }
         }
     }
 }

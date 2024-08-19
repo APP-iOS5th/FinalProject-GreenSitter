@@ -80,14 +80,6 @@ class MakePlanViewController: UIViewController {
         viewModel.delegate = self
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        if self.isBeingDismissed || self.isMovingFromParent {
-            NotificationCenter.default.post(name: NSNotification.Name("CloseChatAdditionalButtons"), object: nil)
-        }
-    }
-    
     private func setupUI() {
         addChild(pageViewController)
         
