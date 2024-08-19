@@ -11,13 +11,34 @@ import MapKit
 class SearchMapDetailViewController: UIViewController {
 
     private var location: Location
-    private let mapView = MKMapView()
+    private lazy var mapView: MKMapView = {
+        let mapView = MKMapView()
+        mapView.delegate = self
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        return mapView
+    }()
     
     private lazy var customAnnotationView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "offeringToSitterIcon"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         return imageView
+    }()
+    
+    private lazy var placeNameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .body)
+        label.textColor = UIColor.label
+        label.textAlignment = .left
+        return label
+    }()
+    
+    private lazy var addressLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        label.textColor = UIColor.secondaryLabel
+        label.textAlignment = .left
+        return label
     }()
 
     init(location: Location) {
@@ -40,14 +61,14 @@ class SearchMapDetailViewController: UIViewController {
     }
 
     private func setupNavigationBar() {
-        // 네비게이션 바 구성
+        // Navigation bar setup
         navigationItem.title = "장소 선택"
         
-        // 좌측 취소 버튼
+        // Cancel button
         let cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
         navigationItem.leftBarButtonItem = cancelButton
         
-        // 우측 확인 버튼
+        // Confirm button
         let confirmButton = UIBarButtonItem(title: "확인", style: .plain, target: self, action: #selector(confirmButtonTapped))
         navigationItem.rightBarButtonItem = confirmButton
     }
@@ -55,19 +76,16 @@ class SearchMapDetailViewController: UIViewController {
     private func setupMapView() {
         view.addSubview(mapView)
         
-        // 네비게이션 바 높이 확보 후 맵 뷰 위치 조정
-        mapView.translatesAutoresizingMaskIntoConstraints = false
+        // Map view layout
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mapView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.75) // 높이 75%
+            mapView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.75) // Height 75%
         ])
 
-        // 지도에 위치 설정
+        // Initial map setup
         let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-        let annotation = MKPointAnnotation()
-
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
         mapView.setRegion(region, animated: true)
     }
@@ -96,7 +114,7 @@ class SearchMapDetailViewController: UIViewController {
             infoView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
-        // 정보 레이블들 추가
+        // Adding info labels
         let titleLabel = UILabel()
         titleLabel.text = "선택한 곳의 정확한 장소를 입력해주세요."
         titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
@@ -104,21 +122,13 @@ class SearchMapDetailViewController: UIViewController {
         titleLabel.textAlignment = .left
         infoView.addSubview(titleLabel)
 
-        let placeNameLabel = UILabel()
         placeNameLabel.text = location.placeName
-        placeNameLabel.font = UIFont.preferredFont(forTextStyle: .body)
-        placeNameLabel.textColor = UIColor.label
-        placeNameLabel.textAlignment = .left
         infoView.addSubview(placeNameLabel)
 
-        let addressLabel = UILabel()
         addressLabel.text = location.address
-        addressLabel.font = UIFont.preferredFont(forTextStyle: .subheadline)
-        addressLabel.textColor = UIColor.secondaryLabel
-        addressLabel.textAlignment = .left
         infoView.addSubview(addressLabel)
 
-        // 레이블 위치 설정
+        // Label layout
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         placeNameLabel.translatesAutoresizingMaskIntoConstraints = false
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -136,20 +146,65 @@ class SearchMapDetailViewController: UIViewController {
             addressLabel.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -16)
         ])
     }
+
     
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        let centerCoordinate = mapView.centerCoordinate
-        location.latitude = centerCoordinate.latitude
-        location.longitude = centerCoordinate.longitude
-    }
-
-
     @objc private func cancelButtonTapped() {
         dismiss(animated: true, completion: nil)
     }
 
     @objc private func confirmButtonTapped() {
-        // TODO: 확인 버튼 동작 구현
+        // TODO: Implement confirm button action
         dismiss(animated: true, completion: nil)
     }
 }
+
+
+extension SearchMapDetailViewController: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        let centerCoordinate = mapView.centerCoordinate
+        location.latitude = centerCoordinate.latitude
+        location.longitude = centerCoordinate.longitude
+        
+        KakaoAPIService.shared.fetchCoordinateToAddress(location: location) { [weak self] result in
+            switch result {
+            case .success(let updatedLocation):
+                print("regionDidChangeAnimated")
+
+                DispatchQueue.main.async {
+                    self?.placeNameLabel.text = updatedLocation.placeName
+                    self?.addressLabel.text = updatedLocation.address
+                    print("placeNameLabel: \(String(describing: self?.placeNameLabel.text))")
+                    print("address: \(String(describing: self?.addressLabel.text))")
+                }
+            case .failure(let error):
+                print("Failed to fetch address: \(error.localizedDescription)")
+            }
+        }
+    }
+
+}
+
+/*
+ 
+ extension SearchMapDetailViewController: MKMapViewDelegate {
+     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+         let centerCoordinate = mapView.centerCoordinate
+         location.latitude = centerCoordinate.latitude
+         location.longitude = centerCoordinate.longitude
+         
+         KakaoAPIService.shared.fetchCoordinateToAddress(location: location) { [weak self] result in
+             switch result {
+             case .success(let updatedLocation):
+                 DispatchQueue.main.async {
+                     self?.placeNameLabel.text = updatedLocation.placeName
+                     self?.addressLabel.text = updatedLocation.address
+                 }
+             case .failure(let error):
+                 print("Failed to fetch address: \(error.localizedDescription)")
+             }
+         }
+     }
+
+ }
+
+ */

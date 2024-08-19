@@ -121,6 +121,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     }
 
     private func loadMorePlaces(query: String) {
+        // isEnd 가 true인 경우, Last Page 이므로 종료
         guard !isEnd else {
             print("Last Page: \(currentPage), \(isEnd)")
             return
