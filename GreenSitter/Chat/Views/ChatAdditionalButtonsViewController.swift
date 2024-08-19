@@ -25,8 +25,23 @@ class ChatAdditionalButtonsViewController: UIViewController {
         additionalButtonStackView.spacing = 37
         additionalButtonStackView.alignment = .leading
         additionalButtonStackView.translatesAutoresizingMaskIntoConstraints = false
-        
         return additionalButtonStackView
+    }()
+    
+    private lazy var closeButton: UIButton = {
+        let closeButton = UIButton()
+        closeButton.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
+        var imageConfig = UIImage.SymbolConfiguration(pointSize: 22)
+        var buttonConfig = UIButton.Configuration.plain()
+        buttonConfig.preferredSymbolConfigurationForImage = imageConfig
+        closeButton.configuration = buttonConfig
+        closeButton.tintColor = .white.withAlphaComponent(0.85)
+        closeButton.contentMode = .scaleToFill
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        closeButton.addAction( UIAction { [weak self] _ in
+            self?.dismiss(animated: true)
+        }, for: .touchUpInside)
+       return closeButton
     }()
     
     override func viewDidLoad() {
@@ -36,15 +51,35 @@ class ChatAdditionalButtonsViewController: UIViewController {
         setupUI()
         
         viewModel.delegate = self
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(_:))))
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(closeViewController), name: NSNotification.Name("CloseChatAdditionalButtons"), object: nil)
+    }
+    
+    @objc
+    private func backgroundTapped(_ sender: UITapGestureRecognizer) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc
+    private func closeViewController() {
+        dismiss(animated: true)
     }
     
     //MARK: Setup UI
     private func setupUI() {
         view.addSubview(additionalButtonStackView)
+        view.addSubview(closeButton)
+        
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             additionalButtonStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -80),
             additionalButtonStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 32),
+            closeButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10),
+            closeButton.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
+            closeButton.widthAnchor.constraint(equalToConstant: 50),
+            closeButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 }
@@ -59,6 +94,7 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
         }
         
         picker.dismiss(animated: true)
+        self.dismiss(animated: true)
     }
     
     private func loadImages(from results: [PHPickerResult]) async -> [UIImage] {
@@ -88,13 +124,18 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
     }
 }
 
+//MARK: 카메라 터치 시 카메라 관련 함수
 extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: false) {
             if let image = info[.originalImage] as? UIImage {
                 print(image)
             }
+            self.dismiss(animated: true)
         }
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.dismiss(animated: true)
     }
 }
 

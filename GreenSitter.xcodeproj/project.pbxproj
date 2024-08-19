@@ -10,6 +10,7 @@
 		15F316352C71FB6C00F30B72 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F316342C71FB6C00F30B72 /* ColorExtension.swift */; };
 		15F316372C71FB7D00F30B72 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F316362C71FB7D00F30B72 /* UILabelExtension.swift */; };
 		15F316392C72002200F30B72 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 15F316382C72002200F30B72 /* APPKey.plist */; };
+		15F3163B2C72087600F30B72 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F3163A2C72087600F30B72 /* TestViewController.swift */; };
 		3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */; };
 		3B596DFA2C6B461200C71851 /* CustomTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF92C6B461200C71851 /* CustomTableCell.swift */; };
 		3B596DFF2C6B462B00C71851 /* InformationTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */; };
@@ -115,6 +116,7 @@
 		15F316342C71FB6C00F30B72 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		15F316362C71FB7D00F30B72 /* UILabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
 		15F316382C72002200F30B72 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
+		15F3163A2C72087600F30B72 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionTableCell.swift; sourceTree = "<group>"; };
 		3B596DF92C6B461200C71851 /* CustomTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableCell.swift; sourceTree = "<group>"; };
 		3B596DFE2C6B462B00C71851 /* InformationTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationTableCell.swift; sourceTree = "<group>"; };
@@ -599,6 +601,7 @@
 				97D1BEB42C6C9DF400F7A983 /* ChatPostViewController.swift */,
 				97D1BEB52C6C9DF400F7A983 /* ChatTableViewCell.swift */,
 				97D1BEB62C6C9DF400F7A983 /* ChatViewController.swift */,
+				15F3163A2C72087600F30B72 /* TestViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -764,6 +767,7 @@
 				977A52B32C69A84500E375F1 /* AnnotationDetailViewController.swift in Sources */,
 				97934E052C62F89F00B38E0A /* LevelPoint.swift in Sources */,
 				97934E012C62F89200B38E0A /* ChatRoom.swift in Sources */,
+				15F3163B2C72087600F30B72 /* TestViewController.swift in Sources */,
 				97D1BEA92C6C954100F7A983 /* SampleChatData.swift in Sources */,
 				97D1BE422C6C7F0500F7A983 /* SetProfileViewController.swift in Sources */,
 				97D1BEC52C6C9DF400F7A983 /* PlanPlaceViewController.swift in Sources */,
