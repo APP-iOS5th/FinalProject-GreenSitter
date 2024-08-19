@@ -79,8 +79,8 @@ class MapViewController: UIViewController {
             
             zoomInButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             zoomInButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            zoomInButton.widthAnchor.constraint(equalToConstant: 50),
-            zoomInButton.heightAnchor.constraint(equalToConstant: 50),
+            zoomInButton.widthAnchor.constraint(equalToConstant: 40),
+            zoomInButton.heightAnchor.constraint(equalToConstant: 40),
             
             zoomOutButton.topAnchor.constraint(equalTo: zoomInButton.bottomAnchor, constant: 8),
             zoomOutButton.leadingAnchor.constraint(equalTo: zoomInButton.leadingAnchor),
@@ -95,18 +95,22 @@ class MapViewController: UIViewController {
     }
     
     @objc private func zoomIn() {
-        
+        let region = mapView.region
+        let zoomedRegion = MKCoordinateRegion(center: region.center, span: MKCoordinateSpan(latitudeDelta: region.span.latitudeDelta / 2, longitudeDelta: region.span.longitudeDelta / 2))
+        mapView.setRegion(zoomedRegion, animated: true)
     }
-    
+
     @objc private func zoomOut() {
-        
+        let region = mapView.region
+        let zoomedRegion = MKCoordinateRegion(center: region.center, span: MKCoordinateSpan(latitudeDelta: region.span.latitudeDelta * 2, longitudeDelta: region.span.longitudeDelta * 2))
+        mapView.setRegion(zoomedRegion, animated: true)
     }
-    
+
     @objc private func centerUserLocation() {
-        
+        guard let location = viewModel.currentLocation else { return }
+        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude), latitudinalMeters: 1000, longitudinalMeters: 1000)
+        mapView.setRegion(region, animated: true)
     }
-    
-    
     
     private func bindViewModel() {
         // current Location 기준으로 1000m 안 카메라 세팅
