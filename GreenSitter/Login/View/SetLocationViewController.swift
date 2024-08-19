@@ -5,6 +5,7 @@
 //  Created by 차지용 on 8/8/24.
 //
 
+import Combine
 import UIKit
 import FirebaseCore
 import FirebaseFirestore
@@ -12,6 +13,9 @@ import FirebaseAuth
 
 class SetLocationViewController: UIViewController, UITextFieldDelegate {
     
+    private let mapViewModel = MapViewModel()
+    private var cancellables = Set<AnyCancellable>()
+
     var user: User?
     let db = Firestore.firestore()
     var currentUser: User? // 현재 사용자 객체
@@ -43,14 +47,9 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         let textField = UITextField()
         textField.frame.size.height = 30
         textField.borderStyle = .roundedRect
-        textField.backgroundColor = UIColor(named: "SeparatorsOpaque")
-        if let userLocation = user?.location {
-            textField.placeholder = "\(userLocation)"
-        }
-        else {
-            textField.placeholder = "현재 위치가져오기 실패"
-        }
-        textField.clearsOnBeginEditing = true //편집시 기존텍스트필드값 지우기
+        textField.backgroundColor = UIColor.fillPrimary
+        textField.placeholder = "현재 위치 가져오기 실패"
+//        textField.clearsOnBeginEditing = true //편집시 기존텍스트필드값 지우기
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         // 위치 텍스트 추가
@@ -101,7 +100,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             print("No user is currently logged in.")
         }
         
-        
+        bindViewModel()
         print("User 객체 상태: \(String(describing: user))")
         
         view.backgroundColor = .white
@@ -111,7 +110,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(locationTextField)
         view.addSubview(nextButton)
         view.addSubview(skipButton)
-        
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
@@ -134,20 +132,36 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         ])
         
     }
+    
+    private func bindViewModel() {
+        mapViewModel.$currentLocation
+            .compactMap { $0 }
+            .sink { [weak self] location in
+                print("SetLocation View Location: \(location)")
+                self?.user?.location = location
+                self?.locationTextField.text = location.address
+            }
+            .store(in: &cancellables)
+    }
+    
+    
     //MARK: - NextButton Method
     @objc func nextTap() {
-//        guard let enterLocation = locationTextField.text, !enterLocation.isEmpty else {
-//            //위치정보를 입력하지 않을때
-//            let userLocation = user?.location ?? "위치 정보 없음"
-//            print("위치 정보가 비어 있습니다.")
-//            updateLocationInFirestore(location: userLocation)
-//            return
-//        }
-//        updateLocationInFirestore(location: enterLocation)
+        guard let currentLocation = mapViewModel.currentLocation else {
+            print("CurrentLocation is nil")
+            return
+        }
+        
+//        updateLocationInFirestore(location: currentLocation)
+        
+        DispatchQueue.main.async {
+            let setProfileViewController = SetProfileViewController()
+            self.navigationController?.pushViewController(setProfileViewController, animated: true)
+        }
     }
     
     //MARK: - 파이어베이스 위치정보 저장
-    private func updateLocationInFirestore(location: String) {
+    private func updateLocationInFirestore(location: Location) {
         guard let user = Auth.auth().currentUser else {
             print("Error: Firebase authResult is nil.")
             return

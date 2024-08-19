@@ -17,18 +17,20 @@ class KakaoAPIService {
     
     // MARK: - 좌표로 행정구역정보 받기
     func fetchRegionInfo(for location: Location, completion: @escaping (Result<Location, Error>) -> Void) {
-        let x = location.latitude
-        let y = location.longitude
+        let x = location.longitude // 경도
+        let y = location.latitude // 위도
         
+        // URL 형성
         guard let url = URL(string: "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=\(x)&y=\(y)") else {
             print("Invalid URL")
             return
         }
         
+        // 요청 설정
         var request = URLRequest(url: url)
         request.addValue("KakaoAK \(restAPIKey)", forHTTPHeaderField: "Authorization")
         
-        // 네트워크 요청 준비
+        // 네트워크 요청
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 completion(.failure(error))
@@ -41,17 +43,20 @@ class KakaoAPIService {
             }
             
             do {
-                var updatedLocation = location
+                // 정상 응답 처리
                 let response = try JSONDecoder().decode(KakaoAPIResponse.self, from: data)
                 if let firstDocument = response.documents.first {
+                    var updatedLocation = location
                     updatedLocation.address = firstDocument.address_name
+                    completion(.success(updatedLocation))
+                } else {
+                    let error = NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No documents found in response"])
+                    completion(.failure(error))
                 }
-                completion(.success(updatedLocation))
             } catch {
                 completion(.failure(error))
             }
         }
-        // 네트워크 요청 시작
         task.resume()
     }
     
@@ -144,6 +149,9 @@ class KakaoAPIService {
                     let roadAddress = firstDocument.road_address
                     updatedLocation.address = roadAddress.addressName
                     updatedLocation.placeName = roadAddress.buildingName
+                } else {
+                    let error = NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No documents found in response"])
+                    completion(.failure(error))
                 }
                 print("Service: \(updatedLocation)")
                 completion(.success(updatedLocation))
@@ -156,7 +164,6 @@ class KakaoAPIService {
 
 
 }
-
 // MARK: - 좌표로 행정구역정보 받기 위한 API Response Models
 struct KakaoAPIResponse: Codable {
     let meta: Meta

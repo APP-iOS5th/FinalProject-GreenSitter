@@ -117,7 +117,7 @@ class MapViewController: UIViewController {
         viewModel.$currentLocation
             .compactMap { $0 }  // nil 이 아닌 경우만 처리
             .sink { [weak self] location in
-                print("Updated Location: \(location.latitude), \(location.longitude), Address: \(location.address)")
+                print("Updated Location: \(location.latitude), \(location.longitude), Address: \(location.address), placeName: \(location.placeName)")
 
                 let region = MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
