@@ -21,7 +21,7 @@ class MakePlanViewModel {
     
     var delegate: MakePlanViewModelDelegate?
     
-    init(date: Date = Date(), planPlace: Location? = Location.sampleLocation, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0) {
+    init(date: Date = Date(), planPlace: Location? = nil, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0) {
         let interval = 5
         let calendar = Calendar.current
         let date = calendar.date(bySettingHour: calendar.component(.hour, from: date), minute: ((calendar.component(.minute, from: date) + 5) / interval) * interval, second: 0, of: date) ?? date
