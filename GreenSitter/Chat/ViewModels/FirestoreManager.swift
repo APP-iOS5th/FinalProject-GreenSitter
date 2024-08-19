@@ -74,8 +74,9 @@ class FirestoreManager {
         
         do {
             try await documentRef.setData(from: chatRoom)
+            print("Message saved successfully")
         } catch let error {
-            print("Save chat room data error: \(error.localizedDescription)")
+            print("Failed to save chatRoom: \(error.localizedDescription)")
         }
     }
     
@@ -92,6 +93,20 @@ class FirestoreManager {
         } catch {
             print("Error checking if chat room exists: \(error.localizedDescription)")
             return false
+        }
+    }
+    
+    // 채팅 메세지 저장
+    func saveMessage(to chatRoomId: String, message: Message) async throws {
+        let messagesCollectionRef = db.collection("chatRooms").document(chatRoomId).collection("messages").document(message.id)
+        
+        do {
+            // 메시지 데이터 저장
+            try await messagesCollectionRef.setData(from: message)
+            print("Message saved successfully")
+        } catch {
+            print("Failed to save message: \(error.localizedDescription)")
+            throw error
         }
     }
     

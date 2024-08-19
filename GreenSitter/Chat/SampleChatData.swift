@@ -199,7 +199,7 @@ struct SampleChatData {
     
     static let examplePosts = [
     Post(
-        id: UUID().uuidString,
+        id: "40e8400-e29b-41d4-a716-446655440001",
         enabled: true,
         createDate: Date(),
         updateDate: Date(),
@@ -219,7 +219,7 @@ struct SampleChatData {
         location: Location.sampleLocation
     ),
     Post(
-        id: UUID().uuidString,
+        id: "40e8400-e29b-41d4-a716-446655440002",
         enabled: true,
         createDate: Date(),
         updateDate: Date(),
@@ -239,7 +239,7 @@ struct SampleChatData {
         location: Location.sampleLocation
     ),
     Post(
-        id: UUID().uuidString,
+        id: "40e8400-e29b-41d4-a716-446655440003",
         enabled: true,
         createDate: Date(),
         updateDate: Date(),

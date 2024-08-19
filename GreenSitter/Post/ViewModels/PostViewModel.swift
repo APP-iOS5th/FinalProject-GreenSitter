@@ -27,7 +27,6 @@ class PostViewModel {
             do {
                 // 채팅방 데이터 저장
                 try await self.firestoreManager.saveChatRoom(newChat)
-                print("Succeed to save chat room")
                 
                 if let onChatButtonTapped = self.onChatButtonTapped {
                     DispatchQueue.main.async {
