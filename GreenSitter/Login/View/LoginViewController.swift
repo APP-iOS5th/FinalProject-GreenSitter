@@ -221,19 +221,53 @@ class LoginViewController: UIViewController {
                     return
                 }
                 
-                // Firebase Database에 사용자 정보 저장
+                let post = Post(
+                    id: UUID().uuidString,
+                    enabled: true,
+                    createDate: Date(),
+                    updateDate: Date(),
+                    userId: "exampleUserId",
+                    profileImage: "exampleProfileImageURL",
+                    nickname: "exampleNickname",
+                    userLocation: Location.seoulLocation,
+                    userNotification: false,
+                    postType: .offeringToSitter,
+                    postTitle: "exampleTitle",
+                    postBody: "exampleBody",
+                    postImages: ["exampleImage1", "exampleImage2"],
+                    postStatus: .beforeTrade,
+                    location: Location.seoulLocation
+                )
+
+                // Firestore에 문서 저장
                 let userRef = db.collection("users").document(user.uid)
-                
                 userRef.setData([
-                    "id": user.uid,
-                    "email": user.email ?? "",
-                    "displayName": user.displayName ?? "",
-                    "location": users?.location ?? "",
-                    "enabled": false,  // 콤마 추가
-                    "address": "서울특별시 구로구 온수동"
+                    
+                    "id": post.id,
+                    "enabled": post.enabled,
+                    "createDate": Timestamp(date: post.createDate), // Date를 Timestamp로 변환
+                    "updateDate": Timestamp(date: post.updateDate), // Date를 Timestamp로 변환
+                    "userId": post.userId,
+                    "profileImage": post.profileImage,
+                    "nickname": post.nickname,
+                    "userLocation": [
+                        "latitude": post.userLocation.latitude,
+                        "longitude": post.userLocation.longitude
+                    ],
+                    "userNotification": post.userNotification,
+                    "postType": post.postType.rawValue,
+                    "postTitle": post.postTitle,
+                    "postBody": post.postBody,
+                    "postImages": post.postImages ?? [],
+                    "postStatus": post.postStatus.rawValue,
+                    "address": "서울특별시 구로구 온수동",
+                    "location": post.location != nil ? [
+                        "latitude": post.location?.latitude ?? 0,
+                        "longitude": post.location?.longitude ?? 0
+                    ] : NSNull() // 위치가 없을 경우 NSNull() 사용
                 ]) { error in
                     if let error = error {
-                        print("Firestore Save Error: \(error.localizedDescription)")
+                        print("Firestore 저장 오류: \(error.localizedDescription)")
                     } else {
                         print("Firestore에 사용자 정보 저장 성공")
                     }

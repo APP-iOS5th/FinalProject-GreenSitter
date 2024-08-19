@@ -6,9 +6,15 @@
 //
 
 import UIKit
+import FirebaseFirestore
+import FirebaseAuth
 
 class CareRecordViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    let db = Firestore.firestore()
+    
+    var post: [Post] = []
+
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
@@ -32,21 +38,42 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        
+        fetchPostFirebase()
         
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return post.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
-        cell.statusLabel.text = "거래중"
-        cell.titleLabel.text = "이런이런 식물을 판매할 예정입니다"
-        cell.bodyLabel.text = "물을 많이 줘야합니다"
-        cell.timeLabel.text = "2시간전"
-        cell.plantImage.image = UIImage(named: "logo7")
+        let currentPost = post[indexPath.row]
+        
+        switch currentPost.postStatus {
+        case .beforeTrade:
+            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
+        case .inTrade:
+            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
+        case .completedTrade:
+            cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        }
+        
+        cell.statusLabel.text = currentPost.postStatus.rawValue
+        cell.titleLabel.text = currentPost.postTitle
+        cell.bodyLabel.text = currentPost.postBody
+        cell.timeLabel.text = DateFormatter.localizedString(from: currentPost.updateDate, dateStyle: .short, timeStyle: .short)
+        
+        if let imageURL = currentPost.postImages?.first {
+            loadImage(from: imageURL) { image in
+                DispatchQueue.main.async {
+                    cell.plantImage.image = image ?? UIImage(named: "logo7")
+                }
+            }
+        } else {
+            cell.plantImage.image = UIImage(named: "logo7")
+        }
+        
         return cell
     }
 

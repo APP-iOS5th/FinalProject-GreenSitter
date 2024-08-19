@@ -70,6 +70,5 @@ extension SelfIntroductionViewController {
                 print("문서 존재하지 않음")
             }
         }
-        
     }
 }
