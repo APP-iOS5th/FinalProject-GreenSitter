@@ -90,18 +90,11 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
 
 extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        let editedImage = info[.editedImage] as? UIImage
-        let originalImage = info[.originalImage] as? UIImage
-        let image = editedImage ?? originalImage
-        
-        guard let image = image else {
-            print("error")
-            dismiss(animated: true)
-            return
+        picker.dismiss(animated: false) {
+            if let image = info[.originalImage] as? UIImage {
+                print(image)
+            }
         }
-        
-        print(image)
-        picker.dismiss(animated: true)
     }
 }
 
@@ -122,8 +115,7 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
     func presentCamera() {
         let camera = UIImagePickerController()
         camera.sourceType = .camera
-        camera.allowsEditing = true
-        camera.cameraDevice = .front
+        camera.allowsEditing = false
         camera.cameraCaptureMode = .photo
         camera.delegate = self
         

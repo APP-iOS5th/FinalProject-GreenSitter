@@ -13,14 +13,24 @@ class MakePlanViewController: UIViewController {
 
     private var pages: [UIViewController] = []
     
-    private lazy var navigationBar : UINavigationBar = {
+    private lazy var backButton : UIButton = {
         let backButton = UIButton()
         backButton.setTitle(" Back", for: .normal)
         backButton.setTitleColor(.systemBlue, for: .normal)
         backButton.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
-        backButton.addAction(UIAction { _ in
-            print("backButtonTapped")
+        backButton.addAction(UIAction { [weak self] _ in
+            if self?.viewModel.progress == 0 {
+                self?.dismiss(animated: true)
+                return
+            } else {
+                self?.viewModel.progress -= 1
+                self?.backtoPreviousPage()
+            }
         }, for: .touchUpInside)
+        return backButton
+    }()
+    
+    private lazy var navigationBar : UINavigationBar = {
         let backButtonItem = UIBarButtonItem(customView: backButton)
         let navItem = UINavigationItem(title: "약속 정하기")
         navItem.leftBarButtonItem = backButtonItem
@@ -90,17 +100,24 @@ class MakePlanViewController: UIViewController {
             planProgressBar.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -30),
             planProgressBar.heightAnchor.constraint(equalToConstant: 80),
             
-            pageViewController.view.topAnchor.constraint(equalTo: planProgressBar.bottomAnchor, constant: 20),
-            pageViewController.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 30),
-            pageViewController.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -30),
-            pageViewController.view.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            pageViewController.view.topAnchor.constraint(equalTo: planProgressBar.bottomAnchor, constant: 40),
+            pageViewController.view.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            pageViewController.view.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            pageViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 }
 
 extension MakePlanViewController: MakePlanViewModelDelegate {
     func gotoNextPage() {
+        guard viewModel.progress < pages.count else { return }
         planProgressBar.progress = viewModel.progress
         pageViewController.setViewControllers([pages[viewModel.progress]], direction: .forward, animated: true, completion: nil)
+    }
+    
+    func backtoPreviousPage() {
+        guard viewModel.progress >= 0 else { return }
+        planProgressBar.progress = viewModel.progress
+        pageViewController.setViewControllers([pages[viewModel.progress]], direction: .reverse, animated: true, completion: nil)
     }
 }
