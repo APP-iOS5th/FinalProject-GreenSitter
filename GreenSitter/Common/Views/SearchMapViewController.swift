@@ -199,13 +199,13 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
         return 40
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerLabel = UILabel()
-        headerLabel.text = "검색 결과"
-        headerLabel.textColor = .secondaryLabel
-        headerLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
-        return headerLabel
-    }
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        let headerLabel = UILabel()
+//        headerLabel.text = "검색 결과"
+//        headerLabel.textColor = .secondaryLabel
+//        headerLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+//        return headerLabel
+//    }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == locations.count - 1 { // 마지막 셀에 도달했을 때

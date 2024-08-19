@@ -238,7 +238,7 @@ extension MapViewController: MKMapViewDelegate {
         
         // postType 따라서 어노테이션에 이미지 다르게 적용
         let sesacImage: UIImage!
-        let size = CGSize(width: 40, height: 40)
+        let size = CGSize(width: 50, height: 50)
         UIGraphicsBeginImageContext(size)
         
         switch annotation.postType {
@@ -309,13 +309,13 @@ extension MapViewController: MKMapViewDelegate {
                 // 오버레이 색 적용
                 switch post.postType {
                 case .lookingForSitter:
-                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.3)
+                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.6)
                 case .offeringToSitter:
-                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3)
+                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.6)
                 }
             } else {
                 print("post is nil")
-                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3) // Default color
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.6) // Default color
             }
 
             circleRenderer.strokeColor = UIColor.separatorsOpaque
