@@ -229,7 +229,6 @@ struct SearchMapViewControllerPreview: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}
 }
 
-// #Preview 구문 추가
 #Preview {
     SearchMapViewControllerPreview()
 }

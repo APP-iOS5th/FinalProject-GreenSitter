@@ -10,8 +10,15 @@ import MapKit
 
 class SearchMapDetailViewController: UIViewController {
 
-    private let location: Location
+    private var location: Location
     private let mapView = MKMapView()
+    
+    private lazy var customAnnotationView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "offeringToSitterIcon"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
 
     init(location: Location) {
         self.location = location
@@ -28,6 +35,7 @@ class SearchMapDetailViewController: UIViewController {
         view.backgroundColor = .white
         setupNavigationBar()
         setupMapView()
+        setupCustomAnnotation()
         setupLocationInfoView()
     }
 
@@ -59,12 +67,20 @@ class SearchMapDetailViewController: UIViewController {
         // 지도에 위치 설정
         let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
         let annotation = MKPointAnnotation()
-        annotation.coordinate = coordinate
-        annotation.title = location.placeName
-        mapView.addAnnotation(annotation)
 
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
         mapView.setRegion(region, animated: true)
+    }
+    
+    private func setupCustomAnnotation() {
+        mapView.addSubview(customAnnotationView)
+        
+        NSLayoutConstraint.activate([
+            customAnnotationView.centerXAnchor.constraint(equalTo: mapView.centerXAnchor),
+            customAnnotationView.centerYAnchor.constraint(equalTo: mapView.centerYAnchor),
+            customAnnotationView.widthAnchor.constraint(equalToConstant: 40),
+            customAnnotationView.heightAnchor.constraint(equalToConstant: 40)
+        ])
     }
 
     private func setupLocationInfoView() {
@@ -120,6 +136,13 @@ class SearchMapDetailViewController: UIViewController {
             addressLabel.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -16)
         ])
     }
+    
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        let centerCoordinate = mapView.centerCoordinate
+        location.latitude = centerCoordinate.latitude
+        location.longitude = centerCoordinate.longitude
+    }
+
 
     @objc private func cancelButtonTapped() {
         dismiss(animated: true, completion: nil)
