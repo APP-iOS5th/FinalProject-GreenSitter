@@ -11,7 +11,6 @@ import MapKit
 class SearchMapDetailViewController: UIViewController {
 
     private var location: Location
-    
     private var isInitialLoad = true  // 초기 로드를 체크하기 위한 플래그
 
     private lazy var mapView: MKMapView = {
@@ -28,21 +27,23 @@ class SearchMapDetailViewController: UIViewController {
         return imageView
     }()
     
-    private lazy var placeNameLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .body)
-        label.textColor = UIColor.label
-        label.textAlignment = .left
-        return label
+    private lazy var placeNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.font = UIFont.preferredFont(forTextStyle: .body)
+        textField.textColor = UIColor.label
+        textField.textAlignment = .left
+        textField.placeholder = "예) 강남역 1번 출구 앞, 와르르 멘션 2동 경비실.."
+        return textField
     }()
-    
-    private lazy var addressLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
-        label.textColor = UIColor.secondaryLabel
-        label.textAlignment = .left
-        return label
+
+    private lazy var addressTextField: UITextField = {
+        let textField = UITextField()
+        textField.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        textField.textColor = UIColor.secondaryLabel
+        textField.textAlignment = .left
+        return textField
     }()
+
 
     init(location: Location) {
         self.location = location
@@ -62,6 +63,12 @@ class SearchMapDetailViewController: UIViewController {
         setupCustomAnnotation()
         setupLocationInfoView()
     }
+    
+    private func updateLabels(with location: Location) {
+        placeNameTextField.text = location.placeName.isEmpty ? nil : location.placeName
+        addressTextField.text = location.address
+    }
+
 
     private func setupNavigationBar() {
         // Navigation bar setup
@@ -125,28 +132,28 @@ class SearchMapDetailViewController: UIViewController {
         titleLabel.textAlignment = .left
         infoView.addSubview(titleLabel)
 
-        placeNameLabel.text = location.placeName
-        infoView.addSubview(placeNameLabel)
+        placeNameTextField.text = location.placeName
+        infoView.addSubview(placeNameTextField)
 
-        addressLabel.text = location.address
-        infoView.addSubview(addressLabel)
+        addressTextField.text = location.address
+        infoView.addSubview(addressTextField)
 
         // Label layout
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        placeNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        addressLabel.translatesAutoresizingMaskIntoConstraints = false
+        placeNameTextField.translatesAutoresizingMaskIntoConstraints = false
+        addressTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: infoView.topAnchor, constant: 16),
             titleLabel.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -16),
             
-            placeNameLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            placeNameLabel.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: 16),
-            placeNameLabel.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -16),
+            placeNameTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            placeNameTextField.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: 16),
+            placeNameTextField.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -16),
             
-            addressLabel.topAnchor.constraint(equalTo: placeNameLabel.bottomAnchor, constant: 4),
-            addressLabel.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: 16),
-            addressLabel.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -16)
+            addressTextField.topAnchor.constraint(equalTo: placeNameTextField.bottomAnchor, constant: 4),
+            addressTextField.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: 16),
+            addressTextField.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -16)
         ])
     }
 
@@ -164,13 +171,10 @@ class SearchMapDetailViewController: UIViewController {
 
 extension SearchMapDetailViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        
-        // 초기 로드 시에는 regionDidChangeAnimated 메서드를 실행하지 않음
         if isInitialLoad {
             isInitialLoad = false
             return
         }
-        
         let centerCoordinate = mapView.centerCoordinate
         location.latitude = centerCoordinate.latitude
         location.longitude = centerCoordinate.longitude
@@ -178,13 +182,8 @@ extension SearchMapDetailViewController: MKMapViewDelegate {
         KakaoAPIService.shared.fetchCoordinateToAddress(location: location) { [weak self] result in
             switch result {
             case .success(let updatedLocation):
-                print("regionDidChangeAnimated")
-
                 DispatchQueue.main.async {
-                    self?.placeNameLabel.text = updatedLocation.placeName
-                    self?.addressLabel.text = updatedLocation.address
-                    print("placeNameLabel: \(String(describing: self?.placeNameLabel.text))")
-                    print("address: \(String(describing: self?.addressLabel.text))")
+                    self?.updateLabels(with: updatedLocation)
                 }
             case .failure(let error):
                 print("Failed to fetch address: \(error.localizedDescription)")
