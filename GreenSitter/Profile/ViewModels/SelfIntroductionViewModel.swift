@@ -32,10 +32,14 @@ extension SelfIntroductionViewController {
             }
             else {
                 print("자기소개 successfully saved!")
+                
+                // 데이터가 성공적으로 저장되었음을 알림
+                NotificationCenter.default.post(name: NSNotification.Name("UserAboutMeUpdated"), object: nil)
             }
         }
-        dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
+
     
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {

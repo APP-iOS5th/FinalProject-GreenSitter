@@ -159,6 +159,15 @@ class AboutMeViewController: UIViewController{
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
         fetchUserFirebase()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.userAboutMeUpdated), name: NSNotification.Name("UserAboutMeUpdated"), object: nil)
+
     }
-    
+    @objc func userAboutMeUpdated() {
+        // 유저 데이터를 다시 불러오기
+        fetchUserFirebase()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }

@@ -71,6 +71,7 @@ extension AboutMeViewController {
                 
                 DispatchQueue.main.async {
                     self.nicknameLabel.text = nickname // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
+                    self.tableView.reloadData()
                 }
             } else {
                 print("Document does not exist")
@@ -123,4 +124,6 @@ extension AboutMeViewController {
             .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 한 번만 호출
         return baseURL + (encodedPath ?? "") + "?alt=media"
     }
+    
+    
 }
