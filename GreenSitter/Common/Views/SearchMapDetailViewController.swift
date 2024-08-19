@@ -11,6 +11,9 @@ import MapKit
 class SearchMapDetailViewController: UIViewController {
 
     private var location: Location
+    
+    private var isInitialLoad = true  // 초기 로드를 체크하기 위한 플래그
+
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.delegate = self
@@ -161,6 +164,13 @@ class SearchMapDetailViewController: UIViewController {
 
 extension SearchMapDetailViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        
+        // 초기 로드 시에는 regionDidChangeAnimated 메서드를 실행하지 않음
+        if isInitialLoad {
+            isInitialLoad = false
+            return
+        }
+        
         let centerCoordinate = mapView.centerCoordinate
         location.latitude = centerCoordinate.latitude
         location.longitude = centerCoordinate.longitude
@@ -183,28 +193,3 @@ extension SearchMapDetailViewController: MKMapViewDelegate {
     }
 
 }
-
-/*
- 
- extension SearchMapDetailViewController: MKMapViewDelegate {
-     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-         let centerCoordinate = mapView.centerCoordinate
-         location.latitude = centerCoordinate.latitude
-         location.longitude = centerCoordinate.longitude
-         
-         KakaoAPIService.shared.fetchCoordinateToAddress(location: location) { [weak self] result in
-             switch result {
-             case .success(let updatedLocation):
-                 DispatchQueue.main.async {
-                     self?.placeNameLabel.text = updatedLocation.placeName
-                     self?.addressLabel.text = updatedLocation.address
-                 }
-             case .failure(let error):
-                 print("Failed to fetch address: \(error.localizedDescription)")
-             }
-         }
-     }
-
- }
-
- */

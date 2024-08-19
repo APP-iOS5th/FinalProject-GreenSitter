@@ -143,7 +143,7 @@ class KakaoAPIService {
                     // Use road_address if available, otherwise fallback to address
                     let roadAddress = firstDocument.road_address
                     updatedLocation.address = roadAddress.addressName
-                    updatedLocation.placeName = roadAddress.buildingName.isEmpty ? firstDocument.address.addressName : roadAddress.buildingName
+                    updatedLocation.placeName = roadAddress.buildingName
                 }
                 print("Service: \(updatedLocation)")
                 completion(.success(updatedLocation))
