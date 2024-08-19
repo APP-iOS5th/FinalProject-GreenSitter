@@ -76,5 +76,5 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
         
         return cell
     }
-
+//
 }
