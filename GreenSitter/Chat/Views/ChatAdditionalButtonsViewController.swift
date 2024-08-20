@@ -169,7 +169,7 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
     func presentMakePlan() {
         guard let viewController = self.presentingViewController else { return }
         DispatchQueue.main.async {
-            self.dismiss(animated: true) {
+            self.dismiss(animated: false) {
                 viewController.present(MakePlanViewController(), animated: true)
             }
         }

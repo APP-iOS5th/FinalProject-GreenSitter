@@ -9,7 +9,7 @@ import UIKit
 
 class PlanProgressBar: UIView {
     
-    var progress: Int = 0 {
+    var progress: Int {
         didSet {
             updateUI()
         }
@@ -20,8 +20,8 @@ class PlanProgressBar: UIView {
     let progressDeactivateGray = UIColor(hexCode: "717171")
     
     init(progress: Int) {
-        super.init(frame: .zero)
         self.progress = progress
+        super.init(frame: .zero)
         setupUI()
         updateUI()
     }
@@ -30,46 +30,67 @@ class PlanProgressBar: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupUI() {
+    private lazy var progressLine: UIProgressView = {
         let progressLine = UIProgressView()
         progressLine.trackTintColor = progressGray
         progressLine.progressTintColor = progressBlue
-        progressLine.progress = 0.0
+        progressLine.setProgress(Float(progress) / 2.0, animated: false)
         progressLine.translatesAutoresizingMaskIntoConstraints = false
-        
+        return progressLine
+    }()
+    
+    private lazy var dateTimeIcon: UIImageView = {
         let dateTimeIcon = UIImageView(image: UIImage(systemName: "checkmark.circle.fill")?.withTintColor(progressBlue, renderingMode: .alwaysOriginal))
         dateTimeIcon.clipsToBounds = true
         dateTimeIcon.layer.cornerRadius = 10
         dateTimeIcon.translatesAutoresizingMaskIntoConstraints = false
-        
+        return dateTimeIcon
+    }()
+    
+    private lazy var placeIcon: UIImageView = {
         let placeIcon = UIImageView(image: UIImage(systemName: "smallcircle.filled.circle")?.withTintColor(progressBlue, renderingMode: .alwaysOriginal))
         placeIcon.clipsToBounds = true
         placeIcon.layer.cornerRadius = 10
         placeIcon.translatesAutoresizingMaskIntoConstraints = false
-        
+        return placeIcon
+    }()
+    
+    private lazy var finalConfirmIcon: UIImageView = {
         let finalConfirmIcon = UIImageView(image: UIImage(systemName: "circle")?.withTintColor(progressGray, renderingMode: .alwaysOriginal))
         finalConfirmIcon.clipsToBounds = true
         finalConfirmIcon.layer.cornerRadius = 10
         finalConfirmIcon.translatesAutoresizingMaskIntoConstraints = false
-        
+        return finalConfirmIcon
+    }()
+    
+    private lazy var dateTimeText: UILabel = {
         let dateTimeText = UILabel()
         dateTimeText.text = "날짜 및 시간 선택"
         dateTimeText.font = UIFont.systemFont(ofSize: 10)
         dateTimeText.addCharacterSpacing(-0.025)
         dateTimeText.translatesAutoresizingMaskIntoConstraints = false
-        
+        return dateTimeText
+    }()
+    
+    private lazy var placeText: UILabel = {
         let placeText = UILabel()
         placeText.text = "만날 장소 선택"
         placeText.font = UIFont.systemFont(ofSize: 10)
         placeText.addCharacterSpacing(-0.025)
         placeText.translatesAutoresizingMaskIntoConstraints = false
-        
+        return placeText
+    }()
+    
+    private lazy var finalConfirmText: UILabel = {
         let finalConfirmText = UILabel()
         finalConfirmText.text = "최종 확인"
         finalConfirmText.font = UIFont.systemFont(ofSize: 10)
         finalConfirmText.addCharacterSpacing(-0.025)
         finalConfirmText.translatesAutoresizingMaskIntoConstraints = false
-        
+        return finalConfirmText
+    }()
+    
+    private func setupUI() {
         self.addSubview(progressLine)
         self.addSubview(dateTimeIcon)
         self.addSubview(placeIcon)
@@ -77,7 +98,6 @@ class PlanProgressBar: UIView {
         self.addSubview(dateTimeText)
         self.addSubview(placeText)
         self.addSubview(finalConfirmText)
-        
         
         NSLayoutConstraint.activate([
             progressLine.heightAnchor.constraint(equalToConstant: 1),
@@ -112,16 +132,7 @@ class PlanProgressBar: UIView {
     }
     
     private func updateUI() {
-        let progressLine = self.subviews.compactMap { $0 as? UIProgressView }.first
-        progressLine?.setProgress(Float(progress) / 2.0, animated: true)
-
-        let dateTimeIcon = self.subviews.compactMap { $0 as? UIImageView }[0]
-        let placeIcon = self.subviews.compactMap { $0 as? UIImageView }[1]
-        let finalConfirmIcon = self.subviews.compactMap { $0 as? UIImageView }[2]
-
-        let dateTimeText = self.subviews.compactMap { $0 as? UILabel }[0]
-        let placeText = self.subviews.compactMap { $0 as? UILabel }[1]
-        let finalConfirmText = self.subviews.compactMap { $0 as? UILabel }[2]
+        progressLine.setProgress(Float(progress) / 2.0, animated: true)
 
         func animateIconChange(icon: UIImageView, newImage: UIImage?, backgroundColor: UIColor?) {
             UIView.transition(with: icon, duration: 0.5, options: .transitionCrossDissolve, animations: {
