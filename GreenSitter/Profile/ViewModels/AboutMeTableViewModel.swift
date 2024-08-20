@@ -25,12 +25,6 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
             return 1
         case 1:
             return 2
-        case 2:
-            return 2
-        case 3:
-            return 2
-        case 4:
-            return 4
         default:
             return 0
             
@@ -46,8 +40,6 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
             cell = tableView.dequeueReusableCell(withIdentifier: "introductionTableCell", for: indexPath) as! IntroductionTableCell
             (cell as! IntroductionTableCell).bodyLabel.text = user?.aboutMe ?? ""
             (cell as! IntroductionTableCell).bodyLabel.textColor = .black
-
-            
         case 1:
             cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
             if indexPath.row == 0 {
@@ -61,47 +53,7 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
                 (cell as! CustomTableCell).textsLabel.text = "돌봄 기록"
                 (cell as! CustomTableCell).textsLabel.textColor = .black
             }
-        case 2:
-            cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
-            if indexPath.row == 0 {
-                (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "leaf.fill")
-                (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
-                (cell as! CustomTableCell).textsLabel.text = "내가 맡긴 식물"
-                (cell as! CustomTableCell).textsLabel.textColor = .black
 
-            } else {
-                (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "list.bullet.rectangle.fill")
-                (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
-                (cell as! CustomTableCell).textsLabel.text = "내가 쓴 돌봄 후기"
-                (cell as! CustomTableCell).textsLabel.textColor = .black
-            }
-        case 3:
-            cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
-            if indexPath.row == 0 {
-                (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "rectangle.portrait.and.arrow.forward.fill")
-                (cell as! CustomTableCell).iconImage.tintColor = .systemBlue
-                (cell as! CustomTableCell).textsLabel.text = "로그아웃"
-                (cell as! CustomTableCell).textsLabel.textColor = .systemBlue
-            } else {
-                (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "person.crop.circle.badge.xmark")
-                (cell as! CustomTableCell).iconImage.tintColor = .systemRed
-                (cell as! CustomTableCell).textsLabel.text = "회원탈퇴"
-                (cell as! CustomTableCell).textsLabel.textColor = .systemRed
-            }
-        case 4:
-            cell = tableView.dequeueReusableCell(withIdentifier: "informationTableCell", for: indexPath) as! InformationTableCell
-            switch indexPath.row {
-            case 0:
-                (cell as! InformationTableCell).infoLabel.text = "서비스 이용약관"
-            case 1:
-                (cell as! InformationTableCell).infoLabel.text = "개인정보 처리 방침"
-            case 2:
-                (cell as! InformationTableCell).infoLabel.text = "비즈니스 개인정보 처리방침"
-            case 3:
-                (cell as! InformationTableCell).infoLabel.text = "위치기반서비스 이용약관"
-            default:
-                (cell as! InformationTableCell).infoLabel.text = ""
-            }
         default:
             cell = UITableViewCell()
         }

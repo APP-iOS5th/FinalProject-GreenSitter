@@ -18,76 +18,124 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        switch section {
+        case 0:
+            return 3
+        case 1:
+            return 2
+        case 2:
+            return 2
+        case 3:
+            return 3
+        default:
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
+        let cell: UITableViewCell
+        
+        switch (indexPath.section, indexPath.row) {
+        case (0, 0):
+            // "이름" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
+            (cell as! ProfileTableViewCell).titleLabel.text = "이름"
+            (cell as! ProfileTableViewCell).bodyLabel.text = user?.nickname
+            (cell as! ProfileTableViewCell).bodyLabel.textColor = .black
+            (cell as! ProfileTableViewCell).actionButton.isHidden = false
+            (cell as! ProfileTableViewCell).actionButton.setTitle("변경", for: .normal)
+            (cell as! ProfileTableViewCell).actionButton.addTarget(self, action: #selector(changeNicknameButtonTap), for: .touchUpInside)
+            (cell as! ProfileTableViewCell).setIconHidden(true)
+            
+        case (0, 1):
+            // "사는 곳" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
+            let profileCell = cell as! ProfileTableViewCell
+
+            profileCell.titleLabel.text = "사는 곳"
+            profileCell.bodyLabel.text = "user?.location"
+
+            profileCell.actionButton.isHidden = false
+            profileCell.actionButton.setTitle("변경", for: .normal)
+            profileCell.actionButton.setImage(nil, for: .normal) // 이미지 설정 초기화
+            
+            // 이전 타겟을 모두 제거하고 새로운 타겟을 추가
+            profileCell.actionButton.removeTarget(nil, action: nil, for: .allEvents)
+            profileCell.actionButton.addTarget(self, action: #selector(changeLocationButtonTap), for: .touchUpInside)
+
+            profileCell.setIconHidden(true)
+            
+        case (0, 2):
+            // "레벨" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
+            let profileCell = cell as! ProfileTableViewCell
+            
+            profileCell.titleLabel.text = nil
+            profileCell.bodyLabel.text = "레벨"
+            profileCell.iconImageView.image = UIImage(named: "logo7")
+            
+            // 여기서 변경 버튼이 아닌 아이콘 버튼만 설정하고, 변경 버튼은 숨깁
+            profileCell.actionButton.setImage(UIImage(systemName: "exclamationmark.circle"), for: .normal)
+            profileCell.actionButton.setTitle(nil, for: .normal) // 이 부분을 추가하여 '변경' 텍스트를 지웁니다.
+            profileCell.actionButton.addTarget(self, action: #selector(inpoButtonTap), for: .touchUpInside)
+            profileCell.actionButton.isHidden = false
+            
+            // 불필요한 "변경" 버튼을 명확히 숨김
+            profileCell.actionButton.isHidden = false
+            profileCell.setIconHidden(false)
+        case (1, 0):
+            // "내가 맡긴 식물" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
+            (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "leaf.fill")
+            (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
+            (cell as! CustomTableCell).textsLabel.text = "내가 맡긴 식물"
+            (cell as! CustomTableCell).textsLabel.textColor = .black
+            
+        case (1, 1):
+            // "내가 쓴 돌봄 후기" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
+            (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "list.bullet.rectangle.fill")
+            (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
+            (cell as! CustomTableCell).textsLabel.text = "내가 쓴 돌봄 후기"
+            (cell as! CustomTableCell).textsLabel.textColor = .black
+            
+        case (2, 0):
+            // "로그아웃" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
+            (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "rectangle.portrait.and.arrow.forward.fill")
+            (cell as! CustomTableCell).iconImage.tintColor = .systemBlue
+            (cell as! CustomTableCell).textsLabel.text = "로그아웃"
+            (cell as! CustomTableCell).textsLabel.textColor = .systemBlue
+            
+        case (2, 1):
+            // "회원탈퇴" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
+            (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "person.crop.circle.badge.xmark")
+            (cell as! CustomTableCell).iconImage.tintColor = .systemRed
+            (cell as! CustomTableCell).textsLabel.text = "회원탈퇴"
+            (cell as! CustomTableCell).textsLabel.textColor = .systemRed
+            
+        case (3, 0):
+            // "서비스 이용약관" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "informationTableCell", for: indexPath) as! InformationTableCell
+            (cell as! InformationTableCell).infoLabel.text = "서비스 이용약관"
+            
+        case (3, 1):
+            // "개인정보 처리 방침" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "informationTableCell", for: indexPath) as! InformationTableCell
+            (cell as! InformationTableCell).infoLabel.text = "개인정보 처리 방침"
+            
+        case (3, 2):
+            // "비즈니스 개인정보 처리방침" 셀
+            cell = tableView.dequeueReusableCell(withIdentifier: "informationTableCell", for: indexPath) as! InformationTableCell
+            (cell as! InformationTableCell).infoLabel.text = "위치기반서비스 이용약관"
+            
+        default:
+            cell = UITableViewCell()
+        }
+        
         let cornerRadius: CGFloat = 10
         var maskedCorners: CACornerMask = []
-        
-        if indexPath.row == 0 {
-            maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        }
-        if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
-            maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        }
-        if indexPath.section == 0 {
-            if indexPath.row == 0 {
-                cell.titleLabel.text = "이름"
-                cell.bodyLabel.text = user?.nickname
-                cell.bodyLabel.textColor = .black
-                cell.actionButton.isHidden = false
-                cell.actionButton.setTitle("변경", for: .normal)
-                cell.actionButton.addTarget(self, action: #selector(changeNicknameButtonTap), for: .touchUpInside)
-                cell.setIconHidden(true)
-            }
-            else if indexPath.row == 1 {
-                cell.titleLabel.text = "사는 곳"
-                cell.bodyLabel.text = "user?.location"
-                cell.actionButton.isHidden = false
-                cell.actionButton.setTitle("변경", for: .normal)
-                cell.actionButton.addTarget(self, action: #selector(changeLocationButtonTap), for: .touchUpInside)
-                cell.setIconHidden(true)
-            }
-            else if indexPath.row == 2 {
-                cell.titleLabel.text = nil
-                cell.bodyLabel.text = "레벨"
-                cell.iconImageView.image = UIImage(named: "로고7")
-                cell.actionButton.setImage(UIImage(systemName: "exclamationmark.circle"), for: .normal)
-                cell.actionButton.addTarget(self, action: #selector(inpoButtonTap), for: .touchUpInside)
-                cell.actionButton.isHidden = false
-                cell.iconImageView.isHidden = false
-            }
-        }
-        else if indexPath.section == 1 {
-            if indexPath.row == 0 {
-                cell.titleLabel.text = nil
-                cell.bodyLabel.text = "내가 쓴 돌봄 후기"
-                cell.iconImageView.image = UIImage(systemName: "pencil")
-                cell.actionButton.isHidden = true
-                cell.iconImageView.isHidden = false
-            }
-            else if indexPath.row == 1 {
-                cell.titleLabel.text = nil
-                cell.bodyLabel.text = "로그아웃"
-                cell.bodyLabel.textColor = .systemBlue
-                cell.iconImageView.image = UIImage(systemName: "rectangle.portrait.and.arrow.forward.fill")
-                cell.iconImageView.tintColor = .systemBlue
-                cell.actionButton.isHidden = true
-                cell.iconImageView.isHidden = false
-            }
-            else if indexPath.row == 2 {
-                cell.titleLabel.text = nil
-                cell.bodyLabel.text = "탈퇴하기"
-                cell.bodyLabel.textColor = .systemRed
-                cell.iconImageView.image = UIImage(systemName: "person.crop.circle.badge.xmark")
-                cell.iconImageView.tintColor = .systemRed
-                cell.actionButton.isHidden = true
-                cell.iconImageView.isHidden = false
-            }
-        }
-        
         let isFirstRow = indexPath.row == 0
         let isLastRow = indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1
         
@@ -105,6 +153,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         
         return cell
     }
+
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)

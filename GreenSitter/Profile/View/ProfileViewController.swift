@@ -13,7 +13,7 @@ class ProfileViewController: UIViewController {
     
     // MARK: - Properties
     var user: User?
-    var sectionTitle = ["내 정보", "계정"]
+    var sectionTitle = ["내 정보","돌봄 신청 정보", "시스템", "이용약관 및 개인정보 처리방침"]
     var textFieldContainer: UIView?
     let db = Firestore.firestore()
     let storage = Storage.storage()
@@ -52,7 +52,6 @@ class ProfileViewController: UIViewController {
         let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = UIColor(named: "BGSecondary")
         return tableView
@@ -75,6 +74,10 @@ class ProfileViewController: UIViewController {
         view.addSubview(tableView)
         
         setupConstraints()
+        
+        tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell")
+        tableView.register(InformationTableCell.self, forCellReuseIdentifier: "informationTableCell")
     }
     
     private func setupConstraints() {

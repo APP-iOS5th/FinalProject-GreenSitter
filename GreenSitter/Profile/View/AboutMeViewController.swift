@@ -14,7 +14,7 @@ class AboutMeViewController: UIViewController{
     
     let db = Firestore.firestore()
     var user: User?
-    var sectionTitle = ["자기소개", "돌봄 정보", "돌봄 신청 정보", "시스템", "이용약관 및 개인정보 처리방침"]
+    var sectionTitle = ["자기소개", "돌봄 정보"]
     
     lazy var profileImage: UIImageView = {
         let image = UIImageView()
@@ -102,8 +102,7 @@ class AboutMeViewController: UIViewController{
         navigationItem.title = "내 프로필"
         
         tableView.register(IntroductionTableCell.self, forCellReuseIdentifier: "introductionTableCell")
-        tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell" )
-        tableView.register(InformationTableCell.self, forCellReuseIdentifier: "informationTableCell" )
+        tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell")
         
         view.addSubview(circleView)
         view.addSubview(profileImage)
