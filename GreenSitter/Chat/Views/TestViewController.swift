@@ -33,6 +33,20 @@ class TestViewController: UIViewController {
         return planDetailButton
     }()
     
+    private lazy var placeButton: UIButton = {
+        let placeButton = UIButton()
+        placeButton.setTitle("장소 보기", for: .normal)
+        placeButton.backgroundColor = .systemBlue
+        placeButton.translatesAutoresizingMaskIntoConstraints = false
+        placeButton.addAction(UIAction { [weak self] _ in
+            let plan = Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: Date(), planPlace: Location.sampleLocation, contract: nil, ownerNotification: true, sitterNotification: true, isAccepted: true)
+            guard let planPlace = plan.planPlace else { return }
+            let navigationController = UINavigationController(rootViewController: PlanPlaceDetailViewController(location: planPlace))
+            self?.present(navigationController, animated: true)
+        }, for: .touchUpInside)
+        return placeButton
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -53,6 +67,7 @@ class TestViewController: UIViewController {
     private func setupUI() {
         view.addSubview(plusButton)
         view.addSubview(planDetailButton)
+        view.addSubview(placeButton)
         
         let safeArea = view.safeAreaLayoutGuide
         
@@ -65,7 +80,12 @@ class TestViewController: UIViewController {
             planDetailButton.bottomAnchor.constraint(equalTo: plusButton.topAnchor, constant: -100),
             planDetailButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 100),
             planDetailButton.widthAnchor.constraint(equalToConstant: 200),
-            planDetailButton.heightAnchor.constraint(equalToConstant: 100)
+            planDetailButton.heightAnchor.constraint(equalToConstant: 100),
+            
+            placeButton.bottomAnchor.constraint(equalTo: planDetailButton.topAnchor, constant: -100),
+            placeButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 100),
+            placeButton.widthAnchor.constraint(equalToConstant: 200),
+            placeButton.heightAnchor.constraint(equalToConstant: 100)
         ])
     }
     
