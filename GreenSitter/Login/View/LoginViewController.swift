@@ -28,11 +28,12 @@ class LoginViewController: UIViewController {
     
     lazy var bodyLabel: UILabel = {
         let label = UILabel()
-        label.text = """
-    내 주변의 새싹 돌봄이 ☘️들이
-    당신의 소중한 식물을
-    돌봐드립니다
-"""
+        label.text = 
+        """
+        내 주변의 새싹 돌봄이 ☘️들이
+        당신의 소중한 식물을
+        돌봐드립니다
+        """
         label.font = UIFont.boldSystemFont(ofSize: 15)
         label.textColor = .labelsPrimary
         label.numberOfLines = 0 // 여러 줄 텍스트를 지원
@@ -43,7 +44,7 @@ class LoginViewController: UIViewController {
     private let appleButton: ASAuthorizationAppleIDButton = {
         let button = ASAuthorizationAppleIDButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(appleLogin), for: .touchUpInside)
+        button.addTarget(LoginViewController.self, action: #selector(appleLogin), for: .touchUpInside)
         return button
     }()
     
@@ -52,7 +53,7 @@ class LoginViewController: UIViewController {
         button.setImage(UIImage(named: "googleLogin"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.imageView?.contentMode = .scaleAspectFill
-        button.addTarget(self, action: #selector(googleLogin), for: .touchUpInside)
+        button.addTarget(LoginViewController.self, action: #selector(googleLogin), for: .touchUpInside)
         return button
     }()
     
@@ -61,15 +62,12 @@ class LoginViewController: UIViewController {
         button.setTitle("둘러보기", for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(navigationTap), for: .touchUpInside)
+        button.addTarget(LoginViewController.self, action: #selector(navigationTap), for: .touchUpInside)
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
         view.backgroundColor = .white
         
         view.addSubview(bodyLabel)
@@ -222,13 +220,13 @@ class LoginViewController: UIViewController {
                 }
                 
                 // Firebase Database에 사용자 정보 저장
-                let userRef = db.collection("users").document(user.uid)
+                let userRef = self.db.collection("users").document(user.uid)
                 
                 userRef.setData([
                     "id": user.uid,
                     "email": user.email ?? "",
                     "displayName": user.displayName ?? "",
-                    "location": users?.location ?? "",
+                    "location": self.users?.location ?? "",
                     "enabled": false,  // 콤마 추가
                 ]) { error in
                     if let error = error {
@@ -280,26 +278,24 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
 
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-            guard let nonce = currentNonce else {
+            guard currentNonce != nil else {
                 fatalError("Invalid state: A login callback was received, but no login request was sent.")
             }
             guard let appleIDToken = appleIDCredential.identityToken else {
                 print("Unable to fetch identity token")
                 return
             }
-            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+            guard String(data: appleIDToken, encoding: .utf8) != nil else {
                 print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
                 return
             }
             // Firebase에 사용자 인증 정보 저장
-            let credential = OAuthProvider.credential(withProviderID: "apple.com",
-                                                      idToken: String(data: appleIDCredential.identityToken!, encoding: .utf8)!,
-                                                      rawNonce: currentNonce!)
+            let credential = OAuthProvider.credential(providerID: AuthProviderID(rawValue: "apple.com")!, idToken: String(data: appleIDCredential.identityToken!, encoding: .utf8)!, rawNonce: currentNonce!)
             // Sign in with Firebase.
             Auth.auth().signIn(with: credential) { [self] (authResult, error) in
                 if (error != nil) {
                     //로그인 오류 처리
-                    print("Apple 로그인 오류: \(error?.localizedDescription)")
+                    print("Apple 로그인 오류: \(String(describing: error?.localizedDescription))")
                     return
                 }
                 //Firebase Database에 사용자 정보 저장
