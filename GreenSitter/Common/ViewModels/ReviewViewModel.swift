@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 extension ReviewViewController {
     
@@ -18,20 +20,25 @@ extension ReviewViewController {
         
         // 선택된 버튼에 테두리 설정
         sender.layer.borderColor = UIColor(named: "ComplementaryColor")?.cgColor ?? UIColor.blue.cgColor
-        sender.layer.borderWidth = 2.0 
+        sender.layer.borderWidth = 2.0
         sender.isSelected = true
         selectedRatingButton = sender
         
-        if sender == (tableView.cellForRow(at: IndexPath(row: 0, section: 1))as? ReviewSendTableViewCell)?.badButton {
+        printRating(for: sender)
+    }
+    
+    private func printRating(for button: UIButton) {
+        guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell else { return }
+        
+        if button == cell.badButton {
             print("Bad selected")
-        }
-        else if sender == (tableView.cellForRow(at: IndexPath(row: 0, section: 1))as? ReviewSendTableViewCell)?.averageButton {
+        } else if button == cell.averageButton {
             print("Average selected")
-        } 
-        else if sender == (tableView.cellForRow(at: IndexPath(row: 0, section: 1))as? ReviewSendTableViewCell)?.goodButton {
+        } else if button == cell.goodButton {
             print("Good selected")
         }
     }
+
     //MARK: - 텍스트 리뷰
     @objc func slectTextButtonTap(_ sender: UIButton) {
         let isSelected = sender.isSelected
@@ -39,8 +46,7 @@ extension ReviewViewController {
         if isSelected {
             // 선택 해제시 기본 상태로 복구
             sender.backgroundColor = UIColor.white
-        }
-        else {
+        } else {
             sender.backgroundColor = UIColor(named: "ComplementaryColor")
         }
         sender.isSelected = !isSelected
@@ -48,6 +54,71 @@ extension ReviewViewController {
     
     //MARK: - 완료
     @objc func completeButtonTap() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("No authenticated user")
+            return
+        }
         
+//        guard let postId = review?.postId else {
+//            print("No post ID found in review")
+//            return
+//        }
+        let postId = "some-hardcoded-post-id"  // 임시로 설정한 postId
+
+        // Get the rating
+        let rating: Rating = {
+            guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell else { return .average }
+            if let selectedButton = selectedRatingButton {
+                if selectedButton == cell.badButton {
+                    return .bad
+                } else if selectedButton == cell.averageButton {
+                    return .average
+                } else if selectedButton == cell.goodButton {
+                    return .good
+                }
+            }
+            return .average
+        }()
+        
+        // Get the selected texts
+        var selectedTexts = [String]()
+        if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell {
+            if cell.row1Button.isSelected {
+                selectedTexts.append(cell.row1Button.titleLabel?.text ?? "")
+            }
+            if cell.row2Button.isSelected {
+                selectedTexts.append(cell.row2Button.titleLabel?.text ?? "")
+            }
+            if cell.row3Button.isSelected {
+                selectedTexts.append(cell.row3Button.titleLabel?.text ?? "")
+            }
+            if cell.row4Button.isSelected {
+                selectedTexts.append(cell.row4Button.titleLabel?.text ?? "")
+            }
+        }
+        let reviewText = (tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell)?.reviewTextField.text
+        
+        // Prepare data to update user document
+        let newReview: [String: Any] = [
+            "reviews": [
+                "id": UUID().uuidString,
+                "enabled": true,
+                "createDate": Timestamp(date: Date()),
+                "updateDate": Timestamp(date: Date()),
+                "postId": postId,
+                "rating": rating.rawValue,
+                "reviewText": reviewText ?? "",
+                "selectedTexts": selectedTexts
+            ]
+        ]
+        
+        // Update user document with new review data
+        db.collection("users").document(userId).setData(newReview, merge: true) { error in
+            if let error = error {
+                print("Error writing review to Firestore: \(error)")
+            } else {
+                print("Review successfully written!")
+            }
+        }
     }
 }

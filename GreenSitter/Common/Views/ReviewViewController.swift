@@ -6,10 +6,14 @@
 //
 
 import UIKit
+import FirebaseFirestore
+import FirebaseAuth
 
 class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    let db = Firestore.firestore()
     var selectedRatingButton: UIButton?
+    var review: Review?
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
