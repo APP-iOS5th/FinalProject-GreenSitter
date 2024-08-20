@@ -270,7 +270,7 @@ class LoginViewController: UIViewController {
                     "postTitle": post.postTitle,
                     "postBody": post.postBody,
                     "postImages": post.postImages ?? [],
-                    "postStatus": post.postStatus.rawValue,
+                    "postStatus": "거래완료",
                     "location": post.location != nil ? [
                         "latitude": post.location?.latitude ?? 0,
                         "longitude": post.location?.longitude ?? 0

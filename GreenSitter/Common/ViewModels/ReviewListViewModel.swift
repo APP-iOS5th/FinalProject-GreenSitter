@@ -10,46 +10,80 @@ import FirebaseAuth
 import FirebaseFirestore
 
 extension ReviewListViewController {
-    
+    //MARK: - Post데이터 가져오기
     func fetchPostFirebase() {
+        // 현재 로그인된 사용자의 userId 가져오기
         guard let userId = Auth.auth().currentUser?.uid else {
             print("User ID is not available")
             return
         }
-        
+
+        // Firestore에서 특정 문서 가져오기
         db.collection("users").document(userId).getDocument { [weak self] (document, error) in
             guard let self = self else { return }
+
             if let error = error {
                 print("Error getting document: \(error)")
                 return
             }
+
+            // 문서가 존재하는지 확인
             if let document = document, document.exists {
-                let data = document.data()
-                let postTitle = data?["postTitle"] as? String ?? "제목 없음"
-                let postBody = data?["postBody"] as? String ?? "본문 내용 없음"
-                let postStatus = data?["postStatus"] as? String ?? "거래 상태 없음"
-                let updateDateTimestamp = data?["updateDate"] as? Timestamp ?? Timestamp(date: Date())
-                let updateDate = updateDateTimestamp.dateValue()
-                let postImages = data?["postImages"] as? [String] ?? []
-                
-                let post = Post(id: "some-hardcoded-post-id", enabled: true, createDate: Date(), updateDate: updateDate, userId: userId, profileImage: "", nickname: "", userLocation: Location.seoulLocation, userNotification: false, postType: .offeringToSitter, postTitle: "일주일동안 식물 돌봐주세요!", postBody: "하루에 한번만 물 주면 됩니다", postImages: postImages, postStatus: .beforeTrade, location: nil)
-                
-                if let postImages = data?["postImages"] as? [String], !postImages.isEmpty {
-                    let imageURL = postImages.first!
-                    // 이미지 다운로드 및 설정은 이후 단계에서 다룹니다.
-                }
-                
-                self.post.append(post)
-                
-                DispatchQueue.main.async {
-                    self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
+                // 'post' 필드를 딕셔너리로 변환
+                if let postData = document.data()?["post"] as? [String: Any] {
+                    // postStatus 필드를 검사하여 "거래완료"인 경우에만 처리
+                    if let postStatus = postData["postStatus"] as? String, postStatus == "거래완료" {
+                        let postTitle = postData["postTitle"] as? String ?? "제목 없음"
+                        let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
+                        let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
+                        let updateDate = updateDateTimestamp.dateValue()
+                        let postImages = postData["postImages"] as? [String] ?? []
+
+                        // 데이터가 올바르게 불러와졌는지 출력해보기
+                        print("Post Title: \(postTitle)")
+                        print("Post Body: \(postBody)")
+                        print("Post Status: \(postStatus)")
+                        print("Update Date: \(updateDate)")
+                        print("Post Images: \(postImages)")
+
+                        // Post 객체 생성 및 배열에 추가
+                        let post = Post(
+                            id: document.documentID,
+                            enabled: true,
+                            createDate: Date(),
+                            updateDate: updateDate,
+                            userId: userId,
+                            profileImage: "",  // 필요시 추가
+                            nickname: "",      // 필요시 추가
+                            userLocation: Location.seoulLocation, // 예시 위치
+                            userNotification: false,
+                            postType: .offeringToSitter,
+                            postTitle: postTitle,
+                            postBody: postBody,
+                            postImages: postImages,
+                            postStatus: .completedTrade,
+                            location: nil
+                        )
+
+                        // Post 배열에 추가
+                        self.post.append(post)
+
+                        // 테이블 뷰 업데이트
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
+                    } else {
+                        print("Post status is not '거래완료'.")
+                    }
+                } else {
+                    print("Post data not found in document.")
                 }
             } else {
                 print("Document does not exist")
             }
         }
     }
-    
+
     func convertToHttpsURL(gsURL: String) -> String? {
         let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
         let encodedPath = gsURL

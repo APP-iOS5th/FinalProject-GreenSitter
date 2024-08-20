@@ -45,19 +45,25 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         return post.count
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // 선택된 포스트 가져오기
+        let selectedPost = post[indexPath.row]
+        
+        // ReviewViewController 생성
+        let reviewViewController = ReviewViewController()
+        
+        // 선택된 포스트를 ReviewViewController에 전달
+        reviewViewController.post = selectedPost
+        
+        // 네비게이션 컨트롤러를 통해 화면 전환
+        navigationController?.pushViewController(reviewViewController, animated: true)
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
         let currentPost = post[indexPath.row]
         
-        switch currentPost.postStatus {
-        case .beforeTrade:
-            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
-        case .inTrade:
-            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
-        case .completedTrade:
-            cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
-        }
-        
+        cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
         cell.statusLabel.text = currentPost.postStatus.rawValue
         cell.titleLabel.text = currentPost.postTitle
         cell.bodyLabel.text = currentPost.postBody
@@ -75,5 +81,5 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         
         return cell
     }
-
+    
 }
