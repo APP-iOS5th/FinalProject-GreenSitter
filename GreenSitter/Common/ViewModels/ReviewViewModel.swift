@@ -120,5 +120,28 @@ extension ReviewViewController {
                 print("Review successfully written!")
             }
         }
+        //게시물 작성자파이어베이스에 저장
+        db.collection("posts").document(postId).getDocument { document, error in
+            if let document = document, document.exists {
+                let postData = document.data()
+                if let creatorId = postData?["creatorId"] as? String {
+                    // Save the review to the post creator's document
+                    let reviewRef = self.db.collection("users").document(creatorId).collection("review").document(UUID().uuidString) // create a new document in the 'reviews' subcollection
+                    reviewRef.setData(newReview) { error in
+                        if let error = error {
+                            print("Error writing review to post creator's Firestore document: \(error)")
+                        } else {
+                            print("Review successfully written to post creator's document!")
+                        }
+                    }
+                } else {
+                    print("Creator ID not found in the post document")
+                }
+            } else {
+                print("Post document does not exist")
+            }
+        }
     }
+    
+    
 }
