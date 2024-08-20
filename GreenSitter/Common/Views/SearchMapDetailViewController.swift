@@ -57,7 +57,7 @@ class SearchMapDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = .bgPrimary
         setupNavigationBar()
         setupMapView()
         setupCustomAnnotation()
@@ -113,7 +113,7 @@ class SearchMapDetailViewController: UIViewController {
 
     private func setupLocationInfoView() {
         let infoView = UIView()
-        infoView.backgroundColor = .white
+        infoView.backgroundColor = .bgSecondary
         view.addSubview(infoView)
         
         infoView.translatesAutoresizingMaskIntoConstraints = false

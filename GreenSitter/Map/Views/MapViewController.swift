@@ -386,7 +386,7 @@ extension MapViewController: MKMapViewDelegate {
                 circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.6) // Default color
             }
 
-            circleRenderer.strokeColor = UIColor.separatorsOpaque
+            circleRenderer.strokeColor = .separatorsNonOpaque
             circleRenderer.lineWidth = 2
             return circleRenderer
         }

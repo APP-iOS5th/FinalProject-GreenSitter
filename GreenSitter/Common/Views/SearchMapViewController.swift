@@ -18,15 +18,14 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.systemBackground
+        
+        
+        view.backgroundColor = .bgPrimary
         setupNavigationBar()
         setupUI()
     }
     
     private func setupNavigationBar() {
-        // Navigation title
-        navigationItem.title = "장소 선택"
-        
         // Cancel button
         let cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
         navigationItem.leftBarButtonItem = cancelButton
@@ -34,9 +33,11 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         // Search bar
         let searchBar = UISearchBar()
         searchBar.placeholder = "장소를 검색하세요"
-        searchBar.backgroundColor = UIColor.systemGray6
+        searchBar.backgroundColor = .bgPrimary
         searchBar.delegate = self
+
         navigationItem.titleView = searchBar
+        
     }
     
     @objc private func cancelButtonTapped() {
