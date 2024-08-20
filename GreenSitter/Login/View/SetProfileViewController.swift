@@ -13,9 +13,10 @@ import FirebaseAuth
 
 class SetProfileViewController: UIViewController {
     let storage = Storage.storage()
-    var users: User?
     let db = Firestore.firestore()
     var selectButton: UIButton? //선택한 버튼을 저장할 변수
+    
+    var users: User?
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()

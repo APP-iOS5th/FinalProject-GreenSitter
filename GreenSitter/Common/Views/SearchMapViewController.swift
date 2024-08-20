@@ -18,20 +18,33 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = UIColor.systemBackground
-        self.title = "장소 검색"
-
+        
+        
+        view.backgroundColor = .bgPrimary
+        setupNavigationBar()
         setupUI()
     }
     
-    private func setupUI() {
+    private func setupNavigationBar() {
+        // Cancel button
+        let cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
+        navigationItem.leftBarButtonItem = cancelButton
+        
+        // Search bar
         let searchBar = UISearchBar()
         searchBar.placeholder = "장소를 검색하세요"
-        searchBar.backgroundColor = UIColor.systemGray6
+        searchBar.backgroundColor = .bgPrimary
         searchBar.delegate = self
+
         navigationItem.titleView = searchBar
         
+    }
+    
+    @objc private func cancelButtonTapped() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    private func setupUI() {
         // UITableView 설정
         tableView.delegate = self
         tableView.dataSource = self
@@ -121,6 +134,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     }
 
     private func loadMorePlaces(query: String) {
+        // isEnd 가 true인 경우, Last Page 이므로 종료
         guard !isEnd else {
             print("Last Page: \(currentPage), \(isEnd)")
             return
@@ -198,14 +212,6 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 40
     }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerLabel = UILabel()
-        headerLabel.text = "검색 결과"
-        headerLabel.textColor = .secondaryLabel
-        headerLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
-        return headerLabel
-    }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == locations.count - 1 { // 마지막 셀에 도달했을 때
@@ -229,7 +235,6 @@ struct SearchMapViewControllerPreview: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}
 }
 
-// #Preview 구문 추가
 #Preview {
     SearchMapViewControllerPreview()
 }
