@@ -20,9 +20,9 @@ class ChatViewController: UIViewController {
     private func setupUI() {
         
         if chatViewModel?.userId == chatViewModel?.chatRoom?.userId {
-            self.title = chatViewModel?.chatRoom?.userNickname
-        } else if chatViewModel?.userId == chatViewModel?.chatRoom?.postUserId {
             self.title = chatViewModel?.chatRoom?.postUserNickname
+        } else if chatViewModel?.userId == chatViewModel?.chatRoom?.postUserId {
+            self.title = chatViewModel?.chatRoom?.userNickname
         }
         
         self.view.backgroundColor = .white

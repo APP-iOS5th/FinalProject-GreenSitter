@@ -108,6 +108,11 @@ class ChatViewModel {
             return
         }
 
+        guard let userId = chatRoom?.userId else {
+            print("Error: userId is nil")
+            return
+        }
+        
         guard let postUserId = chatRoom?.postUserId else {
             print("Error: postUserId is nil")
             return
@@ -117,8 +122,16 @@ class ChatViewModel {
             print("Error: chatRoomId is nil")
             return
         }
-
-        let textMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: postUserId, isRead: false, messageType: .text, text: messageText, image: nil, plan: nil)
+        
+        // TODO: - userId 수정
+        let receiverUserId: String?
+        if userId == userId {
+            receiverUserId = postUserId
+        } else {
+            receiverUserId = userId
+        }
+        
+        let textMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .text, text: messageText, image: nil, plan: nil)
         
         Task {
             do {

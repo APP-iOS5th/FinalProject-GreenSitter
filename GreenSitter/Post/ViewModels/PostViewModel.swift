@@ -12,7 +12,7 @@ class PostViewModel {
     
     // 임시 데이터
     var user = SampleChatData.exampleUsers[0]
-    var post = SampleChatData.examplePosts[2]
+    var post = SampleChatData.examplePosts[1]
     
     var onChatButtonTapped: ((ChatRoom) -> Void)?
     
@@ -24,6 +24,21 @@ class PostViewModel {
         }
         
         do {
+            // 중복 체크
+            if let existingChatRoom = await self.firestoreManager.chatRoomExists(userId: newChat.userId, postUserId: newChat.postUserId, postId: newChat.postId) {
+                print("Chat room already exists, navigating to existing chat room.")
+                
+                if let onChatButtonTapped = self.onChatButtonTapped {
+                    DispatchQueue.main.async {
+                        onChatButtonTapped(existingChatRoom)
+                    }
+                } else {
+                    print("onChatButtonTapped is not set")
+                }
+                
+                return
+            }
+            
             // 채팅방 데이터 저장
             try await self.firestoreManager.saveChatRoom(newChat)
             

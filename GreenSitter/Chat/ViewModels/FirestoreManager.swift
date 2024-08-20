@@ -65,7 +65,7 @@ class FirestoreManager {
         let postId = chatRoom.postId
         
         // 중복 검사
-        if await chatRoomExists(userId: userId, postUserId: postUserId, postId: postId) {
+        if await chatRoomExists(userId: userId, postUserId: postUserId, postId: postId) != nil {
             print("Chat room with userId \(userId), postUserId \(postUserId), and postId \(postId) already exists")
             return
         }
@@ -81,7 +81,7 @@ class FirestoreManager {
     }
     
     // 채팅방 중복 체크
-    func chatRoomExists(userId: String, postUserId: String, postId: String) async -> Bool {
+    func chatRoomExists(userId: String, postUserId: String, postId: String) async -> ChatRoom? {
         let query = db.collection("chatRooms")
             .whereField("userId", isEqualTo: userId)
             .whereField("postUserId", isEqualTo: postUserId)
@@ -89,10 +89,13 @@ class FirestoreManager {
         
         do {
             let snapshot = try await query.getDocuments()
-            return !snapshot.isEmpty
+            let chatRoom = snapshot.documents.compactMap { document in
+                try? document.data(as: ChatRoom.self)
+            }.first
+            return chatRoom
         } catch {
             print("Error checking if chat room exists: \(error.localizedDescription)")
-            return false
+            return nil
         }
     }
     
