@@ -25,6 +25,16 @@ class TestViewController: UIViewController {
         
         view.backgroundColor = .white
         setupUI()
+        
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            if settings.authorizationStatus != .authorized {
+                print("Push notification authorization not granted.")
+            } else {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+        }
     }
     
     private func setupUI() {

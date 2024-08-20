@@ -7,10 +7,12 @@
 
 import UIKit
 import FirebaseCore
+import FirebaseMessaging
 import GoogleSignIn
 
+
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate/*, UNUserNotificationCenterDelegate*/ {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     
@@ -30,12 +32,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, UNUserNotificationCente
         
         //MARK: - Push Notification
         //push notificatioin 시도 중
-//        UNUserNotificationCenter.current().delegate = self
-//        let authOptions: UNAuthorizationOptions = [.badge, .sound]
-//        UNUserNotificationCenter.current().requestAuthorization(
-//            options: authOptions,
-//            completionHandler: { _, _ in }
-//        )
+
+        // 원격 알림 등록
+        UNUserNotificationCenter.current().delegate = self
+        let authOptions: UNAuthorizationOptions = [.badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: { _, _ in }
+        )
+        application.registerForRemoteNotifications()
+        
+        // 등록 토큰 엑세스
+        Messaging.messaging().delegate = self
+        
         return true
 
     }
@@ -75,3 +84,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, UNUserNotificationCente
     
 }
 
+// MARK: - Push Notification 함수
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    // APN 토큰과 등록 토큰 매핑
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("APN TOKEN MAPPING")
+        Messaging.messaging().apnsToken = deviceToken
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
+        print(error.localizedDescription)
+    }
+    
+    // 푸시 알림을 처리하기 위한 함수
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .badge, .sound])
+    }
+}
+
+extension AppDelegate: MessagingDelegate {
+    //디바이스 등록 토큰 가져오기
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("fcmToken: \(fcmToken ?? "nil")")
+    }
+}
