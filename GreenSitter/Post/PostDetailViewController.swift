@@ -9,7 +9,7 @@ import UIKit
 import MapKit
 
 class PostDetailViewController: UIViewController {
-    
+
     private let scrollView: UIScrollView = {
         let scrollView =  UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -29,8 +29,8 @@ class PostDetailViewController: UIViewController {
         button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-    }()
-    
+        }()
+
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 25
@@ -40,7 +40,7 @@ class PostDetailViewController: UIViewController {
         return imageView
     }()
     
-    private let usernameLabel: UILabel = {
+    private let userNameLabel: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -109,7 +109,7 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    private let pickerImageView: UIImageView = {
+    private let uploadedImageView: UIImageView = {
         let image = UIImageView()
         image.backgroundColor = .lightGray
         image.tintColor = .gray
@@ -133,8 +133,8 @@ class PostDetailViewController: UIViewController {
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = label.font.pointSize / 4
         let attributes: [NSAttributedString.Key: Any] = [
-                   .paragraphStyle: paragraphStyle,
-                   .font: UIFont.systemFont(ofSize: 14)]
+            .paragraphStyle: paragraphStyle,
+            .font: UIFont.systemFont(ofSize: 14)]
         let attributedString: NSAttributedString = NSAttributedString(string: dummyString, attributes: attributes)
         label.attributedText = attributedString
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -153,9 +153,9 @@ class PostDetailViewController: UIViewController {
     
     private let mapLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .labelsSecondary
+        label.textColor = .labelsPrimary
         label.font = .systemFont(ofSize: 16)
-        label.text = "거래 희망 장소를 선택할 수 있어요."
+        label.text = "거래 희망 장소"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -170,28 +170,21 @@ class PostDetailViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupLayout()
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(pickerImageViewTapped))
-        pickerImageView.addGestureRecognizer(tapGesture)
-        pickerImageView.isUserInteractionEnabled = true // 이미지 뷰 상호작용 활성화
+        backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
-    
-    @objc private func pickerImageViewTapped() {
-        presentImagePickerController()
-    }
-    
+
     private func setupLayout() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        
+    
         contentView.addSubview(backButton)
         contentView.addSubview(profileImageView)
-        contentView.addSubview(usernameLabel)
+        contentView.addSubview(userNameLabel)
         contentView.addSubview(userLevelLabel)
         contentView.addSubview(postTimeLabel)
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
-        contentView.addSubview(pickerImageView)
+        contentView.addSubview(uploadedImageView)
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(dividerLine1)
         contentView.addSubview(dividerLine2)
@@ -218,16 +211,17 @@ class PostDetailViewController: UIViewController {
             backButton.widthAnchor.constraint(equalToConstant: 20),
             backButton.heightAnchor.constraint(equalToConstant: 20),
             
+    
             profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             profileImageView.widthAnchor.constraint(equalToConstant: 50),
             profileImageView.heightAnchor.constraint(equalToConstant: 50),
             
-            usernameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
-            usernameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
+            userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
             
-            userLevelLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 4),
-            userLevelLabel.leadingAnchor.constraint(equalTo: usernameLabel.leadingAnchor),
+            userLevelLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
+            userLevelLabel.leadingAnchor.constraint(equalTo: userNameLabel.leadingAnchor),
             
             postTimeLabel.topAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 4),
             postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
@@ -246,7 +240,7 @@ class PostDetailViewController: UIViewController {
             dividerLine1.widthAnchor.constraint(equalToConstant: 360),
             dividerLine1.heightAnchor.constraint(equalToConstant: 1),
             
-            dividerLine2.bottomAnchor.constraint(equalTo: dividerLine1.topAnchor, constant: 145),
+            dividerLine2.bottomAnchor.constraint(equalTo: dividerLine1.topAnchor, constant: 300),
             dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             dividerLine2.widthAnchor.constraint(equalToConstant: 360),
             dividerLine2.heightAnchor.constraint(equalToConstant: 1),
@@ -257,10 +251,10 @@ class PostDetailViewController: UIViewController {
             dividerLine3.widthAnchor.constraint(equalToConstant: 360),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            pickerImageView.widthAnchor.constraint(equalToConstant: 100),
-            pickerImageView.heightAnchor.constraint(equalToConstant: 100),
-            pickerImageView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
-            pickerImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            uploadedImageView.widthAnchor.constraint(equalToConstant: 190),
+            uploadedImageView.heightAnchor.constraint(equalToConstant: 250),
+            uploadedImageView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
+            uploadedImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
             descriptionLabel.bottomAnchor.constraint(equalTo: dividerLine2.topAnchor, constant: 120),
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -271,51 +265,30 @@ class PostDetailViewController: UIViewController {
             contactButton.widthAnchor.constraint(equalToConstant: 100),
             contactButton.heightAnchor.constraint(equalToConstant: 40),
             
-            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapLabel.bottomAnchor.constraint(equalTo: mapView.topAnchor, constant: 90 ),
             
-
-            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
-            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            mapView.heightAnchor.constraint(equalToConstant: 200)
+            mapLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            mapLabel.bottomAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 150),
+            
+            mapView.bottomAnchor.constraint(equalTo: mapLabel.topAnchor, constant: 400),
+            //            mapView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),
+            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            mapView.heightAnchor.constraint(equalToConstant: 250),
         ])
     }
-}
-
-extension PostDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    func presentImagePickerController() {
-        let imagePickerController = UIImagePickerController()
-        imagePickerController.delegate = self
-        
-        let alert = UIAlertController(title: "사진 선택", message: "사진을 가져올 곳을 선택하세요.", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "카메라", style: .default, handler: { _ in
-            if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                imagePickerController.sourceType = .camera
-                self.present(imagePickerController, animated: true, completion: nil)
-            } else {
-                print("카메라 사용 불가")
+    @objc private func didTapBackButton() {
+        if let navigationController = navigationController {
+            for viewController in navigationController.viewControllers {
+                if viewController is MainPostListViewController {
+                    navigationController.popToViewController(viewController, animated: true)
+                    return
+                }
             }
-        }))
-        alert.addAction(UIAlertAction(title: "사진 라이브러리", style: .default, handler: { _ in
-            imagePickerController.sourceType = .photoLibrary
-            self.present(imagePickerController, animated: true, completion: nil)
-        }))
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-        
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[.originalImage] as? UIImage {
-            pickerImageView.image = selectedImage
+            // If MainPostListViewController is not found, create a new instance and push it
+            let mainPostListViewController = MainPostListViewController()
+            navigationController.pushViewController(mainPostListViewController, animated: true)
         }
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
     }
 }
 
@@ -332,6 +305,7 @@ extension UIColor {
         return UIColor(red: 30/255, green: 30/255, blue: 30/255, alpha: 1.0)
     }
 }
+
 
 #Preview {
     return UINavigationController(rootViewController: PostDetailViewController())
