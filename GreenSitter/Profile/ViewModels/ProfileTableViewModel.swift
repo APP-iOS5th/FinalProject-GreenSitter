@@ -157,10 +157,14 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
         switch (indexPath.section, indexPath.row) {
-        case (1, 1):
+        case(1,0):
+            let leavePlantListViewController = LeavePlantListViewController()
+            self.navigationController?.pushViewController(leavePlantListViewController, animated: true)
+        case (2, 1):
             logout()
-        case (1, 2):
+        case (2, 2):
             accountDeletion()
         default:
             break

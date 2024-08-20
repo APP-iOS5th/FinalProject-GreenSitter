@@ -20,13 +20,13 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(CareRecordTableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.backgroundColor = UIColor(named: "BGSecondary")
         return tableView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(named: "BGSecondary")
         navigationItem.title = "돌봄 기록"
         
         view.addSubview(tableView)

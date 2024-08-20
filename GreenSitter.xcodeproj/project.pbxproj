@@ -19,6 +19,7 @@
 		3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DE1AD2C72D457009DD41A /* CareRecordViewModel.swift */; };
 		3B6DE1B02C72D483009DD41A /* CareRecordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DE1AF2C72D483009DD41A /* CareRecordTableViewCell.swift */; };
 		3B8348122C74BF6600359E85 /* LeavePlantListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */; };
+		3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */; };
 		3B8A5A7D2C6DD228007E3902 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B8A5A7B2C6DD228007E3902 /* APPKey.plist */; };
 		3B8A5A7E2C6DD228007E3902 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B8A5A7C2C6DD228007E3902 /* GoogleService-Info.plist */; };
 		3BCA713D2C64B61100438BD5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 3BCA713C2C64B61100438BD5 /* FirebaseStorage */; };
@@ -130,6 +131,7 @@
 		3B6DE1AD2C72D457009DD41A /* CareRecordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareRecordViewModel.swift; sourceTree = "<group>"; };
 		3B6DE1AF2C72D483009DD41A /* CareRecordTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareRecordTableViewCell.swift; sourceTree = "<group>"; };
 		3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeavePlantListViewController.swift; sourceTree = "<group>"; };
+		3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeavePlantListModel.swift; sourceTree = "<group>"; };
 		3B8A5A7B2C6DD228007E3902 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
 		3B8A5A7C2C6DD228007E3902 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		582F5D042C64856F00141938 /* SampleChatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleChatData.swift; sourceTree = "<group>"; };
@@ -510,6 +512,7 @@
 				97D1BE672C6C8B7D00F7A983 /* ProfileViewModel.swift */,
 				3B61C6992C71DCAD00337B66 /* SelfIntroductionViewModel.swift */,
 				3B6DE1AD2C72D457009DD41A /* CareRecordViewModel.swift */,
+				3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -702,6 +705,7 @@
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				97934E292C62FDF700B38E0A /* KakaoMapViewController.swift in Sources */,
 				3B6DE1AC2C72D24B009DD41A /* CareRecordViewController.swift in Sources */,
+				3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
 				97934E292C62FDF700B38E0A /* KakaoMapViewController.swift in Sources */,
 				97D1BEC22C6C9DF400F7A983 /* FinalConfirmPlanViewController.swift in Sources */,
