@@ -13,10 +13,10 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     let db = Firestore.firestore()
     var selectedRatingButton: UIButton?
-    var review: Review?
+    var review: Post?
     var selectedTextButtons: Set<UIButton> = []
     var post: Post?
-
+    var postId: String?  
 
     
     lazy var tableView: UITableView = {
@@ -41,6 +41,7 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        fetchPostFirebase()
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -63,9 +64,9 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
         switch indexPath.section {
         case 0:
             cell = tableView.dequeueReusableCell(withIdentifier: "reviewPostTableViewCell", for: indexPath) as! ReviewPostTableViewCell
-            (cell as! ReviewPostTableViewCell).titleLabel.text = "제목1"
-            (cell as! ReviewPostTableViewCell).bodyLabel.text = "내용"
-            (cell as! ReviewPostTableViewCell).timeLabel.text = "2시간 전"
+            (cell as! ReviewPostTableViewCell).titleLabel.text = post?.postTitle
+            (cell as! ReviewPostTableViewCell).bodyLabel.text = post?.postBody
+            (cell as! ReviewPostTableViewCell).timeLabel.text = DateFormatter.localizedString(from: post?.updateDate ?? Date(), dateStyle: .short, timeStyle: .short)
             (cell as! ReviewPostTableViewCell).plantImage.image = UIImage(named: "logo7")
             cell.backgroundColor = UIColor.white
             return cell

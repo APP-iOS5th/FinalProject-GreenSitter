@@ -54,6 +54,7 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         
         // 선택된 포스트를 ReviewViewController에 전달
         reviewViewController.post = selectedPost
+        reviewViewController.postId = selectedPost.id 
         
         // 네비게이션 컨트롤러를 통해 화면 전환
         navigationController?.pushViewController(reviewViewController, animated: true)

@@ -59,11 +59,11 @@ extension ReviewViewController {
             return
         }
         
-//        guard let postId = review?.postId else {
-//            print("No post ID found in review")
-//            return
-//        }
-        let postId = "some-hardcoded-post-id"  // 임시로 설정한 postId
+        guard let id = review?.id else {
+            print("No post ID found in review")
+            return
+        }
+//        let postId = "some-hardcoded-post-id"  // 임시로 설정한 postId
 
         // Get the rating
         let rating: Rating = {
@@ -109,7 +109,7 @@ extension ReviewViewController {
                 "enabled": true,
                 "createDate": Timestamp(date: Date()),
                 "updateDate": Timestamp(date: Date()),
-                "postId": postId,
+                "postId": id,
                 "rating": rating.rawValue,
                 "reviewText": reviewText ?? "",
                 "selectedTexts": selectedTexts
@@ -125,7 +125,7 @@ extension ReviewViewController {
             }
         }
         //게시물 작성자파이어베이스에 저장
-        db.collection("posts").document(postId).getDocument { document, error in
+        db.collection("posts").document(id).getDocument { document, error in
             if let document = document, document.exists {
                 let postData = document.data()
                 if let creatorId = postData?["creatorId"] as? String {
@@ -150,4 +150,64 @@ extension ReviewViewController {
             self.navigationController?.pushViewController(aboutMeViewController, animated: true)
         }
     }
+    
+    func fetchPostFirebase() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User ID is not available")
+            return
+        }
+
+        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("Error getting document: \(error)")
+                return
+            }
+
+            if let document = document, document.exists {
+                if let postData = document.data()?["post"] as? [String: Any] {
+                    if let postStatus = postData["postStatus"] as? String, postStatus == "거래완료" {
+                        let postTitle = postData["postTitle"] as? String ?? "제목 없음"
+                        let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
+                        let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
+                        let updateDate = updateDateTimestamp.dateValue()
+                        let postImages = postData["postImages"] as? [String] ?? []
+                        let postId = postData["id"] as? String ?? ""
+
+                        // Post 객체 생성 및 업데이트
+                        self.review = Post(
+                            id: postId,
+                            enabled: true,
+                            createDate: Date(),
+                            updateDate: updateDate,
+                            userId: userId,
+                            profileImage: "",
+                            nickname: "",
+                            userLocation: Location.seoulLocation,
+                            userNotification: false,
+                            postType: .offeringToSitter,
+                            postTitle: postTitle,
+                            postBody: postBody,
+                            postImages: postImages,
+                            postStatus: .completedTrade,
+                            location: nil
+                        )
+                        
+                        // 테이블 뷰 업데이트
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
+                    } else {
+                        print("Post status is not '거래완료'.")
+                    }
+                } else {
+                    print("Post data not found in document.")
+                }
+            } else {
+                print("Document does not exist")
+            }
+        }
+    }
+
 }
