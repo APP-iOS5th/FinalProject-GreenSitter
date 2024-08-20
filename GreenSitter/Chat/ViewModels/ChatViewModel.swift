@@ -94,7 +94,7 @@ class ChatViewModel {
             print("Message is empty")
             return
         }
-        
+
         guard let postUserId = chatRoom?.postUserId else {
             print("Error: postUserId is nil")
             return

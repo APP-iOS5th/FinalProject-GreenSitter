@@ -55,6 +55,7 @@ class MessageInputViewController: UIViewController {
         
         button.addAction(UIAction { [weak self] _ in
             self?.chatViewModel?.sendButtonTapped(text: self?.messageInputField.text)
+            self?.messageInputField.text = ""
         }, for: .touchUpInside)
         
         return button
