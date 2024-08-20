@@ -4,13 +4,14 @@
 //
 //  Created by 조아라 on 8/13/24.
 //
+// 돌봐드립니다, 찾습니다 등록하는 뷰컨 따로 만들기
 
 import UIKit
 import PhotosUI
 import MapKit
 
 class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewControllerDelegate {
-
+    
     private let scrollView: UIScrollView = {
         let scrollView =  UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -173,10 +174,10 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         contentView.addSubview(saveButton)
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor), 
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor), 
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
@@ -206,11 +207,13 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             
             pickerImageView.widthAnchor.constraint(equalToConstant: 100),
             pickerImageView.heightAnchor.constraint(equalToConstant: 100),
+            pickerImageView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
+            pickerImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
-            dividerLine2.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: 20),
+            dividerLine2.topAnchor.constraint(equalTo: pickerImageView.bottomAnchor, constant: 20),
             dividerLine2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             dividerLine2.widthAnchor.constraint(equalToConstant: 360),
-            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
+            dividerLine2.heightAnchor.constraint(equalToConstant: 1), 
             
             textView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 20),
             textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -224,25 +227,26 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             dividerLine3.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: 60),
             dividerLine3.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             dividerLine3.widthAnchor.constraint(equalToConstant: 360),
-            dividerLine3.heightAnchor.constraint(equalToConstant: 1),
+            dividerLine3.heightAnchor.constraint(equalToConstant: 1), 
             
-            mapLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 48),
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
+            mapLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            mapLabel.bottomAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 30),
             
-            mapIconView.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
-            mapIconView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            mapIconView.widthAnchor.constraint(equalToConstant: 24),
-            mapIconView.heightAnchor.constraint(equalToConstant: 24),
+            mapIconView.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 30),
+            mapIconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapIconView.widthAnchor.constraint(equalToConstant: 70),
+            mapIconView.heightAnchor.constraint(equalToConstant: 70),
             
-            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 20),
-            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            mapView.heightAnchor.constraint(equalToConstant: 200),
+            mapView.topAnchor.constraint(equalTo: mapIconView.bottomAnchor, constant: 20),
+            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            mapView.heightAnchor.constraint(equalToConstant: 300),
             
-            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30),
-            saveButton.heightAnchor.constraint(equalToConstant: 45)
+            saveButton.topAnchor.constraint(equalTo:mapView.bottomAnchor, constant: 20),
+            saveButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            saveButton.widthAnchor.constraint(equalToConstant: 150),
+            saveButton.heightAnchor.constraint(equalToConstant: 50),
+            saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
         ])
     }
     

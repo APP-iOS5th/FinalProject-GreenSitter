@@ -5,9 +5,13 @@
 //  Created by 박지혜 on 8/11/24.
 //
 
+// PostCareProviderTableVC 불러오는 함수
+// PostCareSeekterTableVC 불러오는 함수
+// Seeker,Provider 데이터 지우는 함수
+
 import Foundation
 
-class PostViewModel {
+class MainPostListViewModel {
     private var firestoreManager = FirestoreManager()
     
     // 임시 데이터
