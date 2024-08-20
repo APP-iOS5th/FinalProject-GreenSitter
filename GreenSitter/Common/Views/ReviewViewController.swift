@@ -9,6 +9,8 @@ import UIKit
 
 class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    var selectedRatingButton: UIButton?
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
@@ -69,12 +71,17 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
             (cell as! ReviewSendTableViewCell).goodButton.addTarget(self, action: #selector(selectButtonTap), for: .touchUpInside)
             
             (cell as! ReviewSendTableViewCell).row1Button.setTitle("시간 약속을 잘 지켜요!", for: .normal)
+            (cell as! ReviewSendTableViewCell).row1Button.addTarget(self, action: #selector(slectTextButtonTap), for: .touchUpInside)
             (cell as! ReviewSendTableViewCell).row2Button.setTitle("의사소통이 원활해요!", for: .normal)
+            (cell as! ReviewSendTableViewCell).row2Button.addTarget(self, action: #selector(slectTextButtonTap), for: .touchUpInside)
             (cell as! ReviewSendTableViewCell).row3Button.setTitle("신뢰할 수 있어요!", for: .normal)
+            (cell as! ReviewSendTableViewCell).row3Button.addTarget(self, action: #selector(slectTextButtonTap), for: .touchUpInside)
             (cell as! ReviewSendTableViewCell).row4Button.setTitle("매우 친절해요!", for: .normal)
+            (cell as! ReviewSendTableViewCell).row4Button.addTarget(self, action: #selector(slectTextButtonTap), for: .touchUpInside)
             
             (cell as! ReviewSendTableViewCell).reviewTextField.placeholder = "직접 입력"
             (cell as! ReviewSendTableViewCell).completeButton.setTitle("완료", for: .normal)
+            (cell as! ReviewSendTableViewCell).completeButton.addTarget(self, action: #selector(completeButtonTap), for: .touchUpInside)
 
             cell.backgroundColor = UIColor(named: "BGSecondary") // 두 번째 섹션 셀 배경색 설정
             return cell
@@ -94,6 +101,4 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
             return UITableView.automaticDimension
         }
     }
-
-    
 }

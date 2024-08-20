@@ -69,8 +69,7 @@ class ReviewSendTableViewCell: UITableViewCell {
         let textField = UITextField()
         textField.placeholder = "직접입력하세요"
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.layer.borderColor = UIColor.black.cgColor // 테두리 색상 설정
-        textField.layer.borderWidth = 2.0 // 테두리 두께 설정
+        textField.backgroundColor = .white
         return textField
     }()
     
