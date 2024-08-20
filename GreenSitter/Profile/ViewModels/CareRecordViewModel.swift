@@ -25,7 +25,7 @@ extension CareRecordViewController {
                 let updateDate = updateDateTimestamp.dateValue()
                 let postImages = data?["postImages"] as? [String] ?? []
                 
-                let post = Post(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: updateDate, userId: userId, profileImage: "", nickname: "", userLocation: Location.seoulLocation, userNotification: false, postType: .offeringToSitter, postTitle: postTitle, postBody: postBody, postImages: postImages, postStatus: .beforeTrade, location: nil)
+                let post = Post(id: "some-hardcoded-post-id", enabled: true, createDate: Date(), updateDate: updateDate, userId: userId, profileImage: "", nickname: "", userLocation: Location.seoulLocation, userNotification: false, postType: .offeringToSitter, postTitle: postTitle, postBody: postBody, postImages: postImages, postStatus: .beforeTrade, location: nil)
                 
                 if let postImages = data?["postImages"] as? [String], !postImages.isEmpty {
                     let imageURL = postImages.first!

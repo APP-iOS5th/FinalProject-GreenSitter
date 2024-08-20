@@ -98,10 +98,14 @@ extension ReviewViewController {
         }
         let reviewText = (tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell)?.reviewTextField.text
         
+        //리뷰아이디 생성
+        let reviewId = UUID().uuidString
+        
         // Prepare data to update user document
         let newReview: [String: Any] = [
             "reviews": [
-                "id": UUID().uuidString,
+                "id": reviewId,
+                "userId":userId,
                 "enabled": true,
                 "createDate": Timestamp(date: Date()),
                 "updateDate": Timestamp(date: Date()),
@@ -141,7 +145,9 @@ extension ReviewViewController {
                 print("Post document does not exist")
             }
         }
+        DispatchQueue.main.async {
+            let aboutMeViewController = AboutMeViewController()
+            self.navigationController?.pushViewController(aboutMeViewController, animated: true)
+        }
     }
-    
-    
 }

@@ -14,6 +14,8 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
     let db = Firestore.firestore()
     var selectedRatingButton: UIButton?
     var review: Review?
+     var selectedTextButtons: Set<UIButton> = []
+
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()

@@ -239,104 +239,64 @@ class LoginViewController: UIViewController {
                     location: Location.seoulLocation
                 )
                 
-                // Firebase SignIn 처리 완료 후
-                if let user = authResult?.user {
-                    // 리뷰 객체 생성
-                    let review = Review(
-                        id: UUID().uuidString,
-                        enabled: true,
-                        createDate: Date(),
-                        updateDate: Date(),
-                        userId: user.uid,
-                        postId: "examplePostId", // 실제 postId로 대체 필요
-                        rating: .average, // 실제 평점으로 대체 필요
-                        reviewText: "예시 리뷰 텍스트",
-                        reviewImage: "exampleReviewImageURL"
-                    )
-                    
-                    // 리뷰 저장 함수 호출
-                    saveReview(review: review, user: user)
-                    
-                    // Firestore에 문서 저장
-                    let userRef = db.collection("users").document(user.uid)
-                    userRef.setData([
-                        "id": post.id,
-                        "enabled": post.enabled,
-                        "createDate": Timestamp(date: post.createDate),
-                        "updateDate": Timestamp(date: post.updateDate),
-                        "userId": post.userId,
-                        "profileImage": post.profileImage,
-                        "nickname": post.nickname,
-                        "userLocation": [
-                            "latitude": post.userLocation.latitude,
-                            "longitude": post.userLocation.longitude
-                        ],
-                        "userNotification": post.userNotification,
-                        "postType": post.postType.rawValue,
-                        "postTitle": post.postTitle,
-                        "postBody": post.postBody,
-                        "postImages": post.postImages ?? [],
-                        "postStatus": post.postStatus.rawValue,
+                let userA = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "exampleImage1", nickname: "", location: Location.seoulLocation, platform: "", levelPoint: 1, aboutMe: "", chatNotification: true)
+
+                // Firestore에 문서 저장
+                let userRef = self.db.collection("users").document(user.uid)
+                userRef.setData([
+                    "user" : [
+                        "id": user.uid,
+                        "createDate": Timestamp(date: userA.createDate),
+                        "updateDate": Timestamp(date: userA.updateDate),
+                        "profileImage": userA.profileImage,
+                        "nickname": userA.nickname,
                         "address": "서울특별시 구로구 온수동",
-                        "location": post.location != nil ? [
-                            "latitude": post.location?.latitude ?? 0,
-                            "longitude": post.location?.longitude ?? 0
-                        ] : NSNull(),
-                        "review": [
-                            "id": review.id,
-                            "enabled": review.enabled,
-                            "createDate": Timestamp(date: review.createDate),
-                            "updateDate": Timestamp(date: review.updateDate),
-                            "userId": review.userId,
-                            "postId": review.postId,
-                            "rating": review.rating.rawValue,
-                            "reviewText": review.reviewText,
-                            "reviewImage": review.reviewImage
-                        ]
-                    ]) { error in
-                        if let error = error {
-                            print("Firestore 저장 오류: \(error.localizedDescription)")
-                        } else {
-                            print("Firestore에 사용자 정보 저장 성공")
-                        }
-                    }
-                    
-                    DispatchQueue.main.async {
-                        if let navigationController = self.navigationController {
-                            let setLocationViewController = SetLocationViewController()
-                            navigationController.pushViewController(setLocationViewController, animated: true)
-                        } else {
-                            print("Error: The current view controller is not embedded in a UINavigationController.")
-                        }
+                        "aboutMe": userA.aboutMe
+                    ],
+                    "post":[
+                    "id": post.id,
+                    "enabled": post.enabled,
+                    "createDate": Timestamp(date: post.createDate), // Date를 Timestamp로 변환
+                    "updateDate": Timestamp(date: post.updateDate), // Date를 Timestamp로 변환
+                    "userId": post.userId,
+                    "profileImage": post.profileImage,
+                    "nickname": post.nickname,
+                    "userLocation": [
+                        "latitude": post.userLocation.latitude,
+                        "longitude": post.userLocation.longitude
+                    ],
+                    "userNotification": post.userNotification,
+                    "postType": post.postType.rawValue,
+                    "postTitle": post.postTitle,
+                    "postBody": post.postBody,
+                    "postImages": post.postImages ?? [],
+                    "postStatus": post.postStatus.rawValue,
+                    "location": post.location != nil ? [
+                        "latitude": post.location?.latitude ?? 0,
+                        "longitude": post.location?.longitude ?? 0
+                    ] : NSNull() // 위치가 없을 경우 NSNull() 사용
+                ],
+                ]) { error in
+                    if let error = error {
+                        print("Firestore 저장 오류: \(error.localizedDescription)")
+                    } else {
+                        print("Firestore에 사용자 정보 저장 성공")
                     }
                 }
-
+                
+                DispatchQueue.main.async {
+                    // Ensure that self is in a UINavigationController
+                    if let navigationController = self.navigationController {
+                        let setLocationViewController = SetLocationViewController()
+                        navigationController.pushViewController(setLocationViewController, animated: true)
+                    } else {
+                        print("Error: The current view controller is not embedded in a UINavigationController.")
+                    }
+                }
             }
         }
     }
 
-    func saveReview(review: Review,  user: FirebaseAuth.User) {
-        
-        let reviewRef = db.collection("users").document(user.uid)
-        
-        reviewRef.setData([
-            "id": review.id,
-            "enabled": review.enabled,
-            "createDate": Timestamp(date: review.createDate),
-            "updateDate": Timestamp(date: review.updateDate),
-            "userId": review.userId,
-            "postId": review.postId,
-            "rating": review.rating.rawValue,
-            "reviewText": review.reviewText,
-            "reviewImage": review.reviewImage
-        ]) { error in
-            if let error = error {
-                print("리뷰 저장 오류: \(error.localizedDescription)")
-            } else {
-                print("리뷰 저장 성공")
-            }
-        }
-    }
 
 
     
