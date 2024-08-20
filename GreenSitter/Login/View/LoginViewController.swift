@@ -4,6 +4,7 @@
 //
 //  Created by Jiyong Cha on 8/7/24.
 //
+
 import UIKit
 import AuthenticationServices
 import CryptoKit
@@ -34,7 +35,7 @@ class LoginViewController: UIViewController {
         당신의 소중한 식물을
         돌봐드립니다
         """
-        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.font = .systemFont(ofSize: 17)
         label.textColor = .labelsPrimary
         label.numberOfLines = 0 // 여러 줄 텍스트를 지원
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -42,9 +43,9 @@ class LoginViewController: UIViewController {
     }()
     
     private let appleButton: ASAuthorizationAppleIDButton = {
-        let button = ASAuthorizationAppleIDButton()
+        let button = ASAuthorizationAppleIDButton(type: .continue, style: .black)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(LoginViewController.self, action: #selector(appleLogin), for: .touchUpInside)
+        button.addTarget(self, action: #selector(appleLogin), for: .touchUpInside)
         return button
     }()
     
@@ -52,23 +53,23 @@ class LoginViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(named: "googleLogin"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.imageView?.contentMode = .scaleAspectFill
-        button.addTarget(LoginViewController.self, action: #selector(googleLogin), for: .touchUpInside)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.addTarget(self, action: #selector(googleLogin), for: .touchUpInside)
         return button
     }()
     
     private var textButton: UIButton = {
         let button = UIButton()
         button.setTitle("둘러보기", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.labelsPrimary, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(LoginViewController.self, action: #selector(navigationTap), for: .touchUpInside)
+        button.addTarget(self, action: #selector(navigationTap), for: .touchUpInside)
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .bgPrimary
         
         view.addSubview(bodyLabel)
         view.addSubview(titleLabel)
@@ -77,30 +78,33 @@ class LoginViewController: UIViewController {
         view.addSubview(textButton)
         
         showToast(withDuration: 1, delay: 4)
-        
+
         NSLayoutConstraint.activate([
-            titleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -200),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            // Title Label
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             
-            bodyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
-            bodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
+            // Body Label
+            bodyLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             
-            appleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            appleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200),
-            appleButton.widthAnchor.constraint(equalToConstant: 300),
-            appleButton.heightAnchor.constraint(equalToConstant: 50),
-            
+            // Google Button
             googleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            googleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -120),
-            googleButton.widthAnchor.constraint(equalToConstant: 300),
+            googleButton.bottomAnchor.constraint(equalTo: appleButton.topAnchor, constant: -20),
+            googleButton.widthAnchor.constraint(equalToConstant: 230), // 너비를 230으로 설정
             googleButton.heightAnchor.constraint(equalToConstant: 50),
             
+            // Apple Button
+            appleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            appleButton.bottomAnchor.constraint(equalTo: textButton.topAnchor, constant: -20),
+            appleButton.widthAnchor.constraint(equalToConstant: 230), // 너비를 230으로 설정
+            appleButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            // Text Button
             textButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            textButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40)
         ])
-        
     }
-    
     //MARK: - ToastMessage
     func showToast(withDuration: Double, delay: Double) {
         let toastLabelWidth: CGFloat = 380
@@ -223,11 +227,16 @@ class LoginViewController: UIViewController {
                 let userRef = self.db.collection("users").document(user.uid)
                 
                 userRef.setData([
+//                    "id": user.uid,
+//                    "email": user.email ?? "",
+//                    "displayName": user.displayName ?? "",
+//                    "location": self.users?.location ?? "",
+//                    "enabled": false,  // 콤마 추가
                     "id": user.uid,
-                    "email": user.email ?? "",
-                    "displayName": user.displayName ?? "",
-                    "location": self.users?.location ?? "",
-                    "enabled": false,  // 콤마 추가
+                    "enabled": true,
+                    "createDate": Date(),
+                    "updateDate": Date(),
+                    "platform": "google"
                 ]) { error in
                     if let error = error {
                         print("Firestore Save Error: \(error.localizedDescription)")
@@ -235,6 +244,8 @@ class LoginViewController: UIViewController {
                         print("Firestore에 사용자 정보 저장 성공")
                     }
                 }
+                
+//                let newUser = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "", nickname: "", location: Location.sampleLocation, platform: "google", levelPoint: 0, aboutMe: "", chatNotification: false)
                 
                 DispatchQueue.main.async {
                     // Ensure that self is in a UINavigationController
@@ -260,7 +271,8 @@ class LoginViewController: UIViewController {
 
 
 //MARK: - AppleLogin
-extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+
+extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     //Apple의 응답을 처리
     @objc func appleLogin() {
         let nonce = randomNonceString()
@@ -304,20 +316,32 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                     let userRef = db.collection("users").document(user.uid)
                     
                     userRef.setData([
-                        "uid": user.uid,
-                        "email": user.email ?? "",
-                        "displayName": user.displayName ?? "",
-                        "location": users?.location ?? ""
-                    ])
-                }
-                
-                DispatchQueue.main.async {
-                    // Ensure that self is in a UINavigationController
-                    if let navigationController = self.navigationController {
-                        let setLocationViewController = SetLocationViewController()
-                        navigationController.pushViewController(setLocationViewController, animated: true)
-                    } else {
-                        print("Error: The current view controller is not embedded in a UINavigationController.")
+//                        "uid": user.uid,
+//                        "email": user.email ?? "",
+//                        "displayName": user.displayName ?? "",
+//                        "location": users?.location ?? ""
+                        "id": user.uid,
+                        "enabled": true,
+                        "createDate": Date(),
+                        "updateDate": Date(),
+                        "platform": "apple"
+                    ]) { error in
+                        if let error = error {
+                            print("Firestore Save Error: \(error.localizedDescription)")
+                        } else {
+                            print("Firestore에 사용자 정보 저장 성공")
+                        }
+                    }
+//                    let newUser = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "", nickname: "", location: Location.sampleLocation, platform: "apple", levelPoint: 0, aboutMe: "", chatNotification: false)
+                    
+                    DispatchQueue.main.async {
+                        // Ensure that self is in a UINavigationController
+                        if let navigationController = self.navigationController {
+                            let setLocationViewController = SetLocationViewController()
+                            navigationController.pushViewController(setLocationViewController, animated: true)
+                        } else {
+                            print("Error: The current view controller is not embedded in a UINavigationController.")
+                        }
                     }
                 }
             }
@@ -368,3 +392,7 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
     }
 }
 
+
+#Preview {
+    LoginViewController()
+}

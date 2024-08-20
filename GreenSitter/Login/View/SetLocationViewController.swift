@@ -16,7 +16,8 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     private let mapViewModel = MapViewModel()
     private var cancellables = Set<AnyCancellable>()
 
-    var user: User?
+    var users: User?
+    
     let db = Firestore.firestore()
     var currentUser: User? // 현재 사용자 객체
     
@@ -31,12 +32,13 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     
     lazy var bodyLabel: UILabel = {
         let label = UILabel()
-        label.text = """
-    주변의 새싹 돌봄이 ☘️
-    새싹 돌봄이를 찾는 분들을
-    매칭 해드립니다!
-"""
-        label.font = UIFont.systemFont(ofSize: 20)
+        label.text = 
+        """
+        주변의 새싹 돌봄이 ☘️
+        새싹 돌봄이를 찾는 분들을
+        매칭 해드립니다!
+        """
+        label.font = UIFont.systemFont(ofSize: 17)
         label.numberOfLines = 0 // 여러 줄 텍스트를 지원
         label.textColor = .labelsPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -55,7 +57,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         // 위치 텍스트 추가
         let label = UILabel()
         label.text = "위치 "
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = .labelsPrimary
         label.sizeToFit()
         
@@ -83,7 +85,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     lazy var skipButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("건너뛰기", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.labelsPrimary, for: .normal)
         button.addTarget(self, action: #selector(skipTap), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -91,19 +93,11 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let currentUser = Auth.auth().currentUser {
-            print("Current User ID: \(currentUser.uid)")
-            print("Current User Email: \(currentUser.email ?? "No Email")")
-            print("Current User Display Name: \(currentUser.displayName ?? "No Display Name")")
-            print("Current User Photo URL: \(currentUser.photoURL?.absoluteString ?? "No Photo URL")")
-        } else {
-            print("No user is currently logged in.")
-        }
         
         bindViewModel()
-        print("User 객체 상태: \(String(describing: user))")
+        print("User 객체 상태: \(String(describing: users))")
         
-        view.backgroundColor = .white
+        view.backgroundColor = .bgPrimary
         
         view.addSubview(titleLabel)
         view.addSubview(bodyLabel)
@@ -112,23 +106,23 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(skipButton)
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            bodyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            bodyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -180),
-            
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+
             locationTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             locationTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor ),
-            locationTextField.widthAnchor.constraint(equalToConstant: 350), // 너비 200 설정
+            locationTextField.widthAnchor.constraint(equalToConstant: 350),
             
             nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nextButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
+            nextButton.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -20),
             nextButton.widthAnchor.constraint(equalToConstant: 350),
             nextButton.heightAnchor.constraint(equalToConstant: 45),
             
             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
+            skipButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
         ])
         
     }
@@ -138,7 +132,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             .compactMap { $0 }
             .sink { [weak self] location in
                 print("SetLocation View Location: \(location)")
-                self?.user?.location = location
+                self?.users?.location = location
                 self?.locationTextField.text = location.address
             }
             .store(in: &cancellables)
@@ -152,12 +146,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-//        updateLocationInFirestore(location: currentLocation)
-        
-        DispatchQueue.main.async {
-            let setProfileViewController = SetProfileViewController()
-            self.navigationController?.pushViewController(setProfileViewController, animated: true)
-        }
+        updateLocationInFirestore(location: currentLocation)
     }
     
     //MARK: - 파이어베이스 위치정보 저장
@@ -168,7 +157,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         }
         
         let userData: [String: Any] = [
-            "location": location
+            "location": location.toDictionary()
         ]
         
         db.collection("users").document(user.uid).setData(userData, merge: true) { error in
@@ -178,6 +167,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
                 print("Location successfully saved!")
             }
         }
+        
         DispatchQueue.main.async {
             let setProfileViewController = SetProfileViewController()
             self.navigationController?.pushViewController(setProfileViewController, animated: true)

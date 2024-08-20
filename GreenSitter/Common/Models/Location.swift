@@ -39,3 +39,13 @@ extension Location {
     static let sampleLocation = Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), latitude: 37.903, longitude: 127.06, address: "경기도 동두천시 생연동")
 }
 
+extension Location {
+    func toDictionary() -> [String: Any] {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601 // Ensure the date format matches your Firestore settings
+        if let data = try? encoder.encode(self) {
+            return (try? JSONSerialization.jsonObject(with: data) as? [String: Any]) ?? [:]
+        }
+        return [:]
+    }
+}
