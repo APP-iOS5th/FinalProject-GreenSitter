@@ -12,9 +12,8 @@ class ChatViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupUI()
-            
     }
     
     // MARK: - Setup UI
@@ -28,6 +27,7 @@ class ChatViewController: UIViewController {
         
         self.view.backgroundColor = .white
         self.navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.largeTitleDisplayMode = .never
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(listButtonTapped))
         
         let chatPostViewController = ChatPostViewController()
@@ -61,15 +61,15 @@ class ChatViewController: UIViewController {
             chatPostViewController.view.heightAnchor.constraint(equalToConstant: 100),
             
             chatMessageViewController.view.topAnchor.constraint(equalTo: chatPostViewController.view.bottomAnchor),
+            chatMessageViewController.view.bottomAnchor.constraint(equalTo: messageInputViewController.view.topAnchor, constant: -10),
             chatMessageViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             chatMessageViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             chatMessageViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             
-            messageInputViewController.view.topAnchor.constraint(equalTo: chatMessageViewController.view.bottomAnchor, constant: 10),
             messageInputViewController.view.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             messageInputViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
             messageInputViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
-            messageInputViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            messageInputViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         ])
 
     }

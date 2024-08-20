@@ -11,9 +11,9 @@ class ChatMessageViewController: UIViewController {
     var chatViewModel: ChatViewModel?
     
     // 임시 데이터
-    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!", "어디까지 나오는지 테스트해보자아아아아아아아아아아아아아아아앙아아아아아", "읽었어?"]
-    var isIncoming: [Bool] = [false, true, false, false, true, true, false]
-    var isRead: [Bool] = [true, true, true, true, true, true, false]
+//    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!", "어디까지 나오는지 테스트해보자아아아아아아아아아아아아아아아앙아아아아아", "읽었어?"]
+//    var isIncoming: [Bool] = [false, true, false, false, true, true, false]
+//    var isRead: [Bool] = [true, true, true, true, true, true, false]
     
     // 메세지 뷰
     private lazy var tableView: UITableView = {
@@ -32,8 +32,16 @@ class ChatMessageViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        setupUI()
+        
+        chatViewModel?.loadMessages { [weak self] in
+            guard let self = self else { return }
+            
+            self.chatViewModel?.updateUI = { [weak self] in
+                self?.setupUI()
+            }
+            
+            self.chatViewModel?.updateUI?()
+        }
     }
     
     // MARK: - Setup UI
@@ -57,15 +65,21 @@ class ChatMessageViewController: UIViewController {
 
 extension ChatMessageViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messages.count
+        return chatViewModel?.messages?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
         cell.backgroundColor = .clear
-        cell.messageLabel.text = messages[indexPath.row]
-        cell.isIncoming = isIncoming[indexPath.row]
-        cell.isRead = isRead[indexPath.row]
+        cell.messageLabel.text = chatViewModel?.messages?[indexPath.row].text
+        
+        if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
+            cell.isIncoming = false
+        } else {
+            cell.isIncoming = true
+        }
+        
+        cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
         
         return cell
     }

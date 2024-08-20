@@ -32,6 +32,12 @@ class ChatViewModel {
     }
     
     var chatRoom: ChatRoom?
+    
+    var messages: [Message]? {
+        didSet {
+            updateUI?()
+        }
+    }
 
     var updateUI: (() -> Void)?
     
@@ -45,6 +51,13 @@ class ChatViewModel {
     func loadChatRooms(completion: @escaping () -> Void) {
         firestoreManager.fetchChatRooms(userId: userId) { [weak self] updatedchatRooms in
             self?.chatRooms = updatedchatRooms
+            completion()
+        }
+    }
+    
+    func loadMessages(completion: @escaping () -> Void) {
+        firestoreManager.fetchMessages(chatRoomId: chatRoom!.id) { [weak self] updatedMessages in
+            self?.messages = updatedMessages
             completion()
         }
     }
@@ -109,7 +122,7 @@ class ChatViewModel {
         
         Task {
             do {
-                try await firestoreManager.saveMessage(to: chatRoomId, message: textMessage)
+                try await firestoreManager.saveMessage(chatRoomId: chatRoomId, message: textMessage)
             } catch {
                 print("Failed to save message: \(error.localizedDescription)")
                 return

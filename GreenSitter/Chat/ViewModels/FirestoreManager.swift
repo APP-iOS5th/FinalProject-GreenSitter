@@ -96,20 +96,6 @@ class FirestoreManager {
         }
     }
     
-    // 채팅 메세지 저장
-    func saveMessage(to chatRoomId: String, message: Message) async throws {
-        let messagesCollectionRef = db.collection("chatRooms").document(chatRoomId).collection("messages").document(message.id)
-        
-        do {
-            // 메시지 데이터 저장
-            try await messagesCollectionRef.setData(from: message)
-            print("Message saved successfully")
-        } catch {
-            print("Failed to save message: \(error.localizedDescription)")
-            throw error
-        }
-    }
-    
     // 채팅방 데이터 가져오기
     /// listener를 통한 실시간 데이터 변경사항 반영
     func fetchChatRooms(userId: String, onUpdate: @escaping ([ChatRoom]) -> Void) {
@@ -173,5 +159,46 @@ class FirestoreManager {
             "postUserEnabled": chatRoom.postUserEnabled,
             "enabled": chatRoom.enabled
         ])
+    }
+    
+    // MARK: - Message
+    // 채팅 메세지 저장
+    func saveMessage(chatRoomId: String, message: Message) async throws {
+        let messagesCollectionRef = db.collection("chatRooms").document(chatRoomId).collection("messages").document(message.id)
+        
+        do {
+            // 메시지 데이터 저장
+            try await messagesCollectionRef.setData(from: message)
+            print("Message saved successfully")
+        } catch {
+            print("Failed to save message: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    // 메세지 데이터 가져오기
+    func fetchMessages(chatRoomId: String, onUpdate: @escaping ([Message]) -> Void) {
+        let messagesQuery = db.collection("chatRooms")
+            .document(chatRoomId)
+            .collection("messages")
+            .order(by: "updateDate", descending: false) // 메세지 보낸 시간순 정렬
+        
+        messagesQuery.addSnapshotListener { snapshot, error in
+            if let error = error {
+                print("Error fetching messages: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = snapshot?.documents else {
+                print("No messages found")
+                return
+            }
+            
+            let messages = documents.compactMap { document in
+                return try? document.data(as: Message.self)
+            }
+            
+            onUpdate(messages)
+        }
     }
 }

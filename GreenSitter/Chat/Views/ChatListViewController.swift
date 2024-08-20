@@ -119,6 +119,7 @@ class ChatListViewController: UIViewController {
     func setupChatListUI() {
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
         
         self.view.addSubview(tableView)
@@ -141,6 +142,7 @@ class ChatListViewController: UIViewController {
     func setupEmptyChatListUI() {
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
         // Edit 버튼 비활성화
         self.navigationItem.rightBarButtonItem?.isEnabled = false
@@ -322,10 +324,7 @@ extension ChatListViewController: UITableViewDelegate {
                 } catch {
                     print("Error deleting chat room: \(error.localizedDescription)")
                 }
-                
             }
-            
-            
         }
     }
     

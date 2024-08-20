@@ -8,7 +8,6 @@
 import UIKit
 
 class ChatMessageTableViewCell: UITableViewCell {
-    // TODO: - 사용자의 Id와 Message의 SenderId를 비교
     var isIncoming: Bool = false {
         didSet {
             bubbleView.backgroundColor = isIncoming ? .fillTertiary : .dominent
