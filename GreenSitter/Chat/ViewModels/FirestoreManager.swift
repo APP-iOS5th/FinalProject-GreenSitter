@@ -60,13 +60,13 @@ class FirestoreManager {
     // MARK: - ChatRoom
     // 채팅방 데이터 저장
     func saveChatRoom(_ chatRoom: ChatRoom) async throws {
-        let ownerId = chatRoom.ownerId
-        let sitterId = chatRoom.sitterId
+        let userId = chatRoom.userId
+        let postUserId = chatRoom.postUserId
         let postId = chatRoom.postId
         
         // 중복 검사
-        if await chatRoomExists(ownerId: ownerId, sitterId: sitterId, postId: postId) {
-            print("Chat room with ownerId \(ownerId), sitterId \(sitterId), and postId \(postId) already exists")
+        if await chatRoomExists(userId: userId, postUserId: postUserId, postId: postId) {
+            print("Chat room with userId \(userId), postUserId \(postUserId), and postId \(postId) already exists")
             return
         }
         
@@ -81,10 +81,10 @@ class FirestoreManager {
     }
     
     // 채팅방 중복 체크
-    func chatRoomExists(ownerId: String, sitterId: String, postId: String) async -> Bool {
+    func chatRoomExists(userId: String, postUserId: String, postId: String) async -> Bool {
         let query = db.collection("chatRooms")
-            .whereField("ownerId", isEqualTo: ownerId)
-            .whereField("sitterId", isEqualTo: sitterId)
+            .whereField("userId", isEqualTo: userId)
+            .whereField("postUserId", isEqualTo: postUserId)
             .whereField("postId", isEqualTo: postId)
         
         do {
@@ -114,14 +114,14 @@ class FirestoreManager {
     /// listener를 통한 실시간 데이터 변경사항 반영
     func fetchChatRooms(userId: String, onUpdate: @escaping ([ChatRoom]) -> Void) {
         // 사용자 아이디와 ownerId가 같은 문서와 사용자 아이디와 sitterId가 같은 문서 필터링
-        let ownerQuery = db.collection("chatRooms")
-            .whereField("ownerId", isEqualTo: userId)
-            .whereField("ownerEnabled", isEqualTo: true)
-        let sitterQuery = db.collection("chatRooms")
-            .whereField("sitterId", isEqualTo: userId)
-            .whereField("sitterEnabled", isEqualTo: true)
+        let userQuery = db.collection("chatRooms")
+            .whereField("userId", isEqualTo: userId)
+            .whereField("userEnabled", isEqualTo: true)
+        let postUserQuery = db.collection("chatRooms")
+            .whereField("postUserId", isEqualTo: userId)
+            .whereField("postUserEnabled", isEqualTo: true)
         
-        ownerQuery.getDocuments { [weak self] ownerSnapshot, error in
+        userQuery.getDocuments { [weak self] userSnapshot, error in
             guard self != nil else {
                 print("self is no longer available")
                 return
@@ -132,21 +132,21 @@ class FirestoreManager {
                 return
             }
             
-            sitterQuery.getDocuments { sitterSnapshot, error in
+            postUserQuery.getDocuments { postUserSnapshot, error in
                 if let error = error {
                     print("Error fetching chat rooms as sitter: \(error.localizedDescription)")
                     return
                 }
                 
-                let ownerChatRooms = ownerSnapshot?.documents.compactMap { document in
+                let userChatRooms = userSnapshot?.documents.compactMap { document in
                     return try? document.data(as: ChatRoom.self)
                 } ?? []
                 
-                let sitterChatRooms = sitterSnapshot?.documents.compactMap { document in
+                let postUserChatRooms = postUserSnapshot?.documents.compactMap { document in
                     return try? document.data(as: ChatRoom.self)
                 } ?? []
                 
-                let allChatRooms = Array(ownerChatRooms + sitterChatRooms)
+                let allChatRooms = Array(userChatRooms + postUserChatRooms)
                 
                 onUpdate(allChatRooms)
 
@@ -158,19 +158,19 @@ class FirestoreManager {
     func deleteChatRoom(docId: String, userId: String, chatRoom: inout ChatRoom) async throws {
         let docRef = db.collection("chatRooms").document(docId)
         
-        if userId == chatRoom.ownerId {
-            chatRoom.ownerEnabled = false
-        } else if userId == chatRoom.sitterId {
-            chatRoom.sitterEnabled = false
+        if userId == chatRoom.userId {
+            chatRoom.userEnabled = false
+        } else if userId == chatRoom.postUserId {
+            chatRoom.postUserEnabled = false
         }
         
-        if chatRoom.ownerEnabled == false && chatRoom.sitterEnabled == false {
+        if chatRoom.userEnabled == false && chatRoom.postUserEnabled == false {
             chatRoom.enabled = false
         }
         
         try await docRef.updateData([
-            "ownerEnabled": chatRoom.ownerEnabled,
-            "sitterEnabled": chatRoom.sitterEnabled,
+            "userEnabled": chatRoom.userEnabled,
+            "postUserEnabled": chatRoom.postUserEnabled,
             "enabled": chatRoom.enabled
         ])
     }

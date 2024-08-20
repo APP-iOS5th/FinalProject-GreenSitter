@@ -25,7 +25,7 @@ class PostListViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addAction(UIAction { [weak self] _ in
             Task {
-                await self?.postViewModel.buttonTapped()
+                await self?.postViewModel.chatButtonTapped()
             }
         }, for: .touchUpInside)
 
@@ -45,8 +45,11 @@ class PostListViewController: UIViewController {
     }
     
     private func navigateToChatDetail(chatRoom: ChatRoom) {
+        let chatViewModel = ChatViewModel()
+        chatViewModel.chatRoom = chatRoom
+        
         let chatDetailViewController = ChatViewController()
-        chatDetailViewController.chatRoom = chatRoom
+        chatDetailViewController.chatViewModel = chatViewModel
         self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
 

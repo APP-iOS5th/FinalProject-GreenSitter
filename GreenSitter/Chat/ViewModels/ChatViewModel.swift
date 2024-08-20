@@ -30,6 +30,8 @@ class ChatViewModel {
             updateUI?()
         }
     }
+    
+    var chatRoom: ChatRoom?
 
     var updateUI: (() -> Void)?
     
@@ -83,5 +85,35 @@ class ChatViewModel {
                 }
             }
         }.resume()
+    }
+    
+    // MARK: - MessageInputViewController Button Methods
+    // send button
+    func sendButtonTapped(text: String?) {
+        guard let messageText = text, !messageText.isEmpty else {
+            print("Message is empty")
+            return
+        }
+        
+        guard let postUserId = chatRoom?.postUserId else {
+            print("Error: postUserId is nil")
+            return
+        }
+        
+        guard let chatRoomId = chatRoom?.id else {
+            print("Error: chatRoomId is nil")
+            return
+        }
+
+        let textMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: postUserId, isRead: false, messageType: .text, text: messageText, image: nil, plan: nil)
+        
+        Task {
+            do {
+                try await firestoreManager.saveMessage(to: chatRoomId, message: textMessage)
+            } catch {
+                print("Failed to save message: \(error.localizedDescription)")
+                return
+            }
+        }
     }
 }

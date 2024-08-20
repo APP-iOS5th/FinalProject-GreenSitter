@@ -63,6 +63,14 @@ class ChatPostViewController: UIViewController {
     
     // MARK: - Setup UI
     private func setupUI() {
+        if let firstImageUrlString = chatViewModel?.chatRoom?.postImage,
+           let postThumbnailUrl = URL(string: firstImageUrlString) {
+            chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView)
+        }
+        
+        postTitleLabel.text = chatViewModel?.chatRoom?.postTitle
+        postStatusLabel.text = chatViewModel?.chatRoom?.postStatus.rawValue
+        
         self.view.backgroundColor = .white
         
         stackView.addSubview(postTitleLabel)

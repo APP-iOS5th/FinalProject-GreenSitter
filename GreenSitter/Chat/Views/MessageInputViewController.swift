@@ -34,12 +34,15 @@ class MessageInputViewController: UIViewController {
     // 채팅 부가기능 버튼
     private lazy var plusButton: UIButton = {
         let button = UIButton()
-        
         let largeConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular, scale: .large)
         let largeSymbolImage = UIImage(systemName: "plus.circle.fill", withConfiguration: largeConfig)
         button.setImage(largeSymbolImage, for: .normal)
         button.tintColor = .fillSecondary
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.addAction(UIAction { [weak self] _ in
+            self?.plusButtonTapped()
+        }, for: .touchUpInside)
         
         return button
     }()
@@ -49,6 +52,10 @@ class MessageInputViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.addAction(UIAction { [weak self] _ in
+            self?.chatViewModel?.sendButtonTapped(text: self?.messageInputField.text)
+        }, for: .touchUpInside)
         
         return button
     }()
@@ -91,6 +98,13 @@ class MessageInputViewController: UIViewController {
             sendButton.widthAnchor.constraint(equalToConstant: 34),
             sendButton.heightAnchor.constraint(equalToConstant: 34)
         ])
+    }
+    
+    // MARK: - plus button
+    func plusButtonTapped() {
+        let chatAdditionalButtonsViewController = ChatAdditionalButtonsViewController()
+        chatAdditionalButtonsViewController.modalPresentationStyle = .fullScreen
+        present(chatAdditionalButtonsViewController, animated: true)
     }
 
 }

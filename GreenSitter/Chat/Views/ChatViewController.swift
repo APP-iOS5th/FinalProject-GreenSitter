@@ -8,14 +8,7 @@
 import UIKit
 
 class ChatViewController: UIViewController {
-    private var chatViewModel = ChatViewModel()
-    
-    var chatRoom: ChatRoom?
-    
-    var postId: String?
-    var postThumbnail: String?
-    var postTitle: String?
-    var postStatus: PostStatus?
+    var chatViewModel: ChatViewModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,6 +19,13 @@ class ChatViewController: UIViewController {
     
     // MARK: - Setup UI
     private func setupUI() {
+        
+        if chatViewModel?.userId == chatViewModel?.chatRoom?.userId {
+            self.title = chatViewModel?.chatRoom?.userNickname
+        } else if chatViewModel?.userId == chatViewModel?.chatRoom?.postUserId {
+            self.title = chatViewModel?.chatRoom?.postUserNickname
+        }
+        
         self.view.backgroundColor = .white
         self.navigationController?.navigationBar.prefersLargeTitles = false
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(listButtonTapped))
@@ -34,24 +34,9 @@ class ChatViewController: UIViewController {
         let chatMessageViewController = ChatMessageViewController()
         let messageInputViewController = MessageInputViewController()
         
-        if chatRoom != nil {
-            // ChatRoom 데이터 저장 직후
-            if let firstImageUrlString = chatRoom?.postImage,
-               let postThumbnailUrl = URL(string: firstImageUrlString) {
-                chatViewModel.downloadImage(from: postThumbnailUrl, to: chatPostViewController.postThumbnailView)
-            }
-            
-            chatPostViewController.postTitleLabel.text = chatRoom?.postTitle
-            chatPostViewController.postStatusLabel.text = chatRoom?.postStatus.rawValue
-        } else {
-            if let firstImageUrlString = postThumbnail,
-               let postThumbnailUrl = URL(string: firstImageUrlString) {
-                chatViewModel.downloadImage(from: postThumbnailUrl, to: chatPostViewController.postThumbnailView)
-            }
-            
-            chatPostViewController.postTitleLabel.text = postTitle
-            chatPostViewController.postStatusLabel.text = postStatus?.rawValue
-        }
+        chatPostViewController.chatViewModel = chatViewModel
+        chatMessageViewController.chatViewModel = chatViewModel
+        messageInputViewController.chatViewModel = chatViewModel
         
         chatPostViewController.view.translatesAutoresizingMaskIntoConstraints = false
         chatMessageViewController.view.translatesAutoresizingMaskIntoConstraints = false

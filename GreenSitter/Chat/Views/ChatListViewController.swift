@@ -297,14 +297,13 @@ extension ChatListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatTableViewCell", for: indexPath) as! ChatTableViewCell
         
-        cell.chatViewModel = chatViewModel
-        
         guard let chatRooms = chatViewModel.chatRooms else {
             return cell
         }
         
-        let chatRoom = chatRooms[indexPath.row]
-        cell.configure(chatRoom: chatRoom, userId: chatViewModel.userId)
+        chatViewModel.chatRoom = chatRooms[indexPath.row]
+        cell.chatViewModel = chatViewModel
+        cell.configure(userId: chatViewModel.userId)
         
         return cell
     }
@@ -337,16 +336,7 @@ extension ChatListViewController: UITableViewDelegate {
         }
         
         let chatViewController = ChatViewController()
-        chatViewController.postId = chatRooms[indexPath.row].postId
-        chatViewController.postThumbnail = chatRooms[indexPath.row].postImage
-        chatViewController.postTitle = chatRooms[indexPath.row].postTitle
-        chatViewController.postStatus = chatRooms[indexPath.row].postStatus
-        
-        if chatViewModel.userId == chatRooms[indexPath.row].ownerId {
-            chatViewController.title = chatRooms[indexPath.row].sitterNickname
-        } else if chatViewModel.userId == chatRooms[indexPath.row].sitterId {
-            chatViewController.title = chatRooms[indexPath.row].ownerNickname
-        }
+        chatViewController.chatViewModel = chatViewModel
         
         self.navigationController?.pushViewController(chatViewController, animated: true)
     }
