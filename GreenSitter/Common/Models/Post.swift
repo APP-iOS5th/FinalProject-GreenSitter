@@ -12,11 +12,14 @@ struct Post: Codable {
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
+    
+    // user
     let userId: String
     let profileImage: String
     let nickname: String
     let userLocation: Location
     let userNotification: Bool
+    
     let postType: PostType
     let postTitle: String
     let postBody: String

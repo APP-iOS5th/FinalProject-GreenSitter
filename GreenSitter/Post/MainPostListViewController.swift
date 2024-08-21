@@ -217,6 +217,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
     
     func setupTableView() {
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "CustomCell")
         view.addSubview(tableView)
         
@@ -291,6 +292,16 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
         
         return cell
     }
+    
+    // MARK: - UITABLE VIEW DELEGATE
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let post = filteredPosts[indexPath.row]
+        let postDetailViewController = PostDetailViewController(post: post)
+        postDetailViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(postDetailViewController, animated: true)
+    }
+
 }
 
 

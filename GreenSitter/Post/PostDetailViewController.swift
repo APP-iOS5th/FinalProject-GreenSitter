@@ -33,15 +33,6 @@ class PostDetailViewController: UIViewController {
         return contentView
     }()
     
-    private let backButton: UIButton = {
-        let button = UIButton()
-        let image = UIImage(systemName: "arrow.backward")
-        button.setImage(image, for: .normal)
-        button.tintColor = .black
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 25
@@ -55,7 +46,6 @@ class PostDetailViewController: UIViewController {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "부리부리대마왕"
         return label
     }()
     
@@ -68,14 +58,14 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    private let postTimeLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .gray
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "2시간 전"
-        return label
-    }()
+//    private let postTimeLabel: UILabel = {
+//        let label = UILabel()
+//        label.font = .systemFont(ofSize: 12)
+//        label.textColor = .gray
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.text = "2시간 전"
+//        return label
+//    }()
     
     private let dividerLine1: UIImageView = {
         let line = UIImageView()
@@ -103,7 +93,6 @@ class PostDetailViewController: UIViewController {
         label.font = .systemFont(ofSize: 12)
         label.textColor = .white
         label.backgroundColor = .dominent
-        label.text = "거래중"
         label.layer.cornerRadius = 5
         label.clipsToBounds = true
         label.textAlignment = .center
@@ -115,43 +104,27 @@ class PostDetailViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18, weight: .semibold)
         label.numberOfLines = 0
-        label.text = "대형 화분 주기적으로 관리해드려요!"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let uploadedImageView: UIImageView = {
+    private let postImagesView: UIImageView = {
         let image = UIImageView()
         image.backgroundColor = .lightGray
         image.tintColor = .gray
-        image.image = UIImage(systemName: "photo.on.rectangle.fill")
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
     
-    private let descriptionLabel: UILabel = {
+    private let postBodyLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.numberOfLines = 0
-        
-        let dummyString = """
-        저는 병갈고무나무랑 여인초를 키우고 있는데,
-        저랑 비슷한 품종의 식물을 키우는 분들 계신가요?
-        저는 재택근무 중이라 바쁘신 분들 대신해서
-        화분 관리 도와드릴 수 있어요~~
-        서로서로 정보 공유도 했으면 좋겠어요 ^^
-        """
-        let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = label.font.pointSize / 4
-        let attributes: [NSAttributedString.Key: Any] = [
-            .paragraphStyle: paragraphStyle,
-            .font: UIFont.systemFont(ofSize: 14)]
-        let attributedString: NSAttributedString = NSAttributedString(string: dummyString, attributes: attributes)
-        label.attributedText = attributedString
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
+    // TODO: 채팅방 연결
     private let contactButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("채팅하기", for: .normal)
@@ -179,24 +152,23 @@ class PostDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        setupLayout()
-        backButton.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+        view.backgroundColor = .bgPrimary
+        setupUI()
+        configure(with: post)
     }
 
-    private func setupLayout() {
+    private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
     
-        contentView.addSubview(backButton)
         contentView.addSubview(profileImageView)
         contentView.addSubview(userNameLabel)
         contentView.addSubview(userLevelLabel)
-        contentView.addSubview(postTimeLabel)
+//        contentView.addSubview(postTimeLabel)
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
-        contentView.addSubview(uploadedImageView)
-        contentView.addSubview(descriptionLabel)
+        contentView.addSubview(postImagesView)
+        contentView.addSubview(postBodyLabel)
         contentView.addSubview(dividerLine1)
         contentView.addSubview(dividerLine2)
         contentView.addSubview(dividerLine3)
@@ -217,11 +189,6 @@ class PostDetailViewController: UIViewController {
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
             
-            backButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: -10),
-            backButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            backButton.widthAnchor.constraint(equalToConstant: 20),
-            backButton.heightAnchor.constraint(equalToConstant: 20),
-            
     
             profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -234,10 +201,10 @@ class PostDetailViewController: UIViewController {
             userLevelLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
             userLevelLabel.leadingAnchor.constraint(equalTo: userNameLabel.leadingAnchor),
             
-            postTimeLabel.topAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 4),
-            postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
+//            postTimeLabel.topAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 4),
+//            postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
             
-            statusLabel.bottomAnchor.constraint(equalTo: postTimeLabel.bottomAnchor, constant: 40),
+            statusLabel.bottomAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 40),
             statusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             statusLabel.widthAnchor.constraint(equalToConstant: 40),
             statusLabel.heightAnchor.constraint(equalToConstant: 20),
@@ -256,20 +223,20 @@ class PostDetailViewController: UIViewController {
             dividerLine2.widthAnchor.constraint(equalToConstant: 360),
             dividerLine2.heightAnchor.constraint(equalToConstant: 1),
             
-            dividerLine3.bottomAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
+            dividerLine3.bottomAnchor.constraint(equalTo: postBodyLabel.bottomAnchor, constant: 20),
             dividerLine3.bottomAnchor.constraint(equalTo: mapLabel.topAnchor, constant: 100),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             dividerLine3.widthAnchor.constraint(equalToConstant: 360),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            uploadedImageView.widthAnchor.constraint(equalToConstant: 190),
-            uploadedImageView.heightAnchor.constraint(equalToConstant: 250),
-            uploadedImageView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
-            uploadedImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postImagesView.widthAnchor.constraint(equalToConstant: 190),
+            postImagesView.heightAnchor.constraint(equalToConstant: 250),
+            postImagesView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
+            postImagesView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
-            descriptionLabel.bottomAnchor.constraint(equalTo: dividerLine2.topAnchor, constant: 120),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postBodyLabel.bottomAnchor.constraint(equalTo: dividerLine2.topAnchor, constant: 20),
+            postBodyLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postBodyLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
             contactButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
             contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -280,25 +247,26 @@ class PostDetailViewController: UIViewController {
             mapLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             mapLabel.bottomAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 150),
             
-            mapView.bottomAnchor.constraint(equalTo: mapLabel.topAnchor, constant: 400),
-            //            mapView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),
-            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 20),
+            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapView.heightAnchor.constraint(equalToConstant: 250),
         ])
     }
     
-    @objc private func didTapBackButton() {
-        if let navigationController = navigationController {
-            for viewController in navigationController.viewControllers {
-                if viewController is MainPostListViewController {
-                    navigationController.popToViewController(viewController, animated: true)
-                    return
-                }
-            }
-            // If MainPostListViewController is not found, create a new instance and push it
-            let mainPostListViewController = MainPostListViewController()
-            navigationController.pushViewController(mainPostListViewController, animated: true)
+    private func configure(with post: Post) {
+        userNameLabel.text = post.nickname
+        postTitleLabel.text = post.postTitle
+        postBodyLabel.text = post.postBody
+        statusLabel.text = post.postStatus.rawValue
+        
+        profileImageView.image = UIImage(named: post.profileImage)
+        
+        // TODO: 이미지뷰를 horizontal scrollview 로 바꾸고, 여러 개의 이미지 표시하기
+        if let imageName = post.postImages?.first {
+            postImagesView.image = UIImage(named: imageName)
+        } else {
+            postImagesView.image = nil
         }
     }
 }
