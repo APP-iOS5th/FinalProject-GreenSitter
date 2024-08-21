@@ -91,7 +91,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
         view.addSubview(categoryStackView)
         
         NSLayoutConstraint.activate([
-            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 44),
             categoryStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             categoryStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryStackView.heightAnchor.constraint(equalToConstant: 50)
