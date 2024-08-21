@@ -18,6 +18,8 @@
 		3B6DE1AC2C72D24B009DD41A /* CareRecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DE1AB2C72D24B009DD41A /* CareRecordViewController.swift */; };
 		3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DE1AD2C72D457009DD41A /* CareRecordViewModel.swift */; };
 		3B6DE1B02C72D483009DD41A /* CareRecordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DE1AF2C72D483009DD41A /* CareRecordTableViewCell.swift */; };
+		3B7D8F3D2C75686700008F22 /* WriteReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F3C2C75686700008F22 /* WriteReviewViewController.swift */; };
+		3B7D8F3F2C75689C00008F22 /* WriteReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F3E2C75689C00008F22 /* WriteReviewViewModel.swift */; };
 		3B8348122C74BF6600359E85 /* LeavePlantListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */; };
 		3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */; };
 		3B8A5A7D2C6DD228007E3902 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B8A5A7B2C6DD228007E3902 /* APPKey.plist */; };
@@ -130,6 +132,8 @@
 		3B6DE1AB2C72D24B009DD41A /* CareRecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareRecordViewController.swift; sourceTree = "<group>"; };
 		3B6DE1AD2C72D457009DD41A /* CareRecordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareRecordViewModel.swift; sourceTree = "<group>"; };
 		3B6DE1AF2C72D483009DD41A /* CareRecordTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareRecordTableViewCell.swift; sourceTree = "<group>"; };
+		3B7D8F3C2C75686700008F22 /* WriteReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteReviewViewController.swift; sourceTree = "<group>"; };
+		3B7D8F3E2C75689C00008F22 /* WriteReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteReviewViewModel.swift; sourceTree = "<group>"; };
 		3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeavePlantListViewController.swift; sourceTree = "<group>"; };
 		3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeavePlantListModel.swift; sourceTree = "<group>"; };
 		3B8A5A7B2C6DD228007E3902 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
@@ -513,6 +517,7 @@
 				3B61C6992C71DCAD00337B66 /* SelfIntroductionViewModel.swift */,
 				3B6DE1AD2C72D457009DD41A /* CareRecordViewModel.swift */,
 				3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */,
+				3B7D8F3E2C75689C00008F22 /* WriteReviewViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -555,6 +560,7 @@
 				3B61C6972C71CB1600337B66 /* SelfIntroductionViewController.swift */,
 				3B6DE1AB2C72D24B009DD41A /* CareRecordViewController.swift */,
 				3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */,
+				3B7D8F3C2C75686700008F22 /* WriteReviewViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -693,6 +699,7 @@
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
 				97D1BE7E2C6C8BBA00F7A983 /* PlanProgressBar.swift in Sources */,
 				97D1BE962C6C93A100F7A983 /* FirestoreManager.swift in Sources */,
+				3B7D8F3D2C75686700008F22 /* WriteReviewViewController.swift in Sources */,
 				97B4E8932C6AE6AA0028BE1F /* KakaoAPIService.swift in Sources */,
 				97D1BEC42C6C9DF400F7A983 /* PlanDateTimeViewController.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
@@ -752,6 +759,7 @@
 				97934E052C62F89F00B38E0A /* LevelPoint.swift in Sources */,
 				97934E012C62F89200B38E0A /* ChatRoom.swift in Sources */,
 				97D1BEA92C6C954100F7A983 /* SampleChatData.swift in Sources */,
+				3B7D8F3F2C75689C00008F22 /* WriteReviewViewModel.swift in Sources */,
 				97D1BE422C6C7F0500F7A983 /* SetProfileViewController.swift in Sources */,
 				97D1BEC52C6C9DF400F7A983 /* PlanPlaceViewController.swift in Sources */,
 				3B6DE1B02C72D483009DD41A /* CareRecordTableViewCell.swift in Sources */,
