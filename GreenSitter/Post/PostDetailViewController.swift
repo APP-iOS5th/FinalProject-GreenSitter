@@ -9,7 +9,18 @@ import UIKit
 import MapKit
 
 class PostDetailViewController: UIViewController {
-
+    
+    private let post: Post
+    
+    init(post: Post) {
+        self.post = post
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private let scrollView: UIScrollView = {
         let scrollView =  UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -29,7 +40,7 @@ class PostDetailViewController: UIViewController {
         button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-        }()
+    }()
 
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -292,21 +303,6 @@ class PostDetailViewController: UIViewController {
     }
 }
 
-extension UIColor {
-    class var dominant: UIColor {
-        return UIColor(red: 64/255, green: 219/255, blue: 77/255, alpha: 1.0)
-    }
-    
-    class var complementaryColor: UIColor {
-        return UIColor(red: 219/255, green: 75/255, blue: 64/255, alpha: 1.0)
-    }
-    
-    class var labelsSecondaryColor: UIColor {
-        return UIColor(red: 30/255, green: 30/255, blue: 30/255, alpha: 1.0)
-    }
-}
-
-
 #Preview {
-    return UINavigationController(rootViewController: PostDetailViewController())
+    return UINavigationController(rootViewController: PostDetailViewController(post: Post.samplePosts.first!))
 }

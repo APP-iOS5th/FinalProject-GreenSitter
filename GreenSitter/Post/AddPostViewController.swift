@@ -136,7 +136,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         let button = UIButton()
         button.setTitle("작성완료", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .dominant
+        button.backgroundColor = .dominent
         button.layer.cornerRadius = 20
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

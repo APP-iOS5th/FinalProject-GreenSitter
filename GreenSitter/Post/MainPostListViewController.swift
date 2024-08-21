@@ -122,8 +122,6 @@ class CustomTableViewCell: UITableViewCell {
 }
 
 
-
-
 class MainPostListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     private let categoryStackView = UIStackView()
