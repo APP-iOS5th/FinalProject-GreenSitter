@@ -91,13 +91,14 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.backgroundColor = .clear
             
             let imageCounts: Int = chatViewModel?.messages?[indexPath.row].image?.count ?? 0
-            cell.images = []
+            var progressImages = [UIImage]()
             
             for _ in 0..<imageCounts {
                 if let photoImage = UIImage(systemName: "photo") {
-                    cell.images.append(photoImage)
+                    progressImages.append(photoImage)
                 }
             }
+            cell.images = progressImages
             
             if let imagePaths = chatViewModel?.messages?[indexPath.row].image {
                 Task {
@@ -121,7 +122,6 @@ extension ChatMessageViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
             cell.backgroundColor = .clear
             
-            cell.images = [UIImage(systemName: "xmark")!.withRenderingMode(.alwaysTemplate), UIImage(systemName: "square.and.arrow.up.fill")!.withRenderingMode(.alwaysTemplate)]
             if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
