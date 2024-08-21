@@ -9,12 +9,18 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
+import Combine
 
 class AboutMeViewController: UIViewController{
     
     let db = Firestore.firestore()
     var user: User?
     var sectionTitle = ["자기소개", "돌봄 정보"]
+    let viewModel = LoginViewModel()
+    let mapViewModel = MapViewModel()
+    var cancellables = Set<AnyCancellable>()
+
+    
     
     lazy var profileImage: UIImageView = {
         let image = UIImageView()
@@ -79,7 +85,7 @@ class AboutMeViewController: UIViewController{
     
     lazy var locationLabel: UILabel = {
         let label = UILabel()
-        label.text = "경기도 양주시"
+        label.text = viewModel.user?.location.address
         label.font = UIFont.boldSystemFont(ofSize: 15)
         label.textColor = UIColor(named: "SeparatorsOpaque")
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -158,6 +164,7 @@ class AboutMeViewController: UIViewController{
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
         fetchUserFirebase()
+        bindViewModel()
         NotificationCenter.default.addObserver(self, selector: #selector(self.userAboutMeUpdated), name: NSNotification.Name("UserAboutMeUpdated"), object: nil)
 
     }

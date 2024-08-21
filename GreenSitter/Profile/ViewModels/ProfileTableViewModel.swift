@@ -40,7 +40,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             // "이름" 셀
             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
             (cell as! ProfileTableViewCell).titleLabel.text = "이름"
-            (cell as! ProfileTableViewCell).bodyLabel.text = users?.nickname
+            (cell as! ProfileTableViewCell).bodyLabel.text = viewModel.user?.nickname
             (cell as! ProfileTableViewCell).bodyLabel.textColor = .black
             (cell as! ProfileTableViewCell).actionButton.isHidden = false
             (cell as! ProfileTableViewCell).actionButton.setTitle("변경", for: .normal)
@@ -53,7 +53,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let profileCell = cell as! ProfileTableViewCell
 
             profileCell.titleLabel.text = "사는 곳"
-            profileCell.bodyLabel.text = "user?.location"
+            profileCell.bodyLabel.text = viewModel.user?.location.address
 
             profileCell.actionButton.isHidden = false
             profileCell.actionButton.setTitle("변경", for: .normal)

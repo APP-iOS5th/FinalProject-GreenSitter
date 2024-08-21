@@ -9,6 +9,7 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
+import Combine
 
 extension AboutMeViewController {
     //MARK: - 자기소개 수정하기
@@ -78,6 +79,21 @@ extension AboutMeViewController {
             }
         }
     }
+    
+    func bindViewModel() {
+        mapViewModel.$currentLocation
+            .compactMap { $0 } // Location?을 Location으로 안전하게 변환
+            .sink { [weak self] location in
+                print("SetLocation View Location: \(location)")
+                self?.user?.location = location
+                DispatchQueue.main.async {
+                    self?.locationLabel.text = location.address // location이 nil이 아님을 보장받음
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+
     
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadProfileImage(from gsURL: String) {

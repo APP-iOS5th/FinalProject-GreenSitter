@@ -18,6 +18,7 @@ class ProfileViewController: UIViewController {
     let storage = Storage.storage()
     
     var users: User?
+    let viewModel = LoginViewModel()
     
     // MARK: - UI Components
     lazy var circleView: UIView = {
