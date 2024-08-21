@@ -4,7 +4,6 @@
 //
 //  Created by 조아라 on 8/13/24.
 //
-// 돌봐드립니다, 찾습니다 등록하는 뷰컨 따로 만들기
 
 import UIKit
 import PhotosUI
@@ -138,6 +137,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .dominent
         button.layer.cornerRadius = 20
+        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -153,6 +153,31 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     @objc private func pickerImageViewTapped() {
         presentImagePickerController()
+    }
+    
+    @objc private func saveButtonTapped() {
+        guard let titleText = titleTextField.text, !titleText.isEmpty else {
+            showAlert(title: "제목 오류", message: "제목을 입력하세요.")
+            return
+        }
+        
+        guard let textViewText = textView.text, textViewText != textViewPlaceHolder, !textViewText.isEmpty else {
+            showAlert(title: "내용 오류", message: "내용을 입력하세요.")
+            return
+        }
+        
+        // 게시글 저장 로직 추가
+        print("제목: \(titleText)")
+        print("내용: \(textViewText)")
+        
+        // 저장 후 화면을 종료
+        navigationController?.popViewController(animated: true)
+    }
+    
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     private func setupLayout() {
@@ -174,113 +199,79 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         contentView.addSubview(saveButton)
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor), 
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor), 
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
-            
-            titleTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+
             titleTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
-            
-            dividerLine1.bottomAnchor.constraint(equalTo: titleTextField.topAnchor, constant: 35),
-            dividerLine1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            dividerLine1.widthAnchor.constraint(equalToConstant: 360),
+            titleTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            titleTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            dividerLine1.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 10),
+            dividerLine1.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            dividerLine1.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             dividerLine1.heightAnchor.constraint(equalToConstant: 1),
-            
+
             imageScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
             imageScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             imageScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             imageScrollView.heightAnchor.constraint(equalToConstant: 100),
-            
+
             imageStackView.topAnchor.constraint(equalTo: imageScrollView.topAnchor),
             imageStackView.bottomAnchor.constraint(equalTo: imageScrollView.bottomAnchor),
             imageStackView.leadingAnchor.constraint(equalTo: imageScrollView.leadingAnchor),
             imageStackView.trailingAnchor.constraint(equalTo: imageScrollView.trailingAnchor),
             imageStackView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
-            
+
             pickerImageView.widthAnchor.constraint(equalToConstant: 100),
             pickerImageView.heightAnchor.constraint(equalToConstant: 100),
-            pickerImageView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
-            pickerImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            
-            dividerLine2.topAnchor.constraint(equalTo: pickerImageView.bottomAnchor, constant: 20),
-            dividerLine2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            dividerLine2.widthAnchor.constraint(equalToConstant: 360),
-            dividerLine2.heightAnchor.constraint(equalToConstant: 1), 
-            
+
+            dividerLine2.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: 20),
+            dividerLine2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            dividerLine2.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
+
             textView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 20),
-            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textView.heightAnchor.constraint(equalToConstant: 200),
-            
+
             remainCountLabel.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 5),
             remainCountLabel.trailingAnchor.constraint(equalTo: textView.trailingAnchor),
             remainCountLabel.heightAnchor.constraint(equalToConstant: 20),
-            
-            dividerLine3.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: 60),
-            dividerLine3.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            dividerLine3.widthAnchor.constraint(equalToConstant: 360),
-            dividerLine3.heightAnchor.constraint(equalToConstant: 1), 
-            
-            mapLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            mapLabel.bottomAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 30),
-            
-            mapIconView.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 30),
+
+            dividerLine3.topAnchor.constraint(equalTo: remainCountLabel.bottomAnchor, constant: 10),
+            dividerLine3.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            dividerLine3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            dividerLine3.heightAnchor.constraint(equalToConstant: 1),
+
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 20),
+            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            mapIconView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 10),
             mapIconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             mapIconView.widthAnchor.constraint(equalToConstant: 70),
             mapIconView.heightAnchor.constraint(equalToConstant: 70),
-            
+
             mapView.topAnchor.constraint(equalTo: mapIconView.bottomAnchor, constant: 20),
             mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapView.heightAnchor.constraint(equalToConstant: 300),
-            
-            saveButton.topAnchor.constraint(equalTo:mapView.bottomAnchor, constant: 20),
+
+            saveButton.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 20),
             saveButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             saveButton.widthAnchor.constraint(equalToConstant: 150),
             saveButton.heightAnchor.constraint(equalToConstant: 50),
             saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
         ])
-    }
-    
-    func presentImagePickerController() {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 10
-        configuration.filter = .images
-        
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        present(picker, animated: true, completion: nil)
-    }
-    
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true, completion: nil)
-        
-        for result in results {
-            if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
-                result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
-                    guard let self = self, let image = object as? UIImage else {
-                        return
-                    }
-                    
-                    DispatchQueue.main.async {
-                        let imageView = UIImageView(image: image)
-                        imageView.contentMode = .scaleAspectFill
-                        imageView.clipsToBounds = true
-                        imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-                        imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-                        self.imageStackView.addArrangedSubview(imageView)
-                    }
-                }
-            }
-        }
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -298,9 +289,41 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        remainCountLabel.text = "\(textView.text.count)/700"
+        let characterCount = textView.text.count
+        remainCountLabel.text = "\(characterCount)/700"
+    }
+    
+    private func presentImagePickerController() {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 0
+        configuration.filter = .images
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true, completion: nil)
+
+        for result in results {
+            result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
+                guard let self = self else { return }
+                if let image = object as? UIImage {
+                    DispatchQueue.main.async {
+                        let imageView = UIImageView(image: image)
+                        imageView.contentMode = .scaleAspectFill
+                        imageView.clipsToBounds = true
+                        imageView.translatesAutoresizingMaskIntoConstraints = false
+                        imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+                        imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+                        self.imageStackView.insertArrangedSubview(imageView, at: self.imageStackView.arrangedSubviews.count - 1)
+                    }
+                }
+            }
+        }
     }
 }
+
 
 #Preview {
     return UINavigationController(rootViewController: AddPostViewController())
