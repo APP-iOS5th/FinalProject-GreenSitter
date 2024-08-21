@@ -7,14 +7,20 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 class FirestoreManager {
     private let db = Firestore.firestore()
     
     // MARK: - User
-    // 사용자 데이터 가져오기
-    /// listener를 통한 실시간 데이터 변경사항 반영
-    func fetchUser(userId: String, onUpdate: @escaping (User?) -> Void) {
+    func fetchUser(onUpdate: @escaping (User?) -> Void) {
+        // 현재 로그인된 사용자의 userId 가져오기
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User ID is not available")
+            return
+        }
+
+        // Firestore에서 특정 문서 가져오기
         let docRef = db.collection("users").document(userId)
         
         docRef.getDocument { [weak self] (document, error) in
@@ -102,7 +108,7 @@ class FirestoreManager {
     // 채팅방 데이터 가져오기
     /// listener를 통한 실시간 데이터 변경사항 반영
     func fetchChatRooms(userId: String, onUpdate: @escaping ([ChatRoom]) -> Void) {
-        // 사용자 아이디와 ownerId가 같은 문서와 사용자 아이디와 sitterId가 같은 문서 필터링
+        // 사용자 아이디와 userId가 같은 문서와 사용자 아이디와 postUserId가 같은 문서 필터링
         let userQuery = db.collection("chatRooms")
             .whereField("userId", isEqualTo: userId)
             .whereField("userEnabled", isEqualTo: true)
@@ -197,8 +203,17 @@ class FirestoreManager {
                 return
             }
             
-            let messages = documents.compactMap { document in
-                return try? document.data(as: Message.self)
+//            let messages = documents.compactMap { document in
+//                return try? document.data(as: Message.self)
+//            }
+            
+            let messages: [Message] = documents.compactMap { document in
+                do {
+                    return try document.data(as: Message.self)
+                } catch {
+                    print("Error decoding message: \(error.localizedDescription)")
+                    return nil
+                }
             }
             
             onUpdate(messages)

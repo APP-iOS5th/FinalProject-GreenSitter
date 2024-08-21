@@ -9,7 +9,17 @@ import UIKit
 
 class ChatViewController: UIViewController {
     var chatViewModel: ChatViewModel?
-
+    var chatRoom: ChatRoom
+    
+    init(chatRoom: ChatRoom) {
+        self.chatRoom = chatRoom
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -19,10 +29,10 @@ class ChatViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         
-        if chatViewModel?.userId == chatViewModel?.chatRoom?.userId {
-            self.title = chatViewModel?.chatRoom?.postUserNickname
-        } else if chatViewModel?.userId == chatViewModel?.chatRoom?.postUserId {
-            self.title = chatViewModel?.chatRoom?.userNickname
+        if chatViewModel?.userId == chatRoom.userId {
+            self.title = chatRoom.postUserNickname
+        } else if chatViewModel?.userId == chatRoom.postUserId {
+            self.title = chatRoom.userNickname
         }
         
         self.view.backgroundColor = .white
@@ -30,9 +40,9 @@ class ChatViewController: UIViewController {
         navigationItem.largeTitleDisplayMode = .never
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(listButtonTapped))
         
-        let chatPostViewController = ChatPostViewController()
-        let chatMessageViewController = ChatMessageViewController()
-        let messageInputViewController = MessageInputViewController()
+        let chatPostViewController = ChatPostViewController(chatRoom: chatRoom)
+        let chatMessageViewController = ChatMessageViewController(chatRoom: chatRoom)
+        let messageInputViewController = MessageInputViewController(chatRoom: chatRoom)
         
         chatPostViewController.chatViewModel = chatViewModel
         chatMessageViewController.chatViewModel = chatViewModel

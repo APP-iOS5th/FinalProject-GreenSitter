@@ -24,25 +24,29 @@ class ChatViewModel {
         }
     }
     
-    var chatRooms: [ChatRoom]? {
+    var chatRooms: [ChatRoom] = [] {
         didSet {
-            hasChats = !(chatRooms?.isEmpty ?? true)
+            hasChats = !(chatRooms.isEmpty)
             updateUI?()
         }
     }
     
-    var chatRoom: ChatRoom?
+//    var chatRoom: ChatRoom?
     
-    var messages: [Message]? {
+    var messages: [String:[Message]] = [:] /*{
         didSet {
             updateUI?()
         }
-    }
+    }*/
 
     var updateUI: (() -> Void)?
     
+    init() {
+        loadUser {}
+    }
+    
     func loadUser(completion: @escaping () -> Void) {
-        firestoreManager.fetchUser(userId: userId) { [weak self] updatedUser in
+        firestoreManager.fetchUser() { [weak self] updatedUser in
             self?.user = updatedUser
             completion()
         }
@@ -50,23 +54,33 @@ class ChatViewModel {
     
     func loadChatRooms(completion: @escaping () -> Void) {
         firestoreManager.fetchChatRooms(userId: userId) { [weak self] updatedchatRooms in
-            self?.chatRooms = updatedchatRooms
-            completion()
+            guard let self = self else { return }
+            self.chatRooms = updatedchatRooms
+            let dispatchGroup = DispatchGroup()
+            
+            for updatedChatRoom in updatedchatRooms {
+                dispatchGroup.enter()
+                self.loadMessages(chatRoomId: updatedChatRoom.id) {
+                    dispatchGroup.leave()
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                completion()
+            }
         }
     }
     
-    func loadMessages(completion: @escaping () -> Void) {
-        firestoreManager.fetchMessages(chatRoomId: chatRoom!.id) { [weak self] updatedMessages in
-            self?.messages = updatedMessages
+    func loadMessages(chatRoomId: String, completion: @escaping () -> Void) {
+        firestoreManager.fetchMessages(chatRoomId: chatRoomId) { [weak self] updatedMessages in
+            guard let self = self else { return }
+            self.messages[chatRoomId] = updatedMessages
+            
             completion()
         }
     }
     
     func deleteChatRoom(at index: Int) async throws {
-        guard let chatRooms = self.chatRooms else {
-            return
-        }
-        
         guard index >= 0 && index < chatRooms.count else {
             print("index out of range")
             return
@@ -77,7 +91,7 @@ class ChatViewModel {
         do {
             let idString = chatRoom.id
             try await firestoreManager.deleteChatRoom(docId: idString, userId: userId, chatRoom: &chatRoom)
-            self.chatRooms?.remove(at: index)
+            self.chatRooms.remove(at: index)
         } catch {
             print("Error deleting chat room: \(error.localizedDescription)")
         }
@@ -102,40 +116,25 @@ class ChatViewModel {
     
     // MARK: - MessageInputViewController Button Methods
     // send button
-    func sendButtonTapped(text: String?) {
+    func sendButtonTapped(text: String?, chatRoom: ChatRoom) {
         guard let messageText = text, !messageText.isEmpty else {
             print("Message is empty")
-            return
-        }
-
-        guard let chatRoomUserId = chatRoom?.userId else {
-            print("Error: userId is nil")
-            return
-        }
-        
-        guard let postUserId = chatRoom?.postUserId else {
-            print("Error: postUserId is nil")
-            return
-        }
-        
-        guard let chatRoomId = chatRoom?.id else {
-            print("Error: chatRoomId is nil")
             return
         }
         
         // TODO: - userId 수정
         let receiverUserId: String?
-        if userId == chatRoomUserId {
-            receiverUserId = postUserId
+        if userId == chatRoom.userId {
+            receiverUserId = chatRoom.postUserId
         } else {
-            receiverUserId = chatRoomUserId
+            receiverUserId = chatRoom.userId
         }
         
         let textMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .text, text: messageText, image: nil, plan: nil)
         
         Task {
             do {
-                try await firestoreManager.saveMessage(chatRoomId: chatRoomId, message: textMessage)
+                try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: textMessage)
             } catch {
                 print("Failed to save message: \(error.localizedDescription)")
                 return

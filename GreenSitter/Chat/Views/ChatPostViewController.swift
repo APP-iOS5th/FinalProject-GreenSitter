@@ -9,6 +9,16 @@ import UIKit
 
 class ChatPostViewController: UIViewController {
     var chatViewModel: ChatViewModel?
+    var chatRoom: ChatRoom
+    
+    init(chatRoom: ChatRoom) {
+        self.chatRoom = chatRoom
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // 게시물 이미지
     lazy var postThumbnailView: UIImageView = {
@@ -63,13 +73,13 @@ class ChatPostViewController: UIViewController {
     
     // MARK: - Setup UI
     private func setupUI() {
-        if let firstImageUrlString = chatViewModel?.chatRoom?.postImage,
+        if let firstImageUrlString = chatRoom.postImage,
            let postThumbnailUrl = URL(string: firstImageUrlString) {
             chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView)
         }
         
-        postTitleLabel.text = chatViewModel?.chatRoom?.postTitle
-        postStatusLabel.text = chatViewModel?.chatRoom?.postStatus.rawValue
+        postTitleLabel.text = chatRoom.postTitle
+        postStatusLabel.text = chatRoom.postStatus.rawValue
         
         self.view.backgroundColor = .white
         
