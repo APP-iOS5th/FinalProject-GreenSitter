@@ -168,9 +168,11 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
     
     func presentMakePlan() {
         guard let viewController = self.presentingViewController else { return }
+        let makePlanViewController = MakePlanViewController()
+        makePlanViewController.modalPresentationStyle = .fullScreen
         DispatchQueue.main.async {
             self.dismiss(animated: false) {
-                viewController.present(MakePlanViewController(), animated: true)
+                viewController.present(makePlanViewController, animated: true)
             }
         }
     }
