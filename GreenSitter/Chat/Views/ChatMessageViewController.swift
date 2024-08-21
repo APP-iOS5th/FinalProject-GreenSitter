@@ -49,6 +49,7 @@ class ChatMessageViewController: UIViewController {
         self.view.backgroundColor = .bgSecondary
         
         tableView.register(ChatMessageTableViewCell.self, forCellReuseIdentifier: "ChatMessageCell")
+        tableView.register(ChatMessageTableViewImageCell.self, forCellReuseIdentifier: "ChatMessageImageCell")
         
         self.view.addSubview(tableView)
         
@@ -69,19 +70,33 @@ extension ChatMessageViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
-        cell.backgroundColor = .clear
-        cell.messageLabel.text = chatViewModel?.messages?[indexPath.row].text
-        
-        if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
-            cell.isIncoming = false
+        //TODO: 메세지 유형에 따라 cell 다르게 하기, 이미지의 경우 UIImage로 변환해서 cell에 전달
+        if chatViewModel?.messages?[indexPath.row].messageType == .image {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
+            cell.backgroundColor = .clear
+            cell.images = [UIImage(systemName: "xmark")!.withRenderingMode(.alwaysTemplate), UIImage(systemName: "square.and.arrow.up.fill")!.withRenderingMode(.alwaysTemplate)]
+            if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
+                cell.isIncoming = false
+            } else {
+                cell.isIncoming = true
+            }
+            cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
+            return cell
         } else {
-            cell.isIncoming = true
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
+            cell.backgroundColor = .clear
+            cell.messageLabel.text = chatViewModel?.messages?[indexPath.row].text
+            
+            if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
+                cell.isIncoming = false
+            } else {
+                cell.isIncoming = true
+            }
+            
+            cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
+            
+            return cell
         }
-        
-        cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
-        
-        return cell
     }
 }
 
