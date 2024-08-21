@@ -43,6 +43,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController]
         
+        tabBarController.tabBar.backgroundColor = .bgPrimary
+        tabBarController.tabBar.isTranslucent = false
+        
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }

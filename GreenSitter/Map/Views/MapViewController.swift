@@ -27,6 +27,37 @@ class MapViewController: UIViewController {
     private var currentDetailViewController: AnnotationDetailViewController?
     private var cancellables = Set<AnyCancellable>()
     
+    // zoom control, user location buttons
+    private lazy var zoomInButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "plus"), for: .normal)
+        button.backgroundColor = .systemGray6
+        button.layer.cornerRadius = 4
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(zoomIn), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var zoomOutButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "minus"), for: .normal)
+        button.backgroundColor = .systemGray6
+        button.layer.cornerRadius = 4
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(zoomOut), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var userLocationButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "location.fill"), for: .normal)
+        button.backgroundColor = .systemGray6
+        button.layer.cornerRadius = 4
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(centerUserLocation), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -36,12 +67,49 @@ class MapViewController: UIViewController {
     
     private func setupUI() {
         view.addSubview(mapView)
+        view.addSubview(zoomInButton)
+        view.addSubview(zoomOutButton)
+        view.addSubview(userLocationButton)
+        
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            zoomInButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            zoomInButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            zoomInButton.widthAnchor.constraint(equalToConstant: 40),
+            zoomInButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            zoomOutButton.topAnchor.constraint(equalTo: zoomInButton.bottomAnchor, constant: 8),
+            zoomOutButton.leadingAnchor.constraint(equalTo: zoomInButton.leadingAnchor),
+            zoomOutButton.widthAnchor.constraint(equalTo: zoomInButton.widthAnchor),
+            zoomOutButton.heightAnchor.constraint(equalTo: zoomInButton.heightAnchor),
+            
+            userLocationButton.topAnchor.constraint(equalTo: zoomOutButton.bottomAnchor, constant: 8),
+            userLocationButton.leadingAnchor.constraint(equalTo: zoomOutButton.leadingAnchor),
+            userLocationButton.widthAnchor.constraint(equalTo: zoomInButton.widthAnchor),
+            userLocationButton.heightAnchor.constraint(equalTo: zoomInButton.heightAnchor),
         ])
+    }
+    
+    @objc private func zoomIn() {
+        let region = mapView.region
+        let zoomedRegion = MKCoordinateRegion(center: region.center, span: MKCoordinateSpan(latitudeDelta: region.span.latitudeDelta / 2, longitudeDelta: region.span.longitudeDelta / 2))
+        mapView.setRegion(zoomedRegion, animated: true)
+    }
+
+    @objc private func zoomOut() {
+        let region = mapView.region
+        let zoomedRegion = MKCoordinateRegion(center: region.center, span: MKCoordinateSpan(latitudeDelta: region.span.latitudeDelta * 2, longitudeDelta: region.span.longitudeDelta * 2))
+        mapView.setRegion(zoomedRegion, animated: true)
+    }
+
+    @objc private func centerUserLocation() {
+        guard let location = viewModel.currentLocation else { return }
+        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude), latitudinalMeters: 1000, longitudinalMeters: 1000)
+        mapView.setRegion(region, animated: true)
     }
     
     private func bindViewModel() {
@@ -49,7 +117,7 @@ class MapViewController: UIViewController {
         viewModel.$currentLocation
             .compactMap { $0 }  // nil 이 아닌 경우만 처리
             .sink { [weak self] location in
-                print("Updated Location: \(location.latitude), \(location.longitude), Address: \(location.address)")
+                print("Updated Location: \(location.latitude), \(location.longitude), Address: \(location.address), placeName: \(location.placeName)")
 
                 let region = MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
@@ -238,7 +306,7 @@ extension MapViewController: MKMapViewDelegate {
         
         // postType 따라서 어노테이션에 이미지 다르게 적용
         let sesacImage: UIImage!
-        let size = CGSize(width: 40, height: 40)
+        let size = CGSize(width: 50, height: 50)
         UIGraphicsBeginImageContext(size)
         
         switch annotation.postType {
@@ -309,16 +377,16 @@ extension MapViewController: MKMapViewDelegate {
                 // 오버레이 색 적용
                 switch post.postType {
                 case .lookingForSitter:
-                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.3)
+                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.6)
                 case .offeringToSitter:
-                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3)
+                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.6)
                 }
             } else {
                 print("post is nil")
-                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3) // Default color
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.6) // Default color
             }
 
-            circleRenderer.strokeColor = UIColor.separatorsOpaque
+            circleRenderer.strokeColor = .separatorsNonOpaque
             circleRenderer.lineWidth = 2
             return circleRenderer
         }

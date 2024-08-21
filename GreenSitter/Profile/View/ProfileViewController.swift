@@ -12,11 +12,12 @@ import FirebaseStorage
 class ProfileViewController: UIViewController {
     
     // MARK: - Properties
-    var user: User?
     var sectionTitle = ["내 정보", "계정"]
     var textFieldContainer: UIView?
     let db = Firestore.firestore()
     let storage = Storage.storage()
+    
+    var users: User?
     
     // MARK: - UI Components
     lazy var circleView: UIView = {

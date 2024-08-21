@@ -27,26 +27,26 @@ extension ProfileViewController {
             if let document = document, document.exists {
                 let data = document.data()
                 let nickname = data?["nickname"] as? String ?? "닉네임 없음"
-//                let location = data?["location"] as? String ?? "위치정보없음"
+                let location = data?["location"] as? Location ?? .seoulLocation
                 let profileImage = data?["profileImage"] as? String ?? ""
-
+                
                 
                 // user 객체가 nil일 경우 User 객체를 초기화
-                if self.user == nil {
-                    self.user = User(
+                if self.users == nil {
+                    self.users = User(
                         id: userId,
                         enabled: true,
                         createDate: Date(),
                         updateDate: Date(),
                         profileImage: profileImage,
                         nickname: nickname,
-                        location: Location.sampleLocation,
+                        location: location,
                         platform: "iOS",
                         levelPoint: 1, // 예시 값입니다. 실제 값으로 교체하세요.
                         aboutMe: "", chatNotification: false
                     )
                 } else {
-                    self.user?.nickname = nickname
+                    self.users?.nickname = nickname
                 }
                 
                 self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
