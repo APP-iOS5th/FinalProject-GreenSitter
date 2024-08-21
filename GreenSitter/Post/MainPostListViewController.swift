@@ -7,6 +7,59 @@
 
 import UIKit
 
+// MARK: - Custom Cell
+
+class CustomTableViewCell: UITableViewCell {
+    
+    // Define custom labels
+    private let postTitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        label.textColor = UIColor.labelsPrimary
+        return label
+    }()
+    
+    private let postBodyLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        label.textColor = UIColor.labelsSecondary
+        return label
+    }()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        // Add custom labels to the content view
+        contentView.addSubview(postTitleLabel)
+        contentView.addSubview(postBodyLabel)
+        
+        // Set up constraints
+        NSLayoutConstraint.activate([
+            postTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            postTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            
+            postBodyLabel.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 4),
+            postBodyLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postBodyLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postBodyLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // Configure cell with post data
+    func configure(with post: Post) {
+        postTitleLabel.text = post.postTitle
+        postBodyLabel.text = post.postBody
+        imageView?.image = UIImage(named: post.profileImage)
+    }
+}
+
 class MainPostListViewController: UIViewController, UITableViewDataSource {
     
     private let categoryStackView = UIStackView()
@@ -148,6 +201,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     
     func setupTableView() {
         tableView.dataSource = self
+        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "CustomCell")
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
@@ -214,13 +268,10 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! CustomTableViewCell
         let post = filteredPosts[indexPath.row]
         
-        // Configure the cell with post data
-        cell.textLabel?.text = post.postTitle
-        cell.detailTextLabel?.text = post.postBody
-        cell.imageView?.image = UIImage(named: post.profileImage) // Assuming there's a local image with the same name
+        cell.configure(with: post)
         
         return cell
     }
