@@ -173,30 +173,42 @@ class ChatViewModel {
             receiverUserId = userId
         }
         
-        // firestorage에 이미지 저장
-        for image in images {
-            guard let imageData = firestorageManager.imageToData(image: image) else {
-                print("Failed to transform image to data")
-                return
-            }
-            Task {
-                do {
-                    try await firestorageManager.saveImage(data: imageData)
-                } catch {
-                    print("Failed to save image: \(error.localizedDescription)")
-                    return
+        var imagePaths = [String]()
+        
+        Task {
+            //이미지 파이어베이스 스토리지에 저장
+            await withTaskGroup(of: String?.self) { group in
+                for image in images {
+                    group.addTask {
+                        guard let imageData = self.firestorageManager.imageToData(image: image) else {
+                            print("Failed to transform image to data")
+                            return nil
+                        }
+                        
+                        do {
+                            let imagePath = try await self.firestorageManager.saveImage(data: imageData)
+                            return imagePath
+                        } catch {
+                            print("Failed to save image: \(error.localizedDescription)")
+                            return nil
+                        }
+                    }
+                }
+                
+                for await imagePath in group {
+                    if let path = imagePath {
+                        imagePaths.append(path)
+                    }
                 }
             }
+            // 파이어 스토어 메세지 저장
+            let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
+            do {
+                try await firestoreManager.saveMessage(chatRoomId: chatRoomId, message: imageMessage)
+            } catch {
+                print("Failed to save message: \(error.localizedDescription)")
+                return
+            }
         }
-//        let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imageStrings, plan: nil)
-//        
-//        Task {
-//            do {
-//                try await firestoreManager.saveMessage(chatRoomId: chatRoomId, message: imageMessage)
-//            } catch {
-//                print("Failed to save message: \(error.localizedDescription)")
-//                return
-//            }
-//        }
     }
 }

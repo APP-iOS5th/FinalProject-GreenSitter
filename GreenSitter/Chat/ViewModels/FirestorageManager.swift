@@ -12,7 +12,7 @@ class FirestorageManager {
     private let storage = Storage.storage()
     
     // 이미지 파이어스토리지에 저장
-    func saveImage(data: Data) async throws -> (path: String, name: String) {
+    func saveImage(data: Data) async throws -> String {
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
         
@@ -20,12 +20,11 @@ class FirestorageManager {
         let path = "imagesForChat/\(UUID().uuidString).jpeg"
         let returnedMetadata = try await storageRef.child(path).putDataAsync(data, metadata: metadata)
         
-        guard let returnedPath = returnedMetadata.path, let returnedName = returnedMetadata.name else {
+        guard let returnedPath = returnedMetadata.path else {
             throw URLError(.badServerResponse)
         }
         
-        return (returnedPath, returnedName)
-        
+        return returnedPath
     }
     
     // UIImage -> Data 변환

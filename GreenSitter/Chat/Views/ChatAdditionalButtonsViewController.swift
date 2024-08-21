@@ -92,7 +92,6 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
         
         Task {
             let selectedImages = await loadImages(from: results)
-            print(selectedImages)
             chatViewModelDelegate?.sendImages(images: selectedImages)
         }
         
@@ -131,7 +130,7 @@ extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: false) {
             if let image = info[.originalImage] as? UIImage {
-                print(image)
+                self.chatViewModelDelegate?.sendImages(images: [image])
             }
         }
     }
