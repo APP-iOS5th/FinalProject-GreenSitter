@@ -17,8 +17,10 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
     var selectedTextButtons: Set<UIButton> = []
     var post: Post?
     var postId: String?
-
+    var reviews: Review?
     
+    var selectedTexts: [String] = []
+
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
@@ -41,7 +43,7 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-//        fetchPostFirebase()
+        fetchPostFirebase()
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -60,53 +62,53 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell:  UITableViewCell
         switch indexPath.section {
         case 0:
-            cell = tableView.dequeueReusableCell(withIdentifier: "reviewPostTableViewCell", for: indexPath) as! ReviewPostTableViewCell
-            (cell as! ReviewPostTableViewCell).titleLabel.text = post?.postTitle
-            (cell as! ReviewPostTableViewCell).bodyLabel.text = post?.postBody
-            (cell as! ReviewPostTableViewCell).timeLabel.text = DateFormatter.localizedString(from: post?.updateDate ?? Date(), dateStyle: .short, timeStyle: .short)
-            (cell as! ReviewPostTableViewCell).plantImage.image = UIImage(named: "logo7")
+            let cell = tableView.dequeueReusableCell(withIdentifier: "reviewPostTableViewCell", for: indexPath) as! ReviewPostTableViewCell
+            if let post = post {
+                cell.titleLabel.text = post.postTitle
+                cell.bodyLabel.text = post.postBody
+                cell.timeLabel.text = DateFormatter.localizedString(from: post.updateDate, dateStyle: .short, timeStyle: .short)
+                cell.plantImage.image = UIImage(named: "logo7")
+            } else {
+                cell.titleLabel.text = "데이터 없음"
+                cell.bodyLabel.text = "데이터 없음"
+                cell.timeLabel.text = "데이터 없음"
+                cell.plantImage.image = nil
+            }
             cell.backgroundColor = UIColor.white
             return cell
+            
         case 1:
-            cell = tableView.dequeueReusableCell(withIdentifier: "receiveReviewTableViewCell", for: indexPath) as! ReceiveReviewTableViewCell
-            (cell as! ReceiveReviewTableViewCell).badButton.setImage(UIImage(named: "2"), for: .normal)
-            (cell as! ReceiveReviewTableViewCell).badButton.addTarget(self, action: #selector(selectButtonTap), for: .touchUpInside)
-            (cell as! ReceiveReviewTableViewCell).averageButton.setImage(UIImage(named: "3"), for: .normal)
-            (cell as! ReceiveReviewTableViewCell).averageButton.addTarget(self, action: #selector(selectButtonTap), for: .touchUpInside)
-            (cell as! ReceiveReviewTableViewCell).goodButton.setImage(UIImage(named: "4"), for: .normal)
-            (cell as! ReceiveReviewTableViewCell).goodButton.addTarget(self, action: #selector(selectButtonTap), for: .touchUpInside)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "receiveReviewTableViewCell", for: indexPath) as! ReceiveReviewTableViewCell
+            cell.badButton.setImage(UIImage(named: "2"), for: .normal)
+            cell.averageButton.setImage(UIImage(named: "3"), for: .normal)
+            cell.goodButton.setImage(UIImage(named: "4"), for: .normal)
             
-            (cell as! ReceiveReviewTableViewCell).row1Button.setTitle("시간 약속을 잘 지켜요!", for: .normal)
-            (cell as! ReceiveReviewTableViewCell).row1Button.addTarget(self, action: #selector(slectTextButtonTap), for: .touchUpInside)
-            (cell as! ReceiveReviewTableViewCell).row2Button.setTitle("의사소통이 원활해요!", for: .normal)
-            (cell as! ReceiveReviewTableViewCell).row2Button.addTarget(self, action: #selector(slectTextButtonTap), for: .touchUpInside)
-            (cell as! ReceiveReviewTableViewCell).row3Button.setTitle("신뢰할 수 있어요!", for: .normal)
-            (cell as! ReceiveReviewTableViewCell).row3Button.addTarget(self, action: #selector(slectTextButtonTap), for: .touchUpInside)
-            (cell as! ReceiveReviewTableViewCell).row4Button.setTitle("매우 친절해요!", for: .normal)
-            (cell as! ReceiveReviewTableViewCell).row4Button.addTarget(self, action: #selector(slectTextButtonTap), for: .touchUpInside)
+            cell.row1Button.setTitle("시간 약속을 잘 지켜요!", for: .normal)
+            cell.row2Button.setTitle("의사소통이 원활해요!", for: .normal)
+            cell.row3Button.setTitle("신뢰할 수 있어요!", for: .normal)
+            cell.row4Button.setTitle("매우 친절해요!", for: .normal)
             
-            (cell as! ReceiveReviewTableViewCell).reviewTextField.placeholder = "직접 입력"
-
-            cell.backgroundColor = UIColor(named: "BGSecondary") // 두 번째 섹션 셀 배경색 설정
+            cell.reviewTextField.placeholder = reviews?.reviewText
+            cell.backgroundColor = UIColor(named: "BGSecondary")
+            
+            // Update button colors based on selectedTexts
+            self.updateButtonColors(selectedTexts: self.selectedTexts)
+            
             return cell
             
         default:
-            cell = UITableViewCell()
+            return UITableViewCell()
         }
-        return cell
     }
     
     //MARK: - 셀 높이 조정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 1 && indexPath.row == 0 {
             return 600
-        }
-        else {
+        } else {
             return UITableView.automaticDimension
         }
     }
-
 }

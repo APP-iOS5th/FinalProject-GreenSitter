@@ -59,11 +59,10 @@ extension ReviewViewController {
             return
         }
         
-        guard let id = review?.id else {
+        guard let postId = review?.id else { // Post ID를 review에서 가져옵니다.
             print("No post ID found in review")
             return
         }
-//        let postId = "some-hardcoded-post-id"  // 임시로 설정한 postId
 
         // Get the rating
         let rating: Rating = {
@@ -98,18 +97,18 @@ extension ReviewViewController {
         }
         let reviewText = (tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell)?.reviewTextField.text
         
-        //리뷰아이디 생성
+        // 리뷰 아이디 생성
         let reviewId = UUID().uuidString
         
         // Prepare data to update user document
         let newReview: [String: Any] = [
             "reviews": [
                 "id": reviewId,
-                "userId":userId,
+                "userId": userId,
                 "enabled": true,
                 "createDate": Timestamp(date: Date()),
                 "updateDate": Timestamp(date: Date()),
-                "postId": id,
+                "postId": postId, // 여기에 postId를 저장
                 "rating": rating.rawValue,
                 "reviewText": reviewText ?? "",
                 "selectedTexts": selectedTexts
@@ -124,13 +123,14 @@ extension ReviewViewController {
                 print("Review successfully written!")
             }
         }
-        //게시물 작성자파이어베이스에 저장
-        db.collection("posts").document(id).getDocument { document, error in
+
+        // 게시물 작성자 Firestore에 저장
+        db.collection("posts").document(postId).getDocument { document, error in
             if let document = document, document.exists {
                 let postData = document.data()
                 if let creatorId = postData?["creatorId"] as? String {
                     // Save the review to the post creator's document
-                    let reviewRef = self.db.collection("users").document(creatorId).collection("review").document(UUID().uuidString) // create a new document in the 'reviews' subcollection
+                    let reviewRef = self.db.collection("users").document(creatorId).collection("review").document(reviewId) // create a new document in the 'reviews' subcollection
                     reviewRef.setData(newReview) { error in
                         if let error = error {
                             print("Error writing review to post creator's Firestore document: \(error)")
@@ -145,6 +145,7 @@ extension ReviewViewController {
                 print("Post document does not exist")
             }
         }
+        
         DispatchQueue.main.async {
             let aboutMeViewController = AboutMeViewController()
             self.navigationController?.pushViewController(aboutMeViewController, animated: true)

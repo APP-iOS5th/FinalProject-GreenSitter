@@ -39,6 +39,8 @@ extension WriteReviewViewController {
                         let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
                         let updateDate = updateDateTimestamp.dateValue()
                         let postImages = postData["postImages"] as? [String] ?? []
+                        let postId = postData["id"] as? String? ?? ""
+                        
 
                         // 데이터가 올바르게 불러와졌는지 출력해보기
                         print("Post Title: \(postTitle)")
@@ -46,10 +48,11 @@ extension WriteReviewViewController {
                         print("Post Status: \(postStatus)")
                         print("Update Date: \(updateDate)")
                         print("Post Images: \(postImages)")
+                        print("Post id: \(postId)")
 
                         // Post 객체 생성 및 배열에 추가
                         let post = Post(
-                            id: document.documentID,
+                            id: postId ?? "",
                             enabled: true,
                             createDate: Date(),
                             updateDate: updateDate,
@@ -68,6 +71,9 @@ extension WriteReviewViewController {
 
                         // Post 배열에 추가
                         self.post.append(post)
+                        
+                        self.savePostId(postId: post.id)
+
 
                         // 테이블 뷰 업데이트
                         DispatchQueue.main.async {
@@ -121,4 +127,9 @@ extension WriteReviewViewController {
         }
         task.resume()
     }
+    // MARK: - Save Post ID
+    func savePostId(postId: String) {
+        UserDefaults.standard.set(postId, forKey: "savedPostId")
+    }
+
 }

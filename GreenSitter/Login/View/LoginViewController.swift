@@ -13,6 +13,8 @@ import FirebaseCore
 import FirebaseFirestore
 import GoogleSignIn
 
+
+
 class LoginViewController: UIViewController {
     var currentNonce: String? //Apple Login Property
     var users: User?
@@ -178,6 +180,14 @@ class LoginViewController: UIViewController {
         }, completion: {(isCompleted) in
             toastView.removeFromSuperview()
         })
+    }
+    
+    //MARK: - 자동로그인
+    func saveUserData(user: User) {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(user.id, forKey: "userId")
+        userDefaults.set(user.nickname, forKey: "ninckname")
+        userDefaults.synchronize()
     }
     
     
@@ -366,10 +376,8 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                     let userRef = db.collection("users").document(user.uid)
                     
                     userRef.setData([
-                        "uid": user.uid,
-                        "email": user.email ?? "",
-                        "displayName": user.displayName ?? "",
-                        "location": users?.location ?? ""
+                        "id": user.uid,
+                        "nickname": ""
                     ])
                 }
                 
@@ -429,8 +437,6 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
         return hashString
     }
 }
-
-
 
 #Preview {
     LoginViewController()

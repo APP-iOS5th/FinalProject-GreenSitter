@@ -17,6 +17,7 @@ struct Review: Codable {
     let rating: Rating
     let reviewText: String?
     let reviewImage: String?
+    let selectedTexts: [String]?
 }
 
 enum Rating: String, Codable {
