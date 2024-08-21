@@ -92,7 +92,7 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
         
         Task {
             let selectedImages = await loadImages(from: results)
-            chatViewModel?.sendImages(images: selectedImages)
+            chatViewModel?.sendImageMessage(images: selectedImages)
         }
         
         picker.dismiss(animated: true)
@@ -130,7 +130,7 @@ extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: false) {
             if let image = info[.originalImage] as? UIImage {
-                self.chatViewModel?.sendImages(images: [image])
+                self.chatViewModel?.sendImageMessage(images: [image])
             }
         }
     }
@@ -172,6 +172,7 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
         guard let viewController = self.presentingViewController else { return }
         let makePlanViewController = MakePlanViewController()
         makePlanViewController.modalPresentationStyle = .fullScreen
+        makePlanViewController.viewModel.chatViewModel = chatViewModel
         DispatchQueue.main.async {
             self.dismiss(animated: false) {
                 viewController.present(makePlanViewController, animated: true)

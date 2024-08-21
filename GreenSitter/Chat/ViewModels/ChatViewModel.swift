@@ -144,7 +144,8 @@ class ChatViewModel {
         }
     }
     
-    func sendImages(images: [UIImage]) {
+    //MARK: - 이미지 메세지 전송
+    func sendImageMessage(images: [UIImage]) {
         guard !images.isEmpty else {
             print("No Image")
             return
@@ -205,6 +206,43 @@ class ChatViewModel {
             let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
             do {
                 try await firestoreManager.saveMessage(chatRoomId: chatRoomId, message: imageMessage)
+            } catch {
+                print("Failed to save message: \(error.localizedDescription)")
+                return
+            }
+        }
+    }
+    
+    //MARK: - 약속 메세지 전송
+    func sendPlanMessage(plan: Plan) {
+        guard let userId = chatRoom?.userId else {
+            print("Error: userId is nil")
+            return
+        }
+        
+        guard let postUserId = chatRoom?.postUserId else {
+            print("Error: postUserId is nil")
+            return
+        }
+        
+        guard let chatRoomId = chatRoom?.id else {
+            print("Error: chatRoomId is nil")
+            return
+        }
+        
+        // TODO: - userId 수정
+        let receiverUserId: String?
+        if userId == userId {
+            receiverUserId = postUserId
+        } else {
+            receiverUserId = userId
+        }
+        
+        let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
+        
+        Task {
+            do {
+                try await firestoreManager.saveMessage(chatRoomId: chatRoomId, message: planMessage)
             } catch {
                 print("Failed to save message: \(error.localizedDescription)")
                 return

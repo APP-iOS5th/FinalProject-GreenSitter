@@ -9,7 +9,7 @@ import UIKit
 
 class MakePlanViewController: UIViewController {
     
-    private var viewModel: MakePlanViewModel
+    var viewModel: MakePlanViewModel
     
     private var pages: [UIViewController]
     
