@@ -9,7 +9,7 @@
 import UIKit
 
 class ChatTableViewCell: UITableViewCell {
-    var chatListViewModel: ChatListViewModel?
+    var chatViewModel: ChatViewModel?
     
     // 프로필 이미지
     private lazy var profileImageView: UIImageView = {
@@ -122,13 +122,13 @@ class ChatTableViewCell: UITableViewCell {
     }
     
     // MARK: - Cell 구성
-    func configure(chatRoom: ChatRoom, userId: String/*, db: Firestore*/) {
+    func configure(userId: String) {
         // 프로필 이미지 설정
-        let profileImage = chatRoom.ownerId == userId ? chatRoom.sitterProfileImage : chatRoom.ownerProfileImage
-        self.fetchProfileImage(profileImageString: profileImage, userId: userId)
+        let profileImage = chatViewModel?.chatRoom?.userId == userId ? chatViewModel?.chatRoom?.postUserProfileImage : chatViewModel?.chatRoom?.userProfileImage
+        self.fetchProfileImage(profileImageString: profileImage!, userId: userId)
         
         // 닉네임
-        let nickname = chatRoom.ownerId == userId ? chatRoom.sitterNickname: chatRoom.ownerNickname
+        let nickname = chatViewModel?.chatRoom?.userId == userId ? chatViewModel?.chatRoom?.postUserNickname: chatViewModel?.chatRoom?.userNickname
         userNicknameLabel.text = nickname
         
         // 위치
@@ -140,20 +140,20 @@ class ChatTableViewCell: UITableViewCell {
         userLocationLabel.text = "상도동"
         
         // 알림 여부
-        let notification = chatRoom.ownerId == userId ? chatRoom.sitterNotification : chatRoom.ownerNotification
-        notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
+        let notification = chatViewModel?.chatRoom?.userId == userId ? chatViewModel?.chatRoom?.postUserNotification : chatViewModel?.chatRoom?.userNotification
+        notificationImageView.image = notification! ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
-        if let text = chatRoom.messages.last?.text {
+        if let text = chatViewModel?.chatRoom?.messages.last?.text {
             lastMessageLabel.text = text
-        } else if (chatRoom.messages.last?.image) != nil {
+        } else if (chatViewModel?.chatRoom?.messages.last?.image) != nil {
             lastMessageLabel.text = "사진"
-        } else if (chatRoom.messages.last?.plan) != nil {
+        } else if (chatViewModel?.chatRoom?.messages.last?.plan) != nil {
             lastMessageLabel.text = "약속"
         }
         
         // 마지막 메세지 시간
-        guard let updateDate = chatRoom.messages.last?.updateDate else {
+        guard let updateDate = chatViewModel?.chatRoom?.messages.last?.updateDate else {
             return
         }
         let timeAgoString = timeAgo(from: updateDate)
@@ -163,10 +163,10 @@ class ChatTableViewCell: UITableViewCell {
         
         // 안 읽은 메세지 수
         /// read = false인 메세지 수
-        let unreadCount = chatRoom.messages.filter { $0.receiverUserId == userId && !$0.read }.count
-        if unreadCount > 0 {
+        let unreadCount = chatViewModel?.chatRoom?.messages.filter { $0.receiverUserId == userId && !$0.isRead }.count
+        if unreadCount! > 0 {
             circleView.backgroundColor = .dominent
-            unreadCountLabel.text = "\(unreadCount)"
+            unreadCountLabel.text = "\(String(describing: unreadCount))"
         // 안 읽은 메세지 수가 0일 때 초기화
         } else if unreadCount == 0 {
             circleView.backgroundColor = .clear
@@ -195,7 +195,7 @@ class ChatTableViewCell: UITableViewCell {
         guard let profileImageUrl = URL(string: profileImageString) else {
             return
         }
-        chatListViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
+        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
     }
     
     // MARK: - 메세지 시간 포맷 설정
