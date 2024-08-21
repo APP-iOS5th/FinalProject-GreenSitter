@@ -67,9 +67,12 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         
         textField.leftView = containerView
         textField.leftViewMode = .always
-        
+
+        textField.isEnabled = false  // 편집 불가능 설정
+
         return textField
     }()
+
     
     lazy var nextButton: UIButton = {
         let button = UIButton(type: .system)
@@ -124,7 +127,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             skipButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
         ])
-        
+//        getUserData()
     }
     
     private func bindViewModel() {
@@ -174,6 +177,8 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         }
 
     }
+    
+    
     
     //MARK: - SkipButton Method
     @objc func skipTap() {

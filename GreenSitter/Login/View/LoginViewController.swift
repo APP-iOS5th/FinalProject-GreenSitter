@@ -17,7 +17,7 @@ class LoginViewController: UIViewController {
     var currentNonce: String? //Apple Login Property
     var users: User?
     let db = Firestore.firestore()
-        
+    
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "새싹 돌봄이"
@@ -126,7 +126,7 @@ class LoginViewController: UIViewController {
         toastView.layer.shadowRadius = 10
         
         // UIImageView 생성 및 설정
-        let image = UIImageView(image: UIImage(named: "로고7"))
+        let image = UIImageView(image: UIImage(named: "logo7"))
         image.layer.cornerRadius = 25
         image.contentMode = .scaleAspectFit
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -225,7 +225,27 @@ class LoginViewController: UIViewController {
                 
                 // Firebase Database에 사용자 정보 저장
                 let userRef = self.db.collection("users").document(user.uid)
+                let post = Post(
+                    id: UUID().uuidString,
+                    enabled: true,
+                    createDate: Date(),
+                    updateDate: Date(),
+                    userId: "exampleUserId",
+                    profileImage: "exampleProfileImageURL",
+                    nickname: "exampleNickname",
+                    userLocation: Location.seoulLocation,
+                    userNotification: false,
+                    postType: .offeringToSitter,
+                    postTitle: "exampleTitle",
+                    postBody: "exampleBody",
+                    postImages: ["exampleImage1", "exampleImage2"],
+                    postStatus: .beforeTrade,
+                    location: Location.seoulLocation
+                )
                 
+                let userA = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "exampleImage1", nickname: "", location: Location.seoulLocation, platform: "", levelPoint: 1, aboutMe: "", chatNotification: true)
+                
+                // Firestore에 문서 저장
                 userRef.setData([
 //                    "id": user.uid,
 //                    "email": user.email ?? "",
@@ -236,10 +256,42 @@ class LoginViewController: UIViewController {
                     "enabled": true,
                     "createDate": Date(),
                     "updateDate": Date(),
-                    "platform": "google"
+                    "platform": "google",
+                    "user" : [
+                        "id": user.uid,
+                        "createDate": Timestamp(date: userA.createDate),
+                        "updateDate": Timestamp(date: userA.updateDate),
+                        "profileImage": userA.profileImage,
+                        "nickname": userA.nickname,
+                        "address": "서울특별시 구로구 온수동",
+                        "aboutMe": userA.aboutMe
+                    ],
+                    "post":[
+                        "id": UUID().uuidString,
+                    "enabled": post.enabled,
+                    "createDate": Timestamp(date: post.createDate), // Date를 Timestamp로 변환
+                    "updateDate": Timestamp(date: post.updateDate), // Date를 Timestamp로 변환
+                    "userId": post.userId,
+                    "profileImage": post.profileImage,
+                    "nickname": post.nickname,
+                    "userLocation": [
+                        "latitude": post.userLocation.latitude,
+                        "longitude": post.userLocation.longitude
+                    ],
+                    "userNotification": post.userNotification,
+                    "postType": post.postType.rawValue,
+                    "postTitle": post.postTitle,
+                    "postBody": post.postBody,
+                    "postImages": post.postImages ?? [],
+                    "postStatus": "거래중",
+                    "location": post.location != nil ? [
+                        "latitude": post.location?.latitude ?? 0,
+                        "longitude": post.location?.longitude ?? 0
+                    ] : NSNull() // 위치가 없을 경우 NSNull() 사용
+                ],
                 ]) { error in
                     if let error = error {
-                        print("Firestore Save Error: \(error.localizedDescription)")
+                        print("Firestore 저장 오류: \(error.localizedDescription)")
                     } else {
                         print("Firestore에 사용자 정보 저장 성공")
                     }
@@ -259,20 +311,21 @@ class LoginViewController: UIViewController {
             }
         }
     }
-
-
-
+    
+    
+    
     
     //MARK: - MainView move
     @objc func navigationTap() {
-        
+        if let tabBarController = self.tabBarController {
+            tabBarController.selectedIndex = 0 // Home 탭으로 설정
+        }
     }
 }
 
 
 //MARK: - AppleLogin
-
-extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     //Apple의 응답을 처리
     @objc func appleLogin() {
         let nonce = randomNonceString()
@@ -290,24 +343,26 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
 
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-            guard currentNonce != nil else {
+            guard let nonce = currentNonce else {
                 fatalError("Invalid state: A login callback was received, but no login request was sent.")
             }
             guard let appleIDToken = appleIDCredential.identityToken else {
                 print("Unable to fetch identity token")
                 return
             }
-            guard String(data: appleIDToken, encoding: .utf8) != nil else {
+            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
                 print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
                 return
             }
             // Firebase에 사용자 인증 정보 저장
-            let credential = OAuthProvider.credential(providerID: AuthProviderID(rawValue: "apple.com")!, idToken: String(data: appleIDCredential.identityToken!, encoding: .utf8)!, rawNonce: currentNonce!)
+            let credential = OAuthProvider.credential(withProviderID: "apple.com",
+                                                      idToken: String(data: appleIDCredential.identityToken!, encoding: .utf8)!,
+                                                      rawNonce: currentNonce!)
             // Sign in with Firebase.
             Auth.auth().signIn(with: credential) { [self] (authResult, error) in
                 if (error != nil) {
                     //로그인 오류 처리
-                    print("Apple 로그인 오류: \(String(describing: error?.localizedDescription))")
+                    print("Apple 로그인 오류: \(error?.localizedDescription)")
                     return
                 }
                 //Firebase Database에 사용자 정보 저장
@@ -316,32 +371,20 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
                     let userRef = db.collection("users").document(user.uid)
                     
                     userRef.setData([
-//                        "uid": user.uid,
-//                        "email": user.email ?? "",
-//                        "displayName": user.displayName ?? "",
-//                        "location": users?.location ?? ""
-                        "id": user.uid,
-                        "enabled": true,
-                        "createDate": Date(),
-                        "updateDate": Date(),
-                        "platform": "apple"
-                    ]) { error in
-                        if let error = error {
-                            print("Firestore Save Error: \(error.localizedDescription)")
-                        } else {
-                            print("Firestore에 사용자 정보 저장 성공")
-                        }
-                    }
-//                    let newUser = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "", nickname: "", location: Location.sampleLocation, platform: "apple", levelPoint: 0, aboutMe: "", chatNotification: false)
-                    
-                    DispatchQueue.main.async {
-                        // Ensure that self is in a UINavigationController
-                        if let navigationController = self.navigationController {
-                            let setLocationViewController = SetLocationViewController()
-                            navigationController.pushViewController(setLocationViewController, animated: true)
-                        } else {
-                            print("Error: The current view controller is not embedded in a UINavigationController.")
-                        }
+                        "uid": user.uid,
+                        "email": user.email ?? "",
+                        "displayName": user.displayName ?? "",
+                        "location": users?.location ?? ""
+                    ])
+                }
+                
+                DispatchQueue.main.async {
+                    // Ensure that self is in a UINavigationController
+                    if let navigationController = self.navigationController {
+                        let setLocationViewController = SetLocationViewController()
+                        navigationController.pushViewController(setLocationViewController, animated: true)
+                    } else {
+                        print("Error: The current view controller is not embedded in a UINavigationController.")
                     }
                 }
             }
@@ -391,6 +434,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
         return hashString
     }
 }
+
 
 
 #Preview {

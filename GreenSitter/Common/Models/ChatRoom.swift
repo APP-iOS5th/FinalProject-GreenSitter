@@ -12,21 +12,21 @@ struct ChatRoom: Codable {
     var enabled: Bool
     let createDate: Date
     var updateDate: Date
-    let ownerId: String
-    let sitterId: String
-    let ownerNickname: String
-    let sitterNickname: String
-    let ownerProfileImage: String
-    let sitterProfileImage: String
-    var ownerEnabled: Bool
-    var sitterEnabled: Bool
-    var ownerNotification: Bool
-    var sitterNotification: Bool
-    let ownerLocation: Location
-    let sitterLocation: Location
+    let userId: String
+    let postUserId: String
+    let userNickname: String
+    let postUserNickname: String
+    let userProfileImage: String
+    let postUserProfileImage: String
+    var userEnabled: Bool
+    var postUserEnabled: Bool
+    var userNotification: Bool
+    var postUserNotification: Bool
+    let userLocation: Location
+    let postUserLocation: Location
     var messages: [Message]
     let postId: String
-    let postImage: String
+    let postImage: String?
     let postTitle: String
     let postStatus: PostStatus
 }

@@ -1,15 +1,16 @@
 //
-//  ReviewListViewModel.swift
+//  LeavePlantListModel.swift
 //  GreenSitter
 //
-//  Created by Yungui Lee on 8/7/24.
+//  Created by 차지용 on 8/20/24.
 //
 
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 
-extension ReviewListViewController {
+extension LeavePlantListViewController {
     //MARK: - Post데이터 가져오기
     func fetchPostFirebase() {
         // 현재 로그인된 사용자의 userId 가져오기
@@ -31,8 +32,8 @@ extension ReviewListViewController {
             if let document = document, document.exists {
                 // 'post' 필드를 딕셔너리로 변환
                 if let postData = document.data()?["post"] as? [String: Any] {
-                    // postStatus 필드를 검사하여 "거래완료"인 경우에만 처리
-                    if let postStatus = postData["postStatus"] as? String, postStatus == "거래완료" {
+                    // postStatus 필드를 검사하여 "거래중"인 경우에만 처리
+                    if let postStatus = postData["postStatus"] as? String, postStatus == "거래중" {
                         let postTitle = postData["postTitle"] as? String ?? "제목 없음"
                         let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
                         let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
@@ -61,7 +62,7 @@ extension ReviewListViewController {
                             postTitle: postTitle,
                             postBody: postBody,
                             postImages: postImages,
-                            postStatus: .completedTrade,
+                            postStatus: .inTrade,
                             location: nil
                         )
 
@@ -73,7 +74,7 @@ extension ReviewListViewController {
                             self.tableView.reloadData()
                         }
                     } else {
-                        print("Post status is not '거래완료'.")
+                        print("Post status is not '거래중'.")
                     }
                 } else {
                     print("Post data not found in document.")

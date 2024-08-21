@@ -33,21 +33,20 @@ extension NicknameViewController {
                 DispatchQueue.main.async {
                     self.nicknameStatusLabel.text = "이미 사용 중인 닉네임입니다."
                     self.nicknameStatusLabel.textColor = .red
-                   
                 }
             } else {
                 // 닉네임이 사용 가능할 때
                 DispatchQueue.main.async {
                     self.nicknameStatusLabel.text = "사용 가능한 닉네임입니다."
                     self.nicknameStatusLabel.textColor = .green
-                    self.dismiss(animated: true, completion: nil)
-                    // Firestore에 닉네임 업데이트
                     self.updateNickname(nickname)
+                    NotificationCenter.default.post(name: Notification.Name("NicknameChanged"), object: nil)
+                    self.dismiss(animated: true, completion: nil)
                 }
             }
         }
-       
     }
+
     
     //MARK: - 변경된 닉네임을 파이어베이스에 저장
     func updateNickname(_ nickname: String) {

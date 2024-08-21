@@ -9,9 +9,19 @@ import UIKit
 
 class MakePlanViewController: UIViewController {
     
-    private var viewModel = MakePlanViewModel()
-
-    private var pages: [UIViewController] = []
+    private var viewModel: MakePlanViewModel
+    
+    private var pages: [UIViewController]
+    
+    init(viewModel: MakePlanViewModel = MakePlanViewModel(), pages: [UIViewController] = []) {
+        self.viewModel = viewModel
+        self.pages = pages
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private lazy var backButton : UIButton = {
         let backButton = UIButton()
@@ -19,7 +29,7 @@ class MakePlanViewController: UIViewController {
         backButton.setTitleColor(.systemBlue, for: .normal)
         backButton.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         backButton.addAction(UIAction { [weak self] _ in
-            if self?.viewModel.progress == 0 {
+            if self?.viewModel.progress == 0 || self?.viewModel.progress == 3 {
                 self?.dismiss(animated: true)
                 return
             } else {
@@ -32,7 +42,7 @@ class MakePlanViewController: UIViewController {
     
     private lazy var navigationBar : UINavigationBar = {
         let backButtonItem = UIBarButtonItem(customView: backButton)
-        let navItem = UINavigationItem(title: "약속 정하기")
+        let navItem = UINavigationItem(title: viewModel.progress == 3 ? "약속 정보" : "약속 정하기")
         navItem.leftBarButtonItem = backButtonItem
        let navigationBar = UINavigationBar()
         navigationBar.setItems([navItem], animated: true)
@@ -43,14 +53,18 @@ class MakePlanViewController: UIViewController {
     }()
     
     private lazy var planProgressBar: PlanProgressBar = {
-        let planProgressBar = PlanProgressBar(progress: 0)
+        let planProgressBar = PlanProgressBar(progress: viewModel.progress)
         planProgressBar.translatesAutoresizingMaskIntoConstraints = false
         return planProgressBar
     }()
     
     private lazy var pageViewController: UIPageViewController = {
         let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        pages = [dateTimeViewController, planPlaceViewController, finalConfirmViewController]
+        if viewModel.progress == 3 {
+            pages = [finalConfirmViewController]
+        } else {
+            pages = [dateTimeViewController, planPlaceViewController, finalConfirmViewController]
+        }
         pageViewController.setViewControllers([pages[0]], direction: .forward, animated: true)
         pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
         return pageViewController

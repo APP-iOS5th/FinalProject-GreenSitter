@@ -8,48 +8,50 @@
 import UIKit
 
 class ChatViewController: UIViewController {
-    var chatListViewModel: ChatListViewModel?
-    var postId: String?
-    var postThumbnail: String?
-    var postTitle: String?
-    var postStatus: PostStatus?
+    var chatViewModel: ChatViewModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        setupUI()
         
-        // 게시물 디테일로 이동하기 위한 Tap Gesture
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        self.view.addGestureRecognizer(tapGesture)
-            
+        setupUI()
     }
     
     // MARK: - Setup UI
     private func setupUI() {
+        
+        if chatViewModel?.userId == chatViewModel?.chatRoom?.userId {
+            self.title = chatViewModel?.chatRoom?.postUserNickname
+        } else if chatViewModel?.userId == chatViewModel?.chatRoom?.postUserId {
+            self.title = chatViewModel?.chatRoom?.userNickname
+        }
+        
         self.view.backgroundColor = .white
         self.navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.largeTitleDisplayMode = .never
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(listButtonTapped))
         
         let chatPostViewController = ChatPostViewController()
         let chatMessageViewController = ChatMessageViewController()
+        let messageInputViewController = MessageInputViewController()
         
-        guard let postThumbnailUrl = URL(string: postThumbnail!) else {
-            return
-        }
-        chatListViewModel?.downloadImage(from: postThumbnailUrl, to: chatPostViewController.postThumbnailView)
-        chatPostViewController.postTitleLabel.text = postTitle
-        chatPostViewController.postStatusLabel.text = postStatus?.rawValue
+        chatPostViewController.chatViewModel = chatViewModel
+        chatMessageViewController.chatViewModel = chatViewModel
+        messageInputViewController.chatViewModel = chatViewModel
         
         chatPostViewController.view.translatesAutoresizingMaskIntoConstraints = false
         chatMessageViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        messageInputViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        
         self.view.addSubview(chatPostViewController.view)
         self.view.addSubview(chatMessageViewController.view)
+        self.view.addSubview(messageInputViewController.view)
         
         addChild(chatPostViewController)
         chatPostViewController.didMove(toParent: self)
         addChild(chatMessageViewController)
         chatMessageViewController.didMove(toParent: self)
+        addChild(messageInputViewController)
+        messageInputViewController.didMove(toParent: self)
         
         NSLayoutConstraint.activate([
             chatPostViewController.view.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
@@ -59,9 +61,15 @@ class ChatViewController: UIViewController {
             chatPostViewController.view.heightAnchor.constraint(equalToConstant: 100),
             
             chatMessageViewController.view.topAnchor.constraint(equalTo: chatPostViewController.view.bottomAnchor),
-            chatMessageViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
-            chatMessageViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
+            chatMessageViewController.view.bottomAnchor.constraint(equalTo: messageInputViewController.view.topAnchor, constant: -10),
+            chatMessageViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            chatMessageViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             chatMessageViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            
+            messageInputViewController.view.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            messageInputViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
+            messageInputViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
+            messageInputViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         ])
 
     }
@@ -70,13 +78,13 @@ class ChatViewController: UIViewController {
         print("list button")
     }
     
-    @objc private func handleTap() {
-        let postDetailViewController = PostDetailViewController(post: Post.samplePosts.first!)
+//     @objc private func handleTap() {
+//         let postDetailViewController = PostDetailViewController(post: Post.samplePosts.first!)
         
-        // TODO: - 특정 게시물로 이동
-//        postDetailViewController.postId = postId
+//         // TODO: - 특정 게시물로 이동
+// //        postDetailViewController.postId = postId
         
-        self.navigationController?.pushViewController(postDetailViewController, animated: true)
-    }
+//         self.navigationController?.pushViewController(postDetailViewController, animated: true)
+//     }
 
 }

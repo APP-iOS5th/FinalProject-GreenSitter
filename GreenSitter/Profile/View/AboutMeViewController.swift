@@ -14,7 +14,7 @@ class AboutMeViewController: UIViewController{
     
     let db = Firestore.firestore()
     var user: User?
-    var sectionTitle = ["자기소개", "돌봄 정보", "돌봄 신청 정보", "시스템", "이용약관 및 개인정보 처리방침"]
+    var sectionTitle = ["자기소개", "돌봄 정보"]
     
     lazy var profileImage: UIImageView = {
         let image = UIImageView()
@@ -62,8 +62,8 @@ class AboutMeViewController: UIViewController{
     
     lazy var nicknameLabel: UILabel = {
         let label = UILabel()
-        label.text = "지용"
-        label.font = UIFont.boldSystemFont(ofSize: 28)
+        label.text = user?.nickname
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textColor = UIColor(named: "LabelsPrimary")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -80,7 +80,7 @@ class AboutMeViewController: UIViewController{
     lazy var locationLabel: UILabel = {
         let label = UILabel()
         label.text = "경기도 양주시"
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 15)
         label.textColor = UIColor(named: "SeparatorsOpaque")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -102,8 +102,7 @@ class AboutMeViewController: UIViewController{
         navigationItem.title = "내 프로필"
         
         tableView.register(IntroductionTableCell.self, forCellReuseIdentifier: "introductionTableCell")
-        tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell" )
-        tableView.register(InformationTableCell.self, forCellReuseIdentifier: "informationTableCell" )
+        tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell")
         
         view.addSubview(circleView)
         view.addSubview(profileImage)
@@ -153,10 +152,21 @@ class AboutMeViewController: UIViewController{
             locationLabel.leadingAnchor.constraint(equalTo: circleView.trailingAnchor, constant: 50),
             locationLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
             
-            tableView.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 60),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -10),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+        fetchUserFirebase()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.userAboutMeUpdated), name: NSNotification.Name("UserAboutMeUpdated"), object: nil)
+
+    }
+    @objc func userAboutMeUpdated() {
+        // 유저 데이터를 다시 불러오기
+        fetchUserFirebase()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
