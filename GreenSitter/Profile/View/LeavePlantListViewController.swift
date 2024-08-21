@@ -1,15 +1,15 @@
 //
-//  ReviewListViewController.swift
+//  LeavePlantListViewController.swift
 //  GreenSitter
 //
-//  Created by Yungui Lee on 8/7/24.
+//  Created by 차지용 on 8/20/24.
 //
 
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 
-class ReviewListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     let db = Firestore.firestore()
     var post: [Post] = []
@@ -26,11 +26,9 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationItem.title = "돌봄 기록"
+        navigationItem.title = "내가 맡긴 식물"
         
         view.addSubview(tableView)
-        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -38,38 +36,29 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         fetchPostFirebase()
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedPost = post[indexPath.row]
         
+        let postDetailViewController = PostDetailViewController()
+        navigationController?.pushViewController(postDetailViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return post.count
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // 선택된 포스트 가져오기
-        let selectedPost = post[indexPath.row]
-        
-        // ReviewViewController 생성
-        let reviewViewController = ReviewViewController()
-        
-        // 선택된 포스트를 ReviewViewController에 전달
-        reviewViewController.post = selectedPost
-        reviewViewController.postId = selectedPost.id 
-        
-        // 네비게이션 컨트롤러를 통해 화면 전환
-        navigationController?.pushViewController(reviewViewController, animated: true)
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
+        
         let currentPost = post[indexPath.row]
         
-        cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        cell.statusView.backgroundColor = UIColor(named: "DominentColor")
         cell.statusLabel.text = currentPost.postStatus.rawValue
         cell.titleLabel.text = currentPost.postTitle
         cell.bodyLabel.text = currentPost.postBody
         cell.timeLabel.text = DateFormatter.localizedString(from: currentPost.updateDate, dateStyle: .short, timeStyle: .short)
-        
         if let imageURL = currentPost.postImages?.first {
             loadImage(from: imageURL) { image in
                 DispatchQueue.main.async {
@@ -81,6 +70,6 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         }
         
         return cell
+        
     }
-    
 }

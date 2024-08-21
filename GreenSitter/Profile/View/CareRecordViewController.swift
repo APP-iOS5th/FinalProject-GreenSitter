@@ -1,17 +1,18 @@
 //
-//  ReviewListViewController.swift
+//  CareRecordViewController.swift
 //  GreenSitter
 //
-//  Created by Yungui Lee on 8/7/24.
+//  Created by 차지용 on 8/19/24.
 //
 
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 
-class ReviewListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class CareRecordViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     let db = Firestore.firestore()
+    
     var post: [Post] = []
     
     lazy var tableView: UITableView = {
@@ -20,13 +21,13 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(CareRecordTableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.backgroundColor = UIColor(named: "BGSecondary")
         return tableView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = UIColor(named: "BGSecondary")
         navigationItem.title = "돌봄 기록"
         
         view.addSubview(tableView)
@@ -45,26 +46,19 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         return post.count
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // 선택된 포스트 가져오기
-        let selectedPost = post[indexPath.row]
-        
-        // ReviewViewController 생성
-        let reviewViewController = ReviewViewController()
-        
-        // 선택된 포스트를 ReviewViewController에 전달
-        reviewViewController.post = selectedPost
-        reviewViewController.postId = selectedPost.id 
-        
-        // 네비게이션 컨트롤러를 통해 화면 전환
-        navigationController?.pushViewController(reviewViewController, animated: true)
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
         let currentPost = post[indexPath.row]
         
-        cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        switch currentPost.postStatus {
+        case .beforeTrade:
+            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
+        case .inTrade:
+            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
+        case .completedTrade:
+            cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        }
+        
         cell.statusLabel.text = currentPost.postStatus.rawValue
         cell.titleLabel.text = currentPost.postTitle
         cell.bodyLabel.text = currentPost.postBody
@@ -82,5 +76,4 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         
         return cell
     }
-    
 }

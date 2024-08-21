@@ -12,12 +12,12 @@ struct User: Codable {
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
-    let profileImage: String
+    var profileImage: String
     var nickname: String
     var location: Location
     let platform: String
     let levelPoint: Int
-    let aboutMe: String
+    var aboutMe: String
     let chatNotification: Bool
 }
 

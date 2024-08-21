@@ -257,7 +257,7 @@ class LoginViewController: UIViewController {
                     "enabled": true,
                     "createDate": Date(),
                     "updateDate": Date(),
-                    "platform": "google"
+                    "platform": "google",
                     "user" : [
                         "id": user.uid,
                         "createDate": Timestamp(date: userA.createDate),
@@ -269,27 +269,27 @@ class LoginViewController: UIViewController {
                     ],
                     "post":[
                         "id": UUID().uuidString,
-                        "enabled": post.enabled,
-                        "createDate": Timestamp(date: post.createDate), // Date를 Timestamp로 변환
-                        "updateDate": Timestamp(date: post.updateDate), // Date를 Timestamp로 변환
-                        "userId": post.userId,
-                        "profileImage": post.profileImage,
-                        "nickname": post.nickname,
-                        "userLocation": [
-                            "latitude": post.userLocation.latitude,
-                            "longitude": post.userLocation.longitude
-                        ],
-                        "userNotification": post.userNotification,
-                        "postType": post.postType.rawValue,
-                        "postTitle": post.postTitle,
-                        "postBody": post.postBody,
-                        "postImages": post.postImages ?? [],
-                        "postStatus": "거래완료",
-                        "location": post.location != nil ? [
-                            "latitude": post.location?.latitude ?? 0,
-                            "longitude": post.location?.longitude ?? 0
-                        ] : NSNull() // 위치가 없을 경우 NSNull() 사용
+                    "enabled": post.enabled,
+                    "createDate": Timestamp(date: post.createDate), // Date를 Timestamp로 변환
+                    "updateDate": Timestamp(date: post.updateDate), // Date를 Timestamp로 변환
+                    "userId": post.userId,
+                    "profileImage": post.profileImage,
+                    "nickname": post.nickname,
+                    "userLocation": [
+                        "latitude": post.userLocation.latitude,
+                        "longitude": post.userLocation.longitude
                     ],
+                    "userNotification": post.userNotification,
+                    "postType": post.postType.rawValue,
+                    "postTitle": post.postTitle,
+                    "postBody": post.postBody,
+                    "postImages": post.postImages ?? [],
+                    "postStatus": "거래중",
+                    "location": post.location != nil ? [
+                        "latitude": post.location?.latitude ?? 0,
+                        "longitude": post.location?.longitude ?? 0
+                    ] : NSNull() // 위치가 없을 경우 NSNull() 사용
+                ],
                 ]) { error in
                     if let error = error {
                         print("Firestore 저장 오류: \(error.localizedDescription)")

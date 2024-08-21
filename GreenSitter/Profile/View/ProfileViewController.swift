@@ -53,7 +53,6 @@ class ProfileViewController: UIViewController {
         let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = UIColor(named: "BGSecondary")
         return tableView
@@ -76,6 +75,10 @@ class ProfileViewController: UIViewController {
         view.addSubview(tableView)
         
         setupConstraints()
+        
+        tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell")
+        tableView.register(InformationTableCell.self, forCellReuseIdentifier: "informationTableCell")
     }
     
     private func setupConstraints() {
@@ -192,6 +195,12 @@ class ProfileViewController: UIViewController {
         
         container.isHidden = true // 초기에는 숨김 상태로 설정
         textFieldContainer = container
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNicknameChanged), name: Notification.Name("NicknameChanged"), object: nil)
+
+    }
+    @objc func handleNicknameChanged() {
+        // 사용자 데이터를 다시 fetch하여 갱신합니다.
+        fetchUserFirebase()
     }
     
 }
