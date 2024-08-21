@@ -39,7 +39,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemBackground
+        self.view.backgroundColor = .bgPrimary
         
         setupCategoryButtons()
         setupAddPostButton()
@@ -49,12 +49,12 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
-        careProviderButton.setTitle("새싹 돌봐드립니다.", for: .normal)
+        careProviderButton.setTitle(PostType.offeringToSitter.rawValue, for: .normal)
         careProviderButton.setTitleColor(.labelsPrimary, for: .normal)
         careProviderButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
         
         let careSeekerButton = UIButton()
-        careSeekerButton.setTitle("새싹돌봄이를 찾습니다.", for: .normal)
+        careSeekerButton.setTitle(PostType.lookingForSitter.rawValue, for: .normal)
         careSeekerButton.setTitleColor(.labelsPrimary, for: .normal)
         careSeekerButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
         
