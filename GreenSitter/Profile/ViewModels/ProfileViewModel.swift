@@ -32,22 +32,6 @@
                     
                     
                     // user 객체가 nil일 경우 User 객체를 초기화
-                    if self.users == nil {
-                        self.users = User(
-                            id: userId,
-                            enabled: true,
-                            createDate: Date(),
-                            updateDate: Date(),
-                            profileImage: profileImage,
-                            nickname: nickname,
-                            location: location,
-                            platform: "iOS",
-                            levelPoint: 1,
-                            aboutMe: "", chatNotification: false
-                        )
-                    } else {
-                        self.users?.nickname = nickname
-                    }
                     
                     // 프로필 이미지 URL을 사용하여 이미지 로드
                     if !profileImage.isEmpty {

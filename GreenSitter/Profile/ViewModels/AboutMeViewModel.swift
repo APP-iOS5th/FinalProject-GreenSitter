@@ -55,7 +55,7 @@ extension AboutMeViewController {
                         nickname: nickname,
                         location: Location.sampleLocation,
                         platform: "iOS",
-                        levelPoint: 1,
+                        levelPoint: Level.seeds, exp: 0,
                         aboutMe: aboutMe, chatNotification: false
                     )
                 } else {

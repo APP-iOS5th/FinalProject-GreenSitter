@@ -165,7 +165,7 @@ struct SampleChatData {
             nickname: "JohnDoe",
             location: Location.seoulLocation,
             platform: "apple",
-            levelPoint: 1,
+            levelPoint: Level.seeds, exp: 0,
             aboutMe: "A passionate developer with a love for Swift and iOS.",
             chatNotification: true
         ),
@@ -178,7 +178,7 @@ struct SampleChatData {
             nickname: "JaneDoe",
             location: Location.seoulLocation,
             platform: "apple",
-            levelPoint: 7,
+            levelPoint: Level.seeds, exp: 0,
             aboutMe: "A tech enthusiast who loves exploring new technologies.",
             chatNotification: false
         ),
@@ -191,7 +191,7 @@ struct SampleChatData {
             nickname: "AliceSmith",
             location: Location.sampleLocation,
             platform: "apple",
-            levelPoint: 12,
+            levelPoint: Level.seeds, exp: 0,
             aboutMe: "A digital nomad traveling the world while working remotely.",
             chatNotification: true
         )

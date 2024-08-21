@@ -47,7 +47,6 @@ class LoginViewController: UIViewController {
     private let appleButton: ASAuthorizationAppleIDButton = {
         let button = ASAuthorizationAppleIDButton(type: .continue, style: .black)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(appleLogin), for: .touchUpInside)
         return button
     }()
     
@@ -56,7 +55,6 @@ class LoginViewController: UIViewController {
         button.setImage(UIImage(named: "googleLogin"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(googleLogin), for: .touchUpInside)
         return button
     }()
     
@@ -65,7 +63,6 @@ class LoginViewController: UIViewController {
         button.setTitle("둘러보기", for: .normal)
         button.setTitleColor(.labelsPrimary, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(navigationTap), for: .touchUpInside)
         return button
     }()
     
@@ -78,6 +75,10 @@ class LoginViewController: UIViewController {
         view.addSubview(appleButton)
         view.addSubview(googleButton)
         view.addSubview(textButton)
+        
+        googleButton.addTarget(self, action: #selector(googleLogin), for: .touchUpInside)
+        appleButton.addTarget(self, action: #selector(appleLogin), for: .touchUpInside)
+        textButton.addTarget(self, action: #selector(navigationTap), for: .touchUpInside)
         
         showToast(withDuration: 1, delay: 4)
         
@@ -182,13 +183,6 @@ class LoginViewController: UIViewController {
         })
     }
     
-    //MARK: - 자동로그인
-    func saveUserData(user: User) {
-        let userDefaults = UserDefaults.standard
-        userDefaults.set(user.id, forKey: "userId")
-        userDefaults.set(user.nickname, forKey: "ninckname")
-        userDefaults.synchronize()
-    }
     
     
     //MARK: - GoogleLogin
@@ -235,6 +229,7 @@ class LoginViewController: UIViewController {
                 
                 // Firebase Database에 사용자 정보 저장
                 let userRef = self.db.collection("users").document(user.uid)
+                
                 //                let post = Post(
                 //                    id: UUID().uuidString,
                 //                    enabled: true,
@@ -256,7 +251,9 @@ class LoginViewController: UIViewController {
                 //                let userA = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "exampleImage1", nickname: "", location: Location.seoulLocation, platform: "", levelPoint: 1, aboutMe: "", chatNotification: true)
                 
                 // Firestore에 문서 저장
-                //                userRef.setData([
+//                                userRef.setData([
+//                                    "platform": "google"
+//                                    ])
                 //                    "id": user.uid,
                 //                    "enabled": true,
                 //                    "createDate": Date(),
@@ -391,10 +388,9 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                     let db = Firestore.firestore()
                     let userRef = db.collection("users").document(user.uid)
                     
-                    //                    userRef.setData([
-                    //                        "id": user.uid,
-                    //                        "nickname": ""
-                    //                    ])
+//                                        userRef.setData([
+//                                            "platform": "ios"
+//                                        ])
                     userRef.getDocument { document, error in
                         if let error  = error {
                             print("Error fetching user document: \(error)")

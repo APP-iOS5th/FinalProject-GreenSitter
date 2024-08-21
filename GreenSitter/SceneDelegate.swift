@@ -5,7 +5,6 @@
 //  Created by Yungui Lee on 8/7/24.
 //
 
-//import KakaoMapsSDK
 import UIKit
 import FirebaseAuth
 
@@ -18,13 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let currentUser = Auth.auth().currentUser {
             // 사용자가 이미 로그인되어 있는 경우
             navigateToMainInterface()
-        } else {
-            // 로그인되지 않은 경우, 로그인 화면으로 이동
-            navigateToLoginInterface()
         }
-        
-//        // Kakao SDK 초기화
-//        SDKInitializer.InitSDK(appKey: Bundle.main.kakaoNativeAppKey)
 
         // UIWindow 및 루트 뷰 컨트롤러 설정
         window = UIWindow(windowScene: windowScene)
@@ -89,12 +82,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func navigateToMainInterface() {
         let mainViewController = MainPostListViewController()
         let navigationController = UINavigationController(rootViewController: mainViewController)
-        window?.rootViewController = navigationController
-    }
-
-    func navigateToLoginInterface() {
-        let loginViewController = LoginViewController()
-        let navigationController = UINavigationController(rootViewController: loginViewController)
         window?.rootViewController = navigationController
     }
 }

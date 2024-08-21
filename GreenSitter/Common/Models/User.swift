@@ -16,7 +16,8 @@ struct User: Codable {
     var nickname: String
     var location: Location
     let platform: String
-    let levelPoint: Int
+    let levelPoint: Level
+    let exp: Int
     var aboutMe: String
     let chatNotification: Bool
 }

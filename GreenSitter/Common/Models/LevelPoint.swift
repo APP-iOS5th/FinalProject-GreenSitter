@@ -7,10 +7,11 @@
 
 import Foundation
 
-struct LevelPoint: Codable {
-    let count: Int
-}
-
 enum Level: String, Codable {
-    case low, medium, high
+    case rottenSeeds = "썩은 씨앗"
+    case seeds = "씨앗"
+    case sprout = "새싹"
+    case seedling = "유묘"
+    case flower = "꽃"
+    case fruit = "열매"
 }

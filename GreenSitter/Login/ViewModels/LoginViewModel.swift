@@ -6,4 +6,15 @@
 //
 
 import Foundation
+import FirebaseStorage
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
 
+class LoginViewModel: ObservableObject {
+    @Published var user: User?
+    
+    func userFetchFirbase(profileImage: String, nickname: String, location: Location) {
+        self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false)
+    }
+}
