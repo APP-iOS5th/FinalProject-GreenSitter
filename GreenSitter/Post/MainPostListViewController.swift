@@ -15,7 +15,7 @@ class CustomTableViewCell: UITableViewCell {
     private let postStatusLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         label.textColor = .white
         label.textAlignment = .center
         label.backgroundColor = .dominent
@@ -27,7 +27,7 @@ class CustomTableViewCell: UITableViewCell {
     private let postTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         label.textColor = UIColor.labelsPrimary
         label.numberOfLines = 1
         return label
@@ -36,11 +36,13 @@ class CustomTableViewCell: UITableViewCell {
     private let postBodyLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = UIColor.labelsSecondary
         label.numberOfLines = 2
         return label
     }()
+    
+    // TODO: date time 추가
     
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
@@ -76,8 +78,8 @@ class CustomTableViewCell: UITableViewCell {
             // postStatusLabel constraints
             postStatusLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             postStatusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            postStatusLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 40), // Minimum width for readability
-            postStatusLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 80), // Maximum width for aesthetic balance
+            postStatusLabel.widthAnchor.constraint(equalToConstant: 60),
+            postStatusLabel.heightAnchor.constraint(equalToConstant: 20),
             
             // verticalStackView constraints
             verticalStackView.topAnchor.constraint(equalTo: postStatusLabel.bottomAnchor, constant: 8),
@@ -158,8 +160,6 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
         
         setupCategoryButtons()
         setupNavigationBarButtons()
-//        setupAddPostButton()
-//        setupSearchPostButton()
         setupTableView()
     }
     
