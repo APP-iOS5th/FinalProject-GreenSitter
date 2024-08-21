@@ -4,6 +4,7 @@
 //
 //  Created by Jiyong Cha on 8/7/24.
 //
+
 import UIKit
 import AuthenticationServices
 import CryptoKit
@@ -16,7 +17,7 @@ class LoginViewController: UIViewController {
     var currentNonce: String? //Apple Login Property
     var users: User?
     let db = Firestore.firestore()
-        
+    
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "새싹 돌봄이"
@@ -28,12 +29,13 @@ class LoginViewController: UIViewController {
     
     lazy var bodyLabel: UILabel = {
         let label = UILabel()
-        label.text = """
-    내 주변의 새싹 돌봄이 ☘️들이
-    당신의 소중한 식물을
-    돌봐드립니다
-"""
-        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.text = 
+        """
+        내 주변의 새싹 돌봄이 ☘️들이
+        당신의 소중한 식물을
+        돌봐드립니다
+        """
+        label.font = .systemFont(ofSize: 17)
         label.textColor = .labelsPrimary
         label.numberOfLines = 0 // 여러 줄 텍스트를 지원
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +43,7 @@ class LoginViewController: UIViewController {
     }()
     
     private let appleButton: ASAuthorizationAppleIDButton = {
-        let button = ASAuthorizationAppleIDButton()
+        let button = ASAuthorizationAppleIDButton(type: .continue, style: .black)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(appleLogin), for: .touchUpInside)
         return button
@@ -51,7 +53,7 @@ class LoginViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(named: "googleLogin"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.imageView?.contentMode = .scaleAspectFill
+        button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(googleLogin), for: .touchUpInside)
         return button
     }()
@@ -59,7 +61,7 @@ class LoginViewController: UIViewController {
     private var textButton: UIButton = {
         let button = UIButton()
         button.setTitle("둘러보기", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.labelsPrimary, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(navigationTap), for: .touchUpInside)
         return button
@@ -67,10 +69,7 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
-        view.backgroundColor = .white
+        view.backgroundColor = .bgPrimary
         
         view.addSubview(bodyLabel)
         view.addSubview(titleLabel)
@@ -79,30 +78,33 @@ class LoginViewController: UIViewController {
         view.addSubview(textButton)
         
         showToast(withDuration: 1, delay: 4)
-        
+
         NSLayoutConstraint.activate([
-            titleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -200),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            // Title Label
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             
-            bodyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
-            bodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
+            // Body Label
+            bodyLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             
-            appleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            appleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200),
-            appleButton.widthAnchor.constraint(equalToConstant: 300),
-            appleButton.heightAnchor.constraint(equalToConstant: 50),
-            
+            // Google Button
             googleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            googleButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -120),
-            googleButton.widthAnchor.constraint(equalToConstant: 300),
+            googleButton.bottomAnchor.constraint(equalTo: appleButton.topAnchor, constant: -20),
+            googleButton.widthAnchor.constraint(equalToConstant: 230), // 너비를 230으로 설정
             googleButton.heightAnchor.constraint(equalToConstant: 50),
             
+            // Apple Button
+            appleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            appleButton.bottomAnchor.constraint(equalTo: textButton.topAnchor, constant: -20),
+            appleButton.widthAnchor.constraint(equalToConstant: 230), // 너비를 230으로 설정
+            appleButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            // Text Button
             textButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            textButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40)
         ])
-        
     }
-    
     //MARK: - ToastMessage
     func showToast(withDuration: Double, delay: Double) {
         let toastLabelWidth: CGFloat = 380
@@ -124,7 +126,7 @@ class LoginViewController: UIViewController {
         toastView.layer.shadowRadius = 10
         
         // UIImageView 생성 및 설정
-        let image = UIImageView(image: UIImage(named: "로고7"))
+        let image = UIImageView(image: UIImage(named: "logo7"))
         image.layer.cornerRadius = 25
         image.contentMode = .scaleAspectFit
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -222,21 +224,80 @@ class LoginViewController: UIViewController {
                 }
                 
                 // Firebase Database에 사용자 정보 저장
-                let userRef = db.collection("users").document(user.uid)
+                let userRef = self.db.collection("users").document(user.uid)
+                let post = Post(
+                    id: UUID().uuidString,
+                    enabled: true,
+                    createDate: Date(),
+                    updateDate: Date(),
+                    userId: "exampleUserId",
+                    profileImage: "exampleProfileImageURL",
+                    nickname: "exampleNickname",
+                    userLocation: Location.seoulLocation,
+                    userNotification: false,
+                    postType: .offeringToSitter,
+                    postTitle: "exampleTitle",
+                    postBody: "exampleBody",
+                    postImages: ["exampleImage1", "exampleImage2"],
+                    postStatus: .beforeTrade,
+                    location: Location.seoulLocation
+                )
                 
+                let userA = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "exampleImage1", nickname: "", location: Location.seoulLocation, platform: "", levelPoint: 1, aboutMe: "", chatNotification: true)
+                
+                // Firestore에 문서 저장
                 userRef.setData([
+//                    "id": user.uid,
+//                    "email": user.email ?? "",
+//                    "displayName": user.displayName ?? "",
+//                    "location": self.users?.location ?? "",
+//                    "enabled": false,  // 콤마 추가
                     "id": user.uid,
-                    "email": user.email ?? "",
-                    "displayName": user.displayName ?? "",
-                    "location": users?.location ?? "",
-                    "enabled": false,  // 콤마 추가
+                    "enabled": true,
+                    "createDate": Date(),
+                    "updateDate": Date(),
+                    "platform": "google",
+                    "user" : [
+                        "id": user.uid,
+                        "createDate": Timestamp(date: userA.createDate),
+                        "updateDate": Timestamp(date: userA.updateDate),
+                        "profileImage": userA.profileImage,
+                        "nickname": userA.nickname,
+                        "address": "서울특별시 구로구 온수동",
+                        "aboutMe": userA.aboutMe
+                    ],
+                    "post":[
+                        "id": UUID().uuidString,
+                    "enabled": post.enabled,
+                    "createDate": Timestamp(date: post.createDate), // Date를 Timestamp로 변환
+                    "updateDate": Timestamp(date: post.updateDate), // Date를 Timestamp로 변환
+                    "userId": post.userId,
+                    "profileImage": post.profileImage,
+                    "nickname": post.nickname,
+                    "userLocation": [
+                        "latitude": post.userLocation.latitude,
+                        "longitude": post.userLocation.longitude
+                    ],
+                    "userNotification": post.userNotification,
+                    "postType": post.postType.rawValue,
+                    "postTitle": post.postTitle,
+                    "postBody": post.postBody,
+                    "postImages": post.postImages ?? [],
+                    "postStatus": "거래중",
+                    "location": post.location != nil ? [
+                        "latitude": post.location?.latitude ?? 0,
+                        "longitude": post.location?.longitude ?? 0
+                    ] : NSNull() // 위치가 없을 경우 NSNull() 사용
+                ],
                 ]) { error in
                     if let error = error {
-                        print("Firestore Save Error: \(error.localizedDescription)")
+                        print("Firestore 저장 오류: \(error.localizedDescription)")
                     } else {
                         print("Firestore에 사용자 정보 저장 성공")
                     }
                 }
+                
+//                let newUser = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "", nickname: "", location: Location.sampleLocation, platform: "google", levelPoint: 0, aboutMe: "", chatNotification: false)
                 
                 DispatchQueue.main.async {
                     // Ensure that self is in a UINavigationController
@@ -250,13 +311,15 @@ class LoginViewController: UIViewController {
             }
         }
     }
-
-
-
+    
+    
+    
     
     //MARK: - MainView move
     @objc func navigationTap() {
-        
+        if let tabBarController = self.tabBarController {
+            tabBarController.selectedIndex = 0 // Home 탭으로 설정
+        }
     }
 }
 
@@ -372,3 +435,8 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
     }
 }
 
+
+
+#Preview {
+    LoginViewController()
+}

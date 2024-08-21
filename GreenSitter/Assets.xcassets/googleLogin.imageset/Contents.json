@@ -1,17 +1,18 @@
 {
   "images" : [
     {
-      "filename" : "googleLogin.png",
-      "idiom" : "universal",
-      "scale" : "1x"
+      "filename" : "ios_light_sq_ctn@4x.png",
+      "idiom" : "universal"
     },
     {
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "3x"
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "ios_dark_sq_ctn@4x.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {

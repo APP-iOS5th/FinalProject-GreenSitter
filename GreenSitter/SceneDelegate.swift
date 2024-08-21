@@ -31,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         secondNavigationController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
         
         // Chat
-        let thirdViewController = ChatAdditionalButtonsViewController()
+        let thirdViewController = ChatListViewController()
         let thirdNavigationController = UINavigationController(rootViewController: thirdViewController)
         thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
         
@@ -42,6 +42,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController]
+        
+        tabBarController.tabBar.backgroundColor = .bgPrimary
+        tabBarController.tabBar.isTranslucent = false
         
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()

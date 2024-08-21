@@ -236,6 +236,9 @@ class FinalConfirmPlanViewController: UIViewController {
         buttonStackView.layoutMargins = UIEdgeInsets(top: 16, left: 30, bottom: 16, right: 30)
         buttonStackView.isLayoutMarginsRelativeArrangement = true
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
+        if viewModel.progress == 3 {
+            buttonStackView.isHidden = true
+        }
         return buttonStackView
     }()
     

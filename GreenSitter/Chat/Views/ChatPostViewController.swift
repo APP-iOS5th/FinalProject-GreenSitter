@@ -8,7 +8,7 @@
 import UIKit
 
 class ChatPostViewController: UIViewController {
-    var chatListViewModel: ChatListViewModel?
+    var chatViewModel: ChatViewModel?
     
     // 게시물 이미지
     lazy var postThumbnailView: UIImageView = {
@@ -55,10 +55,22 @@ class ChatPostViewController: UIViewController {
         super.viewDidLoad()
 
         setupUI()
+        
+        // 게시물 디테일로 이동하기 위한 Tap Gesture
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        self.view.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Setup UI
     private func setupUI() {
+        if let firstImageUrlString = chatViewModel?.chatRoom?.postImage,
+           let postThumbnailUrl = URL(string: firstImageUrlString) {
+            chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView)
+        }
+        
+        postTitleLabel.text = chatViewModel?.chatRoom?.postTitle
+        postStatusLabel.text = chatViewModel?.chatRoom?.postStatus.rawValue
+        
         self.view.backgroundColor = .white
         
         stackView.addSubview(postTitleLabel)
@@ -74,11 +86,10 @@ class ChatPostViewController: UIViewController {
             postThumbnailView.heightAnchor.constraint(equalToConstant: 80),
             
             stackView.topAnchor.constraint(equalTo: postThumbnailView.topAnchor, constant: 10),
-            stackView.bottomAnchor.constraint(equalTo: postThumbnailView.topAnchor, constant: -10),
+            stackView.bottomAnchor.constraint(equalTo: postThumbnailView.bottomAnchor, constant: -10),
             stackView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             stackView.leadingAnchor.constraint(equalTo: postThumbnailView.trailingAnchor, constant: 10),
             stackView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
-            stackView.heightAnchor.constraint(equalToConstant: 70),
             
             postTitleLabel.topAnchor.constraint(equalTo: stackView.topAnchor),
             postTitleLabel.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
@@ -90,6 +101,16 @@ class ChatPostViewController: UIViewController {
             postStatusLabel.widthAnchor.constraint(equalToConstant: 49),
             postStatusLabel.heightAnchor.constraint(equalToConstant: 20)
         ])
+    }
+    
+    // MARK: - UITapGestureRecognizer action
+    @objc private func handleTap() {
+        let postDetailViewController = PostDetailViewController()
+        
+        // TODO: - 특정 게시물로 이동
+//        postDetailViewController.postId = postId
+        
+        self.navigationController?.pushViewController(postDetailViewController, animated: true)
     }
 
 }
