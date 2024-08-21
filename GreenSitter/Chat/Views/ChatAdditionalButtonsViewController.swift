@@ -10,12 +10,12 @@ import PhotosUI
 
 class ChatAdditionalButtonsViewController: UIViewController {
     
-    var chatViewModelDelegate: ChatViewModel?
+    var chatViewModel: ChatViewModel?
     
-    private let viewModel = ChatAdditionalButtonsViewModel()
+    private let chatAdditionalButtonsViewModel = ChatAdditionalButtonsViewModel()
     
     private var buttonViews: [ChatAdditionalButton] {
-        viewModel.buttonModels.map { model in
+        chatAdditionalButtonsViewModel.buttonModels.map { model in
             let button = ChatAdditionalButton(imageName: model.imageName, titleText: model.titleText, buttonAction: UIAction { _ in model.buttonAction() })
             return button
         }
@@ -52,7 +52,7 @@ class ChatAdditionalButtonsViewController: UIViewController {
         
         setupUI()
         
-        viewModel.delegate = self
+        chatAdditionalButtonsViewModel.delegate = self
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(_:))))
         
@@ -92,7 +92,7 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
         
         Task {
             let selectedImages = await loadImages(from: results)
-            chatViewModelDelegate?.sendImages(images: selectedImages)
+            chatViewModel?.sendImages(images: selectedImages)
         }
         
         picker.dismiss(animated: true)
@@ -130,7 +130,7 @@ extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: false) {
             if let image = info[.originalImage] as? UIImage {
-                self.chatViewModelDelegate?.sendImages(images: [image])
+                self.chatViewModel?.sendImages(images: [image])
             }
         }
     }
