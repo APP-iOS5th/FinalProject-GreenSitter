@@ -40,8 +40,8 @@ class WriteReviewViewController: UIViewController,UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedPost = post[indexPath.row]
         
-        let postDetailViewController = PostDetailViewController()
-        navigationController?.pushViewController(postDetailViewController, animated: true)
+        let receiveReviewViewController = ReceiveReviewViewController()
+        navigationController?.pushViewController(receiveReviewViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

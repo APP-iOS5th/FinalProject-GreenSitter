@@ -247,11 +247,6 @@ class LoginViewController: UIViewController {
                 
                 // Firestore에 문서 저장
                 userRef.setData([
-//                    "id": user.uid,
-//                    "email": user.email ?? "",
-//                    "displayName": user.displayName ?? "",
-//                    "location": self.users?.location ?? "",
-//                    "enabled": false,  // 콤마 추가
                     "id": user.uid,
                     "enabled": true,
                     "createDate": Date(),
@@ -283,7 +278,7 @@ class LoginViewController: UIViewController {
                     "postTitle": post.postTitle,
                     "postBody": post.postBody,
                     "postImages": post.postImages ?? [],
-                    "postStatus": "거래중",
+                    "postStatus": "거래완료",
                     "location": post.location != nil ? [
                         "latitude": post.location?.latitude ?? 0,
                         "longitude": post.location?.longitude ?? 0

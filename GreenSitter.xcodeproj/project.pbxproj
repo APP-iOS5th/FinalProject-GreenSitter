@@ -28,6 +28,8 @@
 		3B7D8F452C75849300008F22 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B7D8F442C75849300008F22 /* APPKey.plist */; };
 		3B7D8F472C75849900008F22 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B7D8F462C75849900008F22 /* GoogleService-Info.plist */; };
 		3B7D8F492C75890A00008F22 /* ReceiveReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F482C75890A00008F22 /* ReceiveReviewViewController.swift */; };
+		3B7D8F4B2C75898B00008F22 /* ReceiveReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F4A2C75898B00008F22 /* ReceiveReviewViewModel.swift */; };
+		3B7D8F4D2C7589A200008F22 /* ReceiveReviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F4C2C7589A200008F22 /* ReceiveReviewTableViewCell.swift */; };
 		3B8348122C74BF6600359E85 /* LeavePlantListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */; };
 		3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */; };
 		3BCA713D2C64B61100438BD5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 3BCA713C2C64B61100438BD5 /* FirebaseStorage */; };
@@ -149,6 +151,8 @@
 		3B7D8F442C75849300008F22 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
 		3B7D8F462C75849900008F22 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B7D8F482C75890A00008F22 /* ReceiveReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveReviewViewController.swift; sourceTree = "<group>"; };
+		3B7D8F4A2C75898B00008F22 /* ReceiveReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveReviewViewModel.swift; sourceTree = "<group>"; };
+		3B7D8F4C2C7589A200008F22 /* ReceiveReviewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveReviewTableViewCell.swift; sourceTree = "<group>"; };
 		3B8348052C748CD300359E85 /* EditCareProviderViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewModel.swift; sourceTree = "<group>"; };
 		3B8348062C748CD300359E85 /* EditCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewModel.swift; sourceTree = "<group>"; };
 		3B8348072C748CD300359E85 /* AddCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCareSeekerViewModel.swift; sourceTree = "<group>"; };
@@ -336,6 +340,7 @@
 				3B6DE1AF2C72D483009DD41A /* CareRecordTableViewCell.swift */,
 				3B57780A2C733533000643C9 /* ReviewSendTableViewCell.swift */,
 				3B57780C2C73356E000643C9 /* ReviewPostTableViewCell.swift */,
+				3B7D8F4C2C7589A200008F22 /* ReceiveReviewTableViewCell.swift */,
 			);
 			path = ProfileCell;
 			sourceTree = "<group>";
@@ -592,6 +597,7 @@
 				3B6DE1AD2C72D457009DD41A /* CareRecordViewModel.swift */,
 				3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */,
 				3B7D8F3E2C75689C00008F22 /* WriteReviewViewModel.swift */,
+				3B7D8F4A2C75898B00008F22 /* ReceiveReviewViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -790,9 +796,11 @@
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				3B6DE1AC2C72D24B009DD41A /* CareRecordViewController.swift in Sources */,
 				3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */,
+				3B7D8F4D2C7589A200008F22 /* ReceiveReviewTableViewCell.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
 				156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */,
 				97BC0DEE2C747AAA00F4D0B4 /* EditCareProviderViewController.swift in Sources */,
+				3B7D8F4B2C75898B00008F22 /* ReceiveReviewViewModel.swift in Sources */,
 				58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */,
 				97D1BEC22C6C9DF400F7A983 /* FinalConfirmPlanViewController.swift in Sources */,
 				3B61C6982C71CB1600337B66 /* SelfIntroductionViewController.swift in Sources */,
