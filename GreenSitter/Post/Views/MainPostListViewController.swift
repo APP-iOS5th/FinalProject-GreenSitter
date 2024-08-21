@@ -162,28 +162,33 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
     }
     
     func setupNavigationBarButtons() {
+        // Create a menu with actions for each PostType
+        let menu = UIMenu(title: "", children: [
+            UIAction(title: PostType.offeringToSitter.rawValue, image: UIImage(systemName: "hand.raised.fill")) { [weak self] _ in
+                self?.navigateToAddPostViewController(with: .offeringToSitter)
+            },
+            UIAction(title: PostType.lookingForSitter.rawValue, image: UIImage(systemName: "person.fill")) { [weak self] _ in
+                self?.navigateToAddPostViewController(with: .lookingForSitter)
+            },
+        ])
+        
+        // Attach the menu to the addPostButton
+        addPostButton.menu = menu
+        addPostButton.showsMenuAsPrimaryAction = true
+
+        // Add the search button as a UIBarButtonItem
         let searchBarButton = UIBarButtonItem(customView: searchPostButton)
         let addBarButton = UIBarButtonItem(customView: addPostButton)
         navigationItem.rightBarButtonItems = [addBarButton, searchBarButton]
         
-        let addPostButtonAction = UIAction { [weak self] _ in
-            guard let self = self else { return }
-            // TODO: CONTEXT MENU 추가
-            let addPostViewController = AddPostViewController(postType: .lookingForSitter, viewModel: AddPostViewModel(postType: .lookingForSitter))
-            if let navigationController = self.navigationController {
-                navigationController.pushViewController(addPostViewController, animated: true)
-            } else {
-                print("Navigation controller not found.")
-            }
-        }
-        addPostButton.addAction(addPostButtonAction, for: .touchUpInside)
-        
+        // Handle the search action
         let searchPostButtonAction = UIAction { [weak self] _ in
-            // TODO: 검색버튼 액션 추가
-            print("searchPostButton Tapped")
+            // TODO: Add search functionality
+            print("Search button tapped")
         }
         searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
     }
+
     
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
@@ -279,6 +284,15 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
         tableView.reloadData()
     }
     
+    private func navigateToAddPostViewController(with postType: PostType) {
+        let addPostViewController = AddPostViewController(postType: postType, viewModel: AddPostViewModel(postType: postType))
+        if let navigationController = self.navigationController {
+            navigationController.pushViewController(addPostViewController, animated: true)
+        } else {
+            print("Navigation controller not found.")
+        }
+    }
+
     // MARK: - UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -304,6 +318,3 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
     }
 
 }
-
-
-
