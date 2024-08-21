@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 struct Post: Codable {
     let id: String
@@ -26,8 +27,8 @@ struct Post: Codable {
 }
 
 enum PostType: String, Codable {
-    case lookingForSitter = "새싹 돌봐드립니다"
-    case offeringToSitter = "새싹돌봄이 찾습니다"
+    case lookingForSitter = "새싹돌봄이 찾습니다"
+    case offeringToSitter = "새싹 돌봐드립니다"
 }
 
 enum PostStatus: String, Codable {
