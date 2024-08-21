@@ -208,6 +208,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     }
     
     private func setupLayout() {
+        self.title = postType.rawValue
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         

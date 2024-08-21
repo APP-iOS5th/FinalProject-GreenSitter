@@ -73,6 +73,7 @@
 		97BC0DF72C75BCCF00F4D0B4 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */; };
 		97BC0DF82C75BCCF00F4D0B4 /* MainPostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */; };
 		97BC0DFC2C75BCCF00F4D0B4 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */; };
+		97BC0DFE2C75D26700F4D0B4 /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */; };
 		97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */; };
 		97D1BE422C6C7F0500F7A983 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */; };
 		97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */; };
@@ -204,6 +205,7 @@
 		97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
 		97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
+		97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
 		97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetLocationViewController.swift; sourceTree = "<group>"; };
@@ -623,6 +625,7 @@
 				97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */,
 				97BC0DEF2C75BCCF00F4D0B4 /* EditPostViewController.swift */,
 				97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */,
+				97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */,
 				97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */,
 				97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */,
 			);
@@ -798,6 +801,7 @@
 				97D1BE972C6C93A100F7A983 /* ChatViewModel.swift in Sources */,
 				97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */,
 				97D1BEBC2C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift in Sources */,
+				97BC0DFE2C75D26700F4D0B4 /* PostTableViewCell.swift in Sources */,
 				97D1BEA52C6C93FA00F7A983 /* PostListViewController.swift in Sources */,
 				3B57780D2C73356E000643C9 /* ReviewPostTableViewCell.swift in Sources */,
 				97D1BE9D2C6C93CD00F7A983 /* AboutMeViewController.swift in Sources */,
