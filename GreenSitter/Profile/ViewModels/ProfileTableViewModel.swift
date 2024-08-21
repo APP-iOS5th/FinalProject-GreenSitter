@@ -165,9 +165,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         case(1,1):
             let writeReviewViewController = WriteReviewViewController()
             self.navigationController?.pushViewController(writeReviewViewController, animated: true)
-        case (2, 1):
+        case (2, 0):
             logout()
-        case (2, 2):
+        case (2, 1):
             accountDeletion()
         default:
             break
