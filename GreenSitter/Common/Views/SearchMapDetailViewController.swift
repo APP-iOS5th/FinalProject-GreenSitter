@@ -10,6 +10,7 @@ import MapKit
 
 class SearchMapDetailViewController: UIViewController {
 
+    private var makePlanViewModel: MakePlanViewModel?
     private var location: Location
     private var isInitialLoad = true  // 초기 로드를 체크하기 위한 플래그
 
@@ -45,8 +46,9 @@ class SearchMapDetailViewController: UIViewController {
     }()
 
 
-    init(location: Location) {
+    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil) {
         self.location = location
+        self.makePlanViewModel = makePlanViewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -163,8 +165,17 @@ class SearchMapDetailViewController: UIViewController {
     }
 
     @objc private func confirmButtonTapped() {
-        // TODO: Implement confirm button action
-        dismiss(animated: true, completion: nil)
+        // TODO: 확인 버튼 동작 구현
+        //plan에서 필요한 기능
+        self.makePlanViewModel?.planPlace = location
+        self.makePlanViewModel?.isPlaceSelected = true
+        guard let parentViewController = self.presentingViewController else { return }
+        self.dismiss(animated: true) {
+            parentViewController.dismiss(animated: true)
+        }
+        
+        
+//        dismiss(animated: true, completion: nil)
     }
 }
 
