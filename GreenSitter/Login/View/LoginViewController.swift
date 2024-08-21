@@ -246,7 +246,6 @@ class LoginViewController: UIViewController {
                 let userA = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "exampleImage1", nickname: "", location: Location.seoulLocation, platform: "", levelPoint: 1, aboutMe: "", chatNotification: true)
                 
                 // Firestore에 문서 저장
-                let userRef = self.db.collection("users").document(user.uid)
                 userRef.setData([
 //                    "id": user.uid,
 //                    "email": user.email ?? "",
@@ -326,8 +325,7 @@ class LoginViewController: UIViewController {
 
 
 //MARK: - AppleLogin
-
-extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     //Apple의 응답을 처리
     @objc func appleLogin() {
         let nonce = randomNonceString()
@@ -342,27 +340,29 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
     }
-    
+
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-            guard currentNonce != nil else {
+            guard let nonce = currentNonce else {
                 fatalError("Invalid state: A login callback was received, but no login request was sent.")
             }
             guard let appleIDToken = appleIDCredential.identityToken else {
                 print("Unable to fetch identity token")
                 return
             }
-            guard String(data: appleIDToken, encoding: .utf8) != nil else {
+            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
                 print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
                 return
             }
             // Firebase에 사용자 인증 정보 저장
-            let credential = OAuthProvider.credential(providerID: AuthProviderID(rawValue: "apple.com")!, idToken: String(data: appleIDCredential.identityToken!, encoding: .utf8)!, rawNonce: currentNonce!)
+            let credential = OAuthProvider.credential(withProviderID: "apple.com",
+                                                      idToken: String(data: appleIDCredential.identityToken!, encoding: .utf8)!,
+                                                      rawNonce: currentNonce!)
             // Sign in with Firebase.
             Auth.auth().signIn(with: credential) { [self] (authResult, error) in
                 if (error != nil) {
                     //로그인 오류 처리
-                    print("Apple 로그인 오류: \(String(describing: error?.localizedDescription))")
+                    print("Apple 로그인 오류: \(error?.localizedDescription)")
                     return
                 }
                 //Firebase Database에 사용자 정보 저장
@@ -371,38 +371,26 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
                     let userRef = db.collection("users").document(user.uid)
                     
                     userRef.setData([
-//                        "uid": user.uid,
-//                        "email": user.email ?? "",
-//                        "displayName": user.displayName ?? "",
-//                        "location": users?.location ?? ""
-                        "id": user.uid,
-                        "enabled": true,
-                        "createDate": Date(),
-                        "updateDate": Date(),
-                        "platform": "apple"
-                    ]) { error in
-                        if let error = error {
-                            print("Firestore Save Error: \(error.localizedDescription)")
-                        } else {
-                            print("Firestore에 사용자 정보 저장 성공")
-                        }
-                    }
-//                    let newUser = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "", nickname: "", location: Location.sampleLocation, platform: "apple", levelPoint: 0, aboutMe: "", chatNotification: false)
-                    
-                    DispatchQueue.main.async {
-                        // Ensure that self is in a UINavigationController
-                        if let navigationController = self.navigationController {
-                            let setLocationViewController = SetLocationViewController()
-                            navigationController.pushViewController(setLocationViewController, animated: true)
-                        } else {
-                            print("Error: The current view controller is not embedded in a UINavigationController.")
-                        }
+                        "uid": user.uid,
+                        "email": user.email ?? "",
+                        "displayName": user.displayName ?? "",
+                        "location": users?.location ?? ""
+                    ])
+                }
+                
+                DispatchQueue.main.async {
+                    // Ensure that self is in a UINavigationController
+                    if let navigationController = self.navigationController {
+                        let setLocationViewController = SetLocationViewController()
+                        navigationController.pushViewController(setLocationViewController, animated: true)
+                    } else {
+                        print("Error: The current view controller is not embedded in a UINavigationController.")
                     }
                 }
             }
         }
     }
-    
+
     //로그인 실패 처리코드
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         print("Apple 로그인 실패: \(error)")
@@ -446,6 +434,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
         return hashString
     }
 }
+
 
 
 #Preview {

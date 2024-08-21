@@ -127,7 +127,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             skipButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
         ])
-        getUserData()
+//        getUserData()
     }
     
     private func bindViewModel() {
@@ -155,7 +155,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     //MARK: - 파이어베이스 위치정보 저장
     private func updateLocationInFirestore(location: Location) {
         guard let user = Auth.auth().currentUser else {
-            print("No user is currently logged in.")
+            print("Error: Firebase authResult is nil.")
             return
         }
         
@@ -165,24 +165,9 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         
         db.collection("users").document(user.uid).setData(userData, merge: true) { error in
             if let error = error {
-                print("Error getting document: \(error)")
-                return
-            }
-            
-            if let document = document, document.exists {
-                let data = document.data()
-                // Firestore 문서에서 "address" 필드를 가져옵니다.
-                let locationAddress = data?["address"] as? String ?? "현재 위치 가져오기 실패"
-                
-                DispatchQueue.main.async {
-                    self?.locationTextField.placeholder = locationAddress
-                }
-                
-                // 디버깅 로그
-                print("Document data: \(data ?? [:])")
-                
+                print("Firestore Writing Error: \(error)")
             } else {
-                print("Document does not exist")
+                print("Location successfully saved!")
             }
         }
         
