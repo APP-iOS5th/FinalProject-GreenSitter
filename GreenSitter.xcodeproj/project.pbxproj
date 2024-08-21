@@ -27,6 +27,7 @@
 		3B7D8F3F2C75689C00008F22 /* WriteReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F3E2C75689C00008F22 /* WriteReviewViewModel.swift */; };
 		3B7D8F452C75849300008F22 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B7D8F442C75849300008F22 /* APPKey.plist */; };
 		3B7D8F472C75849900008F22 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B7D8F462C75849900008F22 /* GoogleService-Info.plist */; };
+		3B7D8F492C75890A00008F22 /* ReceiveReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F482C75890A00008F22 /* ReceiveReviewViewController.swift */; };
 		3B8348122C74BF6600359E85 /* LeavePlantListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */; };
 		3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */; };
 		3BCA713D2C64B61100438BD5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 3BCA713C2C64B61100438BD5 /* FirebaseStorage */; };
@@ -147,6 +148,7 @@
 		3B7D8F3E2C75689C00008F22 /* WriteReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteReviewViewModel.swift; sourceTree = "<group>"; };
 		3B7D8F442C75849300008F22 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
 		3B7D8F462C75849900008F22 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		3B7D8F482C75890A00008F22 /* ReceiveReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveReviewViewController.swift; sourceTree = "<group>"; };
 		3B8348052C748CD300359E85 /* EditCareProviderViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewModel.swift; sourceTree = "<group>"; };
 		3B8348062C748CD300359E85 /* EditCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewModel.swift; sourceTree = "<group>"; };
 		3B8348072C748CD300359E85 /* AddCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCareSeekerViewModel.swift; sourceTree = "<group>"; };
@@ -630,6 +632,7 @@
 				3B6DE1AB2C72D24B009DD41A /* CareRecordViewController.swift */,
 				3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */,
 				3B7D8F3C2C75686700008F22 /* WriteReviewViewController.swift */,
+				3B7D8F482C75890A00008F22 /* ReceiveReviewViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -826,6 +829,7 @@
 				97934DFF2C62F88B00B38E0A /* Post.swift in Sources */,
 				97934E5A2C65EDBD00B38E0A /* MapViewController.swift in Sources */,
 				974FF2522C6C5BA5009277B9 /* SearchMapDetailViewController.swift in Sources */,
+				3B7D8F492C75890A00008F22 /* ReceiveReviewViewController.swift in Sources */,
 				97934E212C62FAC300B38E0A /* Location.swift in Sources */,
 				97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */,
 				977A52B32C69A84500E375F1 /* AnnotationDetailViewController.swift in Sources */,

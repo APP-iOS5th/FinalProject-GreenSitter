@@ -12,7 +12,7 @@ import FirebaseStorage
 class ProfileViewController: UIViewController {
     
     // MARK: - Properties
-    var sectionTitle = ["내 정보", "계정"]
+    var sectionTitle = ["내 정보", "돌봄 정보", "시스템", "이용약관 및 개인정보 처리방침" ]
     var textFieldContainer: UIView?
     let db = Firestore.firestore()
     let storage = Storage.storage()
@@ -100,7 +100,7 @@ class ProfileViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: profileButton.bottomAnchor, constant: 30),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     

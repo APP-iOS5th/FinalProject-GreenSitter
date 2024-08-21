@@ -162,6 +162,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         case(1,0):
             let leavePlantListViewController = LeavePlantListViewController()
             self.navigationController?.pushViewController(leavePlantListViewController, animated: true)
+        case(1,1):
+            let writeReviewViewController = WriteReviewViewController()
+            self.navigationController?.pushViewController(writeReviewViewController, animated: true)
         case (2, 1):
             logout()
         case (2, 2):
