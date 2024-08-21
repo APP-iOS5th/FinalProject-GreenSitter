@@ -42,9 +42,33 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
         self.view.backgroundColor = .bgPrimary
         
         setupCategoryButtons()
-        setupAddPostButton()
-        setupSearchPostButton()
+        setupNavigationBarButtons()
+//        setupAddPostButton()
+//        setupSearchPostButton()
         setupTableView()
+    }
+    
+    func setupNavigationBarButtons() {
+        let searchBarButton = UIBarButtonItem(customView: searchPostButton)
+        let addBarButton = UIBarButtonItem(customView: addPostButton)
+        navigationItem.rightBarButtonItems = [addBarButton, searchBarButton]
+        
+        let addPostButtonAction = UIAction { [weak self] _ in
+            guard let self = self else { return }
+            let addPostViewController = AddPostViewController()
+            if let navigationController = self.navigationController {
+                navigationController.pushViewController(addPostViewController, animated: true)
+            } else {
+                print("Navigation controller not found.")
+            }
+        }
+        addPostButton.addAction(addPostButtonAction, for: .touchUpInside)
+        
+        let searchPostButtonAction = UIAction { [weak self] _ in
+            // TODO: 검색버튼 액션 추가
+            print("searchPostButton Tapped")
+        }
+        searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
     }
     
     func setupCategoryButtons() {
@@ -76,50 +100,50 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
         categoryButtonTapped(careProviderButton)
     }
     
-    func setupSearchPostButton() {
-        view.addSubview(searchPostButton)
-        
-        let searchPostButtonAction = UIAction { [weak self] _ in
-            // TODO: 검색버튼 액션 추가
-            print("searchPostButton Tapped")
-        }
-        
-        searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-            searchPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            searchPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-            searchPostButton.widthAnchor.constraint(equalToConstant: 40),
-            searchPostButton.heightAnchor.constraint(equalToConstant: 40)
-        ])
-    }
-    
-    // MARK: - ADD POST BUTTON
-    
-    func setupAddPostButton() {
-        view.addSubview(addPostButton)
-        
-        let addPostButtonAction = UIAction { [weak self] _ in
-            guard let self = self else { return }
-            
-            let addPostViewController = AddPostViewController()
-            
-            if let navigationController = self.navigationController {
-                navigationController.pushViewController(addPostViewController, animated: true)
-            } else {
-                print("Navigation controller not found.")
-            }
-        }
-        
-        addPostButton.addAction(addPostButtonAction, for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-            addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            addPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            addPostButton.widthAnchor.constraint(equalToConstant: 40),
-            addPostButton.heightAnchor.constraint(equalToConstant: 40)
-        ])
-    }
+//    func setupSearchPostButton() {
+//        view.addSubview(searchPostButton)
+//        
+//        let searchPostButtonAction = UIAction { [weak self] _ in
+//
+//            print("searchPostButton Tapped")
+//        }
+//        
+//        searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
+//        
+//        NSLayoutConstraint.activate([
+//            searchPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+//            searchPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+//            searchPostButton.widthAnchor.constraint(equalToConstant: 40),
+//            searchPostButton.heightAnchor.constraint(equalToConstant: 40)
+//        ])
+//    }
+//    
+//
+//    
+//    func setupAddPostButton() {
+//        view.addSubview(addPostButton)
+//        
+//        let addPostButtonAction = UIAction { [weak self] _ in
+//            guard let self = self else { return }
+//            
+//            let addPostViewController = AddPostViewController()
+//            
+//            if let navigationController = self.navigationController {
+//                navigationController.pushViewController(addPostViewController, animated: true)
+//            } else {
+//                print("Navigation controller not found.")
+//            }
+//        }
+//        
+//        addPostButton.addAction(addPostButtonAction, for: .touchUpInside)
+//        
+//        NSLayoutConstraint.activate([
+//            addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+//            addPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+//            addPostButton.widthAnchor.constraint(equalToConstant: 40),
+//            addPostButton.heightAnchor.constraint(equalToConstant: 40)
+//        ])
+//    }
     
     
     func setupTableView() {
@@ -135,16 +159,42 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     }
     
     @objc func categoryButtonTapped(_ sender: UIButton) {
+        // 이전에 선택된 버튼의 텍스트 스타일 초기화
         selectedButton?.setTitleColor(.labelsPrimary, for: .normal)
         selectedButton?.titleLabel?.font = UIFont.systemFont(ofSize: 17)
 
+        // 이전에 선택된 버튼에서 이미지 제거
+        if let previousButton = selectedButton, let previousImageView = previousButton.viewWithTag(100) as? UIImageView {
+            previousImageView.removeFromSuperview()
+        }
+
+        // 현재 선택된 버튼 텍스트 스타일 적용
         sender.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         sender.setTitleColor(.complementary, for: .normal)
         selectedButton = sender
-        
+
+        // 새로운 이미지 뷰 추가
+        let imageView = UIImageView(image: UIImage(named: "postCategoryIcon")) // 여기에 이미지 이름을 넣으세요
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tag = 100 // 이미지 뷰를 나중에 제거하기 위해 태그를 지정
+
+        // 이미지 뷰를 버튼에 추가
+        sender.addSubview(imageView)
+
+        // 이미지 뷰 레이아웃 설정 (좌측 상단에 위치)
+        NSLayoutConstraint.activate([
+            imageView.leadingAnchor.constraint(equalTo: sender.leadingAnchor, constant: 15),
+            imageView.topAnchor.constraint(equalTo: sender.topAnchor, constant: -25),
+            imageView.widthAnchor.constraint(equalToConstant: 50),
+            imageView.heightAnchor.constraint(equalToConstant: 50)
+        ])
+
+        // 선택된 카테고리로 필터링
         guard let category = sender.titleLabel?.text else { return }
         filterPosts(for: category)
     }
+
     
     func filterPosts(for category: String) {
         guard let postType = PostType(rawValue: category) else {
