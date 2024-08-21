@@ -10,7 +10,7 @@ import UIKit
 class MainPostListViewController: UIViewController, UITableViewDataSource {
     
     private let categoryStackView = UIStackView()
-    private var filteredPosts: [String] = []
+    private var filteredPosts: [Post] = []
     private var selectedButton: UIButton?
     
     private let addPostButton: UIButton = {
@@ -79,7 +79,8 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     func setupSearchPostButton() {
         view.addSubview(searchPostButton)
         
-        let searchPostButtonAction = UIAction {[weak self] _ in
+        let searchPostButtonAction = UIAction { [weak self] _ in
+            // TODO: 검색버튼 액션 추가
             print("searchPostButton Tapped")
         }
         
@@ -93,15 +94,15 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
         ])
     }
     
+    // MARK: - ADD POST BUTTON
+    
     func setupAddPostButton() {
         view.addSubview(addPostButton)
         
         let addPostButtonAction = UIAction { [weak self] _ in
             guard let self = self else { return }
             
-            
             let addPostViewController = AddPostViewController()
-            
             
             if let navigationController = self.navigationController {
                 navigationController.pushViewController(addPostViewController, animated: true)
@@ -135,6 +136,9 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     
     @objc func categoryButtonTapped(_ sender: UIButton) {
         selectedButton?.setTitleColor(.labelsPrimary, for: .normal)
+        selectedButton?.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+
+        sender.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         sender.setTitleColor(.complementary, for: .normal)
         selectedButton = sender
         
@@ -143,13 +147,13 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     }
     
     func filterPosts(for category: String) {
-        if category == "새싹 돌봐드립니다." {
-            filteredPosts = ["화분 관리해드려요", "꽃을 주기적으로 관리해드려요"]
-        } else if category == "새싹돌봄이를 찾습니다." {
-            filteredPosts = ["경비실 화분 관리해주실 분", "출장가는 동안 식물 관리 부탁드려요"]
-        } else {
+        guard let postType = PostType(rawValue: category) else {
             filteredPosts = []
+            tableView.reloadData()
+            return
         }
+        
+        filteredPosts = Post.samplePosts.filter { $0.postType == postType }
         tableView.reloadData()
     }
     
@@ -160,8 +164,14 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        cell.textLabel?.text = filteredPosts[indexPath.row]
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+        let post = filteredPosts[indexPath.row]
+        
+        // Configure the cell with post data
+        cell.textLabel?.text = post.postTitle
+        cell.detailTextLabel?.text = post.postBody
+        cell.imageView?.image = UIImage(named: post.profileImage) // Assuming there's a local image with the same name
+        
         return cell
     }
 }
