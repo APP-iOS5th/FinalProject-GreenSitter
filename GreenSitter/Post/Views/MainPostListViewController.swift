@@ -100,7 +100,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
             guard let self = self else { return }
             
             
-            let addPostViewController = AddPostViewController()
+            let addPostViewController = AddPostViewController(postType: .lookingForSitter, viewModel: AddPostViewModel(postType: .lookingForSitter))
             
             
             if let navigationController = self.navigationController {

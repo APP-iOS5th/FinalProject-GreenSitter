@@ -30,8 +30,15 @@
 		3BCA713D2C64B61100438BD5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 3BCA713C2C64B61100438BD5 /* FirebaseStorage */; };
 		3BEFEC752C63547D00E48D1E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC742C63547D00E48D1E /* GoogleSignIn */; };
 		3BEFEC772C63547D00E48D1E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC762C63547D00E48D1E /* GoogleSignInSwift */; };
+		4FCE70042C76096A00279774 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4FCE70032C76096A00279774 /* APPKey.plist */; };
+		4FCE700C2C76098500279774 /* MainPostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70052C76098500279774 /* MainPostListViewController.swift */; };
+		4FCE700D2C76098500279774 /* EditCareSeekerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70062C76098500279774 /* EditCareSeekerViewController.swift */; };
+		4FCE700E2C76098500279774 /* PostCareProviderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70072C76098500279774 /* PostCareProviderTableViewController.swift */; };
+		4FCE700F2C76098500279774 /* PostCareSeekerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70082C76098500279774 /* PostCareSeekerTableViewController.swift */; };
+		4FCE70102C76098500279774 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70092C76098500279774 /* AddPostViewController.swift */; };
+		4FCE70112C76098500279774 /* EditCareProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE700A2C76098500279774 /* EditCareProviderViewController.swift */; };
+		4FCE70122C76098500279774 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE700B2C76098500279774 /* PostDetailViewController.swift */; };
 		58D54A1B2C757D5D00332AA2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 58D54A1A2C757D5D00332AA2 /* GoogleService-Info.plist */; };
-		58D54A1D2C757D6600332AA2 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 58D54A1C2C757D6600332AA2 /* APPKey.plist */; };
 		58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */; };
 		58F68FEB2C72273700A7F564 /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */; };
 		974FF2522C6C5BA5009277B9 /* SearchMapDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */; };
@@ -68,20 +75,13 @@
 		97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */; };
 		97BC0DE62C747A9800F4D0B4 /* MainPostListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE12C747A9800F4D0B4 /* MainPostListViewModel.swift */; };
 		97BC0DE72C747A9800F4D0B4 /* AddCareSeekerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE22C747A9800F4D0B4 /* AddCareSeekerViewModel.swift */; };
-		97BC0DE82C747A9800F4D0B4 /* AddCareProviderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE32C747A9800F4D0B4 /* AddCareProviderViewModel.swift */; };
+		97BC0DE82C747A9800F4D0B4 /* AddPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */; };
 		97BC0DE92C747A9800F4D0B4 /* EditCareProviderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE42C747A9800F4D0B4 /* EditCareProviderViewModel.swift */; };
 		97BC0DEA2C747A9800F4D0B4 /* EditCareSeekerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE52C747A9800F4D0B4 /* EditCareSeekerViewModel.swift */; };
-		97BC0DED2C747AAA00F4D0B4 /* EditCareSeekerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DEB2C747AA900F4D0B4 /* EditCareSeekerViewController.swift */; };
-		97BC0DEE2C747AAA00F4D0B4 /* EditCareProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DEC2C747AA900F4D0B4 /* EditCareProviderViewController.swift */; };
 		97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */; };
 		97D1BE422C6C7F0500F7A983 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */; };
 		97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */; };
 		97D1BE472C6C7F8800F7A983 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE462C6C7F8800F7A983 /* LoginViewModel.swift */; };
-		97D1BE5A2C6C847600F7A983 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE512C6C847600F7A983 /* AddPostViewController.swift */; };
-		97D1BE5B2C6C847600F7A983 /* MainPostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE522C6C847600F7A983 /* MainPostListViewController.swift */; };
-		97D1BE5D2C6C847600F7A983 /* PostCareProviderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE542C6C847600F7A983 /* PostCareProviderTableViewController.swift */; };
-		97D1BE5F2C6C847600F7A983 /* PostCareSeekerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE562C6C847600F7A983 /* PostCareSeekerTableViewController.swift */; };
-		97D1BE602C6C847600F7A983 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE572C6C847600F7A983 /* PostDetailViewController.swift */; };
 		97D1BE692C6C8B7D00F7A983 /* AboutMeTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE622C6C8B7D00F7A983 /* AboutMeTableViewModel.swift */; };
 		97D1BE6A2C6C8B7D00F7A983 /* AboutMeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE632C6C8B7D00F7A983 /* AboutMeViewModel.swift */; };
 		97D1BE6B2C6C8B7D00F7A983 /* NincknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE642C6C8B7D00F7A983 /* NincknameViewModel.swift */; };
@@ -94,7 +94,7 @@
 		97D1BE802C6C8BBA00F7A983 /* MakePlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE732C6C8BB900F7A983 /* MakePlanViewModel.swift */; };
 		97D1BE812C6C8BBA00F7A983 /* ChatAdditionalButtonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE752C6C8BB900F7A983 /* ChatAdditionalButtonModel.swift */; };
 		97D1BE872C6C934100F7A983 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC712C63543500E48D1E /* FirebaseAuth */; };
-		97D1BE882C6C934100F7A983 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC782C63567E00E48D1E /* FirebaseFirestore */; };
+		97D1BE882C6C934100F7A983 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC782C63567E00E48D1E /* FirebaseFirestore */; settings = {ATTRIBUTES = (Required, ); }; };
 		97D1BE962C6C93A100F7A983 /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE932C6C93A100F7A983 /* FirestoreManager.swift */; };
 		97D1BE972C6C93A100F7A983 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE942C6C93A100F7A983 /* ChatViewModel.swift */; };
 		97D1BE9D2C6C93CD00F7A983 /* AboutMeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE992C6C93CD00F7A983 /* AboutMeViewController.swift */; };
@@ -153,6 +153,14 @@
 		3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeavePlantListViewController.swift; sourceTree = "<group>"; };
 		3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeavePlantListModel.swift; sourceTree = "<group>"; };
 		3B8A5A772C6DC227007E3902 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4FCE70032C76096A00279774 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = Resources/APPKey.plist; sourceTree = "<group>"; };
+		4FCE70052C76098500279774 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
+		4FCE70062C76098500279774 /* EditCareSeekerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewController.swift; sourceTree = "<group>"; };
+		4FCE70072C76098500279774 /* PostCareProviderTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareProviderTableViewController.swift; sourceTree = "<group>"; };
+		4FCE70082C76098500279774 /* PostCareSeekerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareSeekerTableViewController.swift; sourceTree = "<group>"; };
+		4FCE70092C76098500279774 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
+		4FCE700A2C76098500279774 /* EditCareProviderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewController.swift; sourceTree = "<group>"; };
+		4FCE700B2C76098500279774 /* PostDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		582F5D042C64856F00141938 /* SampleChatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleChatData.swift; sourceTree = "<group>"; };
 		582F5D062C64935500141938 /* ChatTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableViewCell.swift; sourceTree = "<group>"; };
 		582F5D0D2C68C3D800141938 /* ChatListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewModel.swift; sourceTree = "<group>"; };
@@ -162,7 +170,6 @@
 		582F5D1A2C69EA9A00141938 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		582F5D1C2C69EAA700141938 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		58D54A1A2C757D5D00332AA2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		58D54A1C2C757D6600332AA2 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
 		58E7821F2C6C2F4B00572554 /* ChatPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPostViewController.swift; sourceTree = "<group>"; };
 		58E782212C6C36FB00572554 /* PostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		58E782232C6C4F5300572554 /* ChatMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageViewController.swift; sourceTree = "<group>"; };
@@ -204,20 +211,13 @@
 		97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE12C747A9800F4D0B4 /* MainPostListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE22C747A9800F4D0B4 /* AddCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCareSeekerViewModel.swift; sourceTree = "<group>"; };
-		97BC0DE32C747A9800F4D0B4 /* AddCareProviderViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCareProviderViewModel.swift; sourceTree = "<group>"; };
+		97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE42C747A9800F4D0B4 /* EditCareProviderViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE52C747A9800F4D0B4 /* EditCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewModel.swift; sourceTree = "<group>"; };
-		97BC0DEB2C747AA900F4D0B4 /* EditCareSeekerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewController.swift; sourceTree = "<group>"; };
-		97BC0DEC2C747AA900F4D0B4 /* EditCareProviderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewController.swift; sourceTree = "<group>"; };
 		97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetLocationViewController.swift; sourceTree = "<group>"; };
 		97D1BE462C6C7F8800F7A983 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
-		97D1BE512C6C847600F7A983 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
-		97D1BE522C6C847600F7A983 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
-		97D1BE542C6C847600F7A983 /* PostCareProviderTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareProviderTableViewController.swift; sourceTree = "<group>"; };
-		97D1BE562C6C847600F7A983 /* PostCareSeekerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareSeekerTableViewController.swift; sourceTree = "<group>"; };
-		97D1BE572C6C847600F7A983 /* PostDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		97D1BE622C6C8B7D00F7A983 /* AboutMeTableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutMeTableViewModel.swift; sourceTree = "<group>"; };
 		97D1BE632C6C8B7D00F7A983 /* AboutMeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutMeViewModel.swift; sourceTree = "<group>"; };
 		97D1BE642C6C8B7D00F7A983 /* NincknameViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NincknameViewModel.swift; sourceTree = "<group>"; };
@@ -361,7 +361,7 @@
 			children = (
 				97D1BEB02C6C9DDD00F7A983 /* GreenSitter.entitlements */,
 				58D54A1A2C757D5D00332AA2 /* GoogleService-Info.plist */,
-				58D54A1C2C757D6600332AA2 /* APPKey.plist */,
+				4FCE70032C76096A00279774 /* APPKey.plist */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
 				97934DD82C62F3C600B38E0A /* ViewController.swift */,
@@ -529,13 +529,6 @@
 			children = (
 				97D1BEC72C6C9E2D00F7A983 /* ViewModels */,
 				97D1BEA32C6C93FA00F7A983 /* Views */,
-				97D1BE512C6C847600F7A983 /* AddPostViewController.swift */,
-				97BC0DEC2C747AA900F4D0B4 /* EditCareProviderViewController.swift */,
-				97BC0DEB2C747AA900F4D0B4 /* EditCareSeekerViewController.swift */,
-				97D1BE522C6C847600F7A983 /* MainPostListViewController.swift */,
-				97D1BE542C6C847600F7A983 /* PostCareProviderTableViewController.swift */,
-				97D1BE562C6C847600F7A983 /* PostCareSeekerTableViewController.swift */,
-				97D1BE572C6C847600F7A983 /* PostDetailViewController.swift */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -637,6 +630,13 @@
 		97D1BEA32C6C93FA00F7A983 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4FCE70092C76098500279774 /* AddPostViewController.swift */,
+				4FCE700A2C76098500279774 /* EditCareProviderViewController.swift */,
+				4FCE70062C76098500279774 /* EditCareSeekerViewController.swift */,
+				4FCE70052C76098500279774 /* MainPostListViewController.swift */,
+				4FCE70072C76098500279774 /* PostCareProviderTableViewController.swift */,
+				4FCE70082C76098500279774 /* PostCareSeekerTableViewController.swift */,
+				4FCE700B2C76098500279774 /* PostDetailViewController.swift */,
 				97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */,
 			);
 			path = Views;
@@ -661,7 +661,7 @@
 		97D1BEC72C6C9E2D00F7A983 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				97BC0DE32C747A9800F4D0B4 /* AddCareProviderViewModel.swift */,
+				97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */,
 				97BC0DE22C747A9800F4D0B4 /* AddCareSeekerViewModel.swift */,
 				97BC0DE42C747A9800F4D0B4 /* EditCareProviderViewModel.swift */,
 				97BC0DE52C747A9800F4D0B4 /* EditCareSeekerViewModel.swift */,
@@ -740,10 +740,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58D54A1D2C757D6600332AA2 /* APPKey.plist in Resources */,
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
 				58D54A1B2C757D5D00332AA2 /* GoogleService-Info.plist in Resources */,
+				4FCE70042C76096A00279774 /* APPKey.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -754,7 +754,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97BC0DE82C747A9800F4D0B4 /* AddCareProviderViewModel.swift in Sources */,
+				97BC0DE82C747A9800F4D0B4 /* AddPostViewModel.swift in Sources */,
 				97D1BE472C6C7F8800F7A983 /* LoginViewModel.swift in Sources */,
 				97D1BE802C6C8BBA00F7A983 /* MakePlanViewModel.swift in Sources */,
 				3B596DFA2C6B461200C71851 /* CustomTableCell.swift in Sources */,
@@ -769,35 +769,35 @@
 				97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */,
 				97934E4F2C633FA700B38E0A /* (null) in Sources */,
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
-				97D1BE5A2C6C847600F7A983 /* AddPostViewController.swift in Sources */,
 				97D1BEAF2C6C9DB100F7A983 /* BundleExtension.swift in Sources */,
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
+				4FCE700C2C76098500279774 /* MainPostListViewController.swift in Sources */,
 				97D1BE7E2C6C8BBA00F7A983 /* PlanProgressBar.swift in Sources */,
 				97D1BE962C6C93A100F7A983 /* FirestoreManager.swift in Sources */,
 				3B7D8F3D2C75686700008F22 /* WriteReviewViewController.swift in Sources */,
+				4FCE70122C76098500279774 /* PostDetailViewController.swift in Sources */,
 				97B4E8932C6AE6AA0028BE1F /* KakaoAPIService.swift in Sources */,
 				97D1BEC42C6C9DF400F7A983 /* PlanDateTimeViewController.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
+				4FCE70112C76098500279774 /* EditCareProviderViewController.swift in Sources */,
 				3B61C69A2C71DCAD00337B66 /* SelfIntroductionViewModel.swift in Sources */,
 				97D1BE812C6C8BBA00F7A983 /* ChatAdditionalButtonModel.swift in Sources */,
 				3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */,
-				97D1BE602C6C847600F7A983 /* PostDetailViewController.swift in Sources */,
 				97D1BE6E2C6C8B7D00F7A983 /* ProfileViewModel.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				3B6DE1AC2C72D24B009DD41A /* CareRecordViewController.swift in Sources */,
 				3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */,
+				4FCE70102C76098500279774 /* AddPostViewController.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
 				156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */,
-				97BC0DEE2C747AAA00F4D0B4 /* EditCareProviderViewController.swift in Sources */,
 				58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */,
 				97D1BEC22C6C9DF400F7A983 /* FinalConfirmPlanViewController.swift in Sources */,
 				3B61C6982C71CB1600337B66 /* SelfIntroductionViewController.swift in Sources */,
 				97934DFB2C62F87D00B38E0A /* User.swift in Sources */,
 				97D1BEBD2C6C9DF400F7A983 /* ChatListViewController.swift in Sources */,
-				97D1BE5B2C6C847600F7A983 /* MainPostListViewController.swift in Sources */,
-				97D1BE5D2C6C847600F7A983 /* PostCareProviderTableViewController.swift in Sources */,
-				97D1BE5F2C6C847600F7A983 /* PostCareSeekerTableViewController.swift in Sources */,
+				4FCE700E2C76098500279774 /* PostCareProviderTableViewController.swift in Sources */,
+				4FCE700F2C76098500279774 /* PostCareSeekerTableViewController.swift in Sources */,
 				97D1BEA82C6C954100F7A983 /* DataManager.swift in Sources */,
 				97D1BE6C2C6C8B7D00F7A983 /* ProfileImageViewModel.swift in Sources */,
 				97BC0DE92C747A9800F4D0B4 /* EditCareProviderViewModel.swift in Sources */,
@@ -829,6 +829,7 @@
 				97934E212C62FAC300B38E0A /* Location.swift in Sources */,
 				97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */,
 				977A52B32C69A84500E375F1 /* AnnotationDetailViewController.swift in Sources */,
+				4FCE700D2C76098500279774 /* EditCareSeekerViewController.swift in Sources */,
 				97934E052C62F89F00B38E0A /* LevelPoint.swift in Sources */,
 				97BC0DE62C747A9800F4D0B4 /* MainPostListViewModel.swift in Sources */,
 				97934E012C62F89200B38E0A /* ChatRoom.swift in Sources */,
@@ -841,7 +842,6 @@
 				3B596DFF2C6B462B00C71851 /* InformationTableCell.swift in Sources */,
 				97934E032C62F89700B38E0A /* Message.swift in Sources */,
 				97934E1D2C62F8F000B38E0A /* ReviewViewModel.swift in Sources */,
-				97BC0DED2C747AAA00F4D0B4 /* EditCareSeekerViewController.swift in Sources */,
 				97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */,
 				58F68FEB2C72273700A7F564 /* ChatMessageTableViewCell.swift in Sources */,
 				97D1BE9E2C6C93CD00F7A983 /* NicknameViewController.swift in Sources */,
