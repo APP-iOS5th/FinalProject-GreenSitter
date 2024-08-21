@@ -11,7 +11,7 @@ import FirebaseFirestore
 import FirebaseStorage
 
 extension ReceiveReviewViewController {
-    // Firestore에서 postId와 일치하는 데이터 가져오기
+    // MARK: - post정보 불러오기
     func fetchPostFirebase() {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("User ID is not available")
@@ -60,6 +60,7 @@ extension ReceiveReviewViewController {
                                 postStatus: .completedTrade,
                                 location: nil
                             )
+                            self.loadPostImages(from: postImages)
                             
                             // 데이터가 설정된 후 테이블 뷰를 리로드합니다.
                             DispatchQueue.main.async {
@@ -81,7 +82,7 @@ extension ReceiveReviewViewController {
         }
     }
     
-    // Firestore에서 리뷰 데이터 가져오기
+    // MARK: - 리뷰데이터 정보 불러오기
     func fetchReviewFirebase() {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("User ID is not available")
@@ -142,5 +143,51 @@ extension ReceiveReviewViewController {
             }
         }
     }
+    
+    //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
+    func loadImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
+        guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
+              let url = URL(string: httpsURLString) else {
+            print("Invalid URL string: \(gsURL)")
+            completion(nil)
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("이미지 다운로드 오류: \(error)")
+                completion(nil)
+                return
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                print("이미지 변환 실패 또는 데이터가 없음")
+                completion(nil)
+                return
+            }
+            
+            completion(image)
+        }
+        task.resume()
+    }
+    
+    func convertToHttpsURL(gsURL: String) -> String? {
+        let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
+        let encodedPath = gsURL
+            .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 한 번만 호출
+        return baseURL + (encodedPath ?? "") + "?alt=media"
+    }
+    
+    func loadPostImages(from imageURLs: [String]) {
+        let imageView = UIImageView()
 
+        if let firstImageURL = imageURLs.first {
+            loadImage(from: firstImageURL) { [weak self] image in
+                DispatchQueue.main.async {
+                    imageView.image = image
+                }
+            }
+        }
+    }
 }
