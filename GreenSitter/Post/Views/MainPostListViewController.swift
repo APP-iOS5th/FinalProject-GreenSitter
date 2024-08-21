@@ -5,6 +5,7 @@
 //  Created by Yungui Lee on 8/7/24.
 //
 
+import FirebaseFirestore
 import UIKit
 
 // MARK: - Custom Cell
@@ -122,7 +123,7 @@ class CustomTableViewCell: UITableViewCell {
 }
 
 
-class MainPostListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MainPostListViewController: UIViewController {
     
     private let categoryStackView = UIStackView()
     private var filteredPosts: [Post] = []
@@ -175,7 +176,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
         // Attach the menu to the addPostButton
         addPostButton.menu = menu
         addPostButton.showsMenuAsPrimaryAction = true
-
+        
         // Add the search button as a UIBarButtonItem
         let searchBarButton = UIBarButtonItem(customView: searchPostButton)
         let addBarButton = UIBarButtonItem(customView: addPostButton)
@@ -188,7 +189,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
         }
         searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
     }
-
+    
     
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
@@ -239,26 +240,26 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
         // 이전에 선택된 버튼의 텍스트 스타일 초기화
         selectedButton?.setTitleColor(.labelsSecondary, for: .normal)
         selectedButton?.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-
+        
         // 이전에 선택된 버튼에서 이미지 제거
         if let previousButton = selectedButton, let previousImageView = previousButton.viewWithTag(100) as? UIImageView {
             previousImageView.removeFromSuperview()
         }
-
+        
         // 현재 선택된 버튼 텍스트 스타일 적용
         sender.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         sender.setTitleColor(.complementary, for: .normal)
         selectedButton = sender
-
+        
         // 새로운 이미지 뷰 추가
         let imageView = UIImageView(image: UIImage(named: "postCategoryIcon"))
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.tag = 100 // 이미지 뷰를 나중에 제거하기 위해 태그를 지정
-
+        
         // 이미지 뷰를 버튼에 추가
         sender.addSubview(imageView)
-
+        
         // 이미지 뷰 레이아웃 설정 (좌측 상단에 위치)
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: sender.leadingAnchor, constant: 15),
@@ -266,23 +267,43 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
             imageView.widthAnchor.constraint(equalToConstant: 50),
             imageView.heightAnchor.constraint(equalToConstant: 50)
         ])
-
+        
         // 선택된 카테고리로 필터링
         guard let category = sender.titleLabel?.text else { return }
         filterPosts(for: category)
     }
-
     
     func filterPosts(for category: String) {
         guard let postType = PostType(rawValue: category) else {
-            filteredPosts = []
-            tableView.reloadData()
+            self.filteredPosts = []
+            self.tableView.reloadData()
             return
         }
-        
-        filteredPosts = Post.samplePosts.filter { $0.postType == postType }
-        tableView.reloadData()
+
+        // Firestore에서 데이터를 가져오기 위한 참조 설정
+        let db = Firestore.firestore()
+        db.collection("posts")
+            .whereField("postType", isEqualTo: postType.rawValue)
+            .getDocuments { [weak self] (snapshot, error) in
+                guard let self = self else { return }
+
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                    self.filteredPosts = []
+                    self.tableView.reloadData()
+                    return
+                }
+
+                // Firestore에서 가져온 데이터를 Post 배열로 변환
+                self.filteredPosts = snapshot?.documents.compactMap { document in
+                    try? document.data(as: Post.self)
+                } ?? []
+
+                // 테이블 뷰 리로드
+                self.tableView.reloadData()
+            }
     }
+
     
     private func navigateToAddPostViewController(with postType: PostType) {
         let addPostViewController = AddPostViewController(postType: postType, viewModel: AddPostViewModel(postType: postType))
@@ -292,8 +313,10 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
             print("Navigation controller not found.")
         }
     }
-
-    // MARK: - UITableViewDataSource
+}
+    
+extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate {
+    // MARK: - UITABLE VIEW DATA SOURCE
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredPosts.count
