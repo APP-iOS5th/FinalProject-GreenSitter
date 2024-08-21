@@ -20,9 +20,11 @@ class ChatMessageTableViewImageCell: UITableViewCell {
         }
     }
     
-    var images: [UIImage] {
+    var images: [UIImage] = [] {
         didSet {
-            setupUI()
+            DispatchQueue.main.async {
+                self.updateImageStackView()
+            }
         }
     }
     
@@ -82,7 +84,6 @@ class ChatMessageTableViewImageCell: UITableViewCell {
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        self.images = []
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
     }

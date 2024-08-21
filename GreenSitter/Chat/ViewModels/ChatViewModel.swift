@@ -213,6 +213,34 @@ class ChatViewModel {
         }
     }
     
+    //MARK: - 파이어베이스 스토리지에서 이미지 가져오기
+    func loadChatImages(imagePaths: [String]) async -> [UIImage] {
+        var images = [UIImage]()
+        
+        //파이어베이스 스토리지에서 이미지 가져오기
+        await withTaskGroup(of: UIImage?.self) { group in
+            for imagePath in imagePaths {
+                group.addTask {
+                    do {
+                        let image = try await self.firestorageManager.loadImage(imagePath: imagePath)
+                        return image
+                    } catch {
+                        print("Failed to load image: \(error.localizedDescription)")
+                        return nil
+                    }
+                }
+            }
+            
+            for await image in group {
+                if let image = image {
+                    images.append(image)
+                }
+            }
+        }
+        
+        return images
+    }
+    
     //MARK: - 약속 메세지 전송
     func sendPlanMessage(plan: Plan) {
         guard let userId = chatRoom?.userId else {

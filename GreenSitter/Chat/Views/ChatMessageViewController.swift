@@ -71,9 +71,56 @@ extension ChatMessageViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //TODO: 메세지 유형에 따라 cell 다르게 하기, 이미지의 경우 UIImage로 변환해서 cell에 전달
-        if chatViewModel?.messages?[indexPath.row].messageType == .image {
+        switch chatViewModel?.messages?[indexPath.row].messageType {
+        case .text:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
+            cell.backgroundColor = .clear
+            cell.messageLabel.text = chatViewModel?.messages?[indexPath.row].text
+            
+            if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
+                cell.isIncoming = false
+            } else {
+                cell.isIncoming = true
+            }
+            
+            cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
+            
+            return cell
+        case .image:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
             cell.backgroundColor = .clear
+            
+            let imageCounts: Int = chatViewModel?.messages?[indexPath.row].image?.count ?? 0
+            cell.images = []
+            
+            for _ in 0..<imageCounts {
+                if let photoImage = UIImage(systemName: "photo") {
+                    cell.images.append(photoImage)
+                }
+            }
+            
+            if let imagePaths = chatViewModel?.messages?[indexPath.row].image {
+                Task {
+                    let images = await chatViewModel?.loadChatImages(imagePaths: imagePaths)
+                    print("images : \(String(describing: images))")
+                    DispatchQueue.main.async {
+                        cell.images = images ?? []
+                    }
+                }
+            }
+            
+            if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
+                cell.isIncoming = false
+            } else {
+                cell.isIncoming = true
+            }
+            cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
+            return cell
+            //TODO: plan
+        case .plan:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
+            cell.backgroundColor = .clear
+            
             cell.images = [UIImage(systemName: "xmark")!.withRenderingMode(.alwaysTemplate), UIImage(systemName: "square.and.arrow.up.fill")!.withRenderingMode(.alwaysTemplate)]
             if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
                 cell.isIncoming = false
@@ -82,7 +129,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             }
             cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
             return cell
-        } else {
+        case .none:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
             cell.backgroundColor = .clear
             cell.messageLabel.text = chatViewModel?.messages?[indexPath.row].text
