@@ -68,20 +68,20 @@
 		97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */; };
 		97BC0DE62C747A9800F4D0B4 /* MainPostListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE12C747A9800F4D0B4 /* MainPostListViewModel.swift */; };
 		97BC0DE72C747A9800F4D0B4 /* AddCareSeekerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE22C747A9800F4D0B4 /* AddCareSeekerViewModel.swift */; };
-		97BC0DE82C747A9800F4D0B4 /* AddCareProviderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE32C747A9800F4D0B4 /* AddCareProviderViewModel.swift */; };
+		97BC0DE82C747A9800F4D0B4 /* AddPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */; };
 		97BC0DE92C747A9800F4D0B4 /* EditCareProviderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE42C747A9800F4D0B4 /* EditCareProviderViewModel.swift */; };
 		97BC0DEA2C747A9800F4D0B4 /* EditCareSeekerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE52C747A9800F4D0B4 /* EditCareSeekerViewModel.swift */; };
-		97BC0DED2C747AAA00F4D0B4 /* EditCareSeekerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DEB2C747AA900F4D0B4 /* EditCareSeekerViewController.swift */; };
-		97BC0DEE2C747AAA00F4D0B4 /* EditCareProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DEC2C747AA900F4D0B4 /* EditCareProviderViewController.swift */; };
+		97BC0DF62C75BCCF00F4D0B4 /* EditCareProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DEF2C75BCCF00F4D0B4 /* EditCareProviderViewController.swift */; };
+		97BC0DF72C75BCCF00F4D0B4 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */; };
+		97BC0DF82C75BCCF00F4D0B4 /* MainPostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */; };
+		97BC0DF92C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF22C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift */; };
+		97BC0DFA2C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF32C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift */; };
+		97BC0DFB2C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF42C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift */; };
+		97BC0DFC2C75BCCF00F4D0B4 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */; };
 		97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */; };
 		97D1BE422C6C7F0500F7A983 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */; };
 		97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */; };
 		97D1BE472C6C7F8800F7A983 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE462C6C7F8800F7A983 /* LoginViewModel.swift */; };
-		97D1BE5A2C6C847600F7A983 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE512C6C847600F7A983 /* AddPostViewController.swift */; };
-		97D1BE5B2C6C847600F7A983 /* MainPostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE522C6C847600F7A983 /* MainPostListViewController.swift */; };
-		97D1BE5D2C6C847600F7A983 /* PostCareProviderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE542C6C847600F7A983 /* PostCareProviderTableViewController.swift */; };
-		97D1BE5F2C6C847600F7A983 /* PostCareSeekerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE562C6C847600F7A983 /* PostCareSeekerTableViewController.swift */; };
-		97D1BE602C6C847600F7A983 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE572C6C847600F7A983 /* PostDetailViewController.swift */; };
 		97D1BE692C6C8B7D00F7A983 /* AboutMeTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE622C6C8B7D00F7A983 /* AboutMeTableViewModel.swift */; };
 		97D1BE6A2C6C8B7D00F7A983 /* AboutMeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE632C6C8B7D00F7A983 /* AboutMeViewModel.swift */; };
 		97D1BE6B2C6C8B7D00F7A983 /* NincknameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE642C6C8B7D00F7A983 /* NincknameViewModel.swift */; };
@@ -204,20 +204,20 @@
 		97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE12C747A9800F4D0B4 /* MainPostListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE22C747A9800F4D0B4 /* AddCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCareSeekerViewModel.swift; sourceTree = "<group>"; };
-		97BC0DE32C747A9800F4D0B4 /* AddCareProviderViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCareProviderViewModel.swift; sourceTree = "<group>"; };
+		97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE42C747A9800F4D0B4 /* EditCareProviderViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE52C747A9800F4D0B4 /* EditCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewModel.swift; sourceTree = "<group>"; };
-		97BC0DEB2C747AA900F4D0B4 /* EditCareSeekerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewController.swift; sourceTree = "<group>"; };
-		97BC0DEC2C747AA900F4D0B4 /* EditCareProviderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewController.swift; sourceTree = "<group>"; };
+		97BC0DEF2C75BCCF00F4D0B4 /* EditCareProviderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewController.swift; sourceTree = "<group>"; };
+		97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
+		97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
+		97BC0DF22C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareSeekerTableViewController.swift; sourceTree = "<group>"; };
+		97BC0DF32C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewController.swift; sourceTree = "<group>"; };
+		97BC0DF42C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareProviderTableViewController.swift; sourceTree = "<group>"; };
+		97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
 		97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetLocationViewController.swift; sourceTree = "<group>"; };
 		97D1BE462C6C7F8800F7A983 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
-		97D1BE512C6C847600F7A983 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
-		97D1BE522C6C847600F7A983 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
-		97D1BE542C6C847600F7A983 /* PostCareProviderTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareProviderTableViewController.swift; sourceTree = "<group>"; };
-		97D1BE562C6C847600F7A983 /* PostCareSeekerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareSeekerTableViewController.swift; sourceTree = "<group>"; };
-		97D1BE572C6C847600F7A983 /* PostDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		97D1BE622C6C8B7D00F7A983 /* AboutMeTableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutMeTableViewModel.swift; sourceTree = "<group>"; };
 		97D1BE632C6C8B7D00F7A983 /* AboutMeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutMeViewModel.swift; sourceTree = "<group>"; };
 		97D1BE642C6C8B7D00F7A983 /* NincknameViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NincknameViewModel.swift; sourceTree = "<group>"; };
@@ -529,13 +529,6 @@
 			children = (
 				97D1BEC72C6C9E2D00F7A983 /* ViewModels */,
 				97D1BEA32C6C93FA00F7A983 /* Views */,
-				97D1BE512C6C847600F7A983 /* AddPostViewController.swift */,
-				97BC0DEC2C747AA900F4D0B4 /* EditCareProviderViewController.swift */,
-				97BC0DEB2C747AA900F4D0B4 /* EditCareSeekerViewController.swift */,
-				97D1BE522C6C847600F7A983 /* MainPostListViewController.swift */,
-				97D1BE542C6C847600F7A983 /* PostCareProviderTableViewController.swift */,
-				97D1BE562C6C847600F7A983 /* PostCareSeekerTableViewController.swift */,
-				97D1BE572C6C847600F7A983 /* PostDetailViewController.swift */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -637,6 +630,13 @@
 		97D1BEA32C6C93FA00F7A983 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */,
+				97BC0DEF2C75BCCF00F4D0B4 /* EditCareProviderViewController.swift */,
+				97BC0DF32C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift */,
+				97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */,
+				97BC0DF42C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift */,
+				97BC0DF22C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift */,
+				97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */,
 				97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */,
 			);
 			path = Views;
@@ -661,7 +661,7 @@
 		97D1BEC72C6C9E2D00F7A983 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				97BC0DE32C747A9800F4D0B4 /* AddCareProviderViewModel.swift */,
+				97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */,
 				97BC0DE22C747A9800F4D0B4 /* AddCareSeekerViewModel.swift */,
 				97BC0DE42C747A9800F4D0B4 /* EditCareProviderViewModel.swift */,
 				97BC0DE52C747A9800F4D0B4 /* EditCareSeekerViewModel.swift */,
@@ -754,7 +754,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97BC0DE82C747A9800F4D0B4 /* AddCareProviderViewModel.swift in Sources */,
+				97BC0DE82C747A9800F4D0B4 /* AddPostViewModel.swift in Sources */,
 				97D1BE472C6C7F8800F7A983 /* LoginViewModel.swift in Sources */,
 				97D1BE802C6C8BBA00F7A983 /* MakePlanViewModel.swift in Sources */,
 				3B596DFA2C6B461200C71851 /* CustomTableCell.swift in Sources */,
@@ -769,7 +769,6 @@
 				97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */,
 				97934E4F2C633FA700B38E0A /* (null) in Sources */,
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
-				97D1BE5A2C6C847600F7A983 /* AddPostViewController.swift in Sources */,
 				97D1BEAF2C6C9DB100F7A983 /* BundleExtension.swift in Sources */,
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
 				97D1BE7E2C6C8BBA00F7A983 /* PlanProgressBar.swift in Sources */,
@@ -782,23 +781,20 @@
 				3B61C69A2C71DCAD00337B66 /* SelfIntroductionViewModel.swift in Sources */,
 				97D1BE812C6C8BBA00F7A983 /* ChatAdditionalButtonModel.swift in Sources */,
 				3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */,
-				97D1BE602C6C847600F7A983 /* PostDetailViewController.swift in Sources */,
+				97BC0DFA2C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift in Sources */,
 				97D1BE6E2C6C8B7D00F7A983 /* ProfileViewModel.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				3B6DE1AC2C72D24B009DD41A /* CareRecordViewController.swift in Sources */,
 				3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
 				156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */,
-				97BC0DEE2C747AAA00F4D0B4 /* EditCareProviderViewController.swift in Sources */,
 				58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */,
 				97D1BEC22C6C9DF400F7A983 /* FinalConfirmPlanViewController.swift in Sources */,
 				3B61C6982C71CB1600337B66 /* SelfIntroductionViewController.swift in Sources */,
 				97934DFB2C62F87D00B38E0A /* User.swift in Sources */,
 				97D1BEBD2C6C9DF400F7A983 /* ChatListViewController.swift in Sources */,
-				97D1BE5B2C6C847600F7A983 /* MainPostListViewController.swift in Sources */,
-				97D1BE5D2C6C847600F7A983 /* PostCareProviderTableViewController.swift in Sources */,
-				97D1BE5F2C6C847600F7A983 /* PostCareSeekerTableViewController.swift in Sources */,
 				97D1BEA82C6C954100F7A983 /* DataManager.swift in Sources */,
+				97BC0DF92C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift in Sources */,
 				97D1BE6C2C6C8B7D00F7A983 /* ProfileImageViewModel.swift in Sources */,
 				97BC0DE92C747A9800F4D0B4 /* EditCareProviderViewModel.swift in Sources */,
 				97D1BE6D2C6C8B7D00F7A983 /* ProfileTableViewModel.swift in Sources */,
@@ -806,12 +802,14 @@
 				97934E232C62FAC800B38E0A /* Plan.swift in Sources */,
 				97D1BE7D2C6C8BBA00F7A983 /* ChatAdditionalButton.swift in Sources */,
 				97D1BEC32C6C9DF400F7A983 /* MakePlanViewController.swift in Sources */,
+				97BC0DF82C75BCCF00F4D0B4 /* MainPostListViewController.swift in Sources */,
 				97D1BE692C6C8B7D00F7A983 /* AboutMeTableViewModel.swift in Sources */,
 				97934DD92C62F3C600B38E0A /* ViewController.swift in Sources */,
 				97D1BE6A2C6C8B7D00F7A983 /* AboutMeViewModel.swift in Sources */,
 				97D1BE9F2C6C93CD00F7A983 /* ProfileViewController.swift in Sources */,
 				97D1BE7F2C6C8BBA00F7A983 /* ChatAdditionalButtonsViewModel.swift in Sources */,
 				97D1BE6B2C6C8B7D00F7A983 /* NincknameViewModel.swift in Sources */,
+				97BC0DF62C75BCCF00F4D0B4 /* EditCareProviderViewController.swift in Sources */,
 				3B57780B2C733533000643C9 /* ReviewSendTableViewCell.swift in Sources */,
 				97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */,
 				97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */,
@@ -821,10 +819,12 @@
 				97D1BEBC2C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift in Sources */,
 				97D1BEA52C6C93FA00F7A983 /* PostListViewController.swift in Sources */,
 				3B57780D2C73356E000643C9 /* ReviewPostTableViewCell.swift in Sources */,
+				97BC0DFB2C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift in Sources */,
 				97D1BE9D2C6C93CD00F7A983 /* AboutMeViewController.swift in Sources */,
 				97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */,
 				97934DFF2C62F88B00B38E0A /* Post.swift in Sources */,
 				97934E5A2C65EDBD00B38E0A /* MapViewController.swift in Sources */,
+				97BC0DFC2C75BCCF00F4D0B4 /* AddPostViewController.swift in Sources */,
 				974FF2522C6C5BA5009277B9 /* SearchMapDetailViewController.swift in Sources */,
 				97934E212C62FAC300B38E0A /* Location.swift in Sources */,
 				97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */,
@@ -841,7 +841,6 @@
 				3B596DFF2C6B462B00C71851 /* InformationTableCell.swift in Sources */,
 				97934E032C62F89700B38E0A /* Message.swift in Sources */,
 				97934E1D2C62F8F000B38E0A /* ReviewViewModel.swift in Sources */,
-				97BC0DED2C747AAA00F4D0B4 /* EditCareSeekerViewController.swift in Sources */,
 				97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */,
 				58F68FEB2C72273700A7F564 /* ChatMessageTableViewCell.swift in Sources */,
 				97D1BE9E2C6C93CD00F7A983 /* NicknameViewController.swift in Sources */,
@@ -850,6 +849,7 @@
 				15F316352C71FB6C00F30B72 /* ColorExtension.swift in Sources */,
 				3B8348122C74BF6600359E85 /* LeavePlantListViewController.swift in Sources */,
 				97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */,
+				97BC0DF72C75BCCF00F4D0B4 /* PostDetailViewController.swift in Sources */,
 				3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */,
 				97934E192C62F8E700B38E0A /* ReviewListViewModel.swift in Sources */,
 			);

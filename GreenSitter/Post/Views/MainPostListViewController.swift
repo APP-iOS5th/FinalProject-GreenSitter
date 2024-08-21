@@ -168,7 +168,8 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
         
         let addPostButtonAction = UIAction { [weak self] _ in
             guard let self = self else { return }
-            let addPostViewController = AddPostViewController()
+            // TODO: CONTEXT MENU 추가
+            let addPostViewController = AddPostViewController(postType: .lookingForSitter, viewModel: AddPostViewModel(postType: .lookingForSitter))
             if let navigationController = self.navigationController {
                 navigationController.pushViewController(addPostViewController, animated: true)
             } else {

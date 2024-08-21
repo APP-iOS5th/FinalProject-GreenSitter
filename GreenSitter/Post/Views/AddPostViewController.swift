@@ -11,6 +11,19 @@ import MapKit
 
 class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewControllerDelegate {
     
+    private var postType: PostType
+    private var viewModel: AddPostViewModel
+    
+    init(postType: PostType, viewModel: AddPostViewModel) {
+        self.postType = postType
+        self.viewModel = AddPostViewModel(postType: postType)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private let scrollView: UIScrollView = {
         let scrollView =  UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -170,6 +183,20 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         print("제목: \(titleText)")
         print("내용: \(textViewText)")
         
+        guard let titleTextField = titleTextField.text else {
+            print("Title Text Field is nil")
+            return
+        }
+        
+        viewModel.savePost(postTitle: titleTextField, postBody: textView.text) { result in
+            switch result {
+            case .success(let newPost):
+                print("Add Post: \(newPost)")
+            case .failure(let error):
+                print("Error add post \(error.localizedDescription)")
+            }
+        }
+        
         // 저장 후 화면을 종료
         navigationController?.popViewController(animated: true)
     }
@@ -326,5 +353,5 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
 
 
 #Preview {
-    return UINavigationController(rootViewController: AddPostViewController())
+    return UINavigationController(rootViewController: AddPostViewController(postType: PostType.lookingForSitter, viewModel: AddPostViewModel(postType: PostType.lookingForSitter)))
 }

@@ -41,7 +41,7 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedPost = post[indexPath.row]
         
-        let postDetailViewController = PostDetailViewController()
+        let postDetailViewController = PostDetailViewController(post: Post.samplePosts.first!)
         navigationController?.pushViewController(postDetailViewController, animated: true)
     }
     
