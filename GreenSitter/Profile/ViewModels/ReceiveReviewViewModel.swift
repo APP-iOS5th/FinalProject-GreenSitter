@@ -11,34 +11,14 @@ import FirebaseFirestore
 import FirebaseStorage
 
 extension ReceiveReviewViewController {
-    
-    func updateButtonColors(selectedTexts: [String]) {
-        guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReceiveReviewTableViewCell else {
-            return
-        }
-        
-        let buttonTextMapping: [(UIButton, String)] = [
-            (cell.row1Button, "시간 약속을 잘 지켜요!"),
-            (cell.row2Button, "의사소통이 원활해요!"),
-            (cell.row3Button, "신뢰할 수 있어요!"),
-            (cell.row4Button, "매우 친절해요!")
-        ]
-        
-        for (button, text) in buttonTextMapping {
-            if selectedTexts.contains(text) {
-                button.backgroundColor = UIColor(named: "ComplementaryColor")
-            } else {
-                button.backgroundColor = .white
-            }
-        }
-    }
-    
+    // Firestore에서 postId와 일치하는 데이터 가져오기
     func fetchPostFirebase() {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("User ID is not available")
             return
         }
         
+        // UserDefaults에서 저장된 postId 가져오기
         let savedPostId = UserDefaults.standard.string(forKey: "savedPostId") ?? ""
         print("Saved Post ID: \(savedPostId)")
         
@@ -61,13 +41,7 @@ extension ReceiveReviewViewController {
                         let postImages = postData["postImages"] as? [String] ?? []
                         let postId = postData["id"] as? String ?? ""
                         
-                        print("Post Title: \(postTitle)")
-                        print("Post Body: \(postBody)")
-                        print("Post Status: \(postStatus)")
-                        print("Update Date: \(updateDate)")
-                        print("Post Images: \(postImages)")
-                        print("Post id: \(postId)")
-                        
+                        // postId가 저장된 savedPostId와 일치하는지 확인
                         if postId == savedPostId {
                             self.post = Post(
                                 id: postId,
@@ -106,77 +80,67 @@ extension ReceiveReviewViewController {
             }
         }
     }
-
     
-//    func fetchReviewFirebase() {
-//        guard let userId = Auth.auth().currentUser?.uid else {
-//            print("User ID is not available")
-//            return
-//        }
-//        
-//        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
-//            guard let self = self else { return }
-//            if let error = error {
-//                print("Error getting document: \(error)")
-//                return
-//            }
-//            if let document = document, document.exists {
-//                let data = document.data()
-//                let reviewId = data?["id"] as? String ?? ""
-//                let userId = data?["userId"] as? String ?? ""
-//                let enabled = data?["enabled"] as? Bool ?? false
-//                let createDate = (data?["createDate"] as? Timestamp)?.dateValue() ?? Date()
-//                let updateDate = (data?["updateDate"] as? Timestamp)?.dateValue() ?? Date()
-//                let postId = data?["postId"] as? String ?? ""
-//                let ratingRawValue = data?["rating"] as? String ?? "average"
-//                let reviewText = data?["reviewText"] as? String ?? ""
-//                let selectedTexts = data?["selectedTexts"] as? [String] ?? []
-//                
-//                
-//                // Rating 열거형 정의
-//                enum Rating: String {
-//                    case bad, average, good
-//                }
-//                
-//                let rating: Rating
-//                switch ratingRawValue {
-//                case "bad":
-//                    rating = .bad
-//                case "good":
-//                    rating = .good
-//                default:
-//                    rating = .average
-//                }
-//                
-//                // 리뷰 데이터 출력
-//                print("Review ID: \(reviewId)")
-//                print("User ID: \(userId)")
-//                print("Enabled: \(enabled)")
-//                print("Create Date: \(createDate)")
-//                print("Update Date: \(updateDate)")
-//                print("Post ID: \(postId)")
-//                print("Rating: \(rating.rawValue)")
-//                print("Review Text: \(reviewText)")
-//                print("Selected Texts: \(selectedTexts)")
-//              
-//            
-//                
-//
-//                
-//                if let postImages = data?["postImages"] as? [String], !postImages.isEmpty {
-//                    let imageURL = postImages.first!
-//                    // 이미지 다운로드 및 설정은 이후 단계에서 다룹니다.
-//                }
-//                
-//                
-//                DispatchQueue.main.async {
-//                    self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
-//                }
-//            } else {
-//                print("Document does not exist")
-//            }
-//        }
-//    }
-//    
-   
+    // Firestore에서 리뷰 데이터 가져오기
+    func fetchReviewFirebase() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User ID is not available")
+            return
+        }
+        
+        // UserDefaults에서 저장된 postId 가져오기
+        let savedPostId = UserDefaults.standard.string(forKey: "savedPostId") ?? ""
+        print("Saved Post ID: \(savedPostId)")
+        
+        let userRef = db.collection("users").document(userId)
+        userRef.getDocument { [weak self] (document, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error getting document: \(error)")
+                return
+            }
+            
+            guard let document = document, document.exists else {
+                print("Document does not exist")
+                return
+            }
+            
+            if let reviewsData = document.data()?["reviews"] as? [String: Any] {
+                // Initialize variables to safely decode
+                let reviewId = reviewsData["id"] as? String ?? ""
+                let userId = reviewsData["userId"] as? String ?? ""
+                let enabled = reviewsData["enabled"] as? Bool ?? false
+                let createDate = (reviewsData["createDate"] as? Timestamp)?.dateValue() ?? Date()
+                let updateDate = (reviewsData["updateDate"] as? Timestamp)?.dateValue() ?? Date()
+                let postId = reviewsData["postId"] as? String ?? ""
+                let reviewImage = reviewsData["reviewImage"] as? [String] ?? []
+                
+                // Safely decode `rating` to `Rating` enum
+                let ratingRawValue = reviewsData["rating"] as? String ?? "average"
+                let rating = Rating(rawValue: ratingRawValue) ?? .average
+                
+                let reviewText = reviewsData["reviewText"] as? String
+                let selectedTexts = reviewsData["selectedTexts"] as? [String] ?? []
+                
+                // Initialize `self.reviews` with decoded data
+                self.reviews = Review(id: reviewId, enabled: enabled, createDate: createDate, updateDate: updateDate, userId: userId, postId: postId, rating: rating, reviewText: reviewText, reviewImage: "reviewsData", selectedTexts: selectedTexts)
+                
+                print("Fetched Review: \(String(describing: self.reviews))")
+                
+                // postId가 savedPostId와 일치하는지 확인
+                if postId == savedPostId {
+                    self.selectedTexts = selectedTexts
+                    
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                } else {
+                    print("Review post ID does not match saved post ID.")
+                }
+            } else {
+                print("Reviews data not found")
+            }
+        }
+    }
+
 }

@@ -61,7 +61,7 @@ extension ProfileViewController {
                 print("Document does not exist")
             }
         }
-    }    
+    }
     //MARK: - 변경된 사진을 파이어베이스에 저장
     func updateNickname(_ profileImage: String) {
         guard let user = Auth.auth().currentUser else {
