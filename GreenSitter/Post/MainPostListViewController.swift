@@ -217,52 +217,6 @@ class MainPostListViewController: UIViewController, UITableViewDataSource, UITab
         categoryButtonTapped(careProviderButton)
     }
     
-//    func setupSearchPostButton() {
-//        view.addSubview(searchPostButton)
-//        
-//        let searchPostButtonAction = UIAction { [weak self] _ in
-//
-//            print("searchPostButton Tapped")
-//        }
-//        
-//        searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
-//        
-//        NSLayoutConstraint.activate([
-//            searchPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-//            searchPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-//            searchPostButton.widthAnchor.constraint(equalToConstant: 40),
-//            searchPostButton.heightAnchor.constraint(equalToConstant: 40)
-//        ])
-//    }
-//    
-//
-//    
-//    func setupAddPostButton() {
-//        view.addSubview(addPostButton)
-//        
-//        let addPostButtonAction = UIAction { [weak self] _ in
-//            guard let self = self else { return }
-//            
-//            let addPostViewController = AddPostViewController()
-//            
-//            if let navigationController = self.navigationController {
-//                navigationController.pushViewController(addPostViewController, animated: true)
-//            } else {
-//                print("Navigation controller not found.")
-//            }
-//        }
-//        
-//        addPostButton.addAction(addPostButtonAction, for: .touchUpInside)
-//        
-//        NSLayoutConstraint.activate([
-//            addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-//            addPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-//            addPostButton.widthAnchor.constraint(equalToConstant: 40),
-//            addPostButton.heightAnchor.constraint(equalToConstant: 40)
-//        ])
-//    }
-    
-    
     func setupTableView() {
         tableView.dataSource = self
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "CustomCell")
