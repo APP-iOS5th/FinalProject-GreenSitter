@@ -67,16 +67,11 @@
 		97B4E8932C6AE6AA0028BE1F /* KakaoAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */; };
 		97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */; };
 		97BC0DE62C747A9800F4D0B4 /* MainPostListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE12C747A9800F4D0B4 /* MainPostListViewModel.swift */; };
-		97BC0DE72C747A9800F4D0B4 /* AddCareSeekerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE22C747A9800F4D0B4 /* AddCareSeekerViewModel.swift */; };
 		97BC0DE82C747A9800F4D0B4 /* AddPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */; };
-		97BC0DE92C747A9800F4D0B4 /* EditCareProviderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE42C747A9800F4D0B4 /* EditCareProviderViewModel.swift */; };
-		97BC0DEA2C747A9800F4D0B4 /* EditCareSeekerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE52C747A9800F4D0B4 /* EditCareSeekerViewModel.swift */; };
-		97BC0DF62C75BCCF00F4D0B4 /* EditCareProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DEF2C75BCCF00F4D0B4 /* EditCareProviderViewController.swift */; };
+		97BC0DE92C747A9800F4D0B4 /* EditPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DE42C747A9800F4D0B4 /* EditPostViewModel.swift */; };
+		97BC0DF62C75BCCF00F4D0B4 /* EditPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DEF2C75BCCF00F4D0B4 /* EditPostViewController.swift */; };
 		97BC0DF72C75BCCF00F4D0B4 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */; };
 		97BC0DF82C75BCCF00F4D0B4 /* MainPostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */; };
-		97BC0DF92C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF22C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift */; };
-		97BC0DFA2C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF32C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift */; };
-		97BC0DFB2C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF42C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift */; };
 		97BC0DFC2C75BCCF00F4D0B4 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */; };
 		97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */; };
 		97D1BE422C6C7F0500F7A983 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */; };
@@ -203,16 +198,11 @@
 		97B4E8922C6AE6AA0028BE1F /* KakaoAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoAPIService.swift; sourceTree = "<group>"; };
 		97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE12C747A9800F4D0B4 /* MainPostListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewModel.swift; sourceTree = "<group>"; };
-		97BC0DE22C747A9800F4D0B4 /* AddCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCareSeekerViewModel.swift; sourceTree = "<group>"; };
 		97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewModel.swift; sourceTree = "<group>"; };
-		97BC0DE42C747A9800F4D0B4 /* EditCareProviderViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewModel.swift; sourceTree = "<group>"; };
-		97BC0DE52C747A9800F4D0B4 /* EditCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewModel.swift; sourceTree = "<group>"; };
-		97BC0DEF2C75BCCF00F4D0B4 /* EditCareProviderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewController.swift; sourceTree = "<group>"; };
+		97BC0DE42C747A9800F4D0B4 /* EditPostViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditPostViewModel.swift; sourceTree = "<group>"; };
+		97BC0DEF2C75BCCF00F4D0B4 /* EditPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditPostViewController.swift; sourceTree = "<group>"; };
 		97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
-		97BC0DF22C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareSeekerTableViewController.swift; sourceTree = "<group>"; };
-		97BC0DF32C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewController.swift; sourceTree = "<group>"; };
-		97BC0DF42C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareProviderTableViewController.swift; sourceTree = "<group>"; };
 		97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
 		97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
@@ -631,11 +621,8 @@
 			isa = PBXGroup;
 			children = (
 				97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */,
-				97BC0DEF2C75BCCF00F4D0B4 /* EditCareProviderViewController.swift */,
-				97BC0DF32C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift */,
+				97BC0DEF2C75BCCF00F4D0B4 /* EditPostViewController.swift */,
 				97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */,
-				97BC0DF42C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift */,
-				97BC0DF22C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift */,
 				97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */,
 				97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */,
 			);
@@ -662,9 +649,7 @@
 			isa = PBXGroup;
 			children = (
 				97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */,
-				97BC0DE22C747A9800F4D0B4 /* AddCareSeekerViewModel.swift */,
-				97BC0DE42C747A9800F4D0B4 /* EditCareProviderViewModel.swift */,
-				97BC0DE52C747A9800F4D0B4 /* EditCareSeekerViewModel.swift */,
+				97BC0DE42C747A9800F4D0B4 /* EditPostViewModel.swift */,
 				97BC0DE12C747A9800F4D0B4 /* MainPostListViewModel.swift */,
 			);
 			path = ViewModels;
@@ -762,8 +747,6 @@
 				97D1BEC02C6C9DF400F7A983 /* ChatTableViewCell.swift in Sources */,
 				97934E3D2C62FFB600B38E0A /* (null) in Sources */,
 				97D1BEBF2C6C9DF400F7A983 /* ChatPostViewController.swift in Sources */,
-				97BC0DE72C747A9800F4D0B4 /* AddCareSeekerViewModel.swift in Sources */,
-				97BC0DEA2C747A9800F4D0B4 /* EditCareSeekerViewModel.swift in Sources */,
 				97D1BEBE2C6C9DF400F7A983 /* ChatMessageViewController.swift in Sources */,
 				97934E3D2C62FFB600B38E0A /* (null) in Sources */,
 				97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */,
@@ -781,7 +764,6 @@
 				3B61C69A2C71DCAD00337B66 /* SelfIntroductionViewModel.swift in Sources */,
 				97D1BE812C6C8BBA00F7A983 /* ChatAdditionalButtonModel.swift in Sources */,
 				3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */,
-				97BC0DFA2C75BCCF00F4D0B4 /* EditCareSeekerViewController.swift in Sources */,
 				97D1BE6E2C6C8B7D00F7A983 /* ProfileViewModel.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				3B6DE1AC2C72D24B009DD41A /* CareRecordViewController.swift in Sources */,
@@ -794,9 +776,8 @@
 				97934DFB2C62F87D00B38E0A /* User.swift in Sources */,
 				97D1BEBD2C6C9DF400F7A983 /* ChatListViewController.swift in Sources */,
 				97D1BEA82C6C954100F7A983 /* DataManager.swift in Sources */,
-				97BC0DF92C75BCCF00F4D0B4 /* PostCareSeekerTableViewController.swift in Sources */,
 				97D1BE6C2C6C8B7D00F7A983 /* ProfileImageViewModel.swift in Sources */,
-				97BC0DE92C747A9800F4D0B4 /* EditCareProviderViewModel.swift in Sources */,
+				97BC0DE92C747A9800F4D0B4 /* EditPostViewModel.swift in Sources */,
 				97D1BE6D2C6C8B7D00F7A983 /* ProfileTableViewModel.swift in Sources */,
 				97934E3F2C62FFC500B38E0A /* (null) in Sources */,
 				97934E232C62FAC800B38E0A /* Plan.swift in Sources */,
@@ -809,7 +790,7 @@
 				97D1BE9F2C6C93CD00F7A983 /* ProfileViewController.swift in Sources */,
 				97D1BE7F2C6C8BBA00F7A983 /* ChatAdditionalButtonsViewModel.swift in Sources */,
 				97D1BE6B2C6C8B7D00F7A983 /* NincknameViewModel.swift in Sources */,
-				97BC0DF62C75BCCF00F4D0B4 /* EditCareProviderViewController.swift in Sources */,
+				97BC0DF62C75BCCF00F4D0B4 /* EditPostViewController.swift in Sources */,
 				3B57780B2C733533000643C9 /* ReviewSendTableViewCell.swift in Sources */,
 				97934E172C62F8E300B38E0A /* PlaceListViewModel.swift in Sources */,
 				97B4E8952C6AF0FB0028BE1F /* MapViewModel.swift in Sources */,
@@ -819,7 +800,6 @@
 				97D1BEBC2C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift in Sources */,
 				97D1BEA52C6C93FA00F7A983 /* PostListViewController.swift in Sources */,
 				3B57780D2C73356E000643C9 /* ReviewPostTableViewCell.swift in Sources */,
-				97BC0DFB2C75BCCF00F4D0B4 /* PostCareProviderTableViewController.swift in Sources */,
 				97D1BE9D2C6C93CD00F7A983 /* AboutMeViewController.swift in Sources */,
 				97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */,
 				97934DFF2C62F88B00B38E0A /* Post.swift in Sources */,
