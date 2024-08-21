@@ -105,6 +105,7 @@ class MessageInputViewController: UIViewController {
     func plusButtonTapped() {
         let chatAdditionalButtonsViewController = ChatAdditionalButtonsViewController()
         chatAdditionalButtonsViewController.modalPresentationStyle = .overFullScreen
+        chatAdditionalButtonsViewController.chatViewModelDelegate = self.chatViewModel
         present(chatAdditionalButtonsViewController, animated: true)
     }
 

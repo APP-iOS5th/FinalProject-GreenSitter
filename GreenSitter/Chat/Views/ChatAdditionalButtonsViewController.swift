@@ -10,6 +10,8 @@ import PhotosUI
 
 class ChatAdditionalButtonsViewController: UIViewController {
     
+    var chatViewModelDelegate: ChatViewModel?
+    
     private let viewModel = ChatAdditionalButtonsViewModel()
     
     private var buttonViews: [ChatAdditionalButton] {
@@ -91,6 +93,7 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
         Task {
             let selectedImages = await loadImages(from: results)
             print(selectedImages)
+            chatViewModelDelegate?.sendImages(images: selectedImages)
         }
         
         picker.dismiss(animated: true)

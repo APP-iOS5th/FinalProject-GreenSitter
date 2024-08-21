@@ -10,6 +10,7 @@ import UIKit
 @MainActor
 class ChatViewModel {
     private var firestoreManager = FirestoreManager()
+    private let firestorageManager = FirestorageManager()
     
     // 로그인 여부를 나타내는 변수
     var isLoggedIn = true /// 임시로 true, false로 바꾸기
@@ -141,5 +142,61 @@ class ChatViewModel {
                 return
             }
         }
+    }
+    
+    func sendImages(images: [UIImage]) {
+        guard !images.isEmpty else {
+            print("No Image")
+            return
+        }
+
+        guard let userId = chatRoom?.userId else {
+            print("Error: userId is nil")
+            return
+        }
+        
+        guard let postUserId = chatRoom?.postUserId else {
+            print("Error: postUserId is nil")
+            return
+        }
+        
+        guard let chatRoomId = chatRoom?.id else {
+            print("Error: chatRoomId is nil")
+            return
+        }
+        
+        // TODO: - userId 수정
+        let receiverUserId: String?
+        if userId == userId {
+            receiverUserId = postUserId
+        } else {
+            receiverUserId = userId
+        }
+        
+        // firestorage에 이미지 저장
+        for image in images {
+            guard let imageData = firestorageManager.imageToData(image: image) else {
+                print("Failed to transform image to data")
+                return
+            }
+            Task {
+                do {
+                    try await firestorageManager.saveImage(data: imageData)
+                } catch {
+                    print("Failed to save image: \(error.localizedDescription)")
+                    return
+                }
+            }
+        }
+//        let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imageStrings, plan: nil)
+//        
+//        Task {
+//            do {
+//                try await firestoreManager.saveMessage(chatRoomId: chatRoomId, message: imageMessage)
+//            } catch {
+//                print("Failed to save message: \(error.localizedDescription)")
+//                return
+//            }
+//        }
     }
 }
