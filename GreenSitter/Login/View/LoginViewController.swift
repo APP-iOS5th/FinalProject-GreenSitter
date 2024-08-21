@@ -13,6 +13,8 @@ import FirebaseCore
 import FirebaseFirestore
 import GoogleSignIn
 
+
+
 class LoginViewController: UIViewController {
     var currentNonce: String? //Apple Login Property
     var users: User?
@@ -29,7 +31,7 @@ class LoginViewController: UIViewController {
     
     lazy var bodyLabel: UILabel = {
         let label = UILabel()
-        label.text = 
+        label.text =
         """
         내 주변의 새싹 돌봄이 ☘️들이
         당신의 소중한 식물을
@@ -180,6 +182,14 @@ class LoginViewController: UIViewController {
         })
     }
     
+    //MARK: - 자동로그인
+    func saveUserData(user: User) {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(user.id, forKey: "userId")
+        userDefaults.set(user.nickname, forKey: "ninckname")
+        userDefaults.synchronize()
+    }
+    
     
     //MARK: - GoogleLogin
     @objc func googleLogin() {
@@ -247,11 +257,6 @@ class LoginViewController: UIViewController {
                 
                 // Firestore에 문서 저장
                 userRef.setData([
-//                    "id": user.uid,
-//                    "email": user.email ?? "",
-//                    "displayName": user.displayName ?? "",
-//                    "location": self.users?.location ?? "",
-//                    "enabled": false,  // 콤마 추가
                     "id": user.uid,
                     "enabled": true,
                     "createDate": Date(),
@@ -283,7 +288,7 @@ class LoginViewController: UIViewController {
                     "postTitle": post.postTitle,
                     "postBody": post.postBody,
                     "postImages": post.postImages ?? [],
-                    "postStatus": "거래중",
+                    "postStatus": "거래완료",
                     "location": post.location != nil ? [
                         "latitude": post.location?.latitude ?? 0,
                         "longitude": post.location?.longitude ?? 0
@@ -371,10 +376,8 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                     let userRef = db.collection("users").document(user.uid)
                     
                     userRef.setData([
-                        "uid": user.uid,
-                        "email": user.email ?? "",
-                        "displayName": user.displayName ?? "",
-                        "location": users?.location ?? ""
+                        "id": user.uid,
+                        "nickname": ""
                     ])
                 }
                 
@@ -434,8 +437,6 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
         return hashString
     }
 }
-
-
 
 #Preview {
     LoginViewController()

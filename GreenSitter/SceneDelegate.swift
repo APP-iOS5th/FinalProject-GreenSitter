@@ -7,12 +7,21 @@
 
 //import KakaoMapsSDK
 import UIKit
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        if let currentUser = Auth.auth().currentUser {
+            // 사용자가 이미 로그인되어 있는 경우
+            navigateToMainInterface()
+        } else {
+            // 로그인되지 않은 경우, 로그인 화면으로 이동
+            navigateToLoginInterface()
+        }
         
 //        // Kakao SDK 초기화
 //        SDKInitializer.InitSDK(appKey: Bundle.main.kakaoNativeAppKey)
@@ -36,8 +45,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
         
         // Profile
-        let fourthViewController = LoginViewController()
-        let fourthNavigationController = UINavigationController(rootViewController: fourthViewController)
+        let profileViewController: UIViewController
+        if let _ = Auth.auth().currentUser {
+            // 사용자가 로그인한 경우: ProfileViewController로 이동
+            profileViewController = ProfileViewController() // ProfileViewController를 사용하세요.
+        } else {
+            // 사용자가 로그인하지 않은 경우: LoginViewController로 이동
+            profileViewController = LoginViewController()
+        }
+        let fourthNavigationController = UINavigationController(rootViewController: profileViewController)
         fourthNavigationController.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.fill"), tag: 3)
         
         let tabBarController = UITabBarController()
@@ -69,6 +85,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_ scene: UIScene) {
         // Called as the scene transitions from the foreground to the background.
+    }
+    func navigateToMainInterface() {
+        let mainViewController = MainPostListViewController()
+        let navigationController = UINavigationController(rootViewController: mainViewController)
+        window?.rootViewController = navigationController
+    }
+
+    func navigateToLoginInterface() {
+        let loginViewController = LoginViewController()
+        let navigationController = UINavigationController(rootViewController: loginViewController)
+        window?.rootViewController = navigationController
     }
 }
 
