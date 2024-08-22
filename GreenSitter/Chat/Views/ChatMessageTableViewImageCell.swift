@@ -33,11 +33,38 @@ class ChatMessageTableViewImageCell: UITableViewCell {
     lazy var imageStackView: UIStackView = {
        let imageStackView = UIStackView(arrangedSubviews: imageViews)
         imageStackView.axis = .horizontal
-        imageStackView.spacing = 7
+        imageStackView.spacing = 10
         imageStackView.distribution = .fillEqually
         imageStackView.translatesAutoresizingMaskIntoConstraints = false
-        imageStackView.backgroundColor = .black
         return imageStackView
+    }()
+    
+    lazy var firstVStackView: UIStackView = {
+        let firstVStackView = UIStackView()
+        firstVStackView.axis = .vertical
+        firstVStackView.spacing = 10
+        firstVStackView.distribution = .fillEqually
+        return firstVStackView
+    }()
+    
+    lazy var secondVStackView: UIStackView = {
+        let secondVStackView = UIStackView()
+        secondVStackView.axis = .vertical
+        secondVStackView.spacing = 10
+        secondVStackView.distribution = .fillEqually
+
+        return secondVStackView
+    }()
+    
+    lazy var morePhotosLabel: UILabel = {
+        let morePhotosLabel = UILabel()
+        morePhotosLabel.layer.cornerRadius = 10
+        morePhotosLabel.backgroundColor = .white
+        morePhotosLabel.clipsToBounds = true
+        morePhotosLabel.translatesAutoresizingMaskIntoConstraints = false
+        morePhotosLabel.numberOfLines = 0
+        morePhotosLabel.textAlignment = .center
+        return morePhotosLabel
     }()
     
     lazy var profileImageView: UIImageView = {
@@ -117,24 +144,24 @@ class ChatMessageTableViewImageCell: UITableViewCell {
                 imageStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 imageStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
                 imageStackView.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 5),
-                imageStackView.trailingAnchor.constraint(lessThanOrEqualTo: timeLabel.leadingAnchor, constant: -5),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: imageStackView.bottomAnchor, constant: -5),
-                timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100)
+                timeLabel.leadingAnchor.constraint(equalTo: imageStackView.trailingAnchor, constant: 5),
+                timeLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -100)
             ])
         } else {
             contentView.addSubview(isReadLabel)
             
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: imageStackView.bottomAnchor, constant: -5),
-                isReadLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100),
+                isReadLabel.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 100),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: imageStackView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: isReadLabel.trailingAnchor, constant: 5),
                 
                 imageStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 imageStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-                imageStackView.leadingAnchor.constraint(greaterThanOrEqualTo: timeLabel.trailingAnchor, constant: 5),
+                imageStackView.leadingAnchor.constraint(equalTo: timeLabel.trailingAnchor, constant: 5),
                 imageStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
 
             ])
@@ -143,10 +170,12 @@ class ChatMessageTableViewImageCell: UITableViewCell {
     
     private func updateImageStackView() {
         imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        firstVStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        secondVStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         imageViews = images.map { image in
             let imageView = UIImageView(image: image)
-            imageView.layer.cornerRadius = 4
+            imageView.layer.cornerRadius = 10
             imageView.backgroundColor = .white
             imageView.clipsToBounds = true
             imageView.contentMode = .scaleAspectFit
@@ -155,12 +184,33 @@ class ChatMessageTableViewImageCell: UITableViewCell {
             NSLayoutConstraint.activate([
                 imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
             ])
-            
             return imageView
         }
         
-        imageViews.forEach { imageStackView.addArrangedSubview($0) }
-
+        switch imageViews.count {
+        case 0:
+            break
+        case 1...3:
+            imageViews.forEach { imageStackView.addArrangedSubview($0) }
+        case 4:
+            firstVStackView.addArrangedSubview(imageViews[0])
+            secondVStackView.addArrangedSubview(imageViews[1])
+            firstVStackView.addArrangedSubview(imageViews[2])
+            secondVStackView.addArrangedSubview(imageViews[3])
+            
+            imageStackView.addArrangedSubview(firstVStackView)
+            imageStackView.addArrangedSubview(secondVStackView)
+        default:
+            morePhotosLabel.text = "+ \(imageViews.count - 3)\n더보기"
+            
+            firstVStackView.addArrangedSubview(imageViews[0])
+            secondVStackView.addArrangedSubview(imageViews[1])
+            firstVStackView.addArrangedSubview(imageViews[2])
+            secondVStackView.addArrangedSubview(morePhotosLabel)
+            
+            imageStackView.addArrangedSubview(firstVStackView)
+            imageStackView.addArrangedSubview(secondVStackView)
+        }
     }
 }
 

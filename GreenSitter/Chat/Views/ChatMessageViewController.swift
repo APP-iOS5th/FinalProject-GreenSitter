@@ -110,6 +110,8 @@ extension ChatMessageViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
             cell.backgroundColor = .clear
             
+            cell.tag = indexPath.row
+            
             guard let messages = self.chatViewModel?.messages[chatRoom.id],
                   indexPath.row < messages.count else {
                 fatalError("Unable to retrieve messages for the selected chat room")
@@ -120,7 +122,16 @@ extension ChatMessageViewController: UITableViewDataSource {
             
             for _ in 0..<imageCounts {
                 if let photoImage = UIImage(systemName: "photo") {
-                    progressImages.append(photoImage)
+                    
+                    let targetSize = CGSize(width: 200, height: 200)
+                    UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
+                    photoImage.draw(in: CGRect(origin: .zero, size: targetSize))
+                    let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+                    UIGraphicsEndImageContext()
+                    
+                    if let resizedImage = resizedImage {
+                        progressImages.append(resizedImage)
+                    }
                 }
             }
             cell.images = progressImages
@@ -130,7 +141,9 @@ extension ChatMessageViewController: UITableViewDataSource {
                     let images = await chatViewModel?.loadChatImages(imagePaths: imagePaths)
                     print("images : \(String(describing: images))")
                     DispatchQueue.main.async {
-                        cell.images = images ?? []
+                        if cell.tag == indexPath.row {
+                            cell.images = images ?? []
+                        }
                     }
                 }
             }
