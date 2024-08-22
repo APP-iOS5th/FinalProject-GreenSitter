@@ -71,12 +71,6 @@ class LoginViewModel: ObservableObject {
             } else {
                 print("위치정보 없음")
             }
-            
-            if !profileImage.isEmpty {
-                self.loadProfileImage(from: profileImage)
-            }
-            
-            
             DispatchQueue.main.async {
                 self.user = User(id: id,
                                  enabled: enabled,
@@ -94,55 +88,7 @@ class LoginViewModel: ObservableObject {
             }
         }
     }
-    //MARK: - gs:// URL을 https:// URL로 변환
-    func convertToHttpsURL(gsURL: String) -> String? {
-        let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
-        let encodedPath = gsURL
-            .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
-            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 한 번만 호출
-        return baseURL + (encodedPath ?? "") + "?alt=media"
-    }
-    
-    
-    
-    
-    //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
-    func loadProfileImage(from gsURL: String) {
-        guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
-              let url = URL(string: httpsURLString) else {
-            print("Invalid URL string: \(gsURL)")
-            return
-        }
-        
-        print("Fetching image from URL: \(url)") // URL을 로그로 출력하여 확인
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("이미지 다운로드 오류: \(error)")
-                return
-            }
-            
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-                print("HTTP Error: \(httpResponse.statusCode)")
-                return
-            }
-            
-            guard let data = data else {
-                print("No data received")
-                return
-            }
-            
-            print("Data received with size: \(data.count) bytes")
-            
-            guard let image = UIImage(data: data) else {
-                print("error: 이미지로 변환 실패")
-                return
-            }
 
-        }
-        task.resume()
-    }
-
-    
     func updateUserLocation(with location: Location) {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("No logged in user")
