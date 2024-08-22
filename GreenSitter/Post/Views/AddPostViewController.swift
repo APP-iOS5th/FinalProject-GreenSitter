@@ -193,11 +193,39 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         }
     }
     
+    @objc private func titleTextFieldDidChange() {
+        titleTextField.layer.borderColor = UIColor.clear.cgColor
+        titleTextField.attributedPlaceholder = NSAttributedString(string: "제목을 입력하세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+        }
+    
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
+    
+    private func validateInputs() -> Bool {
+            var isValid = true
+            
+            if titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
+                titleTextField.attributedPlaceholder = NSAttributedString(string: "제목을 입력하세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.red])
+                titleTextField.layer.borderColor = UIColor.red.cgColor
+                titleTextField.layer.borderWidth = 1.0
+                isValid = false
+            } else {
+                titleTextField.layer.borderColor = UIColor.clear.cgColor
+            }
+            
+            if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || textView.text == textViewPlaceHolder {
+                textView.textColor = .red
+                textView.text = textViewPlaceHolder
+                isValid = false
+            } else {
+                textView.layer.borderColor = UIColor.clear.cgColor
+            }
+            
+            return isValid
+        }
     
     private func setupLayout() {
         self.title = postType.rawValue
@@ -251,9 +279,6 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             
             pickerImageView.widthAnchor.constraint(equalToConstant: 100),
             pickerImageView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
-            
-            
-            
             pickerImageView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
             dividerLine2.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: 16),
@@ -310,21 +335,21 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             textView.textColor = .black
         }
     }
-
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == .lightGray {
             textView.text = nil
             textView.textColor = .black
         }
     }
-
+    
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.isEmpty {
-            textView.text = textViewPlaceHolder
-            textView.textColor = .lightGray
+            if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                textView.text = textViewPlaceHolder
+                textView.textColor = .red
+            }
         }
-    }
-
+    
     
     private func updateImageStackView() {
         imageStackView.arrangedSubviews.forEach { view in
@@ -362,3 +387,4 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         present(picker, animated: true, completion: nil)
     }
 }
+
