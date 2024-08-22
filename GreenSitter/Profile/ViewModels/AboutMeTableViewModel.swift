@@ -126,7 +126,7 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
                 print("Current User ID: \(currentUserID)")
                 print("Profile User ID: \(profileUserID)")
                 
-                if currentUserID == Auth.auth().currentUser?.uid {
+                if currentUserID == Auth.auth().currentUser?.uid{
                     let editButton = UIButton(type: .system)
                     editButton.setTitle("수정하기", for: .normal)
                     editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
