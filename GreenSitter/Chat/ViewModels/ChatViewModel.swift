@@ -114,6 +114,14 @@ class ChatViewModel {
         }.resume()
     }
     
+    func updateNotification(chatRoomId: String, userNotification: Bool, postUserNotification: Bool) async throws {
+        do {
+            try await firestoreManager.updateNotificationSetting(chatRoomId: chatRoomId, userNotification: userNotification, postUserNotification: postUserNotification)
+        } catch {
+            print("Error updating notification of chatRoom: \(error.localizedDescription)")
+        }
+    }
+    
     // MARK: - MessageInputViewController Button Methods
     // send button
     func sendButtonTapped(text: String?, chatRoom: ChatRoom) {

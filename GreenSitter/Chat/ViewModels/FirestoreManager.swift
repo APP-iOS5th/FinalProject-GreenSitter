@@ -170,6 +170,18 @@ class FirestoreManager {
         ])
     }
     
+    // 채팅방 알림 설정 업데이트
+    func updateNotificationSetting(chatRoomId: String, userNotification: Bool, postUserNotification: Bool) async throws {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+
+            try await chatRoomRef.updateData([
+                "userNotification": userNotification,
+                "postUserNotification": postUserNotification
+            ])
+            
+            print("Notification settings updated successfully for chat room \(chatRoomId).")
+    }
+    
     // MARK: - Message
     // 채팅 메세지 저장
     func saveMessage(chatRoomId: String, message: Message) async throws {

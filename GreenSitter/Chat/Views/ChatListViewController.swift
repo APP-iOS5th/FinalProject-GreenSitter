@@ -121,7 +121,7 @@ class ChatListViewController: UIViewController {
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
+//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
         
         self.view.addSubview(tableView)
         
@@ -135,6 +135,7 @@ class ChatListViewController: UIViewController {
     }
     
     // MARK: - 로그인/채팅 목록 있음 Methods
+    // TODO: - Edit 버튼 액션
     @objc private func editButtonTapped() {
         
     }
@@ -330,6 +331,7 @@ extension ChatListViewController: UITableViewDelegate {
         
         let chatViewController = ChatViewController(chatRoom: selectedChatRoom)
         chatViewController.chatViewModel = chatViewModel
+        chatViewController.index = indexPath.row
         
         self.navigationController?.pushViewController(chatViewController, animated: true)
     }

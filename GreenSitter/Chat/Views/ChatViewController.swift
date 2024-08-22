@@ -10,6 +10,11 @@ import UIKit
 class ChatViewController: UIViewController {
     var chatViewModel: ChatViewModel?
     var chatRoom: ChatRoom
+    var index: Int?
+    
+    private var currentNotification: Bool {
+        chatViewModel?.userId == chatRoom.userId ? chatRoom.userNotification : chatRoom.postUserNotification
+    }
     
     init(chatRoom: ChatRoom) {
         self.chatRoom = chatRoom
@@ -39,35 +44,8 @@ class ChatViewController: UIViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .never
         
-        // 햄버거 버튼
-        if chatViewModel?.userId == chatRoom.userId {
-            let notification = chatRoom.userNotification
-            let menuItems = [
-                UIAction(title: notification ? "알림 끄기" : "알림 켜기",
-                         image: notification ? UIImage(systemName: "bell.slash.fill") : UIImage(systemName: "bell.fill"), handler: { _ in
-                    print("알림")
-                }),
-                UIAction(title: "채팅방 나가기", image: UIImage(systemName: "door.left.hand.open"), attributes: .destructive, handler: { _ in
-                    print("나가기")
-                })
-            ]
-            let menu = UIMenu(title: "", children:  menuItems)
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
-        } else {
-            let notification = chatRoom.postUserNotification
-            let menuItems = [
-                UIAction(title: notification ? "알림 끄기" : "알림 켜기",
-                         image: notification ? UIImage(systemName: "bell.slash.fill") : UIImage(systemName: "bell.fill"), handler: { _ in
-                    print("알림")
-                }),
-                UIAction(title: "채팅방 나가기", image: UIImage(systemName: "door.left.hand.open"), attributes: .destructive, handler: { _ in
-                    print("나가기")
-                })
-            ]
-            let menu = UIMenu(title: "", children:  menuItems)
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
-        }
-
+        self.updateMenu()
+        
         let chatPostViewController = ChatPostViewController(chatRoom: chatRoom)
         let chatMessageViewController = ChatMessageViewController(chatRoom: chatRoom)
         let messageInputViewController = MessageInputViewController(chatRoom: chatRoom)
@@ -109,20 +87,72 @@ class ChatViewController: UIViewController {
             messageInputViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
             messageInputViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         ])
-
     }
     
-    @objc private func listButtonTapped() {
-        print("list button")
+    // MARK: - UIMenu Action Methods
+    private func createNotificationToggleAction() -> UIAction {
+        let notificationStatus = currentNotification
+        return UIAction(
+            title: notificationStatus ? "알림 끄기" : "알림 켜기",
+            image: notificationStatus ? UIImage(systemName: "bell.slash.fill") : UIImage(systemName: "bell.fill")) { [weak self] _ in
+            guard let self = self else { return }
+            let newNotificationStatus = !notificationStatus
+            Task {
+                do {
+                    if self.chatViewModel?.userId == self.chatRoom.userId {
+                        try await self.chatViewModel?.updateNotification(
+                            chatRoomId: self.chatRoom.id,
+                            userNotification: newNotificationStatus,
+                            postUserNotification: self.chatRoom.postUserNotification
+                        )
+                    } else {
+                        try await self.chatViewModel?.updateNotification(
+                            chatRoomId: self.chatRoom.id,
+                            userNotification: self.chatRoom.userNotification,
+                            postUserNotification: newNotificationStatus
+                        )
+                    }
+                    
+                    // 상태 업데이트
+                    if self.chatViewModel?.userId == self.chatRoom.userId {
+                        self.chatRoom.userNotification = newNotificationStatus
+                    } else {
+                        self.chatRoom.postUserNotification = newNotificationStatus
+                    }
+                    
+                    // UI 업데이트
+                    self.updateMenu()
+                    
+                } catch {
+                    print("Failed to update notification: \(error)")
+                }
+            }
+        }
     }
-    
-//     @objc private func handleTap() {
-//         let postDetailViewController = PostDetailViewController(post: Post.samplePosts.first!)
-        
-//         // TODO: - 특정 게시물로 이동
-// //        postDetailViewController.postId = postId
-        
-//         self.navigationController?.pushViewController(postDetailViewController, animated: true)
-//     }
 
+    // 메뉴를 업데이트하는 메서드
+    private func updateMenu() {
+        let notificationToggleAction = createNotificationToggleAction()
+        
+        let leaveChatRoomAction = UIAction(
+            title: "채팅방 나가기",
+            image: UIImage(systemName: "door.left.hand.open"),
+            attributes: .destructive
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            Task {
+                if let index = self.index {
+                    do {
+                        try await self.chatViewModel?.deleteChatRoom(at: index)
+                    } catch {
+                        print("Failed to delete chat room: \(error)")
+                    }
+                }
+            }
+        }
+        
+        let menuItems = [notificationToggleAction, leaveChatRoomAction]
+        let menu = UIMenu(children: menuItems)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
+    }
 }
