@@ -160,8 +160,9 @@ class AnnotationDetailViewController: UIViewController {
     }
 
     @objc private func didTapPostButton() {
-        let postDetailVC = PostDetailViewController(post: post)
-        navigationController?.pushViewController(postDetailVC, animated: true)
+        let postDetailViewController = PostDetailViewController(post: post)
+        navigationController?.pushViewController(postDetailViewController, animated: true)
+        delegate?.annotationDetailViewControllerDidDismiss(self)
     }
     
     func updatePost(_ post: Post) {

@@ -344,28 +344,27 @@ extension MapViewController: MKMapViewDelegate {
             currentDetailViewController.updatePost(post)
         } else {
             // 새로운 DetailViewController 추가
-            let detailVC = AnnotationDetailViewController(post: post)
-//            detailVC.post = post
-            detailVC.delegate = self
+            let detailViewController = AnnotationDetailViewController(post: post)
+            detailViewController.delegate = self
             
             // 최상위 뷰 계층에 추가하기 위해 keyWindow 가져오기
             if let keyWindow = UIApplication.shared.connectedScenes
                 .compactMap({ ($0 as? UIWindowScene)?.keyWindow }).first {
                 
-                keyWindow.addSubview(detailVC.view)
+                keyWindow.addSubview(detailViewController.view)
                 
                 // DetailViewController의 레이아웃 설정
-                detailVC.view.translatesAutoresizingMaskIntoConstraints = false
+                detailViewController.view.translatesAutoresizingMaskIntoConstraints = false
                 NSLayoutConstraint.activate([
-                    detailVC.view.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor),
-                    detailVC.view.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor),
-                    detailVC.view.bottomAnchor.constraint(equalTo: keyWindow.bottomAnchor),
-                    detailVC.view.heightAnchor.constraint(equalToConstant: 200) // 원하는 높이 설정
+                    detailViewController.view.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor),
+                    detailViewController.view.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor),
+                    detailViewController.view.bottomAnchor.constraint(equalTo: keyWindow.bottomAnchor),
+                    detailViewController.view.heightAnchor.constraint(equalToConstant: 200) // 원하는 높이 설정
                 ])
                 
-                addChild(detailVC)
-                detailVC.didMove(toParent: self)
-                currentDetailViewController = detailVC
+                addChild(detailViewController)
+                detailViewController.didMove(toParent: self)
+                currentDetailViewController = detailViewController
             }
         }
     }
