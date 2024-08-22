@@ -79,6 +79,7 @@ extension ProfileViewController {
                                      exp: exp,
                                      aboutMe: aboutMe,
                                      chatNotification: chatNotification)
+                    self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
                     print("사용자 데이터 불러오기: \(String(describing: self.users))")
                 }
 
@@ -87,9 +88,22 @@ extension ProfileViewController {
                     self.loadProfileImage(from: profileImage)
                 }
                 
-                DispatchQueue.main.async {
-                    self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
-                }
+                self.users = User(
+                    id: id,
+                    enabled: enabled,
+                    createDate: createDate,
+                    updateDate: updateDate,
+                    profileImage: profileImage,
+                    nickname: nickname,
+                    location: location ?? Location(locationId: "", enabled: true, createDate: Date(), updateDate: Date()),
+                    platform: platform,
+                    levelPoint: Level(rawValue: levelPoint) ?? .fruit,
+                    exp: exp,
+                    aboutMe: aboutMe,
+                    chatNotification: chatNotification
+                )
+                print("사용자 데이터 업데이트됨: \(self.users)")
+                self.tableView.reloadData()
             } else {
                 print("Document does not exist")
             }

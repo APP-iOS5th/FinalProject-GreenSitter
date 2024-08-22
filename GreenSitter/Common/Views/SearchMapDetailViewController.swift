@@ -180,7 +180,7 @@ class SearchMapDetailViewController: UIViewController {
         else if let loginViewModel = self.loginViewModel {
             print("Updating user location with address: \(location)") // 로그 추가
             loginViewModel.updateUserLocation(with: location)
-            self.dismiss(animated: true, completion: nil)
+            let profileViewController = ProfileViewController()
         }
             else {
                 print("No view model available")  // 로그 추가
