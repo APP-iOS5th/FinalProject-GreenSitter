@@ -369,12 +369,31 @@ class PostDetailViewController: UIViewController {
         profileImageView.image = UIImage(named: post.profileImage)
         
         // 이미지뷰를 horizontal scrollview 로 바꾸고, 여러 개의 이미지 표시하기
-        if let imageName = post.postImages?.first {
-            postImagesView.image = UIImage(named: imageName)
+        if let imageUrlString = post.postImages?.first, let imageUrl = URL(string: imageUrlString) {
+            print("Post Image is: \(imageUrlString)")
+            loadImage(from: imageUrl)
         } else {
+            print("Post Image is nil")
             postImagesView.image = nil
         }
     }
+
+    private func loadImage(from url: URL) {
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                DispatchQueue.main.async {
+                    self.postImagesView.image = nil
+                }
+                return
+            }
+            let image = UIImage(data: data)
+            DispatchQueue.main.async {
+                self.postImagesView.image = image
+            }
+        }
+        task.resume()
+    }
+
     
     @objc private func userProfileButtonTapped() {
         let aboutMeVC = AboutMeViewController(userId: post.userId)
