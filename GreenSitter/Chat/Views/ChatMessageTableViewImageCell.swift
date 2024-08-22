@@ -108,7 +108,7 @@ class ChatMessageTableViewImageCell: UITableViewCell {
             
             NSLayoutConstraint.activate([
                 profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-                profileImageView.centerYAnchor.constraint(equalTo: imageStackView.centerYAnchor),
+                profileImageView.topAnchor.constraint(equalTo: imageStackView.topAnchor),
                 profileImageView.widthAnchor.constraint(equalToConstant: 52),
                 profileImageView.heightAnchor.constraint(equalToConstant: 52),
                 
@@ -150,10 +150,24 @@ class ChatMessageTableViewImageCell: UITableViewCell {
             imageView.contentMode = .scaleAspectFit
             imageView.translatesAutoresizingMaskIntoConstraints = false
             
-            NSLayoutConstraint.activate([
-                imageView.widthAnchor.constraint(equalToConstant: 80),
-                imageView.heightAnchor.constraint(equalToConstant: 80),
+            switch images.count {
+            case 1: NSLayoutConstraint.activate([
+                imageView.widthAnchor.constraint(equalToConstant: 150),
+                imageView.heightAnchor.constraint(equalToConstant: 150),
             ])
+            case 2: NSLayoutConstraint.activate([
+                imageView.widthAnchor.constraint(equalToConstant: 100),
+                imageView.heightAnchor.constraint(equalToConstant: 100),
+            ])
+            case 3: NSLayoutConstraint.activate([
+                imageView.widthAnchor.constraint(equalToConstant: 70),
+                imageView.heightAnchor.constraint(equalToConstant: 70),
+            ])
+            default: NSLayoutConstraint.activate([
+                imageView.widthAnchor.constraint(equalToConstant: 100),
+                imageView.heightAnchor.constraint(equalToConstant: 100),
+            ])
+            }
             
             return imageView
         }
