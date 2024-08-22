@@ -167,7 +167,7 @@ struct SampleChatData {
             platform: "apple",
             levelPoint: Level.seeds, exp: 0,
             aboutMe: "A passionate developer with a love for Swift and iOS.",
-            chatNotification: true
+            chatNotification: true, docId: ""
         ),
         User(
             id: "250e8400-e29b-41d4-a716-446655440002",
@@ -180,7 +180,7 @@ struct SampleChatData {
             platform: "apple",
             levelPoint: Level.seeds, exp: 0,
             aboutMe: "A tech enthusiast who loves exploring new technologies.",
-            chatNotification: false
+            chatNotification: false, docId: ""
         ),
         User(
             id: "250e8400-e29b-41d4-a716-446655440003",
@@ -193,7 +193,7 @@ struct SampleChatData {
             platform: "apple",
             levelPoint: Level.seeds, exp: 0,
             aboutMe: "A digital nomad traveling the world while working remotely.",
-            chatNotification: true
+            chatNotification: true, docId: ""
         )
     ]
     

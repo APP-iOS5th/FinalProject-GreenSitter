@@ -46,6 +46,9 @@ extension AboutMeViewController {
                 let aboutMe = data?["aboutMe"] as? String ?? "자기 소개를 입력해주세요"
                 let levelPoint = data?["levelPoint"] as? String ?? ""
                 print("Fetched levelPoint: \(levelPoint)")
+                print("자기소개: \(aboutMe)")
+                
+                self.user?.aboutMe = aboutMe
                 
                 // location 필드에서 address를 가져오기
                 if let location = data?["location"] as? [String: Any],

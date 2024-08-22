@@ -16,7 +16,6 @@ class SetProfileViewController: UIViewController {
     let db = Firestore.firestore()
     var selectButton: UIButton? //선택한 버튼을 저장할 변수
     private let location: Location
-    private let viewModel = LoginViewModel()
     init(location: Location) {
         self.location = location
         super.init(nibName: nil, bundle: nil)
@@ -116,6 +115,7 @@ class SetProfileViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
+    
     lazy var nicknameStatusLabel: UILabel = {
         let label = UILabel()
         label.text = ""  // 처음에는 빈 문자열로 설정
@@ -124,6 +124,7 @@ class SetProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -137,6 +138,7 @@ class SetProfileViewController: UIViewController {
         view.addSubview(nextButton)
         view.addSubview(skipButton)
         view.addSubview(nicknameStatusLabel)
+        
         imageButton1.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         imageButton2.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         imageButton3.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
@@ -151,36 +153,36 @@ class SetProfileViewController: UIViewController {
         // 제약 조건 설정
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            imageStackView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageStackView1.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            imageStackView1.widthAnchor.constraint(equalToConstant: 320),
-            imageStackView1.heightAnchor.constraint(equalToConstant: 100),
-            
-            imageStackView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageStackView2.topAnchor.constraint(equalTo: imageStackView1.bottomAnchor, constant: 20),
-            imageStackView2.widthAnchor.constraint(equalToConstant: 320),
-            imageStackView2.heightAnchor.constraint(equalToConstant: 100),
-            
-            nickNameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nickNameTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 80),
-            nickNameTextField.widthAnchor.constraint(equalToConstant: 350),
+             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             
+             imageStackView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             imageStackView1.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
+             imageStackView1.widthAnchor.constraint(equalToConstant: 320),
+             imageStackView1.heightAnchor.constraint(equalToConstant: 100),
+             
+             imageStackView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             imageStackView2.topAnchor.constraint(equalTo: imageStackView1.bottomAnchor, constant: 20),
+             imageStackView2.widthAnchor.constraint(equalToConstant: 320),
+             imageStackView2.heightAnchor.constraint(equalToConstant: 100),
+             
+             nickNameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             nickNameTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 80),
+             nickNameTextField.widthAnchor.constraint(equalToConstant: 350),
 
-            nicknameStatusLabel.topAnchor.constraint(equalTo: nickNameTextField.bottomAnchor, constant: 8),
-            nicknameStatusLabel.leadingAnchor.constraint(equalTo: nickNameTextField.leadingAnchor),
-            nicknameStatusLabel.trailingAnchor.constraint(equalTo: nickNameTextField.trailingAnchor),
+             nicknameStatusLabel.topAnchor.constraint(equalTo: nickNameTextField.bottomAnchor, constant: 8),
+             nicknameStatusLabel.leadingAnchor.constraint(equalTo: nickNameTextField.leadingAnchor),
+             nicknameStatusLabel.trailingAnchor.constraint(equalTo: nickNameTextField.trailingAnchor),
 
-            nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nextButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
-            nextButton.widthAnchor.constraint(equalToConstant: 350),
-            nextButton.heightAnchor.constraint(equalToConstant: 45),
-            
-            skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
+             nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             nextButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
+             nextButton.widthAnchor.constraint(equalToConstant: 350),
+             nextButton.heightAnchor.constraint(equalToConstant: 45),
+             
+             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
         ])
-
     }
+    
     //MARK: - 중복된 닉네임 체크
     func checkNicknameAvailability(nickname: String) {
         let usersRef = db.collection("users")
@@ -205,7 +207,7 @@ class SetProfileViewController: UIViewController {
             }
         }
     }
-
+    
     @objc func nicknameTextChanged(_ textField: UITextField) {
         guard let nickname = textField.text, !nickname.isEmpty else {
             nicknameStatusLabel.text = ""
@@ -213,7 +215,6 @@ class SetProfileViewController: UIViewController {
         }
         checkNicknameAvailability(nickname: nickname)
     }
-    
     
     func setupImage() {
         let imageUrls = [
@@ -267,7 +268,7 @@ class SetProfileViewController: UIViewController {
             selectButton?.layer.borderWidth = 2.0 // 테두리 두께 설정
         }
     }
-    
+
     //MARK: - nextButton을 눌렀을때 닉네임을 파이어베이스에 저장
     @objc func nextTap() {
         guard let nicknameStatus = nicknameStatusLabel.text, nicknameStatus == "사용 가능한 닉네임입니다." else {
@@ -315,26 +316,54 @@ class SetProfileViewController: UIViewController {
                 print("Firestore Writing Error: \(error)")
             } else {
                 print("Nickname successfully saved!")
-                // 닉네임이 저장되면 ProfileViewController로 이동
                 let profileViewController = ProfileViewController()
                 self.navigationController?.pushViewController(profileViewController, animated: true)
             }
         }
-        viewModel.userFetchFirebase(profileImage: selectedImageUrl, nickname: nickname, location: location)
-//        print("\(viewModel.user)")
-//                프로필 뷰로이동
-        DispatchQueue.main.async {
+        LoginViewModel.shared.userFetchFirebase(profileImage: selectedImageUrl, nickname: nickname, location: location, docId: user.uid)
 
-        }
         
     }
     // 메인뷰로 이동
     @objc func skipTap() {
-        let postListViewController = MainPostListViewController()
-        navigationController?.pushViewController(postListViewController, animated: true)
-    }
+            
+            // 스킵을 하는 경우에도 user data 가 기본값으로 저장되어야 하므로
+            // Firestore에 사용자 데이터 저장
+            
+            let defaultImageUrl = "gs://greensitter-6dedd.appspot.com/꽃1.png"
+            
+            let userData: [String: Any] = [
+                "id": UUID().uuidString,
+                "enabled": true,
+                "createDate": Date(),
+                "updateDate": Date(),
+                "profileImage": defaultImageUrl,
+                "nickname": "기본 닉네임",   // TODO: 닉네임 자동생성기 호출
+                "levelPoint": Level.seeds.rawValue,
+                "exp": 0,
+                "aboutMe": "",
+                "chatNotification": false
+            ]
+            
+            guard let user = Auth.auth().currentUser else {
+                print("Error: Firebase authResult is nil.")
+                return
+            }
+            
+            db.collection("users").document(user.uid).setData(userData, merge: true) { error in
+                if let error = error {
+                    print("Firestore Writing Error: \(error)")
+                } else {
+                    print("Nickname successfully saved!")
+                }
+            }
+            LoginViewModel.shared.userFetchFirebase(profileImage: defaultImageUrl, nickname: "기본 닉네임", location: location, docId: user.uid)
+            
+            let postListViewController = MainPostListViewController()
+            navigationController?.pushViewController(postListViewController, animated: true)
+        }
+        
     
     
 }
-
 

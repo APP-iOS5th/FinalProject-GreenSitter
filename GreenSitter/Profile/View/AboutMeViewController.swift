@@ -16,7 +16,7 @@ class AboutMeViewController: UIViewController{
     let db = Firestore.firestore()
     var user: User?
     var sectionTitle = ["자기소개", "돌봄 정보"]
-    let viewModel = LoginViewModel()
+
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
 

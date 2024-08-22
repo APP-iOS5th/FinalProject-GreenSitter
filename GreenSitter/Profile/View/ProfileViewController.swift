@@ -10,6 +10,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 import Combine
+
 class ProfileViewController: UIViewController {
     
     // MARK: - Properties
@@ -18,13 +19,14 @@ class ProfileViewController: UIViewController {
     let db = Firestore.firestore()
     let storage = Storage.storage()
     let someIndexPath = IndexPath(row: 0, section: 0) // 적절한 인덱스 경로로 대체
-    var users: User?
-    let viewModel = LoginViewModel()
+
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
-    
 
-    
+    var user: User? {
+        print("LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
+        return LoginViewModel.shared.user
+    }
     
     // MARK: - UI Components
     lazy var circleView: UIView = {
@@ -111,14 +113,18 @@ class ProfileViewController: UIViewController {
         ])
     }
     
-    
-    
     // MARK: - Actions
     @objc func myProfilebuttonTap() {
+        
+        guard let userDocId = LoginViewModel.shared.user?.docId else {
+            print("User ID is not available")
+            return
+        }
+        
+//        let aboutMeViewController = AboutMeViewController(userId: userDocId)
         let aboutMeViewController = AboutMeViewController()
         self.navigationController?.pushViewController(aboutMeViewController, animated: true)
     }
-    
     
     
     @objc func changeNicknameButtonTap() {
@@ -137,7 +143,6 @@ class ProfileViewController: UIViewController {
     
     @objc func changeLocationButtonTap() {
         let searchMapViewController = SearchMapViewController()
-        searchMapViewController.loginViewModel = viewModel
         let navigationController = UINavigationController(rootViewController: searchMapViewController)
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true, completion: nil)
@@ -212,7 +217,6 @@ class ProfileViewController: UIViewController {
         
     }
     @objc func handleNicknameChanged() {
-        // 사용자 데이터를 다시 fetch하여 갱신합니다.
         fetchUserFirebase()
     }
     

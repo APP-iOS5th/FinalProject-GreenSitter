@@ -40,7 +40,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             // "이름" 셀
             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
             (cell as! ProfileTableViewCell).titleLabel.text = "이름"
-            (cell as! ProfileTableViewCell).bodyLabel.text = users?.nickname
+            (cell as! ProfileTableViewCell).bodyLabel.text = user?.nickname
             (cell as! ProfileTableViewCell).bodyLabel.textColor = .black
             (cell as! ProfileTableViewCell).actionButton.isHidden = false
             (cell as! ProfileTableViewCell).actionButton.setTitle("변경", for: .normal)
@@ -53,11 +53,13 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let profileCell = cell as! ProfileTableViewCell
 
             profileCell.titleLabel.text = "사는 곳"
-            profileCell.bodyLabel.text = users?.location.address
-
+            
+            profileCell.bodyLabel.text = user?.location.address
+            
             profileCell.actionButton.isHidden = false
             profileCell.actionButton.setTitle("변경", for: .normal)
-            profileCell.actionButton.setImage(nil, for: .normal) // 이미지 설정 초기화
+            profileCell.actionButton.setImage(nil, for: .normal)
+            
             
             // 이전 타겟을 모두 제거하고 새로운 타겟을 추가
             profileCell.actionButton.removeTarget(nil, action: nil, for: .allEvents)
@@ -69,7 +71,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
             let profileCell = cell as! ProfileTableViewCell
             profileCell.titleLabel.text = nil
-            profileCell.bodyLabel.text = users?.levelPoint.rawValue
+            profileCell.bodyLabel.text = user?.levelPoint.rawValue
             profileCell.iconImageView.image = UIImage(named: "logo7")
             profileCell.actionButton.setImage(UIImage(systemName: "exclamationmark.circle"), for: .normal)
             profileCell.actionButton.setTitle(nil, for: .normal) // '변경' 텍스트 제거
@@ -177,4 +179,3 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
 }
-
