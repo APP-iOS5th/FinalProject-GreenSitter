@@ -458,6 +458,7 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
         return String(nonce)
     }
     
+    
     //주어진 문자열의 SHA256 해시 값을 반환하는 메서드
     @available(iOS 13, *)
     private func sha256(_ input: String) -> String {
