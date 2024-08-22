@@ -10,6 +10,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 import Combine
+import AuthenticationServices
 
 extension ProfileViewController {
     //MARK: - 파이어베이스 데이터 불러오기
@@ -148,7 +149,7 @@ extension ProfileViewController {
         }
     }
     
-   
+    
     func bindViewModel(for indexPath: IndexPath) {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
         mapViewModel.$currentLocation
@@ -162,10 +163,10 @@ extension ProfileViewController {
             }
             .store(in: &cancellables)
     }
-
-
-
-
+    
+    
+    
+    
     
     
     //MARK: - 로그아웃
@@ -192,11 +193,52 @@ extension ProfileViewController {
         }
         let deletion = UIAlertAction(title: "탈퇴 하기", style: .destructive){ action in
             print("탈퇴 눌렸습니다.")
+            self.deleteUserAccount()
         }
         alert.addAction(cancle)
         alert.addAction(deletion)
         present(alert, animated: true)
     }
     
+    func deleteUserData(completion: @escaping(Bool) -> Void) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        db.collection("users").document(userId).delete() { error in
+            if let error = error {
+                print("Error deleting user data: \(error.localizedDescription)")
+                completion(false)
+            }
+            else {
+                print("User data deleted successfully from Firestore")
+                completion(true)
+            }
+        }
+    }
+    
+    //애플 회원탈퇴
+    func deleteUserAccount() {
+        guard let user = Auth.auth().currentUser else { return }
+        
+        deleteUserData { success in
+            if success {
+                user.delete { error in
+                    if let error = error {
+                        print("Error deleting user: \(error.localizedDescription)")
+                        
+                    }
+                    else {
+                        print("User account deleted successfully")
+                        // 로그인 화면으로 이동
+                        let loginViewController = LoginViewController()
+                        self.navigationController?.pushViewController(loginViewController, animated: true)
+                    }
+                }
+            }
+            else {
+                print("Failed to delete user data from Firestore")
+            }
+            
+        }
+    }
 }
 
