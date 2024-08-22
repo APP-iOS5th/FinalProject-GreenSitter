@@ -15,22 +15,86 @@ import AuthenticationServices
 extension ProfileViewController {
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {
-        if viewModel.user?.id == Auth.auth().currentUser?.uid {
-            if let profileImage = viewModel.user?.profileImage {
-                self.loadProfileImage(from: profileImage)
-            }
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
-            }
-
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User ID is not available")
+            return
         }
         
-        
-        // 프로필 이미지 URL을 사용하여 이미지 로드
+        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error getting document: \(error)")
+                return
+            }
+            if let document = document, document.exists {
+                let data = document.data()
+                let id = data?["id"] as? String ?? ""
+                let enabled = data?["enabled"] as? Bool ?? false
+                let createDate = (data?["createDate"] as? Timestamp)?.dateValue() ?? Date()
+                let updateDate = (data?["updateDate"] as? Timestamp)?.dateValue() ?? Date()
+                let profileImage = data?["profileImage"] as? String ?? ""
+                let nickname = data?["nickname"] as? String ?? "닉네임 없음"
+                let platform = data?["platform"] as? String ?? ""
+                let levelPoint = data?["levelPoint"] as? String ?? ""
+                let exp = data?["exp"] as? Int ?? 0
+                let aboutMe = data?["aboutMe"] as? String ?? ""
+                let chatNotification = data?["chatNotification"] as? Bool ?? false
+
+                // Location 데이터 변환
+                var location: Location?
+                if let locationData = data?["location"] as? [String: Any] {
+                    // 위치 정보 문자열을 Double로 변환
+                    let latitudeString = locationData["latitude"] as? String ?? ""
+                    let longitudeString = locationData["longitude"] as? String ?? ""
+                    let latitude = Double(latitudeString) ?? 0.0
+                    let longitude = Double(longitudeString) ?? 0.0
+
+                    let locationId = locationData["locationId"] as? String ?? ""
+                    let enabled = (locationData["enabled"] as? Bool) ?? false
+                    let placeName = locationData["placeName"] as? String ?? ""
+                    let address = locationData["address"] as? String ?? ""
+                    
+                    // Firestore에서 가져온 createDate 및 updateDate는 문자열로 되어 있으므로 Date로 변환
+                    let dateFormatter = ISO8601DateFormatter()
+                    let createDateString = locationData["createDate"] as? String ?? ""
+                    let updateDateString = locationData["updateDate"] as? String ?? ""
+                    let createDate = dateFormatter.date(from: createDateString) ?? Date()
+                    let updateDate = dateFormatter.date(from: updateDateString) ?? Date()
+
+                    location = Location(locationId: locationId, enabled: enabled, createDate: createDate, updateDate: updateDate, latitude: latitude, longitude: longitude, placeName: placeName, address: address)
+                } else {
+                    print("위치정보 없음")
+                }
+                
+                DispatchQueue.main.async {
+                    self.users = User(id: id,
+                                     enabled: enabled,
+                                     createDate: createDate,
+                                     updateDate: updateDate,
+                                     profileImage: profileImage,
+                                     nickname: nickname,
+                                     location: location ?? Location(locationId: "", enabled: true, createDate: Date(), updateDate: Date()),
+                                     platform: platform,
+                                     levelPoint: Level(rawValue: levelPoint) ?? .fruit,
+                                     exp: exp,
+                                     aboutMe: aboutMe,
+                                     chatNotification: chatNotification)
+                    print("사용자 데이터 불러오기: \(String(describing: self.users))")
+                }
+
+                // 프로필 이미지 URL을 사용하여 이미지 로드
+                if !profileImage.isEmpty {
+                    self.loadProfileImage(from: profileImage)
+                }
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
+                }
+            } else {
+                print("Document does not exist")
+            }
+        }
     }
-        
-    
     //MARK: - 변경된 사진을 파이어베이스에 저장
     func updateNickname(_ profileImage: String) {
         guard let user = Auth.auth().currentUser else {

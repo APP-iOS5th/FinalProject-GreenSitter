@@ -18,20 +18,12 @@ class ProfileViewController: UIViewController {
     let db = Firestore.firestore()
     let storage = Storage.storage()
     let someIndexPath = IndexPath(row: 0, section: 0) // 적절한 인덱스 경로로 대체
+    var users: User?
     let viewModel = LoginViewModel()
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
     
-    private let user: User?
-    init(user: User) {
-        self.user = user
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+
     
     
     // MARK: - UI Components
@@ -75,7 +67,6 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        viewModel.firebaseFetch(userId: currentUser?.uid)
         setupView()
         fetchUserFirebase()
         setupTextField()
