@@ -50,6 +50,7 @@ class ChatMessageViewController: UIViewController {
         
         tableView.register(ChatMessageTableViewCell.self, forCellReuseIdentifier: "ChatMessageCell")
         tableView.register(ChatMessageTableViewImageCell.self, forCellReuseIdentifier: "ChatMessageImageCell")
+        tableView.register(ChatMessageTableViewPlanCell.self, forCellReuseIdentifier: "ChatMessagePlanCell")
         
         self.view.addSubview(tableView)
         
@@ -70,7 +71,6 @@ extension ChatMessageViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //TODO: 메세지 유형에 따라 cell 다르게 하기, 이미지의 경우 UIImage로 변환해서 cell에 전달
         switch chatViewModel?.messages?[indexPath.row].messageType {
         case .text:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
@@ -117,17 +117,50 @@ extension ChatMessageViewController: UITableViewDataSource {
             }
             cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
             return cell
-            //TODO: plan
         case .plan:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessagePlanCell", for: indexPath) as! ChatMessageTableViewPlanCell
             cell.backgroundColor = .clear
+            
+            let planDate = chatViewModel?.messages?[indexPath.row].plan?.planDate
+            if let planDate = planDate {
+                let dateFormatter = DateFormatter()
+                
+                dateFormatter.dateStyle = .medium
+                let dateString = dateFormatter.string(from: planDate)
+                
+                dateFormatter.dateStyle = .none
+                dateFormatter.timeStyle = .short
+                let timeString = dateFormatter.string(from: planDate)
+                
+                cell.planDateLabel.text = "날짜: \(dateString)"
+                cell.planTimeLabel.text = "시간: \(timeString)"
+            }
+            
+            let planPlace = chatViewModel?.messages?[indexPath.row].plan?.planPlace?.placeName ?? ""
+            cell.planPlaceLabel.text = "장소: \(planPlace)"
+            
+            if let plan = chatViewModel?.messages?[indexPath.row].plan {
+                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true)
+                cell.detailButtonAction = {
+                    self.present(MakePlanViewController(viewModel: makePlanViewModel), animated: true)
+                }
+            }
+            
+            if let planPlace = chatViewModel?.messages?[indexPath.row].plan?.planPlace {
+                cell.placeButtonAction = {
+                    let navigationController = UINavigationController(rootViewController: PlanPlaceDetailViewController(location: planPlace))
+                    self.present(navigationController, animated: true)
+                }
+            }
             
             if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true
             }
+            
             cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
+            
             return cell
         case .none:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
