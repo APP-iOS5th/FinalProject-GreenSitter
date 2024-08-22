@@ -260,7 +260,7 @@ class SetProfileViewController: UIViewController {
                 print("Nickname successfully saved!")
             }
         }
-        viewModel.userFetchFirbase(profileImage: selectedImageUrl, nickname: nickname, location: location)
+        viewModel.userFetchFirebase(profileImage: selectedImageUrl, nickname: nickname, location: location)
         print("\(viewModel.user)")
         //        프로필 뷰로이동
         DispatchQueue.main.async {

@@ -23,6 +23,9 @@ class ProfileViewController: UIViewController {
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
     
+
+    
+    
     // MARK: - UI Components
     lazy var circleView: UIView = {
         let view = UIView()
@@ -67,7 +70,7 @@ class ProfileViewController: UIViewController {
         setupView()
         fetchUserFirebase()
         setupTextField()
-
+        
         bindViewModel(for: someIndexPath)
     }
     
@@ -116,7 +119,7 @@ class ProfileViewController: UIViewController {
         self.navigationController?.pushViewController(aboutMeViewController, animated: true)
     }
     
-
+    
     
     @objc func changeNicknameButtonTap() {
         let nickname = NicknameViewController()
@@ -133,7 +136,11 @@ class ProfileViewController: UIViewController {
     }
     
     @objc func changeLocationButtonTap() {
-        // Implement location change here
+        let searchMapViewController = SearchMapViewController()
+        searchMapViewController.loginViewModel = viewModel
+        let navigationController = UINavigationController(rootViewController: searchMapViewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true, completion: nil)
     }
     
     @objc func inpoButtonTap() {
@@ -202,7 +209,7 @@ class ProfileViewController: UIViewController {
         container.isHidden = true // 초기에는 숨김 상태로 설정
         textFieldContainer = container
         NotificationCenter.default.addObserver(self, selector: #selector(handleNicknameChanged), name: Notification.Name("NicknameChanged"), object: nil)
-
+        
     }
     @objc func handleNicknameChanged() {
         // 사용자 데이터를 다시 fetch하여 갱신합니다.

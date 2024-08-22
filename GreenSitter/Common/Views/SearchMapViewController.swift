@@ -17,6 +17,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     private let placeholderLabel = UILabel()
     
     var makePlanViewModel: MakePlanViewModel?
+    var loginViewModel: LoginViewModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -201,12 +202,19 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedLocation = locations[indexPath.row]
-        let detailViewController = SearchMapDetailViewController(location: selectedLocation, makePlanViewModel: makePlanViewModel)
+        if let makePlanViewModel = self.makePlanViewModel {
+            let detailViewController = SearchMapDetailViewController(location: selectedLocation, makePlanViewModel: makePlanViewModel)
+            let navigationController = UINavigationController(rootViewController: detailViewController)
+            navigationController.modalPresentationStyle = .pageSheet
+            present(navigationController, animated: true, completion: nil)
+        }
+        else if let loginViewModel = self.loginViewModel {
+            let detailViewController = SearchMapDetailViewController(location: selectedLocation, loginViewModel: loginViewModel)
+            let navigationController = UINavigationController(rootViewController: detailViewController)
+            navigationController.modalPresentationStyle = .pageSheet
+            present(navigationController, animated: true, completion: nil)
+        }
         
-        let navigationController = UINavigationController(rootViewController: detailViewController)
-        navigationController.modalPresentationStyle = .pageSheet
-        
-        present(navigationController, animated: true, completion: nil)
     }
 
     // MARK: - UITableViewDelegate
