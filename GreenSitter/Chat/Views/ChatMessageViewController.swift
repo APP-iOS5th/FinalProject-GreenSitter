@@ -42,11 +42,12 @@ class ChatMessageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
             
-            self.chatViewModel?.updateUI = { [weak self] in
-                self?.setupUI()
-            }
-            
-            self.chatViewModel?.updateUI?()
+        self.chatViewModel?.updateUI = { [weak self] in
+            self?.setupUI()
+        }
+        
+        self.chatViewModel?.updateUI?()
+        
         }
     
     // MARK: - Setup UI

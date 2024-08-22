@@ -31,13 +31,7 @@ class ChatViewModel {
         }
     }
     
-//    var chatRoom: ChatRoom?
-    
-    var messages: [String:[Message]] = [:] /*{
-        didSet {
-            updateUI?()
-        }
-    }*/
+    var messages: [String:[Message]] = [:]
 
     var updateUI: (() -> Void)?
     
@@ -61,6 +55,7 @@ class ChatViewModel {
             for updatedChatRoom in updatedchatRooms {
                 dispatchGroup.enter()
                 self.loadMessages(chatRoomId: updatedChatRoom.id) {
+                    // TODO: - 새로운 메세지가 self.messages에 잘 저장되는데 불러올 때 에러남
                     dispatchGroup.leave()
                 }
             }
@@ -73,7 +68,10 @@ class ChatViewModel {
     
     func loadMessages(chatRoomId: String, completion: @escaping () -> Void) {
         firestoreManager.fetchMessages(chatRoomId: chatRoomId) { [weak self] updatedMessages in
-            guard let self = self else { return }
+            guard let self = self else {
+                completion()
+                return
+            }
             self.messages[chatRoomId] = updatedMessages
             
             completion()
