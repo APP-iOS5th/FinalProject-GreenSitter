@@ -191,13 +191,19 @@ class PostDetailViewController: UIViewController {
     
     private func setupNavigationBarWithEdit() {
         let menu = UIMenu(title: "", children: [
-            UIAction(title: "수정하기", image: UIImage(systemName: "pencil")) { _ in
-                
+            UIAction(title: "수정하기", image: UIImage(systemName: "pencil")) { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                let editPostViewController = EditPostViewController(post: post)
+                editPostViewController.modalPresentationStyle = .fullScreen
+                self.present(editPostViewController, animated: true)
             },
             UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { _ in
                 
             }
         ])
+
         
         let menuButton = UIButton(type: .system)
         menuButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
