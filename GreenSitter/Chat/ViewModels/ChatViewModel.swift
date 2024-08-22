@@ -21,17 +21,19 @@ class ChatViewModel {
     var user: User? {
         didSet {
 //            isLoggedIn = user != nil
-            updateUI?()
+//            updateUI?()
         }
     }
     
     var chatRooms: [ChatRoom] = [] {
         didSet {
             hasChats = !(chatRooms.isEmpty)
-            updateUI?()
+//            updateUI?()
         }
     }
     
+    var lastMessages: [String:[Message]] = [:]
+    var unreadMessages: [String:[Message]] = [:]
     var messages: [String:[Message]] = [:]
 
     var updateUI: (() -> Void)?
@@ -55,9 +57,10 @@ class ChatViewModel {
             
             for updatedChatRoom in updatedchatRooms {
                 dispatchGroup.enter()
-                self.loadMessages(chatRoomId: updatedChatRoom.id) {
-                    // TODO: - 새로운 메세지가 self.messages에 잘 저장되는데 불러올 때 에러남
-                    dispatchGroup.leave()
+                self.loadLastMessages(chatRoomId: updatedChatRoom.id) {
+                    self.loadUnreadMessages(chatRoomId: updatedChatRoom.id) {
+                        dispatchGroup.leave()
+                    }
                 }
             }
             dispatchGroup.notify(queue: .main) {
@@ -65,6 +68,30 @@ class ChatViewModel {
                 
             }
             
+        }
+    }
+    
+    func loadLastMessages(chatRoomId: String, completion: @escaping () -> Void) {
+        firestoreManager.fetchLastMessages(chatRoomId: chatRoomId) { [weak self] updatedMessages in
+            guard let self = self else {
+                completion()
+                return
+            }
+            self.lastMessages[chatRoomId] = updatedMessages
+            
+            completion()
+        }
+    }
+    
+    func loadUnreadMessages(chatRoomId: String, completion: @escaping () -> Void) {
+        firestoreManager.fetchUnreadMessages(chatRoomId: chatRoomId, userId: userId) { [weak self] updatedMessages in
+            guard let self = self else {
+                completion()
+                return
+            }
+            self.unreadMessages[chatRoomId] = updatedMessages
+            
+            completion()
         }
     }
     

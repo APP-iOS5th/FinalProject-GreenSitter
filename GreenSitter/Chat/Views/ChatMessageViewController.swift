@@ -42,15 +42,14 @@ class ChatMessageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.chatViewModel?.updateUI = { [weak self] in
-            self?.setupUI()
-        }
-        
-        self.chatViewModel?.updateUI?()
-        
-        chatViewModel?.updateUI = { [weak self] in
+        self.chatViewModel?.loadMessages(chatRoomId: chatRoom.id) { [weak self] in
             guard let self = self else { return }
-            self.tableView.reloadData() // 테이블 뷰를 리로드하여 최신 메시지를 표시
+            self.chatViewModel?.updateUI = { [weak self] in
+                self?.setupUI()
+                // 테이블 뷰를 리로드하여 최신 메시지를 표시
+                self?.tableView.reloadData()
+            }
+            self.chatViewModel?.updateUI?()
         }
     }
     

@@ -197,15 +197,79 @@ class FirestoreManager {
         }
     }
     
+    // 채팅목록 마지막 메세지 데이터 가져오기
+    func fetchLastMessages(chatRoomId: String, onUpdate: @escaping ([Message]) -> Void) {
+        let messagesQuery = db.collection("chatRooms")
+            .document(chatRoomId)
+            .collection("messages")
+            .order(by: "createDate", descending: true) // 최신순 정렬
+            .limit(to: 1)
+        
+        messagesQuery.getDocuments { snapshot, error in
+            if let error = error {
+                print("Error fetching messages: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = snapshot?.documents else {
+                print("No messages found")
+                return
+            }
+            
+            let messages: [Message] = documents.compactMap { document in
+                do {
+                    return try document.data(as: Message.self)
+                } catch {
+                    print("Error decoding message: \(error.localizedDescription)")
+                    return nil
+                }
+            }
+            
+            onUpdate(messages)
+        }
+    }
+    
+    // 안읽은 메세지 데이터 가져오기
+    func fetchUnreadMessages(chatRoomId: String, userId: String, onUpdate: @escaping ([Message]) -> Void) {
+        let messagesQuery = db.collection("chatRooms")
+            .document(chatRoomId)
+            .collection("messages")
+            .whereField("isRead", isEqualTo: false) // 읽지 않은 메시지 필터링
+            .whereField("receiverUserId", isEqualTo: userId) // 수신자가 현재 사용자
+//            .order(by: "createDate", descending: false) // 메세지 보낸 시간순 정렬
+        
+        messagesQuery.getDocuments { snapshot, error in
+            if let error = error {
+                print("Error fetching messages: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = snapshot?.documents else {
+                print("No messages found")
+                return
+            }
+            
+            let messages: [Message] = documents.compactMap { document in
+                do {
+                    return try document.data(as: Message.self)
+                } catch {
+                    print("Error decoding message: \(error.localizedDescription)")
+                    return nil
+                }
+            }
+            
+            onUpdate(messages)
+        }
+    }
+    
     // 메세지 데이터 가져오기
     func fetchMessages(chatRoomId: String, onUpdate: @escaping ([Message]) -> Void) {
         let messagesQuery = db.collection("chatRooms")
             .document(chatRoomId)
             .collection("messages")
-            .order(by: "updateDate", descending: false) // 메세지 보낸 시간순 정렬
+            .order(by: "createDate", descending: false) // 메세지 보낸 시간순 정렬
         
         messagesQuery.addSnapshotListener { snapshot, error in
-//        messagesQuery.getDocuments { snapshot, error in
             if let error = error {
                 print("Error fetching messages: \(error.localizedDescription)")
                 return

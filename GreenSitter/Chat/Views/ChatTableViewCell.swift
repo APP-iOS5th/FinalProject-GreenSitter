@@ -148,7 +148,7 @@ class ChatTableViewCell: UITableViewCell {
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
-        guard let lastMessage = chatViewModel?.messages[chatRoom!.id]?.last else {
+        guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
             return
         }
 
@@ -278,7 +278,7 @@ class ChatTableViewCell: UITableViewCell {
             rightStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             rightStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             rightStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            rightStackView.widthAnchor.constraint(equalToConstant: 50),
+            rightStackView.widthAnchor.constraint(equalToConstant: 60),
             
             dateLabel.topAnchor.constraint(equalTo: rightStackView.topAnchor, constant: 20),
             dateLabel.leadingAnchor.constraint(equalTo: rightStackView.leadingAnchor),
