@@ -104,7 +104,8 @@ class MessageInputViewController: UIViewController {
     // MARK: - plus button
     func plusButtonTapped() {
         let chatAdditionalButtonsViewController = ChatAdditionalButtonsViewController()
-        chatAdditionalButtonsViewController.modalPresentationStyle = .fullScreen
+        chatAdditionalButtonsViewController.modalPresentationStyle = .overFullScreen
+        chatAdditionalButtonsViewController.chatViewModel = self.chatViewModel
         present(chatAdditionalButtonsViewController, animated: true)
     }
 

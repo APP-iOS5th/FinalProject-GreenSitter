@@ -22,6 +22,8 @@ class MakePlanViewModel {
     
     var delegate: MakePlanViewModelDelegate?
     
+    var chatViewModel: ChatViewModel?
+    
     init(date: Date = Date(), planPlace: Location? = Location.sampleLocation, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0, isPlaceSelected: Bool = false) {
         let interval = 5
         let calendar = Calendar.current
@@ -45,6 +47,8 @@ class MakePlanViewModel {
     
     func sendPlan() {
         let plan = Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: planDate, planPlace: planPlace, contract: nil, ownerNotification: ownerNotification, sitterNotification: sitterNotification, isAccepted: false)
-        print(plan)
+        Task {
+            await chatViewModel?.sendPlanMessage(plan: plan)
+        }
     }
 }
