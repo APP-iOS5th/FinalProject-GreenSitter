@@ -112,7 +112,7 @@ class PostTableViewCell: UITableViewCell {
         postStatusLabel.text = post.postStatus.rawValue
         postTitleLabel.text = post.postTitle
         postBodyLabel.text = post.postBody
-        postDateLabel.text = timeAgoSinceDate(post.createDate)
+        postDateLabel.text = timeAgoSinceDate(post.updateDate)
 
         guard let postImages = post.postImages, !postImages.isEmpty else {
             postImageView.image = nil

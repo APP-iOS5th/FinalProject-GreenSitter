@@ -72,7 +72,6 @@ class PostDetailViewController: UIViewController {
         label.font = .systemFont(ofSize: 12)
         label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "2시간 전"
         return label
     }()
     
@@ -364,6 +363,7 @@ class PostDetailViewController: UIViewController {
         userNameLabel.text = post.nickname
         postTitleLabel.text = post.postTitle
         postBodyLabel.text = post.postBody
+        postTimeLabel.text = timeAgoSinceDate(post.updateDate)
         statusLabel.text = post.postStatus.rawValue
         
         profileImageView.image = UIImage(named: post.profileImage)
@@ -377,7 +377,27 @@ class PostDetailViewController: UIViewController {
             postImagesView.image = nil
         }
     }
-
+    
+    private func timeAgoSinceDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let now = Date()
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date, to: now)
+        
+        if let year = components.year, year > 0 {
+            return "\(year)년 전"
+        } else if let month = components.month, month > 0 {
+            return "\(month)개월 전"
+        } else if let day = components.day, day > 0 {
+            return "\(day)일 전"
+        } else if let hour = components.hour, hour > 0 {
+            return "\(hour)시간 전"
+        } else if let minute = components.minute, minute > 0 {
+            return "\(minute)분 전"
+        } else {
+            return "방금 전"
+        }
+    }
+    
     private func loadImage(from url: URL) {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else {
