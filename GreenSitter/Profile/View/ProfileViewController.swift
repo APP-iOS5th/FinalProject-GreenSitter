@@ -24,7 +24,7 @@ class ProfileViewController: UIViewController {
     var cancellables = Set<AnyCancellable>()
 
     var user: User? {
-        print("LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
+        print("Profile View - LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
         return LoginViewModel.shared.user
     }
     

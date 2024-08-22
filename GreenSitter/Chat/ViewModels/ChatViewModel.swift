@@ -141,7 +141,7 @@ class ChatViewModel {
         }
 
         // UI 업데이트
-//        self.updateUI?()
+        self.updateUI?()
         
         Task {
             do {
@@ -153,7 +153,7 @@ class ChatViewModel {
                     chatRoomMessages.removeAll { $0.id == textMessage.id }
                     self.messages[chatRoom.id] = chatRoomMessages
                 }
-//                self.updateUI?()
+                self.updateUI?()
                 return
             }
         }

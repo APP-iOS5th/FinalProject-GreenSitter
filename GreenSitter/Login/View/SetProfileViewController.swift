@@ -259,8 +259,7 @@ class SetProfileViewController: UIViewController {
                 print("Nickname successfully saved!")
             }
         }
-        LoginViewModel.shared.userFetchFirebase(profileImage: selectedImageUrl, nickname: nickname, location: location, docId: user.uid)
-        
+        LoginViewModel.shared.firebaseFetch(docId: user.uid)
         // 프로필 뷰로이동
         DispatchQueue.main.async {
             let profileViewController = ProfileViewController()
@@ -301,8 +300,9 @@ class SetProfileViewController: UIViewController {
                 print("Nickname successfully saved!")
             }
         }
-        LoginViewModel.shared.userFetchFirebase(profileImage: defaultImageUrl, nickname: "기본 닉네임", location: location, docId: user.uid)
-        
+//        LoginViewModel.shared.userFetchFirebase(profileImage: defaultImageUrl, nickname: "기본 닉네임", location: location, docId: user.uid)
+        LoginViewModel.shared.firebaseFetch(docId: user.uid)
+
         let postListViewController = MainPostListViewController()
         navigationController?.pushViewController(postListViewController, animated: true)
     }

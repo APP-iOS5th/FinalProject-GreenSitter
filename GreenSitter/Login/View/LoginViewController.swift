@@ -234,12 +234,18 @@ class LoginViewController: UIViewController {
                         
                     }
                     else if let document = document, document.exists {
-                        let profileViewController = ProfileViewController()
-                        if let navigationController = self.navigationController {
-                            navigationController.pushViewController(profileViewController, animated: true)
-                        }
-                        else {
-                            print("Error: The current view controller is not embedded in a UINavigationController.")
+                        // 재로그인 (유저 데이터가 있는 경우)
+                        DispatchQueue.main.async {
+                            // Setting local User
+                            LoginViewModel.shared.firebaseFetch(docId: user.uid)
+
+                            let profileViewController = ProfileViewController()
+                            if let navigationController = self.navigationController {
+                                navigationController.pushViewController(profileViewController, animated: true)
+                            }
+                            else {
+                                print("Error: The current view controller is not embedded in a UINavigationController.")
+                            }
                         }
                     }
                     
@@ -331,8 +337,13 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                         else if let document = document, document.exists {
                             // 재로그인 (유저 데이터가 있는 경우)
                             DispatchQueue.main.async {
+                                // Setting local User
+                                LoginViewModel.shared.firebaseFetch(docId: user.uid)
+                                // TODO: 비동기 프로그래밍
+                                
                                 let profileViewController = ProfileViewController()
                                 if let navigationController = self.navigationController {
+                                    print("LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
                                     navigationController.pushViewController(profileViewController, animated: true)
                                 }
                                 else {
