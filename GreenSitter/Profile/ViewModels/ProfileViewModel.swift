@@ -13,6 +13,7 @@ import Combine
 import AuthenticationServices
 
 extension ProfileViewController {
+    
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {
         if user?.id == Auth.auth().currentUser?.uid {
@@ -21,13 +22,12 @@ extension ProfileViewController {
             }
             
             DispatchQueue.main.async {
-                self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
+                self.tableView.reloadData()
             }
         }
     }
     
     
-    //MARK: - 변경된 사진을 파이어베이스에 저장
     func updateNickname(_ profileImage: String) {
         guard let user = Auth.auth().currentUser else {
             print("Error: Firebase authResult is nil.")

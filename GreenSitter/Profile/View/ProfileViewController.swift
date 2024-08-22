@@ -216,7 +216,6 @@ class ProfileViewController: UIViewController {
         
     }
     @objc func handleNicknameChanged() {
-        // 사용자 데이터를 다시 fetch하여 갱신합니다.
         fetchUserFirebase()
     }
     
