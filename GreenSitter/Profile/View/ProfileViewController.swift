@@ -9,15 +9,30 @@ import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
+import Combine
 class ProfileViewController: UIViewController {
     
     // MARK: - Properties
-    var sectionTitle = ["내 정보", "계정"]
+    var sectionTitle = ["내 정보", "돌봄 정보", "시스템", "이용약관 및 개인정보 처리방침" ]
     var textFieldContainer: UIView?
     let db = Firestore.firestore()
     let storage = Storage.storage()
+    let someIndexPath = IndexPath(row: 0, section: 0) // 적절한 인덱스 경로로 대체
+    let viewModel = LoginViewModel()
+    let mapViewModel = MapViewModel()
+    var cancellables = Set<AnyCancellable>()
     
-    var users: User?
+    private let user: User?
+    init(user: User) {
+        self.user = user
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
     
     // MARK: - UI Components
     lazy var circleView: UIView = {
@@ -60,6 +75,7 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        viewModel.firebaseFetch(userId: currentUser?.uid)
         setupView()
         fetchUserFirebase()
         setupTextField()
@@ -75,7 +91,7 @@ class ProfileViewController: UIViewController {
         view.addSubview(tableView)
         
         setupConstraints()
-        
+
         tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell")
         tableView.register(InformationTableCell.self, forCellReuseIdentifier: "informationTableCell")
@@ -100,7 +116,7 @@ class ProfileViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: profileButton.bottomAnchor, constant: 30),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
@@ -110,7 +126,7 @@ class ProfileViewController: UIViewController {
         self.navigationController?.pushViewController(aboutMeViewController, animated: true)
     }
     
-
+    
     
     @objc func changeNicknameButtonTap() {
         let nickname = NicknameViewController()
@@ -127,7 +143,11 @@ class ProfileViewController: UIViewController {
     }
     
     @objc func changeLocationButtonTap() {
-        // Implement location change here
+        let searchMapViewController = SearchMapViewController()
+        searchMapViewController.loginViewModel = viewModel
+        let navigationController = UINavigationController(rootViewController: searchMapViewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true, completion: nil)
     }
     
     @objc func inpoButtonTap() {
@@ -196,7 +216,7 @@ class ProfileViewController: UIViewController {
         container.isHidden = true // 초기에는 숨김 상태로 설정
         textFieldContainer = container
         NotificationCenter.default.addObserver(self, selector: #selector(handleNicknameChanged), name: Notification.Name("NicknameChanged"), object: nil)
-
+        
     }
     @objc func handleNicknameChanged() {
         // 사용자 데이터를 다시 fetch하여 갱신합니다.

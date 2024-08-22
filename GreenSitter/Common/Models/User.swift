@@ -8,7 +8,7 @@
 import Foundation
 
 struct User: Codable {
-    let id: String
+    var id: String
     let enabled: Bool
     let createDate: Date
     let updateDate: Date
@@ -16,7 +16,8 @@ struct User: Codable {
     var nickname: String
     var location: Location
     let platform: String
-    let levelPoint: Int
+    var levelPoint: Level
+    let exp: Int
     var aboutMe: String
     let chatNotification: Bool
 }

@@ -32,6 +32,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
         
@@ -40,7 +41,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             // "이름" 셀
             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
             (cell as! ProfileTableViewCell).titleLabel.text = "이름"
-            (cell as! ProfileTableViewCell).bodyLabel.text = users?.nickname
+            (cell as! ProfileTableViewCell).bodyLabel.text = viewModel.user?.nickname
             (cell as! ProfileTableViewCell).bodyLabel.textColor = .black
             (cell as! ProfileTableViewCell).actionButton.isHidden = false
             (cell as! ProfileTableViewCell).actionButton.setTitle("변경", for: .normal)
@@ -53,8 +54,14 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let profileCell = cell as! ProfileTableViewCell
 
             profileCell.titleLabel.text = "사는 곳"
-            profileCell.bodyLabel.text = "user?.location"
-
+            
+            // location에서 address 값을 가져와 설정
+            if let location = viewModel.user?.location as? [String: Any],
+               let address = location["address"] as? String {
+                profileCell.bodyLabel.text = address
+            } else {
+                profileCell.bodyLabel.text = "주소 없음" // address가 없을 경우 기본값 설정
+            }
             profileCell.actionButton.isHidden = false
             profileCell.actionButton.setTitle("변경", for: .normal)
             profileCell.actionButton.setImage(nil, for: .normal) // 이미지 설정 초기화
@@ -64,23 +71,18 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             profileCell.actionButton.addTarget(self, action: #selector(changeLocationButtonTap), for: .touchUpInside)
 
             profileCell.setIconHidden(true)
+
             
         case (0, 2):
-            // "레벨" 셀
             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
             let profileCell = cell as! ProfileTableViewCell
-            
             profileCell.titleLabel.text = nil
-            profileCell.bodyLabel.text = "레벨"
+            profileCell.bodyLabel.text = viewModel.user?.levelPoint.rawValue
             profileCell.iconImageView.image = UIImage(named: "logo7")
-            
-            // 여기서 변경 버튼이 아닌 아이콘 버튼만 설정하고, 변경 버튼은 숨깁
             profileCell.actionButton.setImage(UIImage(systemName: "exclamationmark.circle"), for: .normal)
-            profileCell.actionButton.setTitle(nil, for: .normal) // 이 부분을 추가하여 '변경' 텍스트를 지웁니다.
+            profileCell.actionButton.setTitle(nil, for: .normal) // '변경' 텍스트 제거
+            profileCell.actionButton.removeTarget(nil, action: nil, for: .allEvents) // 기존 타겟 제거
             profileCell.actionButton.addTarget(self, action: #selector(inpoButtonTap), for: .touchUpInside)
-            profileCell.actionButton.isHidden = false
-            
-            // 불필요한 "변경" 버튼을 명확히 숨김
             profileCell.actionButton.isHidden = false
             profileCell.setIconHidden(false)
         case (1, 0):
@@ -162,9 +164,12 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         case(1,0):
             let leavePlantListViewController = LeavePlantListViewController()
             self.navigationController?.pushViewController(leavePlantListViewController, animated: true)
-        case (2, 1):
+        case(1,1):
+            let writeReviewViewController = WriteReviewViewController()
+            self.navigationController?.pushViewController(writeReviewViewController, animated: true)
+        case (2, 0):
             logout()
-        case (2, 2):
+        case (2, 1):
             accountDeletion()
         default:
             break

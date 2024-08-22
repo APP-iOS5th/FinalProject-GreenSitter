@@ -9,6 +9,7 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
+import Combine
 
 extension AboutMeViewController {
     //MARK: - 자기소개 수정하기
@@ -43,34 +44,31 @@ extension AboutMeViewController {
                 let nickname = data?["nickname"] as? String ?? "닉네임 없음"
                 let profileImage = data?["profileImage"] as? String ?? ""
                 let aboutMe = data?["aboutMe"] as? String ?? "자기 소개를 입력해주세요"
+                let levelPoint = data?["levelPoint"] as? String ?? ""
+                print("Fetched levelPoint: \(levelPoint)")
                 
-                // user 객체가 nil일 경우 User 객체를 초기화
-                if self.user == nil {
-                    self.user = User(
-                        id: userId,
-                        enabled: true,
-                        createDate: Date(),
-                        updateDate: Date(),
-                        profileImage: profileImage,
-                        nickname: nickname,
-                        location: Location.sampleLocation,
-                        platform: "iOS",
-                        levelPoint: 1,
-                        aboutMe: aboutMe, chatNotification: false
-                    )
+                // location 필드에서 address를 가져오기
+                if let location = data?["location"] as? [String: Any],
+                   let locationAddress = location["address"] as? String {
+                    self.user?.location.address = locationAddress
+                    
+                    // UI 업데이트: locationLabel에 주소 표시
+                    DispatchQueue.main.async {
+                        self.locationLabel.text = locationAddress
+                    }
                 } else {
-                    self.user?.nickname = nickname
-                    self.user?.aboutMe = aboutMe
-                    self.user?.profileImage = profileImage
+                    // location 정보가 없을 때 기본값 설정
+                    self.locationLabel.text = "주소 없음"
                 }
-                
-                // 프로필 이미지 URL을 사용하여 이미지 로드
+                // 프로필 이미지 로드
                 if !profileImage.isEmpty {
                     self.loadProfileImage(from: profileImage)
                 }
                 
+                // UI 업데이트
                 DispatchQueue.main.async {
-                    self.nicknameLabel.text = nickname // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
+                    self.nicknameLabel.text = nickname
+                    self.levelLabel.text = levelPoint
                     self.tableView.reloadData()
                 }
             } else {
@@ -78,7 +76,7 @@ extension AboutMeViewController {
             }
         }
     }
-    
+
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadProfileImage(from gsURL: String) {
         guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),

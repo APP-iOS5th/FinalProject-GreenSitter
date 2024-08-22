@@ -85,14 +85,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
     
-    lazy var skipButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("건너뛰기", for: .normal)
-        button.setTitleColor(.labelsPrimary, for: .normal)
-        button.addTarget(self, action: #selector(skipTap), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,7 +98,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(bodyLabel)
         view.addSubview(locationTextField)
         view.addSubview(nextButton)
-        view.addSubview(skipButton)
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
@@ -120,12 +111,11 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             locationTextField.widthAnchor.constraint(equalToConstant: 350),
             
             nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nextButton.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -20),
+            nextButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
             nextButton.widthAnchor.constraint(equalToConstant: 350),
             nextButton.heightAnchor.constraint(equalToConstant: 45),
             
-            skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            skipButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
+
         ])
 //        getUserData()
     }
@@ -172,7 +162,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         }
         
         DispatchQueue.main.async {
-            let setProfileViewController = SetProfileViewController()
+            let setProfileViewController = SetProfileViewController(location: location)
             self.navigationController?.pushViewController(setProfileViewController, animated: true)
         }
 
@@ -180,10 +170,5 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     
     
     
-    //MARK: - SkipButton Method
-    @objc func skipTap() {
-        let setProfileViewController = SetProfileViewController()
-        navigationController?.pushViewController(setProfileViewController, animated: true)
-    }
 }
 

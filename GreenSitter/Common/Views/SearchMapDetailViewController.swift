@@ -9,11 +9,12 @@ import UIKit
 import MapKit
 
 class SearchMapDetailViewController: UIViewController {
-
+    
     private var makePlanViewModel: MakePlanViewModel?
     private var location: Location
     private var isInitialLoad = true  // 초기 로드를 체크하기 위한 플래그
-
+    var loginViewModel: LoginViewModel?
+    
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.delegate = self
@@ -36,7 +37,7 @@ class SearchMapDetailViewController: UIViewController {
         textField.placeholder = "예) 강남역 1번 출구 앞, 와르르 멘션 2동 경비실.."
         return textField
     }()
-
+    
     private lazy var addressTextField: UITextField = {
         let textField = UITextField()
         textField.font = UIFont.preferredFont(forTextStyle: .subheadline)
@@ -44,21 +45,22 @@ class SearchMapDetailViewController: UIViewController {
         textField.textAlignment = .left
         return textField
     }()
-
-
-    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil) {
+    
+    
+    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil, loginViewModel: LoginViewModel? = nil) {
         self.location = location
         self.makePlanViewModel = makePlanViewModel
+        self.loginViewModel = loginViewModel
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         view.backgroundColor = .bgPrimary
         setupNavigationBar()
         setupMapView()
@@ -70,8 +72,8 @@ class SearchMapDetailViewController: UIViewController {
         placeNameTextField.text = location.placeName.isEmpty ? nil : location.placeName
         addressTextField.text = location.address
     }
-
-
+    
+    
     private func setupNavigationBar() {
         // Navigation bar setup
         navigationItem.title = "장소 선택"
@@ -84,7 +86,7 @@ class SearchMapDetailViewController: UIViewController {
         let confirmButton = UIBarButtonItem(title: "확인", style: .plain, target: self, action: #selector(confirmButtonTapped))
         navigationItem.rightBarButtonItem = confirmButton
     }
-
+    
     private func setupMapView() {
         view.addSubview(mapView)
         
@@ -95,7 +97,7 @@ class SearchMapDetailViewController: UIViewController {
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mapView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.75) // Height 75%
         ])
-
+        
         // Initial map setup
         let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
@@ -112,7 +114,7 @@ class SearchMapDetailViewController: UIViewController {
             customAnnotationView.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
-
+    
     private func setupLocationInfoView() {
         let infoView = UIView()
         infoView.backgroundColor = .bgSecondary
@@ -133,13 +135,13 @@ class SearchMapDetailViewController: UIViewController {
         titleLabel.textColor = UIColor.label
         titleLabel.textAlignment = .left
         infoView.addSubview(titleLabel)
-
+        
         placeNameTextField.text = location.placeName
         infoView.addSubview(placeNameTextField)
-
+        
         addressTextField.text = location.address
         infoView.addSubview(addressTextField)
-
+        
         // Label layout
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         placeNameTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -158,24 +160,31 @@ class SearchMapDetailViewController: UIViewController {
             addressTextField.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -16)
         ])
     }
-
+    
     
     @objc private func cancelButtonTapped() {
         dismiss(animated: true, completion: nil)
     }
-
+    
     @objc private func confirmButtonTapped() {
         // TODO: 확인 버튼 동작 구현
         //plan에서 필요한 기능
-        self.makePlanViewModel?.planPlace = location
-        self.makePlanViewModel?.isPlaceSelected = true
-        guard let parentViewController = self.presentingViewController else { return }
-        self.dismiss(animated: true) {
-            parentViewController.dismiss(animated: true)
+        if let makePlanViewModel = self.makePlanViewModel {
+            self.makePlanViewModel?.planPlace = location
+            self.makePlanViewModel?.isPlaceSelected = true
+            guard let parentViewController = self.presentingViewController else { return }
+            self.dismiss(animated: true) {
+                parentViewController.dismiss(animated: true)
+            }
         }
-        
-        
-//        dismiss(animated: true, completion: nil)
+        else if let loginViewModel = self.loginViewModel {
+            print("Updating user location with address: \(location)") // 로그 추가
+            loginViewModel.updateUserLocation(with: location)
+            self.dismiss(animated: true, completion: nil)
+        }
+            else {
+                print("No view model available")  // 로그 추가
+            }
     }
 }
 
@@ -201,5 +210,5 @@ extension SearchMapDetailViewController: MKMapViewDelegate {
             }
         }
     }
-
+    
 }
