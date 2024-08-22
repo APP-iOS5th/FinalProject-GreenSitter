@@ -29,8 +29,23 @@ class FirestorageManager {
     
     // UIImage -> Data 변환
     func imageToData(image: UIImage) -> Data? {
-        return image.jpegData(compressionQuality: 1.0) ?? nil
+        var compressionQuality: CGFloat = 1.0
+        let minCompressionQuality: CGFloat = 0.1 // 너무 낮은 품질은 피하기 위해 최소 값 설정
+        let step: CGFloat = 0.1
+
+        var imageData: Data? = image.jpegData(compressionQuality: compressionQuality)
+        
+        let maxSize = 4 * 1024 * 1024
+        // 이미지가 maxSize를 초과할 경우 compressionQuality를 줄여나감
+        while let data = imageData, data.count > maxSize, compressionQuality > minCompressionQuality {
+            compressionQuality -= step
+            imageData = image.jpegData(compressionQuality: compressionQuality)
+        }
+        
+        // 최종적으로 압축된 이미지 데이터를 반환
+        return imageData
     }
+
     
     // 파이어베이스 스토리지에서 이미지 가져오기
     func loadImage(imagePath: String) async throws -> UIImage {
