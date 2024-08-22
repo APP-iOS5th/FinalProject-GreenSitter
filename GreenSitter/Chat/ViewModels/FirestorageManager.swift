@@ -53,7 +53,7 @@ class FirestorageManager {
         let imageRef = storageRef.child(imagePath)
         
         return try await withCheckedThrowingContinuation { continuation in
-            imageRef.getData(maxSize: 8 * 1024 * 1024) { data, error in
+            imageRef.getData(maxSize: 4 * 1024 * 1024) { data, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let data = data, let image = UIImage(data: data) {
