@@ -52,7 +52,8 @@ class MainPostListViewController: UIViewController {
     private func bindViewModel() {
         viewModel.$filteredPosts
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
+            .sink { [weak self] posts in
+                print("MainView - bindViewModel posts: \(posts)")
                 self?.tableView.reloadData()
             }
             .store(in: &cancellables)
@@ -166,7 +167,7 @@ class MainPostListViewController: UIViewController {
         
         // 선택된 카테고리로 필터링
         guard let category = sender.titleLabel?.text else { return }
-        viewModel.fetchPosts(for: category)
+        viewModel.fetchPostsByCategory(for: category)
     }
     
     private func navigateToAddPostViewController(with postType: PostType) {

@@ -12,6 +12,7 @@ import UIKit
 class MapViewController: UIViewController {
     
     private let viewModel = MapViewModel()  // 위치 정보 관리 뷰모델
+    private let postViewModel = MainPostListViewModel()
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.delegate = self
@@ -62,7 +63,8 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-        setupMarkerAndOverlay(with: Post.samplePosts)  // TODO: 실제 서버 post 데이터로 변경
+//        setupMarkerAndOverlay(with: Post.samplePosts)  // TODO: 실제 서버 post 데이터로 변경
+        postViewModel.fetchAllPosts()
     }
     
     private func setupUI() {
@@ -141,6 +143,14 @@ class MapViewController: UIViewController {
                 }
 
             }.store(in: &cancellables)
+        
+        postViewModel.$filteredPosts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] posts in
+                print("MapView - bindviewmodel posts: \(posts)")
+                self?.setupMarkerAndOverlay(with: posts)
+            }
+            .store(in: &cancellables)
     }
     
     
@@ -244,6 +254,10 @@ class MapViewController: UIViewController {
     // MARK: - Post 객체 배열을 사용하여 지도에 마커 및 오버레이 추가
     
     func setupMarkerAndOverlay(with posts: [Post]) {
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
+        overlayPostMapping.removeAll()
+        
         for post in posts {
             guard let latitude = post.location?.latitude,
                   let longitude = post.location?.longitude else { continue }

@@ -39,7 +39,7 @@ class AddPostViewModel: ObservableObject {
             postBody: postBody,
             postImages: postImages,
             postStatus: .beforeTrade,
-            location: location
+            location: Location.seoulLocation
         )
         
         let db = Firestore.firestore()

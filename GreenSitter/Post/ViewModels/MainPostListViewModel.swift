@@ -15,7 +15,8 @@ class MainPostListViewModel {
 
     @Published var filteredPosts: [Post] = []
 
-    func fetchPosts(for category: String) {
+    // TODO: Date 에 따라 정렬해서 가져오기
+    func fetchPostsByCategory(for category: String) {
         guard let postType = PostType(rawValue: category) else {
             filteredPosts = []
             return
@@ -23,6 +24,21 @@ class MainPostListViewModel {
 
         db.collection("posts")
             .whereField("postType", isEqualTo: postType.rawValue)
+            .getDocuments { [weak self] snapshot, error in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                    self?.filteredPosts = []
+                    return
+                }
+
+                self?.filteredPosts = snapshot?.documents.compactMap { document in
+                    try? document.data(as: Post.self)
+                } ?? []
+            }
+    }
+    
+    func fetchAllPosts() {
+        db.collection("posts")
             .getDocuments { [weak self] snapshot, error in
                 if let error = error {
                     print("Error getting documents: \(error)")
