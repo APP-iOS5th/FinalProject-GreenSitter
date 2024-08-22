@@ -85,7 +85,7 @@ class AboutMeViewController: UIViewController{
     
     lazy var locationLabel: UILabel = {
         let label = UILabel()
-        label.text = viewModel.user?.location.address
+        label.text = user?.location.address
         label.font = UIFont.boldSystemFont(ofSize: 15)
         label.textColor = UIColor(named: "SeparatorsOpaque")
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -164,7 +164,6 @@ class AboutMeViewController: UIViewController{
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
         fetchUserFirebase()
-        bindViewModel()
         NotificationCenter.default.addObserver(self, selector: #selector(self.userAboutMeUpdated), name: NSNotification.Name("UserAboutMeUpdated"), object: nil)
 
     }

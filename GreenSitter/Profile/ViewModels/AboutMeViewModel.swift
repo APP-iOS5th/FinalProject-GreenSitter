@@ -45,6 +45,20 @@ extension AboutMeViewController {
                 let profileImage = data?["profileImage"] as? String ?? ""
                 let aboutMe = data?["aboutMe"] as? String ?? "자기 소개를 입력해주세요"
                 
+                // location 필드에서 address를 가져오기
+                if let location = data?["location"] as? [String: Any],
+                   let locationAddress = location["address"] as? String {
+                    self.user?.location.address = locationAddress
+                    
+                    // UI 업데이트: locationLabel에 주소 표시
+                    DispatchQueue.main.async {
+                        self.locationLabel.text = locationAddress
+                    }
+                } else {
+                    // location 정보가 없을 때 기본값 설정
+                    self.locationLabel.text = "주소 없음"
+                }
+
                 // user 객체가 nil일 경우 User 객체를 초기화
                 if self.user == nil {
                     self.user = User(
@@ -65,13 +79,14 @@ extension AboutMeViewController {
                     self.user?.profileImage = profileImage
                 }
                 
-                // 프로필 이미지 URL을 사용하여 이미지 로드
+                // 프로필 이미지 로드
                 if !profileImage.isEmpty {
                     self.loadProfileImage(from: profileImage)
                 }
                 
+                // UI 업데이트
                 DispatchQueue.main.async {
-                    self.nicknameLabel.text = nickname // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
+                    self.nicknameLabel.text = nickname
                     self.tableView.reloadData()
                 }
             } else {
@@ -79,22 +94,7 @@ extension AboutMeViewController {
             }
         }
     }
-    
-    func bindViewModel() {
-        mapViewModel.$currentLocation
-            .compactMap { $0 } // Location?을 Location으로 안전하게 변환
-            .sink { [weak self] location in
-                print("SetLocation View Location: \(location)")
-                self?.user?.location = location
-                DispatchQueue.main.async {
-                    self?.locationLabel.text = location.address // location이 nil이 아님을 보장받음
-                }
-            }
-            .store(in: &cancellables)
-    }
 
-
-    
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadProfileImage(from gsURL: String) {
         guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
