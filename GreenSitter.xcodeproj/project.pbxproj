@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		156A3B272C73307300F22B74 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 156A3B262C73307300F22B74 /* FirebaseMessaging */; };
+		156A3B272C73307300F22B74 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 156A3B262C73307300F22B74 /* FirebaseMessaging */; settings = {ATTRIBUTES = (Required, ); }; };
 		156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156A3B582C749E3900F22B74 /* PlanPlaceDetailViewController.swift */; };
 		15F316352C71FB6C00F30B72 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F316342C71FB6C00F30B72 /* ColorExtension.swift */; };
 		15F316372C71FB7D00F30B72 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F316362C71FB7D00F30B72 /* UILabelExtension.swift */; };

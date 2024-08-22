@@ -362,8 +362,3 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         present(picker, animated: true, completion: nil)
     }
 }
-
-
-//#Preview {
-//    return UINavigationController(rootViewController: AddPostViewController(postType: PostType.lookingForSitter, viewModel: AddPostViewModel(postType: PostType.lookingForSitter)))
-//}

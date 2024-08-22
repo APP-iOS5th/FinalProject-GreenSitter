@@ -271,6 +271,6 @@ class PostDetailViewController: UIViewController {
     }
 }
 
-#Preview {
-    return UINavigationController(rootViewController: PostDetailViewController(post: Post.samplePosts.first!))
-}
+//#Preview {
+//    return UINavigationController(rootViewController: PostDetailViewController(post: Post.samplePosts.first!))
+//}
