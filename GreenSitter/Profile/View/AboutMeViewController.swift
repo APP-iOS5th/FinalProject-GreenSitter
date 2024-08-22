@@ -19,8 +19,6 @@ class AboutMeViewController: UIViewController{
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
 
-    
-    
     lazy var profileImage: UIImageView = {
         let image = UIImageView()
         image.image = UIImage(named: "로고7")

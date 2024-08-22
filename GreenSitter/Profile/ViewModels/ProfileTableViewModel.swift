@@ -32,7 +32,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
         
@@ -67,7 +66,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             profileCell.actionButton.addTarget(self, action: #selector(changeLocationButtonTap), for: .touchUpInside)
 
             profileCell.setIconHidden(true)
-
             
         case (0, 2):
             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell

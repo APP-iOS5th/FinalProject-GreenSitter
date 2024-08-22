@@ -11,7 +11,9 @@ import FirebaseAuth
 
 class LoginViewModel: ObservableObject {
     static let shared = LoginViewModel()
+    
     @Published var user: User?
+    
     let db = Firestore.firestore()
     
     private init() {} 

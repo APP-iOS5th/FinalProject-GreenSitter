@@ -13,8 +13,6 @@ import FirebaseCore
 import FirebaseFirestore
 import GoogleSignIn
 
-
-
 class LoginViewController: UIViewController {
     var currentNonce: String? //Apple Login Property
     var users: User?
