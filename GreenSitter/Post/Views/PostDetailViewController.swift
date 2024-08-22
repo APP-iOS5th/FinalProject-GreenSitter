@@ -49,14 +49,14 @@ class PostDetailViewController: UIViewController {
         imageView.backgroundColor = .lightGray
         return imageView
     }()
-
+    
     private let userNameLabel: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
+    
     private let userLevelLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12)
@@ -181,7 +181,7 @@ class PostDetailViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(userProfileButton)
-
+        
         contentView.addSubview(profileImageView)
         contentView.addSubview(userNameLabel)
         contentView.addSubview(userLevelLabel)
@@ -198,7 +198,7 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(mapView)
         
         userProfileButton.addTarget(self, action: #selector(userProfileButtonTapped), for: .touchUpInside)
-
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -212,7 +212,7 @@ class PostDetailViewController: UIViewController {
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
             
-    
+            
             userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             userProfileButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -282,25 +282,25 @@ class PostDetailViewController: UIViewController {
             mapView.heightAnchor.constraint(equalToConstant: 200),
             mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16) // -10에서 -16으로 조정
         ])
-
+        
     }
     
     private func configure(with post: Post) {
-            userNameLabel.text = post.nickname
-            postTitleLabel.text = post.postTitle
-            postBodyLabel.text = post.postBody
-            statusLabel.text = post.postStatus.rawValue
-            
-            profileImageView.image = UIImage(named: post.profileImage)
-            
-            // 이미지뷰를 horizontal scrollview 로 바꾸고, 여러 개의 이미지 표시하기
-            if let imageName = post.postImages?.first {
-                postImagesView.image = UIImage(named: imageName)
-            } else {
-                postImagesView.image = nil
-            }
+        userNameLabel.text = post.nickname
+        postTitleLabel.text = post.postTitle
+        postBodyLabel.text = post.postBody
+        statusLabel.text = post.postStatus.rawValue
+        
+        profileImageView.image = UIImage(named: post.profileImage)
+        
+        // 이미지뷰를 horizontal scrollview 로 바꾸고, 여러 개의 이미지 표시하기
+        if let imageName = post.postImages?.first {
+            postImagesView.image = UIImage(named: imageName)
+        } else {
+            postImagesView.image = nil
         }
     }
+    
     @objc private func userProfileButtonTapped() {
         let aboutMeVC = AboutMeViewController(userId: post.userId)
         navigationController?.pushViewController(aboutMeVC, animated: true)
@@ -314,6 +314,7 @@ class PostDetailViewController: UIViewController {
         self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
 }
+
 
 #Preview {
     return UINavigationController(rootViewController: PostDetailViewController(post: Post.samplePosts.first!))
