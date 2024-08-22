@@ -49,6 +49,15 @@ class MainPostListViewController: UIViewController {
         bindViewModel()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        // 선택된 row 해제
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: false)
+        }
+    }
+    
     private func bindViewModel() {
         viewModel.$filteredPosts
             .receive(on: DispatchQueue.main)
