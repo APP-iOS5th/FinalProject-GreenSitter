@@ -144,6 +144,7 @@ class ChatViewController: UIViewController {
                 if let index = self.index {
                     do {
                         try await self.chatViewModel?.deleteChatRoom(at: index)
+                        self.navigationController?.popViewController(animated: true)
                     } catch {
                         print("Failed to delete chat room: \(error)")
                     }
