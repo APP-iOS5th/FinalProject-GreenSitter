@@ -34,7 +34,9 @@ class ChatMessageTableViewImageCell: UITableViewCell {
        let imageStackView = UIStackView(arrangedSubviews: imageViews)
         imageStackView.axis = .horizontal
         imageStackView.spacing = 7
+        imageStackView.distribution = .fillEqually
         imageStackView.translatesAutoresizingMaskIntoConstraints = false
+        imageStackView.backgroundColor = .black
         return imageStackView
     }()
     
@@ -115,24 +117,24 @@ class ChatMessageTableViewImageCell: UITableViewCell {
                 imageStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 imageStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
                 imageStackView.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 5),
+                imageStackView.trailingAnchor.constraint(lessThanOrEqualTo: timeLabel.leadingAnchor, constant: -5),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: imageStackView.bottomAnchor, constant: -5),
-                timeLabel.leadingAnchor.constraint(equalTo: imageStackView.trailingAnchor, constant: 5),
-                timeLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -100)
+                timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100)
             ])
         } else {
             contentView.addSubview(isReadLabel)
             
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: imageStackView.bottomAnchor, constant: -5),
-                isReadLabel.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 100),
+                isReadLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: imageStackView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: isReadLabel.trailingAnchor, constant: 5),
                 
                 imageStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 imageStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-                imageStackView.leadingAnchor.constraint(equalTo: timeLabel.trailingAnchor, constant: 5),
+                imageStackView.leadingAnchor.constraint(greaterThanOrEqualTo: timeLabel.trailingAnchor, constant: 5),
                 imageStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
 
             ])
@@ -150,24 +152,9 @@ class ChatMessageTableViewImageCell: UITableViewCell {
             imageView.contentMode = .scaleAspectFit
             imageView.translatesAutoresizingMaskIntoConstraints = false
             
-            switch images.count {
-            case 1: NSLayoutConstraint.activate([
-                imageView.widthAnchor.constraint(equalToConstant: 150),
-                imageView.heightAnchor.constraint(equalToConstant: 150),
+            NSLayoutConstraint.activate([
+                imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
             ])
-            case 2: NSLayoutConstraint.activate([
-                imageView.widthAnchor.constraint(equalToConstant: 100),
-                imageView.heightAnchor.constraint(equalToConstant: 100),
-            ])
-            case 3: NSLayoutConstraint.activate([
-                imageView.widthAnchor.constraint(equalToConstant: 70),
-                imageView.heightAnchor.constraint(equalToConstant: 70),
-            ])
-            default: NSLayoutConstraint.activate([
-                imageView.widthAnchor.constraint(equalToConstant: 100),
-                imageView.heightAnchor.constraint(equalToConstant: 100),
-            ])
-            }
             
             return imageView
         }
