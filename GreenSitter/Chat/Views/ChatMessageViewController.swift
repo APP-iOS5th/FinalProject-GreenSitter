@@ -41,14 +41,20 @@ class ChatMessageViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-            
+        
         self.chatViewModel?.updateUI = { [weak self] in
             self?.setupUI()
         }
         
         self.chatViewModel?.updateUI?()
         
-        }
+//        chatViewModel?.loadMessages(chatRoomId: chatRoom.id) { [weak self] in
+//            guard let self = self else { return }
+//            
+//            self.tableView.reloadData()
+//            
+//        }
+    }
     
     // MARK: - Setup UI
     private func setupUI() {

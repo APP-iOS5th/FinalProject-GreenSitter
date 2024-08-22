@@ -38,8 +38,36 @@ class ChatViewController: UIViewController {
         self.view.backgroundColor = .white
         self.navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .never
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(listButtonTapped))
         
+        // 햄버거 버튼
+        if chatViewModel?.userId == chatRoom.userId {
+            let notification = chatRoom.userNotification
+            let menuItems = [
+                UIAction(title: notification ? "알림 끄기" : "알림 켜기",
+                         image: notification ? UIImage(systemName: "bell.slash.fill") : UIImage(systemName: "bell.fill"), handler: { _ in
+                    print("알림")
+                }),
+                UIAction(title: "채팅방 나가기", image: UIImage(systemName: "door.left.hand.open"), attributes: .destructive, handler: { _ in
+                    print("나가기")
+                })
+            ]
+            let menu = UIMenu(title: "", children:  menuItems)
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
+        } else {
+            let notification = chatRoom.postUserNotification
+            let menuItems = [
+                UIAction(title: notification ? "알림 끄기" : "알림 켜기",
+                         image: notification ? UIImage(systemName: "bell.slash.fill") : UIImage(systemName: "bell.fill"), handler: { _ in
+                    print("알림")
+                }),
+                UIAction(title: "채팅방 나가기", image: UIImage(systemName: "door.left.hand.open"), attributes: .destructive, handler: { _ in
+                    print("나가기")
+                })
+            ]
+            let menu = UIMenu(title: "", children:  menuItems)
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
+        }
+
         let chatPostViewController = ChatPostViewController(chatRoom: chatRoom)
         let chatMessageViewController = ChatMessageViewController(chatRoom: chatRoom)
         let messageInputViewController = MessageInputViewController(chatRoom: chatRoom)
