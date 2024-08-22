@@ -10,6 +10,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 import Combine
+
 class ProfileViewController: UIViewController {
     
     // MARK: - Properties
@@ -18,21 +19,15 @@ class ProfileViewController: UIViewController {
     let db = Firestore.firestore()
     let storage = Storage.storage()
     let someIndexPath = IndexPath(row: 0, section: 0) // 적절한 인덱스 경로로 대체
-    let viewModel = LoginViewModel()
+
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
     
-    private let user: User?
-    init(user: User) {
-        self.user = user
-        super.init(nibName: nil, bundle: nil)
+
+    var user: User? {
+        print("LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
+        return LoginViewModel.shared.user
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    
     
     // MARK: - UI Components
     lazy var circleView: UIView = {
@@ -75,7 +70,6 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        viewModel.firebaseFetch(userId: currentUser?.uid)
         setupView()
         fetchUserFirebase()
         setupTextField()
@@ -144,7 +138,6 @@ class ProfileViewController: UIViewController {
     
     @objc func changeLocationButtonTap() {
         let searchMapViewController = SearchMapViewController()
-        searchMapViewController.loginViewModel = viewModel
         let navigationController = UINavigationController(rootViewController: searchMapViewController)
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true, completion: nil)

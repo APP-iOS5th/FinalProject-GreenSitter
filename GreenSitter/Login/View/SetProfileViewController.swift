@@ -16,7 +16,6 @@ class SetProfileViewController: UIViewController {
     let db = Firestore.firestore()
     var selectButton: UIButton? //선택한 버튼을 저장할 변수
     private let location: Location
-    private let viewModel = LoginViewModel()
     init(location: Location) {
         self.location = location
         super.init(nibName: nil, bundle: nil)
@@ -260,13 +259,13 @@ class SetProfileViewController: UIViewController {
                 print("Nickname successfully saved!")
             }
         }
-        viewModel.userFetchFirebase(profileImage: selectedImageUrl, nickname: nickname, location: location)
-        print("\(viewModel.user)")
-        //        프로필 뷰로이동
-//        DispatchQueue.main.async {
-////            let profileViewController = ProfileViewController(user: <#User#>)
-//            self.navigationController?.pushViewController(profileViewController, animated: true)
-//        }
+        LoginViewModel.shared.userFetchFirebase(profileImage: selectedImageUrl, nickname: nickname, location: location)
+        
+        // 프로필 뷰로이동
+        DispatchQueue.main.async {
+            let profileViewController = ProfileViewController()
+            self.navigationController?.pushViewController(profileViewController, animated: true)
+        }
         
     }
     // 메인뷰로 이동

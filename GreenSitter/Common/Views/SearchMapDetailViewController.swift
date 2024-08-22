@@ -13,7 +13,6 @@ class SearchMapDetailViewController: UIViewController {
     private var makePlanViewModel: MakePlanViewModel?
     private var location: Location
     private var isInitialLoad = true  // 초기 로드를 체크하기 위한 플래그
-    var loginViewModel: LoginViewModel?
     
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
@@ -47,10 +46,9 @@ class SearchMapDetailViewController: UIViewController {
     }()
     
     
-    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil, loginViewModel: LoginViewModel? = nil) {
+    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil) {
         self.location = location
         self.makePlanViewModel = makePlanViewModel
-        self.loginViewModel = loginViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -176,15 +174,11 @@ class SearchMapDetailViewController: UIViewController {
             self.dismiss(animated: true) {
                 parentViewController.dismiss(animated: true)
             }
-        }
-        else if let loginViewModel = self.loginViewModel {
+        } else {
             print("Updating user location with address: \(location)") // 로그 추가
-            loginViewModel.updateUserLocation(with: location)
+            LoginViewModel.shared.updateUserLocation(with: location)
             self.dismiss(animated: true, completion: nil)
         }
-            else {
-                print("No view model available")  // 로그 추가
-            }
     }
 }
 

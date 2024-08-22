@@ -10,13 +10,16 @@ import FirebaseFirestore
 import FirebaseAuth
 
 class LoginViewModel: ObservableObject {
+    static let shared = LoginViewModel()
     @Published var user: User?
     let db = Firestore.firestore()
-
     
+    private init() {} 
+
     func userFetchFirebase(profileImage: String, nickname: String, location: Location) {
         self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false)
     }
+    
     func firebaseFetch(userId: String) {
         db.collection("users").document(userId).getDocument { (document, error) in
             if let error = error {
