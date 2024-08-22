@@ -5,15 +5,16 @@
 //  Created by Yungui Lee on 8/7/24.
 //
 
-import FirebaseFirestore
+import Combine
 import UIKit
 
 class MainPostListViewController: UIViewController {
     
     private let categoryStackView = UIStackView()
-    private var filteredPosts: [Post] = []
     private var selectedButton: UIButton?
-    
+    private let viewModel = MainPostListViewModel()
+    private var cancellables = Set<AnyCancellable>()
+
     private let addPostButton: UIButton = {
         let button = UIButton(type: .system)
         let image = UIImage(systemName: "plus.circle")
@@ -45,6 +46,16 @@ class MainPostListViewController: UIViewController {
         setupCategoryButtons()
         setupNavigationBarButtons()
         setupTableView()
+        bindViewModel()
+    }
+    
+    private func bindViewModel() {
+        viewModel.$filteredPosts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.tableView.reloadData()
+            }
+            .store(in: &cancellables)
     }
     
     func setupNavigationBarButtons() {
@@ -67,7 +78,7 @@ class MainPostListViewController: UIViewController {
         let addBarButton = UIBarButtonItem(customView: addPostButton)
         navigationItem.rightBarButtonItems = [addBarButton, searchBarButton]
         
-        // Handle the search action
+        // TODO: post 검색 기능
         let searchPostButtonAction = UIAction { [weak self] _ in
             // TODO: Add search functionality
             print("Search button tapped")
@@ -155,40 +166,8 @@ class MainPostListViewController: UIViewController {
         
         // 선택된 카테고리로 필터링
         guard let category = sender.titleLabel?.text else { return }
-        filterPosts(for: category)
+        viewModel.fetchPosts(for: category)
     }
-    
-    func filterPosts(for category: String) {
-        guard let postType = PostType(rawValue: category) else {
-            self.filteredPosts = []
-            self.tableView.reloadData()
-            return
-        }
-
-        // Firestore에서 데이터를 가져오기 위한 참조 설정
-        let db = Firestore.firestore()
-        db.collection("posts")
-            .whereField("postType", isEqualTo: postType.rawValue)
-            .getDocuments { [weak self] (snapshot, error) in
-                guard let self = self else { return }
-
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                    self.filteredPosts = []
-                    self.tableView.reloadData()
-                    return
-                }
-
-                // Firestore에서 가져온 데이터를 Post 배열로 변환
-                self.filteredPosts = snapshot?.documents.compactMap { document in
-                    try? document.data(as: Post.self)
-                } ?? []
-
-                // 테이블 뷰 리로드
-                self.tableView.reloadData()
-            }
-    }
-
     
     private func navigateToAddPostViewController(with postType: PostType) {
         let addPostViewController = AddPostViewController(postType: postType, viewModel: AddPostViewModel(postType: postType))
@@ -205,13 +184,13 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
     // MARK: - UITABLE VIEW DATA SOURCE
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredPosts.count
+        return viewModel.filteredPosts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! PostTableViewCell
-        let post = filteredPosts[indexPath.row]
-        
+        let post = viewModel.filteredPosts[indexPath.row]
+
         cell.configure(with: post)
         
         return cell
@@ -220,7 +199,7 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
     // MARK: - UITABLE VIEW DELEGATE
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let post = filteredPosts[indexPath.row]
+        let post = viewModel.filteredPosts[indexPath.row]
         let postDetailViewController = PostDetailViewController(post: post)
         postDetailViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(postDetailViewController, animated: true)
