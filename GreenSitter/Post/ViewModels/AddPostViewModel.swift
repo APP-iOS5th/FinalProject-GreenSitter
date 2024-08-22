@@ -16,7 +16,7 @@ class AddPostViewModel: ObservableObject {
     @Published var postBody: String = ""
     @Published var postImages: [UIImage] = []
     @Published var selectedImages: [UIImage] = []
-    @Published var location: Location? = nil
+    @Published var location: Location? = .busanLocation
     
     private var firestoreManager = FirestoreManager()
     private let postType: PostType

@@ -31,13 +31,6 @@
 		3BEFEC752C63547D00E48D1E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC742C63547D00E48D1E /* GoogleSignIn */; };
 		3BEFEC772C63547D00E48D1E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3BEFEC762C63547D00E48D1E /* GoogleSignInSwift */; };
 		4FCE70042C76096A00279774 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4FCE70032C76096A00279774 /* APPKey.plist */; };
-		4FCE700C2C76098500279774 /* MainPostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70052C76098500279774 /* MainPostListViewController.swift */; };
-		4FCE700D2C76098500279774 /* EditCareSeekerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70062C76098500279774 /* EditCareSeekerViewController.swift */; };
-		4FCE700E2C76098500279774 /* PostCareProviderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70072C76098500279774 /* PostCareProviderTableViewController.swift */; };
-		4FCE700F2C76098500279774 /* PostCareSeekerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70082C76098500279774 /* PostCareSeekerTableViewController.swift */; };
-		4FCE70102C76098500279774 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE70092C76098500279774 /* AddPostViewController.swift */; };
-		4FCE70112C76098500279774 /* EditCareProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE700A2C76098500279774 /* EditCareProviderViewController.swift */; };
-		4FCE70122C76098500279774 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE700B2C76098500279774 /* PostDetailViewController.swift */; };
 		58D54A1B2C757D5D00332AA2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 58D54A1A2C757D5D00332AA2 /* GoogleService-Info.plist */; };
 		58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */; };
 		58F68FEB2C72273700A7F564 /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */; };
@@ -160,8 +153,6 @@
 		4FCE70032C76096A00279774 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = Resources/APPKey.plist; sourceTree = "<group>"; };
 		4FCE70052C76098500279774 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
 		4FCE70062C76098500279774 /* EditCareSeekerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewController.swift; sourceTree = "<group>"; };
-		4FCE70072C76098500279774 /* PostCareProviderTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareProviderTableViewController.swift; sourceTree = "<group>"; };
-		4FCE70082C76098500279774 /* PostCareSeekerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCareSeekerTableViewController.swift; sourceTree = "<group>"; };
 		4FCE70092C76098500279774 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
 		4FCE700A2C76098500279774 /* EditCareProviderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewController.swift; sourceTree = "<group>"; };
 		4FCE700B2C76098500279774 /* PostDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
@@ -574,6 +565,11 @@
 				3B8348072C748CD300359E85 /* AddCareSeekerViewModel.swift */,
 				3B8348082C748CD300359E85 /* AddCareProviderViewModel.swift */,
 				3B8A5A772C6DC227007E3902 /* GoogleService-Info.plist */,
+				4FCE70052C76098500279774 /* MainPostListViewController.swift */,
+				4FCE700B2C76098500279774 /* PostDetailViewController.swift */,
+				4FCE700A2C76098500279774 /* EditCareProviderViewController.swift */,
+				4FCE70092C76098500279774 /* AddPostViewController.swift */,
+				4FCE70062C76098500279774 /* EditCareSeekerViewController.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -774,16 +770,13 @@
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
 				97D1BEAF2C6C9DB100F7A983 /* BundleExtension.swift in Sources */,
 				97934E2B2C62FE0F00B38E0A /* SearchMapViewController.swift in Sources */,
-				4FCE700C2C76098500279774 /* MainPostListViewController.swift in Sources */,
 				97D1BE7E2C6C8BBA00F7A983 /* PlanProgressBar.swift in Sources */,
 				97D1BE962C6C93A100F7A983 /* FirestoreManager.swift in Sources */,
 				3B7D8F3D2C75686700008F22 /* WriteReviewViewController.swift in Sources */,
-				4FCE70122C76098500279774 /* PostDetailViewController.swift in Sources */,
 				97B4E8932C6AE6AA0028BE1F /* KakaoAPIService.swift in Sources */,
 				97D1BEC42C6C9DF400F7A983 /* PlanDateTimeViewController.swift in Sources */,
 				97934E152C62F8DF00B38E0A /* SearchMapViewModel.swift in Sources */,
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
-				4FCE70112C76098500279774 /* EditCareProviderViewController.swift in Sources */,
 				3B61C69A2C71DCAD00337B66 /* SelfIntroductionViewModel.swift in Sources */,
 				97D1BE812C6C8BBA00F7A983 /* ChatAdditionalButtonModel.swift in Sources */,
 				3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */,
@@ -791,7 +784,6 @@
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
 				3B6DE1AC2C72D24B009DD41A /* CareRecordViewController.swift in Sources */,
 				3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */,
-				4FCE70102C76098500279774 /* AddPostViewController.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
 				156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */,
 				58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */,
@@ -834,7 +826,6 @@
 				97934E212C62FAC300B38E0A /* Location.swift in Sources */,
 				97934E332C62FE3400B38E0A /* ReviewViewController.swift in Sources */,
 				977A52B32C69A84500E375F1 /* AnnotationDetailViewController.swift in Sources */,
-				4FCE700D2C76098500279774 /* EditCareSeekerViewController.swift in Sources */,
 				97934E052C62F89F00B38E0A /* LevelPoint.swift in Sources */,
 				97BC0DE62C747A9800F4D0B4 /* PostDetailViewModel.swift in Sources */,
 				97934E012C62F89200B38E0A /* ChatRoom.swift in Sources */,
