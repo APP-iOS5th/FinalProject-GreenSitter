@@ -12,10 +12,12 @@ import FirebaseFirestore
 import FirebaseAuth
 
 class SetProfileViewController: UIViewController {
+    
     let storage = Storage.storage()
     let db = Firestore.firestore()
     var selectButton: UIButton? //선택한 버튼을 저장할 변수
     private let location: Location
+    
     init(location: Location) {
         self.location = location
         super.init(nibName: nil, bundle: nil)
@@ -24,8 +26,6 @@ class SetProfileViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    var users: User?
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -270,6 +270,39 @@ class SetProfileViewController: UIViewController {
     }
     // 메인뷰로 이동
     @objc func skipTap() {
+        
+        // 스킵을 하는 경우에도 user data 가 기본값으로 저장되어야 하므로
+        // Firestore에 사용자 데이터 저장
+        
+        let defaultImageUrl = "gs://greensitter-6dedd.appspot.com/꽃1.png"
+        
+        let userData: [String: Any] = [
+            "id": UUID().uuidString,
+            "enabled": true,
+            "createDate": Date(),
+            "updateDate": Date(),
+            "profileImage": defaultImageUrl,
+            "nickname": "기본 닉네임",   // TODO: 닉네임 자동생성기 호출
+            "levelPoint": Level.seeds.rawValue,
+            "exp": 0,
+            "aboutMe": "",
+            "chatNotification": false
+        ]
+        
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
+            return
+        }
+        
+        db.collection("users").document(user.uid).setData(userData, merge: true) { error in
+            if let error = error {
+                print("Firestore Writing Error: \(error)")
+            } else {
+                print("Nickname successfully saved!")
+            }
+        }
+        LoginViewModel.shared.userFetchFirebase(profileImage: defaultImageUrl, nickname: "기본 닉네임", location: location, docId: user.uid)
+        
         let postListViewController = MainPostListViewController()
         navigationController?.pushViewController(postListViewController, animated: true)
     }

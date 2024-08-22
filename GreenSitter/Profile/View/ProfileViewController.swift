@@ -22,7 +22,6 @@ class ProfileViewController: UIViewController {
 
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
-    
 
     var user: User? {
         print("LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
@@ -125,7 +124,6 @@ class ProfileViewController: UIViewController {
         let aboutMeViewController = AboutMeViewController(userId: userDocId)
         self.navigationController?.pushViewController(aboutMeViewController, animated: true)
     }
-    
     
     
     @objc func changeNicknameButtonTap() {

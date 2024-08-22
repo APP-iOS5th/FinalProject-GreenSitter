@@ -19,7 +19,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     var users: User?
     
     let db = Firestore.firestore()
-    var currentUser: User? // 현재 사용자 객체
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -165,10 +164,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             let setProfileViewController = SetProfileViewController(location: location)
             self.navigationController?.pushViewController(setProfileViewController, animated: true)
         }
-
     }
-    
-    
-    
 }
 
