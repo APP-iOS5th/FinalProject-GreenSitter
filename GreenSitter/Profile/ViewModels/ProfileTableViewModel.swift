@@ -165,9 +165,17 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             logout()
         case (2, 1):
             accountDeletion()
+        case(3,0):
+            let serviceViewController = ServiceViewController()
+            self.navigationController?.pushViewController(serviceViewController, animated: true)
+        case(3,1):
+            let locationServiceViewController = LocationServiceViewController()
+            self.navigationController?.pushViewController(locationServiceViewController, animated: true)
+        case(3,2):
+            let personalInfomationViewController = PersonalinfomationViewController()
+            self.navigationController?.pushViewController(personalInfomationViewController, animated: true)
         default:
             break
         }
     }
 }
-

@@ -26,6 +26,7 @@ extension AboutMeViewController {
             presentationController.preferredCornerRadius = 20 // 모서리 둥글기 설정 (선택 사항)
         }
     }
+    
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase(userId: String) {
         db.collection("users").document(userId).getDocument { [weak self] (document, error) in
@@ -38,12 +39,22 @@ extension AboutMeViewController {
             print("Auth UserId: \(String(describing: Auth.auth().currentUser?.uid))")
             if let document = document, document.exists {
                 let data = document.data()
-                let nickname = data?["nickname"] as? String ?? "닉네임 없음"
+                let id = data?["id"] as? String ?? ""
+                let enabled = data?["enable"] as? Bool
+                let createDate = data?["createDate"] as? Date
+                let updateDate = data?["updateDate"] as? Date
                 let profileImage = data?["profileImage"] as? String ?? ""
-                let aboutMe = data?["aboutMe"] as? String ?? "자기 소개를 입력해주세요"
+                let nickname = data?["nickname"] as? String ?? "닉네임 없음"
+                let platform = data?["platform"] as? String ?? ""
                 let levelPoint = data?["levelPoint"] as? String ?? ""
-                print("Fetched levelPoint: \(levelPoint)")
+                let exp = data?["exp"] as? Int
+                let aboutMe = data?["aboutMe"] as? String ?? "자기 소개를 입력해주세요"
+                let chatNotification = data?["chatNotification"] as? Bool
+                let docId = data?["docId"] as? String ?? ""
                 
+                print("Fetched levelPoint: \(levelPoint)")
+                print("자기소개: \(aboutMe)")
+
                 // location 필드에서 address를 가져오기
                 if let location = data?["location"] as? [String: Any],
                    let locationAddress = location["address"] as? String {
@@ -61,6 +72,8 @@ extension AboutMeViewController {
                 if !profileImage.isEmpty {
                     self.loadProfileImage(from: profileImage)
                 }
+                self.user = User(id: id, enabled: false, createDate: createDate ?? Date(), updateDate: updateDate ?? Date(), profileImage: profileImage, nickname: nickname, location: Location.sampleLocation, platform: platform, levelPoint: Level.flower, exp: 0, aboutMe: aboutMe, chatNotification: false, docId: docId)
+
                 
                 // UI 업데이트
                 DispatchQueue.main.async {
@@ -73,6 +86,8 @@ extension AboutMeViewController {
             }
         }
     }
+    
+    
 
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadProfileImage(from gsURL: String) {

@@ -31,7 +31,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     
     lazy var bodyLabel: UILabel = {
         let label = UILabel()
-        label.text = 
+        label.text =
         """
         주변의 새싹 돌봄이 ☘️
         새싹 돌봄이를 찾는 분들을
@@ -166,4 +166,3 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         }
     }
 }
-

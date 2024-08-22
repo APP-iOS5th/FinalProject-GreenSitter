@@ -116,6 +116,16 @@ class SetProfileViewController: UIViewController {
         return stackView
     }()
     
+    lazy var nicknameStatusLabel: UILabel = {
+        let label = UILabel()
+        label.text = ""  // 처음에는 빈 문자열로 설정
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .red  // 에러 메시지는 빨간색으로 표시
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -127,6 +137,7 @@ class SetProfileViewController: UIViewController {
         view.addSubview(nickNameTextField)
         view.addSubview(nextButton)
         view.addSubview(skipButton)
+        view.addSubview(nicknameStatusLabel)
         
         imageButton1.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         imageButton2.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
@@ -134,39 +145,76 @@ class SetProfileViewController: UIViewController {
         imageButton4.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         imageButton5.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         imageButton6.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
-        
+        nickNameTextField.addTarget(self, action: #selector(nicknameTextChanged(_:)), for: .editingChanged)
+
         
         setupImage()
         
         // 제약 조건 설정
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            imageStackView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageStackView1.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            imageStackView1.widthAnchor.constraint(equalToConstant: 320),
-            imageStackView1.heightAnchor.constraint(equalToConstant: 100),
-            
-            imageStackView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageStackView2.topAnchor.constraint(equalTo: imageStackView1.bottomAnchor, constant: 20),
-            imageStackView2.widthAnchor.constraint(equalToConstant: 320),
-            imageStackView2.heightAnchor.constraint(equalToConstant: 100),
-            
-            nickNameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nickNameTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 80),
-            nickNameTextField.widthAnchor.constraint(equalToConstant: 350),
-            
-            nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nextButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
-            nextButton.widthAnchor.constraint(equalToConstant: 350),
-            nextButton.heightAnchor.constraint(equalToConstant: 45),
-            
-            skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
+             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             
+             imageStackView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             imageStackView1.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
+             imageStackView1.widthAnchor.constraint(equalToConstant: 320),
+             imageStackView1.heightAnchor.constraint(equalToConstant: 100),
+             
+             imageStackView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             imageStackView2.topAnchor.constraint(equalTo: imageStackView1.bottomAnchor, constant: 20),
+             imageStackView2.widthAnchor.constraint(equalToConstant: 320),
+             imageStackView2.heightAnchor.constraint(equalToConstant: 100),
+             
+             nickNameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             nickNameTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 80),
+             nickNameTextField.widthAnchor.constraint(equalToConstant: 350),
+
+             nicknameStatusLabel.topAnchor.constraint(equalTo: nickNameTextField.bottomAnchor, constant: 8),
+             nicknameStatusLabel.leadingAnchor.constraint(equalTo: nickNameTextField.leadingAnchor),
+             nicknameStatusLabel.trailingAnchor.constraint(equalTo: nickNameTextField.trailingAnchor),
+
+             nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             nextButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
+             nextButton.widthAnchor.constraint(equalToConstant: 350),
+             nextButton.heightAnchor.constraint(equalToConstant: 45),
+             
+             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+             skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
         ])
     }
     
+    //MARK: - 중복된 닉네임 체크
+    func checkNicknameAvailability(nickname: String) {
+        let usersRef = db.collection("users")
+        usersRef.whereField("nickname", isEqualTo: nickname).getDocuments { [weak self] (querySnapshot, error) in
+            if let error = error {
+                print("Error checking nickname availability: \(error)")
+                return
+            }
+            
+            if let querySnapshot = querySnapshot, !querySnapshot.isEmpty {
+                // 닉네임이 이미 사용 중인 경우
+                DispatchQueue.main.async {
+                    self?.nicknameStatusLabel.text = "중복된 닉네임입니다."
+                    self?.nicknameStatusLabel.textColor = .red
+                }
+            } else {
+                // 닉네임을 사용할 수 있는 경우
+                DispatchQueue.main.async {
+                    self?.nicknameStatusLabel.text = "사용 가능한 닉네임입니다."
+                    self?.nicknameStatusLabel.textColor = .green
+                }
+            }
+        }
+    }
+    
+    @objc func nicknameTextChanged(_ textField: UITextField) {
+        guard let nickname = textField.text, !nickname.isEmpty else {
+            nicknameStatusLabel.text = ""
+            return
+        }
+        checkNicknameAvailability(nickname: nickname)
+    }
     
     func setupImage() {
         let imageUrls = [
@@ -207,15 +255,26 @@ class SetProfileViewController: UIViewController {
     
     //MARK: - 선택 이미지
     @objc func imageButtonTap(_ sender: UIButton) {
-        //이전 버튼 선택해제
+        // 이전에 선택된 버튼의 테두리 해제
         selectButton?.layer.borderWidth = 0
+        selectButton?.layer.borderColor = UIColor.clear.cgColor // 테두리 색상을 지움
         
-        //새로운 버튼을 선택
+        // 새로운 버튼을 선택
         selectButton = sender
+        
+        // 선택된 버튼의 테두리 색상을 ComplementaryColor로 설정
+        if let complementaryColor = UIColor(named: "ComplementaryColor") {
+            selectButton?.layer.borderColor = complementaryColor.cgColor
+            selectButton?.layer.borderWidth = 2.0 // 테두리 두께 설정
+        }
     }
-    
+
     //MARK: - nextButton을 눌렀을때 닉네임을 파이어베이스에 저장
     @objc func nextTap() {
+        guard let nicknameStatus = nicknameStatusLabel.text, nicknameStatus == "사용 가능한 닉네임입니다." else {
+            // 중복된 닉네임일 경우 처리
+            return
+        }
         //MARK: - 파이어베이스 저장
         guard let nickname = nickNameTextField.text, !nickname.isEmpty else { return }
         guard let selectButton = selectButton else { return }
@@ -257,6 +316,8 @@ class SetProfileViewController: UIViewController {
                 print("Firestore Writing Error: \(error)")
             } else {
                 print("Nickname successfully saved!")
+                let profileViewController = ProfileViewController()
+                self.navigationController?.pushViewController(profileViewController, animated: true)
             }
         }
         LoginViewModel.shared.firebaseFetch(docId: user.uid)
@@ -309,5 +370,4 @@ class SetProfileViewController: UIViewController {
     
     
 }
-
 
