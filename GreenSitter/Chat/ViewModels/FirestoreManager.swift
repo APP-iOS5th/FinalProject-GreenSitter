@@ -218,15 +218,17 @@ class FirestoreManager {
                 print("No snapshot received.")
             }
             
-//            print("왜: \(String(describing: snapshot?.documentChanges))")
+            if snapshot?.metadata.hasPendingWrites == true {
+                // 로컬 쓰기가 아직 서버에 반영되지 않음
+                /// UI 업데이트 안전하게 처리
+                print("Local writes have not yet been committed to the server.")
+                return
+            }
+            
             guard let documents = snapshot?.documents else {
                 print("No messages found")
                 return
             }
-            
-//            let messages = documents.compactMap { document in
-//                return try? document.data(as: Message.self)
-//            }
             
             let messages: [Message] = documents.compactMap { document in
                 do {

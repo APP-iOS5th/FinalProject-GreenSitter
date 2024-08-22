@@ -48,12 +48,10 @@ class ChatMessageViewController: UIViewController {
         
         self.chatViewModel?.updateUI?()
         
-//        chatViewModel?.loadMessages(chatRoomId: chatRoom.id) { [weak self] in
-//            guard let self = self else { return }
-//            
-//            self.tableView.reloadData()
-//            
-//        }
+        chatViewModel?.updateUI = { [weak self] in
+            guard let self = self else { return }
+            self.tableView.reloadData() // 테이블 뷰를 리로드하여 최신 메시지를 표시
+        }
     }
     
     // MARK: - Setup UI

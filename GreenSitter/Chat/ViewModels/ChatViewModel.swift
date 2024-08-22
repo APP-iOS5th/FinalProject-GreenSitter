@@ -16,7 +16,7 @@ class ChatViewModel {
     var hasChats = false
     
     // 임시 유저 id
-    let userId = "250e8400-e29b-41d4-a716-446655440003"
+    let userId = "250e8400-e29b-41d4-a716-446655440002"
     var user: User? {
         didSet {
 //            isLoggedIn = user != nil
@@ -59,10 +59,11 @@ class ChatViewModel {
                     dispatchGroup.leave()
                 }
             }
-            
             dispatchGroup.notify(queue: .main) {
                 completion()
+                
             }
+            
         }
     }
     
@@ -130,11 +131,28 @@ class ChatViewModel {
         
         let textMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .text, text: messageText, image: nil, plan: nil)
         
+        // 로컬 메시지 리스트에 메시지 추가
+        if var chatRoomMessages = self.messages[chatRoom.id] {
+            chatRoomMessages.append(textMessage)
+            self.messages[chatRoom.id] = chatRoomMessages
+        } else {
+            self.messages[chatRoom.id] = [textMessage]
+        }
+
+        // UI 업데이트
+//        self.updateUI?()
+        
         Task {
             do {
                 try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: textMessage)
             } catch {
                 print("Failed to save message: \(error.localizedDescription)")
+                // Firestore에 저장 실패 시, 로컬 메시지 리스트에서 해당 메시지 제거
+                if var chatRoomMessages = self.messages[chatRoom.id] {
+                    chatRoomMessages.removeAll { $0.id == textMessage.id }
+                    self.messages[chatRoom.id] = chatRoomMessages
+                }
+//                self.updateUI?()
                 return
             }
         }
