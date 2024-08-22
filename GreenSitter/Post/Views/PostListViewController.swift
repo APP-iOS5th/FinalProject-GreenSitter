@@ -46,9 +46,7 @@ class PostListViewController: UIViewController {
     
     private func navigateToChatDetail(chatRoom: ChatRoom) {
         let chatViewModel = ChatViewModel()
-        chatViewModel.chatRoom = chatRoom
-        
-        let chatDetailViewController = ChatViewController()
+        let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
         chatDetailViewController.chatViewModel = chatViewModel
         self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }

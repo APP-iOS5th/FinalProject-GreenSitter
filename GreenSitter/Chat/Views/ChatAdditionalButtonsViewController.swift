@@ -10,10 +10,22 @@ import PhotosUI
 
 class ChatAdditionalButtonsViewController: UIViewController {
     
-    private let viewModel = ChatAdditionalButtonsViewModel()
+    var chatViewModel: ChatViewModel?
+    var chatRoom: ChatRoom
+    
+    init(chatRoom: ChatRoom) {
+        self.chatRoom = chatRoom
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let chatAdditionalButtonsViewModel = ChatAdditionalButtonsViewModel()
     
     private var buttonViews: [ChatAdditionalButton] {
-        viewModel.buttonModels.map { model in
+        chatAdditionalButtonsViewModel.buttonModels.map { model in
             let button = ChatAdditionalButton(imageName: model.imageName, titleText: model.titleText, buttonAction: UIAction { _ in model.buttonAction() })
             return button
         }
@@ -50,7 +62,7 @@ class ChatAdditionalButtonsViewController: UIViewController {
         
         setupUI()
         
-        viewModel.delegate = self
+        chatAdditionalButtonsViewModel.delegate = self
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(_:))))
         
@@ -90,7 +102,7 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
         
         Task {
             let selectedImages = await loadImages(from: results)
-            print(selectedImages)
+            chatViewModel?.sendImageMessage(images: selectedImages, chatRoom: chatRoom)
         }
         
         picker.dismiss(animated: true)
@@ -128,7 +140,7 @@ extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: false) {
             if let image = info[.originalImage] as? UIImage {
-                print(image)
+                self.chatViewModel?.sendImageMessage(images: [image], chatRoom: self.chatRoom)
             }
         }
     }
@@ -168,9 +180,12 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
     
     func presentMakePlan() {
         guard let viewController = self.presentingViewController else { return }
+        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(chatRoom: chatRoom))
+        makePlanViewController.modalPresentationStyle = .fullScreen
+        makePlanViewController.viewModel.chatViewModel = chatViewModel
         DispatchQueue.main.async {
             self.dismiss(animated: false) {
-                viewController.present(MakePlanViewController(), animated: true)
+                viewController.present(makePlanViewController, animated: true)
             }
         }
     }

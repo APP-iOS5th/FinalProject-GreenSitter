@@ -9,6 +9,7 @@ import UIKit
 
 class ChatListViewController: UIViewController {
     private var chatViewModel = ChatViewModel()
+    private var chatRoom: ChatRoom?
     
     // container
     private lazy var container: UIView = {
@@ -44,7 +45,7 @@ class ChatListViewController: UIViewController {
         button.titleLabel?.textAlignment = .center
         button.titleLabel?.numberOfLines = 0
         button.titleLabel?.lineBreakMode = .byWordWrapping
-
+        
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -95,9 +96,9 @@ class ChatListViewController: UIViewController {
                     
                 } else {
                     // MARK: - 로그인/채팅방 없음
-                    setupEmptyChatListUI()
+                    self.setupEmptyChatListUI()
                     // 버튼 클릭 시 홈 화면으로 이동
-                    goToHomeButton.addAction(UIAction { [weak self] _ in
+                    self.goToHomeButton.addAction(UIAction { [weak self] _ in
                         self?.navigateToHome()
                     }, for: .touchUpInside)
                 }
@@ -135,7 +136,7 @@ class ChatListViewController: UIViewController {
     
     // MARK: - 로그인/채팅 목록 있음 Methods
     @objc private func editButtonTapped() {
-
+        
     }
     
     // MARK: - Setup Empty ChatList UI
@@ -190,11 +191,11 @@ class ChatListViewController: UIViewController {
         let loginViewController = LoginViewController()
         loginViewController.modalPresentationStyle = .fullScreen
         self.present(loginViewController, animated: true) {
-                let image = UIImage(named: "profileIcon")
-                let title = "로그인 권한이 필요한 기능입니다."
-                let subtitle = "로그인 화면으로 이동합니다."
-                if let image = image {
-                    self.showToast(image: image, title: title, subtitle: subtitle, on: loginViewController)
+            let image = UIImage(named: "profileIcon")
+            let title = "로그인 권한이 필요한 기능입니다."
+            let subtitle = "로그인 화면으로 이동합니다."
+            if let image = image {
+                self.showToast(image: image, title: title, subtitle: subtitle, on: loginViewController)
             }
         }
     }
@@ -244,7 +245,7 @@ class ChatListViewController: UIViewController {
             toastView.centerXAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.centerXAnchor),
             toastView.widthAnchor.constraint(equalToConstant: 370),
             toastView.heightAnchor.constraint(equalToConstant: 88),
-
+            
             imageView.leadingAnchor.constraint(equalTo: toastView.leadingAnchor, constant: 10),
             imageView.centerYAnchor.constraint(equalTo: toastView.centerYAnchor),
             imageView.widthAnchor.constraint(equalToConstant: 52),
@@ -257,7 +258,7 @@ class ChatListViewController: UIViewController {
             titleLabel.topAnchor.constraint(equalTo: labelView.topAnchor, constant: 10),
             titleLabel.leadingAnchor.constraint(equalTo: labelView.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: labelView.trailingAnchor),
-
+            
             subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
             subtitleLabel.leadingAnchor.constraint(equalTo: labelView.leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(equalTo: labelView.trailingAnchor),
@@ -290,22 +291,17 @@ class ChatListViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension ChatListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let chatRooms = chatViewModel.chatRooms else {
-            return 0
-        }
-        return chatRooms.count
+        return chatViewModel.chatRooms.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatTableViewCell", for: indexPath) as! ChatTableViewCell
         
-        guard let chatRooms = chatViewModel.chatRooms else {
-            return cell
-        }
-        
-        chatViewModel.chatRoom = chatRooms[indexPath.row]
-        cell.chatViewModel = chatViewModel
-        cell.configure(userId: chatViewModel.userId)
+        chatRoom = chatViewModel.chatRooms[indexPath.row]
+        cell.chatRoom = chatRoom!
+        cell.chatViewModel = self.chatViewModel
+        cell.configure(userId: self.chatViewModel.userId)
+        cell.setupUI()
         
         return cell
     }
@@ -330,11 +326,9 @@ extension ChatListViewController: UITableViewDelegate {
     
     // 채팅 디테일로 이동
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let chatRooms = chatViewModel.chatRooms, indexPath.row >= 0 && indexPath.row < chatRooms.count else {
-            return
-        }
+        let selectedChatRoom = chatViewModel.chatRooms[indexPath.row]
         
-        let chatViewController = ChatViewController()
+        let chatViewController = ChatViewController(chatRoom: selectedChatRoom)
         chatViewController.chatViewModel = chatViewModel
         
         self.navigationController?.pushViewController(chatViewController, animated: true)

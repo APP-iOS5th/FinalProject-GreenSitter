@@ -7,14 +7,20 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 class FirestoreManager {
     private let db = Firestore.firestore()
     
     // MARK: - User
-    // 사용자 데이터 가져오기
-    /// listener를 통한 실시간 데이터 변경사항 반영
-    func fetchUser(userId: String, onUpdate: @escaping (User?) -> Void) {
+    func fetchUser(onUpdate: @escaping (User?) -> Void) {
+        // 현재 로그인된 사용자의 userId 가져오기
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User ID is not available")
+            return
+        }
+
+        // Firestore에서 특정 문서 가져오기
         let docRef = db.collection("users").document(userId)
         
         docRef.getDocument { [weak self] (document, error) in
@@ -102,7 +108,7 @@ class FirestoreManager {
     // 채팅방 데이터 가져오기
     /// listener를 통한 실시간 데이터 변경사항 반영
     func fetchChatRooms(userId: String, onUpdate: @escaping ([ChatRoom]) -> Void) {
-        // 사용자 아이디와 ownerId가 같은 문서와 사용자 아이디와 sitterId가 같은 문서 필터링
+        // 사용자 아이디와 userId가 같은 문서와 사용자 아이디와 postUserId가 같은 문서 필터링
         let userQuery = db.collection("chatRooms")
             .whereField("userId", isEqualTo: userId)
             .whereField("userEnabled", isEqualTo: true)
@@ -187,8 +193,35 @@ class FirestoreManager {
             .order(by: "updateDate", descending: false) // 메세지 보낸 시간순 정렬
         
         messagesQuery.addSnapshotListener { snapshot, error in
+//        messagesQuery.getDocuments { snapshot, error in
             if let error = error {
                 print("Error fetching messages: \(error.localizedDescription)")
+                return
+            }
+            
+            // 스냅샷 발생 이유에 대한 로그 출력
+            if let snapshot = snapshot {
+                print("Snapshot metadata: \(snapshot.metadata)")
+                print("Is from cache: \(snapshot.metadata.isFromCache)")
+                print("Has pending writes: \(snapshot.metadata.hasPendingWrites)")
+                
+                if snapshot.metadata.hasPendingWrites {
+                    print("Snapshot contains local writes that have not yet been sent to the server.")
+                }
+                
+                if snapshot.metadata.isFromCache {
+                    print("Snapshot is from cache and may not reflect the most recent server state.")
+                } else {
+                    print("Snapshot is from the server and reflects the most up-to-date state.")
+                }
+            } else {
+                print("No snapshot received.")
+            }
+            
+            if snapshot?.metadata.hasPendingWrites == true {
+                // 로컬 쓰기가 아직 서버에 반영되지 않음
+                /// UI 업데이트 안전하게 처리
+                print("Local writes have not yet been committed to the server.")
                 return
             }
             
@@ -197,8 +230,13 @@ class FirestoreManager {
                 return
             }
             
-            let messages = documents.compactMap { document in
-                return try? document.data(as: Message.self)
+            let messages: [Message] = documents.compactMap { document in
+                do {
+                    return try document.data(as: Message.self)
+                } catch {
+                    print("Error decoding message: \(error.localizedDescription)")
+                    return nil
+                }
             }
             
             onUpdate(messages)

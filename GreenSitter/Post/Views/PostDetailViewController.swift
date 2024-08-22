@@ -9,6 +9,7 @@ import UIKit
 import MapKit
 
 class PostDetailViewController: UIViewController {
+    private var postDetailViewModel = PostDetailViewModel()
     
     private let post: Post
     
@@ -162,6 +163,18 @@ class PostDetailViewController: UIViewController {
         view.backgroundColor = .bgPrimary
         setupUI()
         configure(with: post)
+        
+        contactButton.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            Task {
+                await self.postDetailViewModel.chatButtonTapped()
+            }
+        }, for: .touchUpInside)
+        
+        // ChatDetailView로 이동
+        postDetailViewModel.onChatButtonTapped = { [weak self] chatRoom in
+            self?.navigateToChatDetail(chatRoom: chatRoom)
+        }
     }
 
     private func setupUI() {
@@ -288,6 +301,14 @@ class PostDetailViewController: UIViewController {
     @objc private func userProfileButtonTapped() {
         let aboutMeVC = AboutMeViewController(userId: post.userId)
         navigationController?.pushViewController(aboutMeVC, animated: true)
+    }
+    
+    // 채팅창으로 이동
+    private func navigateToChatDetail(chatRoom: ChatRoom) {
+        let chatViewModel = ChatViewModel()
+        let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
+        chatDetailViewController.chatViewModel = chatViewModel
+        self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
 }
 

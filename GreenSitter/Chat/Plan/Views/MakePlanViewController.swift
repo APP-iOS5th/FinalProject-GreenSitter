@@ -9,11 +9,11 @@ import UIKit
 
 class MakePlanViewController: UIViewController {
     
-    private var viewModel: MakePlanViewModel
+    var viewModel: MakePlanViewModel
     
     private var pages: [UIViewController]
     
-    init(viewModel: MakePlanViewModel = MakePlanViewModel(), pages: [UIViewController] = []) {
+    init(viewModel: MakePlanViewModel, pages: [UIViewController] = []) {
         self.viewModel = viewModel
         self.pages = pages
         super.init(nibName: nil, bundle: nil)
