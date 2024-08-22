@@ -9,6 +9,7 @@ import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
+import Combine
 class ProfileViewController: UIViewController {
     
     // MARK: - Properties
@@ -16,9 +17,11 @@ class ProfileViewController: UIViewController {
     var textFieldContainer: UIView?
     let db = Firestore.firestore()
     let storage = Storage.storage()
-    
+    let someIndexPath = IndexPath(row: 0, section: 0) // 적절한 인덱스 경로로 대체
     var users: User?
     let viewModel = LoginViewModel()
+    let mapViewModel = MapViewModel()
+    var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI Components
     lazy var circleView: UIView = {
@@ -64,6 +67,8 @@ class ProfileViewController: UIViewController {
         setupView()
         fetchUserFirebase()
         setupTextField()
+
+        bindViewModel(for: someIndexPath)
     }
     
     private func setupView() {
