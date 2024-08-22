@@ -7,6 +7,7 @@
 
 import Combine
 import UIKit
+import FirebaseAuth
 
 class MainPostListViewController: UIViewController {
     
@@ -72,10 +73,10 @@ class MainPostListViewController: UIViewController {
         // Create a menu with actions for each PostType
         let menu = UIMenu(title: "", children: [
             UIAction(title: PostType.offeringToSitter.rawValue, image: UIImage(systemName: "hand.raised.fill")) { [weak self] _ in
-                self?.navigateToAddPostViewController(with: .offeringToSitter)
+                self?.handleAddPostButtonTapped(postType: .offeringToSitter)
             },
             UIAction(title: PostType.lookingForSitter.rawValue, image: UIImage(systemName: "person.fill")) { [weak self] _ in
-                self?.navigateToAddPostViewController(with: .lookingForSitter)
+                self?.handleAddPostButtonTapped(postType: .lookingForSitter)
             },
         ])
         
@@ -96,7 +97,16 @@ class MainPostListViewController: UIViewController {
         searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
     }
     
-    
+    private func handleAddPostButtonTapped(postType: PostType) {
+        if Auth.auth().currentUser != nil {
+            navigateToAddPostViewController(with: postType)
+        } else {
+            if let tabBarController = self.tabBarController {
+                tabBarController.selectedIndex = 3
+            }
+        }
+    }
+
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
         careProviderButton.setTitle(PostType.offeringToSitter.rawValue, for: .normal)
