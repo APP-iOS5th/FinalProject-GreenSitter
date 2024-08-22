@@ -10,10 +10,28 @@
 // Seeker,Provider 데이터 지우는 함수
 
 import Foundation
+import FirebaseFirestore
 
-class PostDetailViewModel {
+class PostDetailViewModel: ObservableObject {
+    private let db = Firestore.firestore()
     private var firestoreManager = FirestoreManager()
+
+    @Published var selectedPost: Post?
     
+    // MARK: - Post 삭제
+    func deletePost(postId: String, completion: @escaping (Bool) -> Void) {
+        db.collection("posts").document(postId).delete { error in
+            if let error = error {
+                print("Error removing document: \(error.localizedDescription)")
+                completion(false)
+            } else {
+                print("Document successfully removed!")
+                completion(true)
+            }
+        }
+    }
+    
+
     // 임시 데이터
     var user = SampleChatData.exampleUsers[2]
     var post = SampleChatData.examplePosts[1]

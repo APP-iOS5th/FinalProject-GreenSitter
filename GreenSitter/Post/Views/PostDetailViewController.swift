@@ -199,8 +199,23 @@ class PostDetailViewController: UIViewController {
                 editPostViewController.modalPresentationStyle = .fullScreen
                 self.present(editPostViewController, animated: true)
             },
-            UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { _ in
-                
+            UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { [weak self] _ in
+                guard let self = self else { return }
+                self.postDetailViewModel.deletePost(postId: self.post.id) { [weak self] success in
+                    DispatchQueue.main.async {
+                        if success {
+                            let alert = UIAlertController(title: "성공", message: "삭제가 완료되었습니다.", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "확인", style: .default) { _ in
+                                self?.navigationController?.popViewController(animated: true)
+                            })
+                            self?.present(alert, animated: true)
+                        } else {
+                            let alert = UIAlertController(title: "실패", message: "삭제에 실패했습니다. 다시 시도해 주세요.", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "확인", style: .default))
+                            self?.present(alert, animated: true)
+                        }
+                    }
+                }
             }
         ])
 
