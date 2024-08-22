@@ -10,6 +10,14 @@ import UIKit
 
 class PostTableViewCell: UITableViewCell {
     
+    private let containerView: UIView = {
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = .systemBackground
+            view.layer.cornerRadius = 8
+            return view
+        }()
+    
     private let postTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -47,6 +55,7 @@ class PostTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        contentView.addSubview(containerView)
         contentView.addSubview(verticalStackView)
         
         verticalStackView.addArrangedSubview(postTitleLabel)
@@ -54,10 +63,15 @@ class PostTableViewCell: UITableViewCell {
         verticalStackView.addArrangedSubview(postDateLabel)
         
         NSLayoutConstraint.activate([
-            verticalStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            verticalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            verticalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            verticalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            
+            verticalStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+            verticalStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
+            verticalStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
+            verticalStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8)
         ])
     }
     
