@@ -7,6 +7,7 @@
 
 import UIKit
 import MapKit
+import FirebaseAuth
 
 class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
@@ -161,6 +162,17 @@ class PostDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
+        
+        if Auth.auth().currentUser != nil {
+            // 해당 post 가 자신이 올린 Post 라면, 삭제/편집 기능 있는 네비게이션 바로 표시
+            if LoginViewModel.shared.user?.docId == post.userId {
+                setupNavigationBarWithEdit()
+            } else {
+                // 그게 아니면 차단 기능있는 네비게이션 바 표시
+                setupNavigationBarWithBlock()
+            }
+        }
+        
         setupUI()
         configure(with: post)
         
@@ -176,7 +188,49 @@ class PostDetailViewController: UIViewController {
             self?.navigateToChatDetail(chatRoom: chatRoom)
         }
     }
-
+    
+    private func setupNavigationBarWithEdit() {
+        let menu = UIMenu(title: "", children: [
+            UIAction(title: "수정하기", image: UIImage(systemName: "pencil")) { _ in
+                
+            },
+            UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { _ in
+                
+            }
+        ])
+        
+        let menuButton = UIButton(type: .system)
+        menuButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
+        menuButton.tintColor = .labelsPrimary
+        menuButton.menu = menu
+        menuButton.showsMenuAsPrimaryAction = true
+        menuButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let menuBarButtonItem = UIBarButtonItem(customView: menuButton)
+        navigationItem.rightBarButtonItem = menuBarButtonItem
+    }
+    
+    private func setupNavigationBarWithBlock() {
+        let menu = UIMenu(title: "", children: [
+            UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { _ in
+                
+            },
+            UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { _ in
+                
+            }
+        ])
+        
+        let menuButton = UIButton(type: .system)
+        menuButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
+        menuButton.tintColor = .labelsPrimary
+        menuButton.menu = menu
+        menuButton.showsMenuAsPrimaryAction = true
+        menuButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let menuBarButtonItem = UIBarButtonItem(customView: menuButton)
+        navigationItem.rightBarButtonItem = menuBarButtonItem
+    }
+    
     private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
