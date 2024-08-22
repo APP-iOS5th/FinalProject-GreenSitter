@@ -193,11 +193,32 @@ class FirestoreManager {
             .order(by: "updateDate", descending: false) // 메세지 보낸 시간순 정렬
         
         messagesQuery.addSnapshotListener { snapshot, error in
+//        messagesQuery.getDocuments { snapshot, error in
             if let error = error {
                 print("Error fetching messages: \(error.localizedDescription)")
                 return
             }
             
+            // 스냅샷 발생 이유에 대한 로그 출력
+            if let snapshot = snapshot {
+                print("Snapshot metadata: \(snapshot.metadata)")
+                print("Is from cache: \(snapshot.metadata.isFromCache)")
+                print("Has pending writes: \(snapshot.metadata.hasPendingWrites)")
+                
+                if snapshot.metadata.hasPendingWrites {
+                    print("Snapshot contains local writes that have not yet been sent to the server.")
+                }
+                
+                if snapshot.metadata.isFromCache {
+                    print("Snapshot is from cache and may not reflect the most recent server state.")
+                } else {
+                    print("Snapshot is from the server and reflects the most up-to-date state.")
+                }
+            } else {
+                print("No snapshot received.")
+            }
+            
+//            print("왜: \(String(describing: snapshot?.documentChanges))")
             guard let documents = snapshot?.documents else {
                 print("No messages found")
                 return
