@@ -77,5 +77,14 @@ class ChatViewController: UIViewController {
     @objc private func listButtonTapped() {
         print("list button")
     }
+    
+//     @objc private func handleTap() {
+//         let postDetailViewController = PostDetailViewController(post: Post.samplePosts.first!)
+        
+//         // TODO: - 특정 게시물로 이동
+// //        postDetailViewController.postId = postId
+        
+//         self.navigationController?.pushViewController(postDetailViewController, animated: true)
+//     }
 
 }

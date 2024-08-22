@@ -8,7 +8,7 @@
 import UIKit
 
 class PostListViewController: UIViewController {
-    private var postViewModel = MainPostListViewModel()
+    private var postViewModel = PostDetailViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()

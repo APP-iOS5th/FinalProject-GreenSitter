@@ -5,14 +5,16 @@
 //  Created by Yungui Lee on 8/7/24.
 //
 
+import Combine
 import UIKit
 
-class MainPostListViewController: UIViewController, UITableViewDataSource {
+class MainPostListViewController: UIViewController {
     
     private let categoryStackView = UIStackView()
-    private var filteredPosts: [String] = []
     private var selectedButton: UIButton?
-    
+    private let viewModel = MainPostListViewModel()
+    private var cancellables = Set<AnyCancellable>()
+
     private let addPostButton: UIButton = {
         let button = UIButton(type: .system)
         let image = UIImage(systemName: "plus.circle")
@@ -39,23 +41,64 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemBackground
+        self.view.backgroundColor = .bgPrimary
         
         setupCategoryButtons()
-        setupAddPostButton()
-        setupSearchPostButton()
+        setupNavigationBarButtons()
         setupTableView()
+        bindViewModel()
     }
+    
+    private func bindViewModel() {
+        viewModel.$filteredPosts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] posts in
+                print("MainView - bindViewModel posts: \(posts)")
+                self?.tableView.reloadData()
+            }
+            .store(in: &cancellables)
+    }
+    
+    func setupNavigationBarButtons() {
+        // Create a menu with actions for each PostType
+        let menu = UIMenu(title: "", children: [
+            UIAction(title: PostType.offeringToSitter.rawValue, image: UIImage(systemName: "hand.raised.fill")) { [weak self] _ in
+                self?.navigateToAddPostViewController(with: .offeringToSitter)
+            },
+            UIAction(title: PostType.lookingForSitter.rawValue, image: UIImage(systemName: "person.fill")) { [weak self] _ in
+                self?.navigateToAddPostViewController(with: .lookingForSitter)
+            },
+        ])
+        
+        // Attach the menu to the addPostButton
+        addPostButton.menu = menu
+        addPostButton.showsMenuAsPrimaryAction = true
+        
+        // Add the search button as a UIBarButtonItem
+        let searchBarButton = UIBarButtonItem(customView: searchPostButton)
+        let addBarButton = UIBarButtonItem(customView: addPostButton)
+        navigationItem.rightBarButtonItems = [addBarButton, searchBarButton]
+        
+        // TODO: post 검색 기능
+        let searchPostButtonAction = UIAction { [weak self] _ in
+            // TODO: Add search functionality
+            print("Search button tapped")
+        }
+        searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
+    }
+    
     
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
-        careProviderButton.setTitle("새싹 돌봐드립니다.", for: .normal)
-        careProviderButton.setTitleColor(.labelsPrimary, for: .normal)
+        careProviderButton.setTitle(PostType.offeringToSitter.rawValue, for: .normal)
+        careProviderButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        careProviderButton.setTitleColor(.labelsSecondary, for: .normal)
         careProviderButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
         
         let careSeekerButton = UIButton()
-        careSeekerButton.setTitle("새싹돌봄이를 찾습니다.", for: .normal)
-        careSeekerButton.setTitleColor(.labelsPrimary, for: .normal)
+        careSeekerButton.setTitle(PostType.lookingForSitter.rawValue, for: .normal)
+        careSeekerButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        careSeekerButton.setTitleColor(.labelsSecondary, for: .normal)
         careSeekerButton.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
         
         categoryStackView.axis = .horizontal
@@ -67,7 +110,7 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
         view.addSubview(categoryStackView)
         
         NSLayoutConstraint.activate([
-            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            categoryStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 44),
             categoryStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             categoryStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             categoryStackView.heightAnchor.constraint(equalToConstant: 50)
@@ -123,6 +166,8 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     
     func setupTableView() {
         tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "CustomCell")
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
@@ -134,37 +179,76 @@ class MainPostListViewController: UIViewController, UITableViewDataSource {
     }
     
     @objc func categoryButtonTapped(_ sender: UIButton) {
-        selectedButton?.setTitleColor(.labelsPrimary, for: .normal)
+        // 이전에 선택된 버튼의 텍스트 스타일 초기화
+        selectedButton?.setTitleColor(.labelsSecondary, for: .normal)
+        selectedButton?.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        
+        // 이전에 선택된 버튼에서 이미지 제거
+        if let previousButton = selectedButton, let previousImageView = previousButton.viewWithTag(100) as? UIImageView {
+            previousImageView.removeFromSuperview()
+        }
+        
+        // 현재 선택된 버튼 텍스트 스타일 적용
+        sender.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         sender.setTitleColor(.complementary, for: .normal)
         selectedButton = sender
         
+        // 새로운 이미지 뷰 추가
+        let imageView = UIImageView(image: UIImage(named: "postCategoryIcon"))
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tag = 100 // 이미지 뷰를 나중에 제거하기 위해 태그를 지정
+        
+        // 이미지 뷰를 버튼에 추가
+        sender.addSubview(imageView)
+        
+        // 이미지 뷰 레이아웃 설정 (좌측 상단에 위치)
+        NSLayoutConstraint.activate([
+            imageView.leadingAnchor.constraint(equalTo: sender.leadingAnchor, constant: 15),
+            imageView.topAnchor.constraint(equalTo: sender.topAnchor, constant: -25),
+            imageView.widthAnchor.constraint(equalToConstant: 50),
+            imageView.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        
+        // 선택된 카테고리로 필터링
         guard let category = sender.titleLabel?.text else { return }
-        filterPosts(for: category)
+        viewModel.fetchPostsByCategory(for: category)
     }
     
-    func filterPosts(for category: String) {
-        if category == "새싹 돌봐드립니다." {
-            filteredPosts = ["화분 관리해드려요", "꽃을 주기적으로 관리해드려요"]
-        } else if category == "새싹돌봄이를 찾습니다." {
-            filteredPosts = ["경비실 화분 관리해주실 분", "출장가는 동안 식물 관리 부탁드려요"]
+    private func navigateToAddPostViewController(with postType: PostType) {
+        let addPostViewController = AddPostViewController(postType: postType, viewModel: AddPostViewModel(postType: postType))
+        addPostViewController.hidesBottomBarWhenPushed = true
+        if let navigationController = self.navigationController {
+            navigationController.pushViewController(addPostViewController, animated: true)
         } else {
-            filteredPosts = []
+            print("Navigation controller not found.")
         }
-        tableView.reloadData()
     }
+}
     
-    // MARK: - UITableViewDataSource
+extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate {
+    // MARK: - UITABLE VIEW DATA SOURCE
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredPosts.count
+        return viewModel.filteredPosts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        cell.textLabel?.text = filteredPosts[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! PostTableViewCell
+        let post = viewModel.filteredPosts[indexPath.row]
+
+        cell.configure(with: post)
+        
         return cell
     }
+    
+    // MARK: - UITABLE VIEW DELEGATE
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let post = viewModel.filteredPosts[indexPath.row]
+        let postDetailViewController = PostDetailViewController(post: post)
+        postDetailViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(postDetailViewController, animated: true)
+    }
+
 }
-
-
-

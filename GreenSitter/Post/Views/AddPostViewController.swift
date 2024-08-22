@@ -16,7 +16,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     init(postType: PostType, viewModel: AddPostViewModel) {
         self.postType = postType
-        self.viewModel = viewModel
+        self.viewModel = AddPostViewModel(postType: postType)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -148,7 +148,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         let button = UIButton()
         button.setTitle("작성완료", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .dominant
+        button.backgroundColor = .dominent
         button.layer.cornerRadius = 20
         button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -200,6 +200,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     }
     
     private func setupLayout() {
+        self.title = postType.rawValue
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
