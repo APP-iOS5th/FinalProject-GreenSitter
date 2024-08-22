@@ -58,14 +58,14 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-//    private let postTimeLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = .systemFont(ofSize: 12)
-//        label.textColor = .gray
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.text = "2시간 전"
-//        return label
-//    }()
+    private let postTimeLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = .gray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "2시간 전"
+        return label
+    }()
     
     private let dividerLine1: UIImageView = {
         let line = UIImageView()
@@ -164,7 +164,7 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(profileImageView)
         contentView.addSubview(userNameLabel)
         contentView.addSubview(userLevelLabel)
-//        contentView.addSubview(postTimeLabel)
+        contentView.addSubview(postTimeLabel)
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
         contentView.addSubview(postImagesView)
@@ -201,8 +201,8 @@ class PostDetailViewController: UIViewController {
             userLevelLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
             userLevelLabel.leadingAnchor.constraint(equalTo: userNameLabel.leadingAnchor),
             
-//            postTimeLabel.topAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 4),
-//            postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
+            postTimeLabel.topAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 4),
+            postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
             
             statusLabel.bottomAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 40),
             statusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -262,11 +262,33 @@ class PostDetailViewController: UIViewController {
         
         profileImageView.image = UIImage(named: post.profileImage)
         
+        postTimeLabel.text = timeAgoSinceDate(post.createDate)
+        
         // TODO: 이미지뷰를 horizontal scrollview 로 바꾸고, 여러 개의 이미지 표시하기
         if let imageName = post.postImages?.first {
             postImagesView.image = UIImage(named: imageName)
         } else {
             postImagesView.image = nil
+        }
+    }
+    
+    private func timeAgoSinceDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let now = Date()
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date, to: now)
+        
+        if let year = components.year, year > 0 {
+            return "\(year)년 전"
+        } else if let month = components.month, month > 0 {
+            return "\(month)개월 전"
+        } else if let day = components.day, day > 0 {
+            return "\(day)일 전"
+        } else if let hour = components.hour, hour > 0 {
+            return "\(hour)시간 전"
+        } else if let minute = components.minute, minute > 0 {
+            return "\(minute)분 전"
+        } else {
+            return "방금 전"
         }
     }
 }
