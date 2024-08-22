@@ -76,7 +76,7 @@ class ChatViewController: UIViewController {
             chatMessageViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             chatMessageViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             
-            messageInputViewController.view.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            messageInputViewController.view.bottomAnchor.constraint(equalTo: self.view.keyboardLayoutGuide.topAnchor, constant: -10),
             messageInputViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
             messageInputViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
             messageInputViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
