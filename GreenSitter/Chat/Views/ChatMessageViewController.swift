@@ -84,7 +84,7 @@ extension ChatMessageViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch chatViewModel?.messages?[indexPath.row].messageType {
+        switch chatViewModel?.messages[chatRoom.id]?[indexPath.row].messageType {
         case .text:
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
         
@@ -110,7 +110,12 @@ extension ChatMessageViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
             cell.backgroundColor = .clear
             
-            let imageCounts: Int = chatViewModel?.messages?[indexPath.row].image?.count ?? 0
+            guard let messages = self.chatViewModel?.messages[chatRoom.id],
+                  indexPath.row < messages.count else {
+                fatalError("Unable to retrieve messages for the selected chat room")
+            }
+            
+            let imageCounts: Int = messages[indexPath.row].image?.count ?? 0
             var progressImages = [UIImage]()
             
             for _ in 0..<imageCounts {
@@ -120,7 +125,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             }
             cell.images = progressImages
             
-            if let imagePaths = chatViewModel?.messages?[indexPath.row].image {
+            if let imagePaths = messages[indexPath.row].image {
                 Task {
                     let images = await chatViewModel?.loadChatImages(imagePaths: imagePaths)
                     print("images : \(String(describing: images))")
@@ -130,18 +135,25 @@ extension ChatMessageViewController: UITableViewDataSource {
                 }
             }
             
-            if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
+            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true
             }
-            cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
+            cell.isRead = messages[indexPath.row].isRead
+            
             return cell
+            
         case .plan:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessagePlanCell", for: indexPath) as! ChatMessageTableViewPlanCell
             cell.backgroundColor = .clear
             
-            let planDate = chatViewModel?.messages?[indexPath.row].plan?.planDate
+            guard let messages = self.chatViewModel?.messages[chatRoom.id],
+                  indexPath.row < messages.count else {
+                fatalError("Unable to retrieve messages for the selected chat room")
+            }
+            
+            let planDate = messages[indexPath.row].plan?.planDate
             if let planDate = planDate {
                 let dateFormatter = DateFormatter()
                 
@@ -156,44 +168,51 @@ extension ChatMessageViewController: UITableViewDataSource {
                 cell.planTimeLabel.text = "시간: \(timeString)"
             }
             
-            let planPlace = chatViewModel?.messages?[indexPath.row].plan?.planPlace?.placeName ?? ""
+            let planPlace = messages[indexPath.row].plan?.planPlace?.placeName ?? ""
             cell.planPlaceLabel.text = "장소: \(planPlace)"
             
-            if let plan = chatViewModel?.messages?[indexPath.row].plan {
-                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true)
+            if let plan = messages[indexPath.row].plan {
+                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, chatRoom: chatRoom)
                 cell.detailButtonAction = {
                     self.present(MakePlanViewController(viewModel: makePlanViewModel), animated: true)
                 }
             }
             
-            if let planPlace = chatViewModel?.messages?[indexPath.row].plan?.planPlace {
+            if let planPlace = messages[indexPath.row].plan?.planPlace {
                 cell.placeButtonAction = {
                     let navigationController = UINavigationController(rootViewController: PlanPlaceDetailViewController(location: planPlace))
                     self.present(navigationController, animated: true)
                 }
             }
             
-            if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
+            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true
             }
             
-            cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
+            cell.isRead = messages[indexPath.row].isRead
             
             return cell
+            
         case .none:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
-            cell.backgroundColor = .clear
-            cell.messageLabel.text = chatViewModel?.messages?[indexPath.row].text
             
-            if chatViewModel?.userId == chatViewModel?.messages?[indexPath.row].senderUserId {
+            guard let messages = self.chatViewModel?.messages[chatRoom.id],
+                  indexPath.row < messages.count else {
+                fatalError("Unable to retrieve messages for the selected chat room")
+            }
+            
+            cell.backgroundColor = .clear
+            cell.messageLabel.text = messages[indexPath.row].text
+            
+            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true
             }
             
-            cell.isRead = ((chatViewModel?.messages?[indexPath.row].isRead) != nil)
+            cell.isRead = messages[indexPath.row].isRead
             
             return cell
         }

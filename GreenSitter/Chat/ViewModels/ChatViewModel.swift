@@ -160,33 +160,18 @@ class ChatViewModel {
     }
     
     //MARK: - 이미지 메세지 전송
-    func sendImageMessage(images: [UIImage]) {
+    func sendImageMessage(images: [UIImage], chatRoom: ChatRoom) {
         guard !images.isEmpty else {
             print("No Image")
-            return
-        }
-
-        guard let userId = chatRoom?.userId else {
-            print("Error: userId is nil")
-            return
-        }
-        
-        guard let postUserId = chatRoom?.postUserId else {
-            print("Error: postUserId is nil")
-            return
-        }
-        
-        guard let chatRoomId = chatRoom?.id else {
-            print("Error: chatRoomId is nil")
             return
         }
         
         // TODO: - userId 수정
         let receiverUserId: String?
-        if userId == userId {
-            receiverUserId = postUserId
+        if userId == chatRoom.userId {
+            receiverUserId = chatRoom.postUserId
         } else {
-            receiverUserId = userId
+            receiverUserId = chatRoom.userId
         }
         
         var imagePaths = [String]()
@@ -220,7 +205,7 @@ class ChatViewModel {
             // 파이어 스토어 메세지 저장
             let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
             do {
-                try await firestoreManager.saveMessage(chatRoomId: chatRoomId, message: imageMessage)
+                try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: imageMessage)
             } catch {
                 print("Failed to save message: \(error.localizedDescription)")
                 return
@@ -257,35 +242,20 @@ class ChatViewModel {
     }
     
     //MARK: - 약속 메세지 전송
-    func sendPlanMessage(plan: Plan) {
-        guard let userId = chatRoom?.userId else {
-            print("Error: userId is nil")
-            return
-        }
-        
-        guard let postUserId = chatRoom?.postUserId else {
-            print("Error: postUserId is nil")
-            return
-        }
-        
-        guard let chatRoomId = chatRoom?.id else {
-            print("Error: chatRoomId is nil")
-            return
-        }
-        
+    func sendPlanMessage(plan: Plan, chatRoom: ChatRoom) {
         // TODO: - userId 수정
         let receiverUserId: String?
-        if userId == userId {
-            receiverUserId = postUserId
+        if userId == chatRoom.userId {
+            receiverUserId = chatRoom.postUserId
         } else {
-            receiverUserId = userId
+            receiverUserId = chatRoom.userId
         }
         
         let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
         
         Task {
             do {
-                try await firestoreManager.saveMessage(chatRoomId: chatRoomId, message: planMessage)
+                try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: planMessage)
             } catch {
                 print("Failed to save message: \(error.localizedDescription)")
                 return

@@ -11,6 +11,16 @@ import PhotosUI
 class ChatAdditionalButtonsViewController: UIViewController {
     
     var chatViewModel: ChatViewModel?
+    var chatRoom: ChatRoom
+    
+    init(chatRoom: ChatRoom) {
+        self.chatRoom = chatRoom
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private let chatAdditionalButtonsViewModel = ChatAdditionalButtonsViewModel()
     
@@ -92,7 +102,7 @@ extension ChatAdditionalButtonsViewController: PHPickerViewControllerDelegate {
         
         Task {
             let selectedImages = await loadImages(from: results)
-            chatViewModel?.sendImageMessage(images: selectedImages)
+            chatViewModel?.sendImageMessage(images: selectedImages, chatRoom: chatRoom)
         }
         
         picker.dismiss(animated: true)
@@ -130,7 +140,7 @@ extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: false) {
             if let image = info[.originalImage] as? UIImage {
-                self.chatViewModel?.sendImageMessage(images: [image])
+                self.chatViewModel?.sendImageMessage(images: [image], chatRoom: self.chatRoom)
             }
         }
     }
@@ -170,7 +180,7 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
     
     func presentMakePlan() {
         guard let viewController = self.presentingViewController else { return }
-        let makePlanViewController = MakePlanViewController()
+        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(chatRoom: chatRoom))
         makePlanViewController.modalPresentationStyle = .fullScreen
         makePlanViewController.viewModel.chatViewModel = chatViewModel
         DispatchQueue.main.async {
