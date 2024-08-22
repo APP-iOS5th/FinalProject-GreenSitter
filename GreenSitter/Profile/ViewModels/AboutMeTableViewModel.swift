@@ -122,37 +122,45 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
             editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
             editButton.translatesAutoresizingMaskIntoConstraints = false
 
-//            headerView.addSubview(titleLabel)
+            headerView.addSubview(titleLabel)
             headerView.addSubview(editButton)
-            // 현재 로그인한 사용자의 ID를 가져옵니다
-            guard let currentUserID = Auth.auth().currentUser?.uid else {
-                return headerView
-            }
+//            // 현재 로그인한 사용자의 ID를 가져옵니다
+//            guard let currentUserID = Auth.auth().currentUser?.uid else {
+//                return headerView
+//            }
             
-            // 프로필의 사용자 ID와 현재 로그인한 사용자의 ID를 비교합니다
-            if let profileUserID = user?.id, currentUserID == profileUserID {
-                let editButton = UIButton(type: .system)
-                editButton.setTitle("수정하기", for: .normal)
-                editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
-                editButton.translatesAutoresizingMaskIntoConstraints = false
-                headerView.addSubview(titleLabel)
+//            // 프로필의 사용자 ID와 현재 로그인한 사용자의 ID를 비교합니다
+//            if let profileUserID = user?.id, currentUserID == profileUserID {
+//                let editButton = UIButton(type: .system)
+//                editButton.setTitle("수정하기", for: .normal)
+//                editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+//                editButton.translatesAutoresizingMaskIntoConstraints = false
+//                headerView.addSubview(titleLabel)
+//
+//                
+//                NSLayoutConstraint.activate([
+//                    titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+//                    titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+//
+//                    editButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
+//                    editButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+//                ])
+//            }
+//            else {
+//                // 수정 버튼을 표시하지 않음
+//                NSLayoutConstraint.activate([
+//                    titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+//                    titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+//                ])
+//            }
 
-                
-                NSLayoutConstraint.activate([
-                    titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
-                    titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+            NSLayoutConstraint.activate([
+                titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+                titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
 
-                    editButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
-                    editButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
-                ])
-            }
-            else {
-                // 수정 버튼을 표시하지 않음
-                NSLayoutConstraint.activate([
-                    titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
-                    titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
-                ])
-            }
+                editButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
+                editButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+            ])
 
             return headerView
         }
