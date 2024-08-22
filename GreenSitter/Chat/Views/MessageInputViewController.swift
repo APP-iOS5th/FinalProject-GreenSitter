@@ -9,6 +9,16 @@ import UIKit
 
 class MessageInputViewController: UIViewController {
     var chatViewModel: ChatViewModel?
+    var chatRoom: ChatRoom
+    
+    init(chatRoom: ChatRoom) {
+        self.chatRoom = chatRoom
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // 메세지 패딩
     private lazy var messagePaddingView: UIView = {
@@ -54,8 +64,9 @@ class MessageInputViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.addAction(UIAction { [weak self] _ in
-            self?.chatViewModel?.sendButtonTapped(text: self?.messageInputField.text)
-            self?.messageInputField.text = ""
+            guard let self = self else { return }
+            self.chatViewModel?.sendButtonTapped(text: self.messageInputField.text, chatRoom: chatRoom)
+            self.messageInputField.text = ""
         }, for: .touchUpInside)
         
         return button

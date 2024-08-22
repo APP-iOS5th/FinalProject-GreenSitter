@@ -10,7 +10,17 @@ import UIKit
 
 class ChatTableViewCell: UITableViewCell {
     var chatViewModel: ChatViewModel?
+    var chatRoom: ChatRoom?
     
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupUI()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+        
     // 프로필 이미지
     private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -111,59 +121,57 @@ class ChatTableViewCell: UITableViewCell {
         return view
     }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        setupUI()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     // MARK: - Cell 구성
     func configure(userId: String) {
         // 프로필 이미지 설정
-        let profileImage = chatViewModel?.chatRoom?.userId == userId ? chatViewModel?.chatRoom?.postUserProfileImage : chatViewModel?.chatRoom?.userProfileImage
-        self.fetchProfileImage(profileImageString: profileImage!, userId: userId)
+        guard let profileImage = chatRoom?.userId == userId ? chatRoom?.postUserProfileImage : chatRoom?.userProfileImage else {
+            return
+        }
+        self.fetchProfileImage(profileImageString: profileImage, userId: userId)
         
         // 닉네임
-        let nickname = chatViewModel?.chatRoom?.userId == userId ? chatViewModel?.chatRoom?.postUserNickname: chatViewModel?.chatRoom?.userNickname
+        let nickname = chatRoom?.userId == userId ? chatRoom?.postUserNickname: chatRoom?.userNickname
         userNicknameLabel.text = nickname
         
         // 위치
-//        let location = chatRoom.ownerId == userId ? chatRoom.sitterLocation : chatRoom.ownerLocation
-//        userLocationLabel.text = location
-//            // TODO: - 지번 주소로 변경
+        //        let location = chatRoom.userId == userId ? chatRoom.postUserLocation : chatRoom.userLocation
+        //        // TODO: - 지번 주소로 변경
+        //        userLocationLabel.text = location
         
         // 임시 위치 데이터
         userLocationLabel.text = "상도동"
         
         // 알림 여부
-        let notification = chatViewModel?.chatRoom?.userId == userId ? chatViewModel?.chatRoom?.postUserNotification : chatViewModel?.chatRoom?.userNotification
-        notificationImageView.image = notification! ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
+        guard let notification = chatRoom?.userId == userId ? chatRoom?.postUserNotification : chatRoom?.userNotification else {
+            return
+        }
+        notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
-        if let text = chatViewModel?.chatRoom?.messages.last?.text {
+        guard let lastMessage = chatViewModel?.messages[chatRoom!.id]?.last else {
+            return
+        }
+
+        if let text = lastMessage.text {
             lastMessageLabel.text = text
-        } else if (chatViewModel?.chatRoom?.messages.last?.image) != nil {
+        } else if (lastMessage.image) != nil {
             lastMessageLabel.text = "사진"
-        } else if (chatViewModel?.chatRoom?.messages.last?.plan) != nil {
+        } else if (lastMessage.plan) != nil {
             lastMessageLabel.text = "약속"
         }
         
         // 마지막 메세지 시간
-        guard let updateDate = chatViewModel?.chatRoom?.messages.last?.updateDate else {
-            return
-        }
-        let timeAgoString = timeAgo(from: updateDate)
+        let timeAgoString = timeAgo(from: lastMessage.updateDate)
         print(timeAgoString)
         
         dateLabel.text = timeAgoString
+
         
         // 안 읽은 메세지 수
         /// read = false인 메세지 수
-        let unreadCount = chatViewModel?.chatRoom?.messages.filter { $0.receiverUserId == userId && !$0.isRead }.count
+        let unreadCount = chatViewModel?.messages.values.flatMap { $0 }.filter {
+            $0.receiverUserId == userId && !$0.isRead
+        }.count
         if unreadCount! > 0 {
             circleView.backgroundColor = .dominent
             unreadCountLabel.text = "\(String(describing: unreadCount))"
@@ -223,7 +231,7 @@ class ChatTableViewCell: UITableViewCell {
     }
     
     // MARK: - Setup UI
-    private func setupUI() {
+    func setupUI() {
         leftStackView.addSubview(userNicknameLabel)
         leftStackView.addSubview(lastMessageLabel)
         leftStackView.addSubview(userLocationLabel)
