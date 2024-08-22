@@ -170,6 +170,8 @@ extension ChatMessageViewController: UITableViewDataSource {
                 cell.images = cachedImages
             }
             
+            cell.delegate = self
+            
             if chatViewModel?.userId == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
@@ -251,5 +253,12 @@ extension ChatMessageViewController: UITableViewDataSource {
             
             return cell
         }
+    }
+}
+
+extension ChatMessageViewController: ChatMessageTableViewImageCellDelegate {
+    func imageViewTapped(images: [UIImage], index: Int) {
+        let imageDetailCollectionView = ImageDetailCollectionViewController(images: images, index: index)
+        self.present(imageDetailCollectionView, animated: true, completion: nil)
     }
 }

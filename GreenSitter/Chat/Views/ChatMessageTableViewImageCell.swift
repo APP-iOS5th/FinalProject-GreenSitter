@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol ChatMessageTableViewImageCellDelegate: AnyObject {
+    func imageViewTapped(images: [UIImage], index: Int)
+}
+
 class ChatMessageTableViewImageCell: UITableViewCell {
+    weak var delegate: ChatMessageTableViewImageCellDelegate?
+    
     var isIncoming: Bool = false {
         didSet {
             setupUI()
@@ -181,6 +187,10 @@ class ChatMessageTableViewImageCell: UITableViewCell {
             imageView.contentMode = .scaleAspectFit
             imageView.translatesAutoresizingMaskIntoConstraints = false
             
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
+            imageView.isUserInteractionEnabled = true
+            imageView.addGestureRecognizer(tapGesture)
+            
             NSLayoutConstraint.activate([
                 imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
             ])
@@ -202,6 +212,9 @@ class ChatMessageTableViewImageCell: UITableViewCell {
             imageStackView.addArrangedSubview(secondVStackView)
         default:
             morePhotosLabel.text = "+ \(imageViews.count - 3)\n더보기"
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleMorePhotosLabelTap(_:)))
+            morePhotosLabel.isUserInteractionEnabled = true
+            morePhotosLabel.addGestureRecognizer(tapGesture)
             
             firstVStackView.addArrangedSubview(imageViews[0])
             secondVStackView.addArrangedSubview(imageViews[1])
@@ -211,6 +224,22 @@ class ChatMessageTableViewImageCell: UITableViewCell {
             imageStackView.addArrangedSubview(firstVStackView)
             imageStackView.addArrangedSubview(secondVStackView)
         }
+    }
+    
+    @objc
+    private func handleImageTap(_ sender: UITapGestureRecognizer) {
+        guard let imageView = sender.view as? UIImageView, let image = imageView.image else { return }
+        
+        guard let index = images.firstIndex(of: image) else { return }
+        
+        delegate?.imageViewTapped(images: images, index: index)
+    }
+    
+    @objc
+    private func handleMorePhotosLabelTap(_ sender: UITapGestureRecognizer) {
+        guard let morePhotosLabel = sender.view as? UILabel else { return }
+        
+        delegate?.imageViewTapped(images: images, index: 3)
     }
 }
 

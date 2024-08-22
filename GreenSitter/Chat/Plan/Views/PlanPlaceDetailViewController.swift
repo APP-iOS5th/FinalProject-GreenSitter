@@ -38,9 +38,14 @@ class PlanPlaceDetailViewController: UIViewController {
         // 네비게이션 바 구성
         navigationItem.title = "약속 장소"
         
-        // 우측 닫기 버튼
-        let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(closeButtonTapped))
-        navigationItem.rightBarButtonItem = closeButton
+        // 좌측 닫기 버튼
+        let backButton = UIButton()
+        backButton.setTitle(" Back", for: .normal)
+        backButton.setTitleColor(.systemBlue, for: .normal)
+        backButton.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
+        backButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+        let closeButton = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem = closeButton
     }
 
     private func setupMapView() {
