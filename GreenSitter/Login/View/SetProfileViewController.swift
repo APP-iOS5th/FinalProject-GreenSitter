@@ -263,10 +263,10 @@ class SetProfileViewController: UIViewController {
         viewModel.userFetchFirebase(profileImage: selectedImageUrl, nickname: nickname, location: location)
         print("\(viewModel.user)")
         //        프로필 뷰로이동
-        DispatchQueue.main.async {
-            let profileViewController = ProfileViewController()
-            self.navigationController?.pushViewController(profileViewController, animated: true)
-        }
+//        DispatchQueue.main.async {
+////            let profileViewController = ProfileViewController(user: <#User#>)
+//            self.navigationController?.pushViewController(profileViewController, animated: true)
+//        }
         
     }
     // 메인뷰로 이동

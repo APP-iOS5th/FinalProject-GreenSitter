@@ -15,42 +15,22 @@ import AuthenticationServices
 extension ProfileViewController {
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            print("User ID is not available")
-            return
+        if viewModel.user?.id == Auth.auth().currentUser?.uid {
+            if let profileImage = viewModel.user?.profileImage {
+                self.loadProfileImage(from: profileImage)
+            }
+            
+            DispatchQueue.main.async {
+                self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
+            }
+
         }
         
-        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
-            guard let self = self else { return }
-            if let error = error {
-                print("Error getting document: \(error)")
-                return
-            }
-            if let document = document, document.exists {
-                let data = document.data()
-                let nickname = data?["nickname"] as? String ?? "닉네임 없음"
-                let location = data?["location"] as? [String: Any]
-                let profileImage = data?["profileImage"] as? String ?? ""
-                let levelPoint = data?["levelPoint"] as? String ?? ""
-                
-                
-                print("Fetched nickname: \(nickname)")
-                print("Fetched location: \(location)")
-                print("Fetched levelPoint: \(levelPoint)")
-                
-                // 프로필 이미지 URL을 사용하여 이미지 로드
-                if !profileImage.isEmpty {
-                    self.loadProfileImage(from: profileImage)
-                }
-                
-                DispatchQueue.main.async {
-                    self.tableView.reloadData() // 데이터를 업데이트한 후 테이블 뷰를 리로드합니다.
-                }
-            } else {
-                print("Document does not exist")
-            }
-        }
+        
+        // 프로필 이미지 URL을 사용하여 이미지 로드
     }
+        
+    
     //MARK: - 변경된 사진을 파이어베이스에 저장
     func updateNickname(_ profileImage: String) {
         guard let user = Auth.auth().currentUser else {

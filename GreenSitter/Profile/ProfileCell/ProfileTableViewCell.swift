@@ -8,6 +8,7 @@
 import UIKit
 
 class ProfileTableViewCell: UITableViewCell {
+    
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -38,6 +39,15 @@ class ProfileTableViewCell: UITableViewCell {
     // 추가: 아이콘 이미지 뷰의 width와 height 제약 조건을 별도로 저장
     var iconWidthConstraint: NSLayoutConstraint!
     var iconHeightConstraint: NSLayoutConstraint!
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        // Reset the state of the cell here
+        titleLabel.text = nil
+        bodyLabel.text = nil
+        actionButton.setTitle(nil, for: .normal)
+        actionButton.setImage(nil, for: .normal)
+    }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

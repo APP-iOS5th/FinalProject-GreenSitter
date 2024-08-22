@@ -8,7 +8,7 @@
 import Foundation
 
 struct User: Codable {
-    let id: String
+    var id: String
     let enabled: Bool
     let createDate: Date
     let updateDate: Date

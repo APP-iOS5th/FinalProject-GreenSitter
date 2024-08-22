@@ -32,6 +32,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
         
@@ -53,8 +54,14 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let profileCell = cell as! ProfileTableViewCell
 
             profileCell.titleLabel.text = "사는 곳"
-            profileCell.bodyLabel.text = viewModel.user?.location.address
-
+            
+            // location에서 address 값을 가져와 설정
+            if let location = viewModel.user?.location as? [String: Any],
+               let address = location["address"] as? String {
+                profileCell.bodyLabel.text = address
+            } else {
+                profileCell.bodyLabel.text = "주소 없음" // address가 없을 경우 기본값 설정
+            }
             profileCell.actionButton.isHidden = false
             profileCell.actionButton.setTitle("변경", for: .normal)
             profileCell.actionButton.setImage(nil, for: .normal) // 이미지 설정 초기화
@@ -64,12 +71,13 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             profileCell.actionButton.addTarget(self, action: #selector(changeLocationButtonTap), for: .touchUpInside)
 
             profileCell.setIconHidden(true)
+
             
         case (0, 2):
             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
             let profileCell = cell as! ProfileTableViewCell
             profileCell.titleLabel.text = nil
-            profileCell.bodyLabel.text = users?.levelPoint.rawValue
+            profileCell.bodyLabel.text = viewModel.user?.levelPoint.rawValue
             profileCell.iconImageView.image = UIImage(named: "logo7")
             profileCell.actionButton.setImage(UIImage(systemName: "exclamationmark.circle"), for: .normal)
             profileCell.actionButton.setTitle(nil, for: .normal) // '변경' 텍스트 제거
