@@ -7,7 +7,6 @@
 
 import UIKit
 
-// MARK: - Delegate Protocol
 
 protocol AnnotationDetailViewControllerDelegate: AnyObject {
     func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController)
@@ -16,44 +15,35 @@ protocol AnnotationDetailViewControllerDelegate: AnyObject {
 class AnnotationDetailViewController: UIViewController {
     var post: Post?
     weak var delegate: AnnotationDetailViewControllerDelegate?
-
-    private let titleLabel = UILabel()
-    private let bodyLabel = UILabel()
-
+    
+    private let closeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "xmark"), for: .normal)
+        button.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .bgPrimary
+        view.backgroundColor = .white
         setupUI()
-        configure(with: post)
     }
-
+    
     private func setupUI() {
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        bodyLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        view.addSubview(titleLabel)
-        view.addSubview(bodyLabel)
-
+        view.addSubview(closeButton)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-
-            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
-            bodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            bodyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            closeButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 10),
+            closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10)
         ])
     }
-
-    private func configure(with post: Post?) {
-        guard let post = post else { return }
-        titleLabel.text = post.postTitle
-        bodyLabel.text = post.postBody
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    
+    @objc private func didTapCloseButton() {
         delegate?.annotationDetailViewControllerDidDismiss(self)
+    }
+    
+    func updatePost(_ post: Post) {
+        self.post = post
+        // TODO: View 업데이트
     }
 }

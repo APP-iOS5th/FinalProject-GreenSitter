@@ -241,8 +241,6 @@ class MapViewController: UIViewController {
         })
     }
     
-    
-
     // MARK: - Post 객체 배열을 사용하여 지도에 마커 및 오버레이 추가
     
     func setupMarkerAndOverlay(with posts: [Post]) {
@@ -327,42 +325,58 @@ extension MapViewController: MKMapViewDelegate {
     
     // MKAnnotationView 터치 이벤트 관리
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        guard let annotationCoordinate = view.annotation?.coordinate else { return }
-        let region = MKCoordinateRegion(center: annotationCoordinate, latitudinalMeters: 1000, longitudinalMeters: 1000)
+        guard let annotation = view.annotation as? CustomAnnotation else { return }
+        
+        // 선택한 어노테이션 주변으로 MKCoordinateRegion 설정
+        let region = MKCoordinateRegion(center: annotation.coordinate, latitudinalMeters: 1000, longitudinalMeters: 1000)
         mapView.setRegion(region, animated: true)
         
-        // 기존의 시트가 표시된 상태라면 닫음
-        if let currentDetailViewController = currentDetailViewController {
-            currentDetailViewController.dismiss(animated: false) {
-                self.presentAnnotationDetail(for: view)
-            }
-        } else {
-            presentAnnotationDetail(for: view)
+        // 어노테이션에 연결된 Post를 찾아서 상세 정보를 표시
+        if let post = overlayPostMapping.first(where: { $0.key.coordinate.latitude == annotation.coordinate.latitude && $0.key.coordinate.longitude == annotation.coordinate.longitude })?.value {
+            presentAnnotationDetail(for: post)
         }
     }
     
-    private func presentAnnotationDetail(for view: MKAnnotationView) {
-        // 어노테이션에 연결된 Post를 가져옴
-        if let annotation = view.annotation as? CustomAnnotation,
-           let post = overlayPostMapping.first(where: { $0.key.coordinate.latitude == annotation.coordinate.latitude && $0.key.coordinate.longitude == annotation.coordinate.longitude })?.value {
+    // MARK: - AnnotationDetailViewController를 맵 위에 커스텀 방식으로 추가
+    private func presentAnnotationDetail(for post: Post) {
+        if let currentDetailViewController = currentDetailViewController {
+            // 이미 창이 떠 있는 경우, Post 데이터만 업데이트
+            currentDetailViewController.updatePost(post)
+        } else {
+            // 새로운 DetailViewController 추가
+            let detailVC = AnnotationDetailViewController()
+            detailVC.post = post
+            detailVC.delegate = self
             
-            // 이미지 확대 애니메이션 추가
-            UIView.animate(withDuration: 0.3) {
-                view.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
+            // 최상위 뷰 계층에 추가하기 위해 keyWindow 가져오기
+            if let keyWindow = UIApplication.shared.connectedScenes
+                .compactMap({ ($0 as? UIWindowScene)?.keyWindow }).first {
+                
+                keyWindow.addSubview(detailVC.view)
+                
+                // DetailViewController의 레이아웃 설정
+                detailVC.view.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    detailVC.view.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor),
+                    detailVC.view.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor),
+                    detailVC.view.bottomAnchor.constraint(equalTo: keyWindow.bottomAnchor),
+                    detailVC.view.heightAnchor.constraint(equalToConstant: 200) // 원하는 높이 설정
+                ])
+                
+                addChild(detailVC)
+                detailVC.didMove(toParent: self)
+                currentDetailViewController = detailVC
             }
-            
-            // 새 하프 시트 뷰 컨트롤러 생성 및 표시
-            let postDetailViewController = AnnotationDetailViewController()
-            postDetailViewController.post = post
-            postDetailViewController.delegate = self  // Set delegate
-            postDetailViewController.modalPresentationStyle = .pageSheet
-            if let sheet = postDetailViewController.sheetPresentationController {
-                sheet.detents = [.custom { context in
-                    return context.maximumDetentValue * 0.25
-                }]
-            }
-            present(postDetailViewController, animated: true, completion: nil)
-            currentDetailViewController = postDetailViewController
+        }
+    }
+
+    
+    private func hideAnnotationDetail() {
+        if let currentDetailViewController = currentDetailViewController {
+            currentDetailViewController.willMove(toParent: nil)
+            currentDetailViewController.view.removeFromSuperview()
+            currentDetailViewController.removeFromParent()
+            self.currentDetailViewController = nil
         }
     }
     
@@ -396,16 +410,9 @@ extension MapViewController: MKMapViewDelegate {
 }
 
 
-// MARK: - ANNOTATION DETAIL VIEW CONTROLLER DELEGATE
-
+// MARK: - AnnotationDetailViewControllerDelegate
 extension MapViewController: AnnotationDetailViewControllerDelegate {
     func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController) {
-        if let selectedAnnotationView = mapView.selectedAnnotations.compactMap({ mapView.view(for: $0) }).first {
-            UIView.animate(withDuration: 0.1) {
-                selectedAnnotationView.transform = CGAffineTransform.identity
-            }
-        }
-        // 시트가 닫혔으므로 currentDetailViewController를 nil로 설정
-        currentDetailViewController = nil
+        hideAnnotationDetail()
     }
 }
