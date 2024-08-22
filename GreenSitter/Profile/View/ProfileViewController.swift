@@ -116,7 +116,7 @@ class ProfileViewController: UIViewController {
     
     // MARK: - Actions
     @objc func myProfilebuttonTap() {
-        let aboutMeViewController = AboutMeViewController()
+        let aboutMeViewController = AboutMeViewController(userId: LoginViewModel.shared.user!.id)
         self.navigationController?.pushViewController(aboutMeViewController, animated: true)
     }
     

@@ -147,7 +147,7 @@ extension ReviewViewController {
         }
         
         DispatchQueue.main.async {
-            let aboutMeViewController = AboutMeViewController()
+            let aboutMeViewController = AboutMeViewController(userId: LoginViewModel.shared.user!.id)
             self.navigationController?.pushViewController(aboutMeViewController, animated: true)
         }
     }

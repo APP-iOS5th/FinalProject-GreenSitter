@@ -33,6 +33,13 @@ class PostDetailViewController: UIViewController {
         return contentView
     }()
     
+    private let userProfileButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .clear // 투명하게 만들어 배경이 보이지 않게
+        return button
+    }()
+    
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 25
@@ -41,20 +48,20 @@ class PostDetailViewController: UIViewController {
         imageView.backgroundColor = .lightGray
         return imageView
     }()
-    
+
     private let userNameLabel: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     private let userLevelLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12)
         label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Lv. 1 🌱"
+        label.text = LoginViewModel.shared.user?.levelPoint.rawValue
         return label
     }()
     
@@ -160,7 +167,8 @@ class PostDetailViewController: UIViewController {
     private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-    
+        contentView.addSubview(userProfileButton)
+
         contentView.addSubview(profileImageView)
         contentView.addSubview(userNameLabel)
         contentView.addSubview(userLevelLabel)
@@ -176,6 +184,8 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(mapLabel)
         contentView.addSubview(mapView)
         
+        userProfileButton.addTarget(self, action: #selector(userProfileButtonTapped), for: .touchUpInside)
+
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -190,16 +200,22 @@ class PostDetailViewController: UIViewController {
             contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
             
     
-            profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-            profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            userProfileButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            
+            profileImageView.leadingAnchor.constraint(equalTo: userProfileButton.leadingAnchor),
+            profileImageView.topAnchor.constraint(equalTo: userProfileButton.topAnchor),
             profileImageView.widthAnchor.constraint(equalToConstant: 50),
             profileImageView.heightAnchor.constraint(equalToConstant: 50),
             
-            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
             userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
             
-            userLevelLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
             userLevelLabel.leadingAnchor.constraint(equalTo: userNameLabel.leadingAnchor),
+            userLevelLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
+            
+            userProfileButton.bottomAnchor.constraint(equalTo: userLevelLabel.bottomAnchor),
             
 //            postTimeLabel.topAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 4),
 //            postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
@@ -268,6 +284,10 @@ class PostDetailViewController: UIViewController {
         } else {
             postImagesView.image = nil
         }
+    }
+    @objc private func userProfileButtonTapped() {
+        let aboutMeVC = AboutMeViewController(userId: post.userId)
+        navigationController?.pushViewController(aboutMeVC, animated: true)
     }
 }
 

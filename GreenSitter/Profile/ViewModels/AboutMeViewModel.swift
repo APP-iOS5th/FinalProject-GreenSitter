@@ -27,18 +27,15 @@ extension AboutMeViewController {
         }
     }
     //MARK: - 파이어베이스 데이터 불러오기
-    func fetchUserFirebase() {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            print("User ID is not available")
-            return
-        }
-        
+    func fetchUserFirebase(userId: String) {
         db.collection("users").document(userId).getDocument { [weak self] (document, error) in
             guard let self = self else { return }
             if let error = error {
                 print("Error getting document: \(error)")
                 return
             }
+            print("userId: \(userId)")
+            print("Auth UserId: \(String(describing: Auth.auth().currentUser?.uid))")
             if let document = document, document.exists {
                 let data = document.data()
                 let nickname = data?["nickname"] as? String ?? "닉네임 없음"

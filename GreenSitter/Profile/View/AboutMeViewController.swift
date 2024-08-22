@@ -9,15 +9,24 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
-import Combine
 
 class AboutMeViewController: UIViewController{
     
     let db = Firestore.firestore()
     var user: User?
+    
+    private var userId: String
+    
+    init(userId: String) {
+        self.userId = userId
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     var sectionTitle = ["자기소개", "돌봄 정보"]
-    let mapViewModel = MapViewModel()
-    var cancellables = Set<AnyCancellable>()
 
     lazy var profileImage: UIImageView = {
         let image = UIImageView()
@@ -102,7 +111,7 @@ class AboutMeViewController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "BGSecondary")
-        navigationItem.title = "내 프로필"
+        navigationItem.title = "프로필"
         
         tableView.register(IntroductionTableCell.self, forCellReuseIdentifier: "introductionTableCell")
         tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell")
@@ -160,13 +169,13 @@ class AboutMeViewController: UIViewController{
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -10),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
-        fetchUserFirebase()
+        fetchUserFirebase(userId: userId)
         NotificationCenter.default.addObserver(self, selector: #selector(self.userAboutMeUpdated), name: NSNotification.Name("UserAboutMeUpdated"), object: nil)
 
     }
     @objc func userAboutMeUpdated() {
         // 유저 데이터를 다시 불러오기
-        fetchUserFirebase()
+        fetchUserFirebase(userId: userId)
     }
 
     deinit {
