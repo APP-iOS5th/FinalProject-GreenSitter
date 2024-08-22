@@ -51,7 +51,7 @@ class AboutMeViewController: UIViewController{
     
     lazy var levelLabel: UILabel = {
         let label = UILabel()
-        label.text = "새싹 단계"
+        label.text = user?.levelPoint.rawValue
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = /*UIColor(named: "LabelsPrimary")*/ .white
         label.translatesAutoresizingMaskIntoConstraints = false

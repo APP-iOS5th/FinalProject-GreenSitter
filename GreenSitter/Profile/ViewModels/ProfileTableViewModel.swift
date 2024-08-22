@@ -66,21 +66,15 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             profileCell.setIconHidden(true)
             
         case (0, 2):
-            // "레벨" 셀
             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
             let profileCell = cell as! ProfileTableViewCell
-            
             profileCell.titleLabel.text = nil
-            profileCell.bodyLabel.text = "레벨"
+            profileCell.bodyLabel.text = users?.levelPoint.rawValue
             profileCell.iconImageView.image = UIImage(named: "logo7")
-            
-            // 여기서 변경 버튼이 아닌 아이콘 버튼만 설정하고, 변경 버튼은 숨깁
             profileCell.actionButton.setImage(UIImage(systemName: "exclamationmark.circle"), for: .normal)
-            profileCell.actionButton.setTitle(nil, for: .normal) // 이 부분을 추가하여 '변경' 텍스트를 지웁니다.
+            profileCell.actionButton.setTitle(nil, for: .normal) // '변경' 텍스트 제거
+            profileCell.actionButton.removeTarget(nil, action: nil, for: .allEvents) // 기존 타겟 제거
             profileCell.actionButton.addTarget(self, action: #selector(inpoButtonTap), for: .touchUpInside)
-            profileCell.actionButton.isHidden = false
-            
-            // 불필요한 "변경" 버튼을 명확히 숨김
             profileCell.actionButton.isHidden = false
             profileCell.setIconHidden(false)
         case (1, 0):

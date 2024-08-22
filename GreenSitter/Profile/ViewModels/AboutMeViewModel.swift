@@ -44,6 +44,8 @@ extension AboutMeViewController {
                 let nickname = data?["nickname"] as? String ?? "닉네임 없음"
                 let profileImage = data?["profileImage"] as? String ?? ""
                 let aboutMe = data?["aboutMe"] as? String ?? "자기 소개를 입력해주세요"
+                let levelPoint = data?["levelPoint"] as? String ?? ""
+                print("Fetched levelPoint: \(levelPoint)")
                 
                 // location 필드에서 address를 가져오기
                 if let location = data?["location"] as? [String: Any],
@@ -58,27 +60,6 @@ extension AboutMeViewController {
                     // location 정보가 없을 때 기본값 설정
                     self.locationLabel.text = "주소 없음"
                 }
-
-                // user 객체가 nil일 경우 User 객체를 초기화
-                if self.user == nil {
-                    self.user = User(
-                        id: userId,
-                        enabled: true,
-                        createDate: Date(),
-                        updateDate: Date(),
-                        profileImage: profileImage,
-                        nickname: nickname,
-                        location: Location.sampleLocation,
-                        platform: "iOS",
-                        levelPoint: Level.seeds, exp: 0,
-                        aboutMe: aboutMe, chatNotification: false
-                    )
-                } else {
-                    self.user?.nickname = nickname
-                    self.user?.aboutMe = aboutMe
-                    self.user?.profileImage = profileImage
-                }
-                
                 // 프로필 이미지 로드
                 if !profileImage.isEmpty {
                     self.loadProfileImage(from: profileImage)
@@ -87,6 +68,7 @@ extension AboutMeViewController {
                 // UI 업데이트
                 DispatchQueue.main.async {
                     self.nicknameLabel.text = nickname
+                    self.levelLabel.text = levelPoint
                     self.tableView.reloadData()
                 }
             } else {

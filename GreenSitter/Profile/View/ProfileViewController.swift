@@ -70,8 +70,6 @@ class ProfileViewController: UIViewController {
         setupView()
         fetchUserFirebase()
         setupTextField()
-        
-        bindViewModel(for: someIndexPath)
     }
     
     private func setupView() {
@@ -84,7 +82,7 @@ class ProfileViewController: UIViewController {
         view.addSubview(tableView)
         
         setupConstraints()
-        
+
         tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell")
         tableView.register(InformationTableCell.self, forCellReuseIdentifier: "informationTableCell")

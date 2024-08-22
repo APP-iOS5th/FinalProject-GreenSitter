@@ -29,11 +29,14 @@ extension ProfileViewController {
             if let document = document, document.exists {
                 let data = document.data()
                 let nickname = data?["nickname"] as? String ?? "닉네임 없음"
-                let location = data?["location"] as? Location ?? .seoulLocation
+                let location = data?["location"] as? [String: Any]
                 let profileImage = data?["profileImage"] as? String ?? ""
+                let levelPoint = data?["levelPoint"] as? String ?? ""
                 
                 
-                // user 객체가 nil일 경우 User 객체를 초기화
+                print("Fetched nickname: \(nickname)")
+                print("Fetched location: \(location)")
+                print("Fetched levelPoint: \(levelPoint)")
                 
                 // 프로필 이미지 URL을 사용하여 이미지 로드
                 if !profileImage.isEmpty {
@@ -148,25 +151,6 @@ extension ProfileViewController {
             }
         }
     }
-    
-    
-    func bindViewModel(for indexPath: IndexPath) {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
-        mapViewModel.$currentLocation
-            .sink { [weak self] location in
-                guard let unwrappedLocation = location else { return }
-                print("SetLocation View Location: \(unwrappedLocation)")
-                self?.users?.location = unwrappedLocation
-                DispatchQueue.main.async {
-                    cell.bodyLabel.text = unwrappedLocation.address // cell을 직접 사용
-                }
-            }
-            .store(in: &cancellables)
-    }
-    
-    
-    
-    
     
     
     //MARK: - 로그아웃
