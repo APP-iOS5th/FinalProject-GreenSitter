@@ -204,7 +204,7 @@ class ChatMessageTableViewPlanCell: UITableViewCell {
                 profileImageView.heightAnchor.constraint(equalToConstant: 52),
                 
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-                bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+                bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -15),
                 bubbleView.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 5),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
@@ -250,7 +250,7 @@ class ChatMessageTableViewPlanCell: UITableViewCell {
                 placeButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
                 placeButton.heightAnchor.constraint(equalToConstant: 35),
                 placeButton.widthAnchor.constraint(equalToConstant: 100),
-                placeButton.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -10),
+                placeButton.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -15),
                 
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
