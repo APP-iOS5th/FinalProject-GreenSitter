@@ -344,8 +344,8 @@ extension MapViewController: MKMapViewDelegate {
             currentDetailViewController.updatePost(post)
         } else {
             // 새로운 DetailViewController 추가
-            let detailVC = AnnotationDetailViewController()
-            detailVC.post = post
+            let detailVC = AnnotationDetailViewController(post: post)
+//            detailVC.post = post
             detailVC.delegate = self
             
             // 최상위 뷰 계층에 추가하기 위해 keyWindow 가져오기
