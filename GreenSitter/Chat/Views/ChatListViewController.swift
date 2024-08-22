@@ -84,23 +84,34 @@ class ChatListViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(userDidLogin), name: NSNotification.Name("UserDidLoginNotification"), object: nil)
         
         if chatViewModel.isLoggedIn {
-            chatViewModel.loadChatRooms { [weak self] in
+            chatViewModel.loadChatRooms { [weak self] updatedChatRooms in
                 guard let self = self else { return }
                 
-                // MARK: - 로그인/채팅방 있음
-                if self.chatViewModel.hasChats {
-                    self.chatViewModel.updateUI = { [weak self] in
-                        self?.setupChatListUI()
+                for updatedChatRoom in updatedChatRooms {
+                    chatViewModel.loadMessages(chatRoomId: updatedChatRoom.id) {
+                        
+                        // MARK: - 로그인/채팅방 있음
+                        if self.chatViewModel.hasChats {
+                            self.chatViewModel.updateUI = { [weak self] in
+                                self?.setupChatListUI()
+                            }
+                            
+                        } else {
+                            // MARK: - 로그인/채팅방 없음
+                            self.chatViewModel.updateUI = { [weak self] in
+                                self?.setupEmptyChatListUI()
+                                
+                                // 버튼 클릭 시 홈 화면으로 이동
+                                self?.goToHomeButton.addAction(UIAction { [weak self] _ in
+                                    self?.navigateToHome()
+                                }, for: .touchUpInside)
+                            }
+                            
+                            
+                        }
+                        self.chatViewModel.updateUI?()
+                        
                     }
-                    self.chatViewModel.updateUI?()
-                    
-                } else {
-                    // MARK: - 로그인/채팅방 없음
-                    self.setupEmptyChatListUI()
-                    // 버튼 클릭 시 홈 화면으로 이동
-                    self.goToHomeButton.addAction(UIAction { [weak self] _ in
-                        self?.navigateToHome()
-                    }, for: .touchUpInside)
                 }
             }
         } else {

@@ -49,25 +49,12 @@ class ChatViewModel {
         }
     }
     
-    func loadChatRooms(completion: @escaping () -> Void) {
-        firestoreManager.fetchChatRooms(userId: userId) { [weak self] updatedchatRooms in
+    func loadChatRooms(completion: @escaping ([ChatRoom]) -> Void) {
+        firestoreManager.fetchChatRooms(userId: userId) { [weak self] updatedChatRooms in
             guard let self = self else { return }
-            self.chatRooms = updatedchatRooms
-            let dispatchGroup = DispatchGroup()
+            self.chatRooms = updatedChatRooms
             
-            for updatedChatRoom in updatedchatRooms {
-                dispatchGroup.enter()
-                self.loadLastMessages(chatRoomId: updatedChatRoom.id) {
-                    self.loadUnreadMessages(chatRoomId: updatedChatRoom.id) {
-                        dispatchGroup.leave()
-                    }
-                }
-            }
-            dispatchGroup.notify(queue: .main) {
-                completion()
-                
-            }
-            
+            completion(updatedChatRooms)
         }
     }
     

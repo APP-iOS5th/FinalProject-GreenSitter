@@ -106,7 +106,6 @@ class FirestoreManager {
     }
     
     // 채팅방 데이터 가져오기
-    /// listener를 통한 실시간 데이터 변경사항 반영
     func fetchChatRooms(userId: String, onUpdate: @escaping ([ChatRoom]) -> Void) {
         // 사용자 아이디와 userId가 같은 문서와 사용자 아이디와 postUserId가 같은 문서 필터링
         let userQuery = db.collection("chatRooms")
@@ -263,6 +262,7 @@ class FirestoreManager {
     }
     
     // 메세지 데이터 가져오기
+    /// listener를 통한 실시간 데이터 변경사항 반영
     func fetchMessages(chatRoomId: String, onUpdate: @escaping ([Message]) -> Void) {
         let messagesQuery = db.collection("chatRooms")
             .document(chatRoomId)
@@ -318,4 +318,5 @@ class FirestoreManager {
             onUpdate(messages)
         }
     }
+    
 }

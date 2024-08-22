@@ -148,7 +148,7 @@ class ChatTableViewCell: UITableViewCell {
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
-        guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
+        guard let lastMessage = chatViewModel?.messages[chatRoom!.id]?.last else {
             return
         }
 
