@@ -22,7 +22,7 @@ class PostTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-        label.textColor = UIColor.labelsPrimary
+        label.textColor = .labelsPrimary
         label.numberOfLines = 1
         return label
     }()
@@ -31,7 +31,7 @@ class PostTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.textColor = UIColor.labelsSecondary
+        label.textColor = .labelsPrimary
         label.numberOfLines = 2
         return label
     }()
@@ -40,7 +40,7 @@ class PostTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        label.textColor = .lightGray
+        label.textColor = .labelsSecondary
         return label
     }()
     
