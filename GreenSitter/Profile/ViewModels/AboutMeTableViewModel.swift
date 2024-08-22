@@ -38,7 +38,9 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
         switch indexPath.section {
         case 0:
             cell = tableView.dequeueReusableCell(withIdentifier: "introductionTableCell", for: indexPath) as! IntroductionTableCell
-//            (cell as! IntroductionTableCell).bodyLabel.text = user?.aboutMe ?? ""
+            let aboutMeText = user?.aboutMe ?? "자기소개를 입력해주세요"
+            print("Cell for row at indexPath \(indexPath): aboutMeText = \(aboutMeText)")
+            (cell as! IntroductionTableCell).bodyLabel.text = aboutMeText
             (cell as! IntroductionTableCell).bodyLabel.textColor = .black
         case 1:
             cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell

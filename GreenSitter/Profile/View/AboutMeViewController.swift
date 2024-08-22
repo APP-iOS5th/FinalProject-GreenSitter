@@ -14,14 +14,14 @@ import Combine
 class AboutMeViewController: UIViewController{
     
     let db = Firestore.firestore()
-    var user: User?
+   
     var sectionTitle = ["자기소개", "돌봄 정보"]
 
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
 
-    
-    
+    var user: User?
+
     lazy var profileImage: UIImageView = {
         let image = UIImageView()
         image.image = UIImage(named: "로고7")
