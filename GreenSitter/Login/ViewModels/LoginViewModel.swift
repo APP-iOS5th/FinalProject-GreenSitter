@@ -18,12 +18,12 @@ class LoginViewModel: ObservableObject {
     
     private init() {} 
 
-    func userFetchFirebase(profileImage: String, nickname: String, location: Location) {
-        self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false)
+    func userFetchFirebase(profileImage: String, nickname: String, location: Location, docId: String) {
+        self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false, docId: docId)
     }
     
-    func firebaseFetch(userId: String) {
-        db.collection("users").document(userId).getDocument { (document, error) in
+    func firebaseFetch(docId: String) {
+        db.collection("users").document(docId).getDocument { (document, error) in
             if let error = error {
                 print("데이터 불러오기 실패: \(error.localizedDescription)")
                 return
@@ -84,7 +84,7 @@ class LoginViewModel: ObservableObject {
                                  levelPoint: Level(rawValue: levelPoint) ?? .fruit,
                                  exp: exp,
                                  aboutMe: aboutMe,
-                                 chatNotification: chatNotification)
+                                 chatNotification: chatNotification, docId: docId)
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
             }
         }

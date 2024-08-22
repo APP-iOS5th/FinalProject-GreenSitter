@@ -20,6 +20,7 @@ struct User: Codable {
     let exp: Int
     var aboutMe: String
     let chatNotification: Bool
+    var docId: String
 }
 
 extension User {

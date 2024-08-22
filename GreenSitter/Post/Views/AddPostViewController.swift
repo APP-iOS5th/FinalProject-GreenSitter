@@ -181,7 +181,12 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             return
         }
         
-        viewModel.savePost(postTitle: titleText, postBody: textViewText) { result in
+        guard let userDocId = LoginViewModel.shared.user?.docId else {
+            print("User ID is not available")
+            return
+        }
+        
+        viewModel.savePost(userId: userDocId, postTitle: titleText, postBody: textViewText) { result in
             switch result {
             case .success(let newPost):
                 print("Add Post: \(newPost)")

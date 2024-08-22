@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         if let currentUser = Auth.auth().currentUser {
-            LoginViewModel.shared.firebaseFetch(userId: currentUser.uid)
+            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid)
         }
         
         // UIWindow 및 루트 뷰 컨트롤러 설정

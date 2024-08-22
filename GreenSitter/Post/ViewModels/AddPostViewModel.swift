@@ -117,7 +117,7 @@ class AddPostViewModel: ObservableObject {
     }
     
     // 게시물 저장 메서드
-    func savePost(postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
+    func savePost(userId: String, postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
         uploadImages { [weak self] result in
             guard let self = self else { return }
             
@@ -129,7 +129,7 @@ class AddPostViewModel: ObservableObject {
                     createDate: Date(),
                     updateDate: Date(),
                     
-                    userId: "currentUserId",  // 실제 사용자 정보로 대체해야 함
+                    userId: userId,  // 실제 사용자 정보로 대체해야 함
                     profileImage: "currentProfileImage",  // 실제 프로필 이미지로 대체해야 함
                     nickname: "currentNickname",  // 실제 닉네임으로 대체해야 함
                     userLocation: self.location ?? Location.seoulLocation,  // 기본 위치를 서울로 설정
