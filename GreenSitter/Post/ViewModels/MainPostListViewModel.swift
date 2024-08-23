@@ -29,7 +29,7 @@ class MainPostListViewModel {
     }
     
     // TODO: Date 에 따라 정렬해서 가져오기
-    func fetchPostsByCategoryAndLocation(for category: String) {
+    func fetchPostsByCategoryAndLocation(for category: String, userLocation: Location?) {
         guard let postType = PostType(rawValue: category) else {
             filteredPosts = []
             return
@@ -37,16 +37,35 @@ class MainPostListViewModel {
 
         db.collection("posts")
             .whereField("postType", isEqualTo: postType.rawValue)
-            .getDocuments { [weak self] snapshot, error in
+            .getDocuments { [weak self] (querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error)")
                     self?.filteredPosts = []
                     return
                 }
-
-                self?.filteredPosts = snapshot?.documents.compactMap { document in
+                guard let documents = querySnapshot?.documents else {
+                    self?.filteredPosts = []
+                    return
+                }
+                let posts = documents.compactMap { document in
                     try? document.data(as: Post.self)
-                } ?? []
+                }
+                
+                // 위치 필터링
+                self?.filteredPosts = posts.filter { post in
+                    guard let postLocation = post.location else {
+                        return false
+                    }
+
+                    let distance = self?.calculateDistance(
+                        lat1: userLocation?.latitude ?? Location.seoulLocation.latitude,    // 위치 정보 파라미터 값 안받으면 기본 값은 서울 시청!
+                        lon1: userLocation?.longitude ?? Location.seoulLocation.longitude,
+                        lat2: postLocation.latitude,
+                        lon2: postLocation.longitude
+                    ) ?? Double.greatestFiniteMagnitude
+                    
+                    return distance <= 3000 // 3km 이내의 게시물만 포함
+                }.sorted(by: { $0.updateDate > $1.updateDate }) // 최신 업데이트 순으로 정렬
             }
     }
     

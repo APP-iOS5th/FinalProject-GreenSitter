@@ -56,7 +56,15 @@ class MainPostListViewController: UIViewController {
         guard let categoryText = selectedButton?.titleLabel?.text else {
             return
         }
-        viewModel.fetchPostsByCategoryAndLocation(for: categoryText)
+        
+        // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
+        if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
+            print("MainPostView - userlocation: \(userLocation)")
+            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: userLocation)
+        } else {    // 비로그인, 혹은 위치 정보 없으면
+            print("MainPostView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
+            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: nil)
+        }
 
         // 선택된 row 해제
         if let indexPath = tableView.indexPathForSelectedRow {
@@ -191,7 +199,15 @@ class MainPostListViewController: UIViewController {
         
         // 선택된 카테고리로 필터링
         guard let category = sender.titleLabel?.text else { return }
-        viewModel.fetchPostsByCategoryAndLocation(for: category)
+        
+        // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
+        if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
+            print("MainPostView - userlocation: \(userLocation)")
+            viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: userLocation)
+        } else {    // 비로그인, 혹은 위치 정보 없으면
+            print("MainPostView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
+            viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: nil)
+        }
     }
     
     private func navigateToAddPostViewController(with postType: PostType) {
