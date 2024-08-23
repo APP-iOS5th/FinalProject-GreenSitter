@@ -385,7 +385,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     private func presentImagePickerController() {
         var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 0
+        configuration.selectionLimit = 10 // 사진 최대 10개까지 추가가능
         configuration.filter = .images
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
