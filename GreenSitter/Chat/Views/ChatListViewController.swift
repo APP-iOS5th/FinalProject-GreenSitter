@@ -84,24 +84,47 @@ class ChatListViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(userDidLogin), name: NSNotification.Name("UserDidLoginNotification"), object: nil)
         
         if chatViewModel.isLoggedIn {
-            chatViewModel.loadChatRooms { [weak self] in
+            chatViewModel.loadChatRooms { [weak self] updatedChatRooms in
                 guard let self = self else { return }
                 
-                // MARK: - 로그인/채팅방 있음
-                if self.chatViewModel.hasChats {
-                    self.chatViewModel.updateUI = { [weak self] in
-                        self?.setupChatListUI()
+//                let dispatchGroup = DispatchGroup()
+                
+                for updatedChatRoom in updatedChatRooms {
+//                    dispatchGroup.enter()
+                    chatViewModel.loadLastMessages(chatRoomId: updatedChatRoom.id) {
+//                        dispatchGroup.enter()
+                        self.chatViewModel.loadUnreadMessages(chatRoomId: updatedChatRoom.id) {
+                            // MARK: - 로그인/채팅방 있음
+                            if self.chatViewModel.hasChats {
+                                self.chatViewModel.updateUI = { [weak self] in
+                                    self?.setupChatListUI()
+                                }
+                                
+                            } else {
+                                // MARK: - 로그인/채팅방 없음
+                                self.chatViewModel.updateUI = { [weak self] in
+                                    self?.setupEmptyChatListUI()
+                                    
+                                    // 버튼 클릭 시 홈 화면으로 이동
+                                    self?.goToHomeButton.addAction(UIAction { [weak self] _ in
+                                        self?.navigateToHome()
+                                    }, for: .touchUpInside)
+                                }
+                            }
+                            // 테이블 뷰를 리로드하여 최신 메시지를 표시
+                            self.tableView.reloadData()
+                            self.chatViewModel.updateUI?()
+
+                            
+//                            dispatchGroup.leave()
+                        }
+//                        dispatchGroup.leave()
                     }
-                    self.chatViewModel.updateUI?()
-                    
-                } else {
-                    // MARK: - 로그인/채팅방 없음
-                    self.setupEmptyChatListUI()
-                    // 버튼 클릭 시 홈 화면으로 이동
-                    self.goToHomeButton.addAction(UIAction { [weak self] _ in
-                        self?.navigateToHome()
-                    }, for: .touchUpInside)
                 }
+                // 모든 작업이 완료된 후 UI 업데이트
+//                dispatchGroup.notify(queue: .main) {
+//                    self.chatViewModel.updateUI?()
+//                }
             }
         } else {
             // MARK: - 비로그인
@@ -121,7 +144,7 @@ class ChatListViewController: UIViewController {
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
+//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
         
         self.view.addSubview(tableView)
         
@@ -135,6 +158,7 @@ class ChatListViewController: UIViewController {
     }
     
     // MARK: - 로그인/채팅 목록 있음 Methods
+    // TODO: - Edit 버튼 액션
     @objc private func editButtonTapped() {
         
     }
@@ -330,6 +354,7 @@ extension ChatListViewController: UITableViewDelegate {
         
         let chatViewController = ChatViewController(chatRoom: selectedChatRoom)
         chatViewController.chatViewModel = chatViewModel
+        chatViewController.index = indexPath.row
         
         self.navigationController?.pushViewController(chatViewController, animated: true)
     }

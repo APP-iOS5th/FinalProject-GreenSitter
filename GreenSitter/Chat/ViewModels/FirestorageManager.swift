@@ -52,18 +52,9 @@ class FirestorageManager {
         let storageRef = storage.reference()
         let imageRef = storageRef.child(imagePath)
         
-        return try await withCheckedThrowingContinuation { continuation in
-            imageRef.getData(maxSize: 4 * 1024 * 1024) { data, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else if let data = data, let image = UIImage(data: data) {
-                    continuation.resume(returning: image)
-                } else {
-                    let defaultImage = UIImage(systemName: "photo")!
-                    continuation.resume(returning: defaultImage)
-                }
-            }
-        }
+        let data = try await imageRef.data(maxSize: 4 * 1024 * 1024)
+        let photoImage = UIImage(systemName: "photo")!
+        return UIImage(data: data) ?? photoImage
     }
 
 }

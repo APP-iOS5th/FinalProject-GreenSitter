@@ -102,7 +102,7 @@ class ChatTableViewCell: UITableViewCell {
     // 안 읽은 메세지 수
     private lazy var unreadCountLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 8)
         label.textColor = .white
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -113,7 +113,7 @@ class ChatTableViewCell: UITableViewCell {
     private lazy var circleView: UIView = {
         let view = UIView()
         view.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-        view.layer.cornerRadius = view.frame.height/2
+        view.layer.cornerRadius = view.bounds.height/2
         view.layer.masksToBounds = true
         
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -148,7 +148,7 @@ class ChatTableViewCell: UITableViewCell {
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
-        guard let lastMessage = chatViewModel?.messages[chatRoom!.id]?.last else {
+        guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
             return
         }
 
@@ -169,12 +169,12 @@ class ChatTableViewCell: UITableViewCell {
         
         // 안 읽은 메세지 수
         /// read = false인 메세지 수
-        let unreadCount = chatViewModel?.messages.values.flatMap { $0 }.filter {
+        let unreadCount = chatViewModel?.unreadMessages.values.flatMap { $0 }.filter {
             $0.receiverUserId == userId && !$0.isRead
         }.count
         if unreadCount! > 0 {
             circleView.backgroundColor = .dominent
-            unreadCountLabel.text = "\(String(describing: unreadCount))"
+            unreadCountLabel.text = "\(unreadCount!)"
         // 안 읽은 메세지 수가 0일 때 초기화
         } else if unreadCount == 0 {
             circleView.backgroundColor = .clear
@@ -278,7 +278,7 @@ class ChatTableViewCell: UITableViewCell {
             rightStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             rightStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             rightStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            rightStackView.widthAnchor.constraint(equalToConstant: 45),
+            rightStackView.widthAnchor.constraint(equalToConstant: 60),
             
             dateLabel.topAnchor.constraint(equalTo: rightStackView.topAnchor, constant: 20),
             dateLabel.leadingAnchor.constraint(equalTo: rightStackView.leadingAnchor),
