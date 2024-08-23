@@ -27,9 +27,9 @@ class AnnotationDetailViewController: UIViewController {
     
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "xmark"), for: .normal)
-        button.tintColor = .black
-        button.backgroundColor = .fillPrimary
+        button.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        button.tintColor = .labelsTertiary
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -69,7 +69,7 @@ class AnnotationDetailViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = UIColor.labelsSecondary
-        label.numberOfLines = 2
+        label.numberOfLines = 1
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return label
     }()
@@ -103,7 +103,7 @@ class AnnotationDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .bgPrimary
         setupUI()
         updateUI()
     }
@@ -126,24 +126,24 @@ class AnnotationDetailViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             // Close button constraints
-            closeButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             closeButton.widthAnchor.constraint(equalToConstant: 20),
             closeButton.heightAnchor.constraint(equalToConstant: 20),
             
             // postStatusLabel constraints
-            postStatusLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            postStatusLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             postStatusLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             postStatusLabel.widthAnchor.constraint(equalToConstant: 60),
             postStatusLabel.heightAnchor.constraint(equalToConstant: 20),
             
             // verticalStackView constraints
-            verticalStackView.topAnchor.constraint(equalTo: postStatusLabel.bottomAnchor, constant: 8),
+            verticalStackView.topAnchor.constraint(equalTo: postStatusLabel.bottomAnchor, constant: 16),
             verticalStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             verticalStackView.trailingAnchor.constraint(equalTo: postImageView.leadingAnchor, constant: -16),
             
             // postImageView constraints
-            postImageView.topAnchor.constraint(equalTo: postStatusLabel.bottomAnchor, constant: 8),
+            postImageView.topAnchor.constraint(equalTo: verticalStackView.topAnchor, constant: 0),
             postImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             postImageView.widthAnchor.constraint(equalToConstant: 80),
             postImageView.heightAnchor.constraint(equalTo: postImageView.widthAnchor),

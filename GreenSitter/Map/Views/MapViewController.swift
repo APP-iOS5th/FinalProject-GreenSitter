@@ -383,7 +383,7 @@ extension MapViewController: MKMapViewDelegate {
                     detailViewController.view.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor),
                     detailViewController.view.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor),
                     detailViewController.view.bottomAnchor.constraint(equalTo: keyWindow.bottomAnchor),
-                    detailViewController.view.heightAnchor.constraint(equalToConstant: 200) // 원하는 높이 설정
+                    detailViewController.view.heightAnchor.constraint(equalToConstant: 200)
                 ])
                 
                 addChild(detailViewController)
@@ -414,13 +414,13 @@ extension MapViewController: MKMapViewDelegate {
                 // 오버레이 색 적용
                 switch post.postType {
                 case .lookingForSitter:
-                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.6)
+                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.3)
                 case .offeringToSitter:
-                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.6)
+                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3)
                 }
             } else {
                 print("post is nil")
-                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.6) // Default color
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3) // Default color
             }
 
             circleRenderer.strokeColor = .separatorsNonOpaque
