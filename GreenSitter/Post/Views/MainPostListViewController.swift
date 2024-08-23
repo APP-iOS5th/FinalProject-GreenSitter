@@ -33,7 +33,13 @@ class MainPostListViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+    private let locationLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        label.textColor = .labelsPrimary
+        return label
+    }()
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +52,8 @@ class MainPostListViewController: UIViewController {
         
         setupCategoryButtons()
         setupNavigationBarButtons()
-                
+        setupLocationLabel()
+
         fetchPostsByCategoryAndLocationWithViewModel()
         
         setupTableView()
@@ -76,6 +83,7 @@ class MainPostListViewController: UIViewController {
         }
         
         fetchPostsByCategoryAndLocationWithViewModel()
+        setupLocationLabel()
 
         // 선택된 row 해제
         if let indexPath = tableView.indexPathForSelectedRow {
@@ -111,7 +119,11 @@ class MainPostListViewController: UIViewController {
         // Add the search button as a UIBarButtonItem
         let searchBarButton = UIBarButtonItem(customView: searchPostButton)
         let addBarButton = UIBarButtonItem(customView: addPostButton)
+        
+        let locationBarButton = UIBarButtonItem(customView: locationLabel)
+        
         navigationItem.rightBarButtonItems = [addBarButton, searchBarButton]
+        navigationItem.leftBarButtonItem = locationBarButton
         
         // TODO: post 검색 기능
         let searchPostButtonAction = UIAction { [weak self] _ in
@@ -130,7 +142,15 @@ class MainPostListViewController: UIViewController {
             }
         }
     }
-
+    
+    private func setupLocationLabel() {
+        if let userAddress = LoginViewModel.shared.user?.location.address {
+            locationLabel.text = userAddress
+        } else {
+            locationLabel.text = ""
+        }
+    }
+    
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
         careProviderButton.setTitle(PostType.offeringToSitter.rawValue, for: .normal)

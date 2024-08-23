@@ -119,15 +119,29 @@ class PostTableViewCell: UITableViewCell {
             return
         }
         
-        // Set image if available
-        // TODO: 이미지 불러오기
-        if let imageName = postImages.first {
-            postImageView.image = UIImage(named: imageName)
+        if let imageUrlString = postImages.first, let imageUrl = URL(string: imageUrlString) {
+            print("Post Image is: \(imageUrlString)")
+            loadImage(from: imageUrl)
         } else {
+            print("Post Image is nil")
             postImageView.image = nil
         }
     }
-    
+    private func loadImage(from url: URL) {
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                DispatchQueue.main.async {
+                    self.postImageView.image = nil
+                }
+                return
+            }
+            let image = UIImage(data: data)
+            DispatchQueue.main.async {
+                self.postImageView.image = image
+            }
+        }
+        task.resume()
+    }
     
     private func timeAgoSinceDate(_ date: Date) -> String {
         let calendar = Calendar.current

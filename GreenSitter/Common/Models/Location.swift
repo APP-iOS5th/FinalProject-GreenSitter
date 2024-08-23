@@ -35,7 +35,7 @@ struct Location: Codable {
 
 
 extension Location {
-    static let seoulLocation = Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), latitude: 37.566, longitude: 126.97, address: "서울특별시 동작구 상도로")
+    static let seoulLocation = Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), latitude: 37.566, longitude: 126.97, address: "서울 중구 세종대로")
     static let busanLocation = Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), latitude: 35.179, longitude: 129.075, address: "부산광역시 해운대구 우동")
     static let daejeonLocation = Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), latitude: 36.351, longitude: 127.385, address: "대전광역시 유성구 궁동")
     static let incheonLocation = Location(locationId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), latitude: 37.456, longitude: 126.705, address: "인천광역시 남동구 구월동")
