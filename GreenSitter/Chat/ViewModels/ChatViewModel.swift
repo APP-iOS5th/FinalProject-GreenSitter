@@ -17,7 +17,7 @@ class ChatViewModel {
     var hasChats = false
     
     // 임시 유저 id
-    let userId = "250e8400-e29b-41d4-a716-446655440003"
+    let userId = "250e8400-e29b-41d4-a716-446655440002"
     var user: User? {
         didSet {
 //            isLoggedIn = user != nil
@@ -28,13 +28,27 @@ class ChatViewModel {
     var chatRooms: [ChatRoom] = [] {
         didSet {
             hasChats = !(chatRooms.isEmpty)
-//            updateUI?()
+            updateUI?()
         }
     }
     
-    var lastMessages: [String:[Message]] = [:]
-    var unreadMessages: [String:[Message]] = [:]
-    var messages: [String:[Message]] = [:]
+    var lastMessages: [String:[Message]] = [:] {
+        didSet {
+            updateUI?()
+        }
+    }
+    
+    var unreadMessages: [String:[Message]] = [:] {
+        didSet {
+            updateUI?()
+        }
+    }
+    
+    var messages: [String:[Message]] = [:] {
+        didSet {
+            updateUI?()
+        }
+    }
 
     var updateUI: (() -> Void)?
     
@@ -95,17 +109,17 @@ class ChatViewModel {
     }
     
     func deleteChatRoom(at index: Int) async throws {
-        guard index >= 0 && index < chatRooms.count else {
+        guard index >= 0 && index < self.chatRooms.count else {
             print("index out of range")
             return
         }
         
-        var chatRoom = chatRooms[index]
+        var chatRoom = self.chatRooms[index]
         
         do {
             let idString = chatRoom.id
-            try await firestoreManager.deleteChatRoom(docId: idString, userId: userId, chatRoom: &chatRoom)
-            self.chatRooms.remove(at: index)
+            let updatedChatRoom = try await firestoreManager.deleteChatRoom(docId: idString, userId: userId, chatRoom: chatRoom)
+            self.chatRooms[index] = updatedChatRoom
         } catch {
             print("Error deleting chat room: \(error.localizedDescription)")
         }
@@ -128,6 +142,7 @@ class ChatViewModel {
         }.resume()
     }
     
+    // 채팅방 알림 설정 업데이트
     func updateNotification(chatRoomId: String, userNotification: Bool, postUserNotification: Bool) async throws {
         do {
             try await firestoreManager.updateNotificationSetting(chatRoomId: chatRoomId, userNotification: userNotification, postUserNotification: postUserNotification)
@@ -135,6 +150,17 @@ class ChatViewModel {
             print("Error updating notification of chatRoom: \(error.localizedDescription)")
         }
     }
+    
+    // 채팅방 읽음 처리 업데이트
+    func updateUnread(chatRoomId: String) async throws {
+        do {
+            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: self.userId, unreadMessages: self.unreadMessages[chatRoomId]!)
+            self.unreadMessages[chatRoomId] = []
+        } catch {
+            print("Error updating notification of chatRoom: \(error.localizedDescription)")
+        }
+    }
+    
     
     // MARK: - MessageInputViewController Button Methods
     // send button
@@ -163,7 +189,7 @@ class ChatViewModel {
         }
 
         // UI 업데이트
-        self.updateUI?()
+//        self.updateUI?()
         
         Task {
             do {
@@ -175,7 +201,7 @@ class ChatViewModel {
                     chatRoomMessages.removeAll { $0.id == textMessage.id }
                     self.messages[chatRoom.id] = chatRoomMessages
                 }
-                self.updateUI?()
+//                self.updateUI?()
                 return
             }
         }
@@ -236,7 +262,7 @@ class ChatViewModel {
             }
 
             // UI 업데이트
-            self.updateUI?()
+//            self.updateUI?()
             
             do {
                 try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: imageMessage)
@@ -247,7 +273,7 @@ class ChatViewModel {
                     chatRoomMessages.removeAll { $0.id == imageMessage.id }
                     self.messages[chatRoom.id] = chatRoomMessages
                 }
-                self.updateUI?()
+//                self.updateUI?()
                 return
             }
         }
@@ -302,7 +328,7 @@ class ChatViewModel {
         }
 
         // UI 업데이트
-        self.updateUI?()
+//        self.updateUI?()
         
         Task {
             do {
@@ -314,7 +340,7 @@ class ChatViewModel {
                     chatRoomMessages.removeAll { $0.id == planMessage.id }
                     self.messages[chatRoom.id] = chatRoomMessages
                 }
-                self.updateUI?()
+//                self.updateUI?()
                 return
             }
         }

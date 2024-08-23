@@ -150,36 +150,68 @@ class FirestoreManager {
     }
     
     // 채팅방 데이터 삭제
-    func deleteChatRoom(docId: String, userId: String, chatRoom: inout ChatRoom) async throws {
+    func deleteChatRoom(docId: String, userId: String, chatRoom: ChatRoom) async throws -> ChatRoom {
         let docRef = db.collection("chatRooms").document(docId)
+        var updatedChatRoom = chatRoom
         
-        if userId == chatRoom.userId {
-            chatRoom.userEnabled = false
+        if userId == updatedChatRoom.userId {
+            updatedChatRoom.userEnabled = false
         } else if userId == chatRoom.postUserId {
-            chatRoom.postUserEnabled = false
+            updatedChatRoom.postUserEnabled = false
         }
         
-        if chatRoom.userEnabled == false && chatRoom.postUserEnabled == false {
-            chatRoom.enabled = false
+        if updatedChatRoom.userEnabled == false && updatedChatRoom.postUserEnabled == false {
+            updatedChatRoom.enabled = false
         }
         
         try await docRef.updateData([
-            "userEnabled": chatRoom.userEnabled,
-            "postUserEnabled": chatRoom.postUserEnabled,
-            "enabled": chatRoom.enabled
+            "userEnabled": updatedChatRoom.userEnabled,
+            "postUserEnabled": updatedChatRoom.postUserEnabled,
+            "enabled": updatedChatRoom.enabled
         ])
+        
+        return updatedChatRoom
     }
     
     // 채팅방 알림 설정 업데이트
     func updateNotificationSetting(chatRoomId: String, userNotification: Bool, postUserNotification: Bool) async throws {
         let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
 
-            try await chatRoomRef.updateData([
-                "userNotification": userNotification,
-                "postUserNotification": postUserNotification
-            ])
-            
-            print("Notification settings updated successfully for chat room \(chatRoomId).")
+        try await chatRoomRef.updateData([
+            "userNotification": userNotification,
+            "postUserNotification": postUserNotification
+        ])
+        
+        print("Notification settings updated successfully for chat room \(chatRoomId).")
+    }
+    
+    // 채팅방 읽음 처리 업데이트
+    func markMessagesAsRead(chatRoomId: String, userId: String, unreadMessages: [Message]) async throws -> [Message] {
+        let messagesCollectionRef = db.collection("chatRooms")
+            .document(chatRoomId)
+            .collection("messages")
+
+        var updatedMessages: [Message] = []
+
+        // 배치 작업
+        let batch = db.batch()
+        
+        // 읽지 않은 메시지들에 대해 isRead를 true로 업데이트
+        for var message in unreadMessages {
+            if message.receiverUserId == userId && !message.isRead {
+                message.isRead = true
+                let documentRef = messagesCollectionRef.document(message.id)
+                batch.updateData(["isRead": true], forDocument: documentRef)
+                updatedMessages.append(message)
+            }
+        }
+        
+        try await batch.commit()
+        
+        print("isRead settings updated successfully for chat room \(chatRoomId).")
+        
+        // 업데이트된 메시지 배열을 반환
+        return updatedMessages
     }
     
     // MARK: - Message
