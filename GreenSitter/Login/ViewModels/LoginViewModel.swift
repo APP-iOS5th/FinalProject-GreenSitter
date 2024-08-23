@@ -50,10 +50,8 @@ class LoginViewModel: ObservableObject {
             var location: Location?
             if let locationData = data?["location"] as? [String: Any] {
                 // 위치 정보 문자열을 Double로 변환
-                let latitudeString = locationData["latitude"] as? String ?? ""
-                let longitudeString = locationData["longitude"] as? String ?? ""
-                let latitude = Double(latitudeString) ?? 0.0
-                let longitude = Double(longitudeString) ?? 0.0
+                let latitude = locationData["latitude"] as? Double ?? 37.566 // 기본값 설정
+                let longitude = locationData["longitude"] as? Double ?? 126.97 // 기본값 설정
 
                 let locationId = locationData["locationId"] as? String ?? ""
                 let enabled = (locationData["enabled"] as? Bool) ?? false
@@ -79,7 +77,7 @@ class LoginViewModel: ObservableObject {
                                  updateDate: updateDate,
                                  profileImage: profileImage,
                                  nickname: nickname,
-                                 location: location ?? Location(locationId: "", enabled: true, createDate: Date(), updateDate: Date()),
+                                 location: location ?? Location.seoulLocation,
                                  platform: platform,
                                  levelPoint: Level(rawValue: levelPoint) ?? .fruit,
                                  exp: exp,
@@ -90,7 +88,6 @@ class LoginViewModel: ObservableObject {
         }
     }
 
-    
     func updateUserLocation(with location: Location) {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("No logged in user")
