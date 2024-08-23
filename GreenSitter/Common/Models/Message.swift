@@ -14,7 +14,7 @@ struct Message: Codable {
     let updateDate: Date
     let senderUserId: String
     let receiverUserId: String
-    let isRead: Bool
+    var isRead: Bool
     let messageType: MessageType
     let text: String?
     let image: [String]?
