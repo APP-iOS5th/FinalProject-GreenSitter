@@ -181,7 +181,7 @@ class AnnotationDetailViewController: UIViewController {
             loadImage(from: imageUrl)
         } else {
             print("Post Image is nil")
-            postImageView.image = nil
+            postImageView.image = UIImage(systemName: "photo")
         }
         
         descriptionLabel.text = "이 위치는 500m 반경 이내의 지역이 표시됩니다."
