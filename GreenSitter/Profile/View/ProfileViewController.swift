@@ -10,8 +10,11 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 import Combine
+import AuthenticationServices
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: UIViewController,ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+
+    
     
     // MARK: - Properties
     var sectionTitle = ["내 정보", "돌봄 정보", "시스템", "이용약관 및 개인정보 처리방침" ]
@@ -19,6 +22,7 @@ class ProfileViewController: UIViewController {
     let db = Firestore.firestore()
     let storage = Storage.storage()
     let someIndexPath = IndexPath(row: 0, section: 0) // 적절한 인덱스 경로로 대체
+    var currentReauthCompletion: ((Bool) -> Void)?
 
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()

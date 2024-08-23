@@ -11,6 +11,7 @@ import FirebaseAuth
 import FirebaseStorage
 import Combine
 import AuthenticationServices
+import GoogleSignIn
 
 extension ProfileViewController {
     
@@ -151,22 +152,152 @@ extension ProfileViewController {
         }
     }
     
+    //MARK: - 구글 재인증
+
+    func reauthenticateWithGoogle(completion: @escaping (Bool) -> Void) {
+        guard let currentUser = Auth.auth().currentUser else {
+            completion(false)
+            return
+        }
+        
+        guard let presentingViewController = UIApplication.shared.windows.first?.rootViewController else {
+            completion(false)
+            return
+        }
+
+        GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController) { signInResult, error in
+            if let error = error {
+                print("Google sign-in error: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            guard let authentication = signInResult?.user else {
+                print("Google authentication failed.")
+                completion(false)
+                return
+            }
+            
+            guard let idToken = authentication.idToken?.tokenString else {
+                print("Failed to retrieve ID token.")
+                completion(false)
+                return
+            }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken.tokenString)
+
+            currentUser.reauthenticate(with: credential) { result, error in
+                if let error = error {
+                    print("Re-authentication with Google failed: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    print("Re-authentication with Google succeeded.")
+                    completion(true)
+                }
+            }
+        }
+    }
+
+    
+    //Apple재인증
+    func reauthenticateWithApple(completion: @escaping (Bool) -> Void) {
+            guard let user = Auth.auth().currentUser else {
+                completion(false)
+                return
+            }
+
+            let appleIDProvider = ASAuthorizationAppleIDProvider()
+            let request = appleIDProvider.createRequest()
+            request.requestedScopes = [.fullName, .email]
+
+            let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+            authorizationController.delegate = self
+            authorizationController.presentationContextProvider = self
+            
+            // completion 클로저를 저장합니다.
+            self.currentReauthCompletion = completion
+            
+            authorizationController.performRequests()
+        }
+
+        // ASAuthorizationControllerDelegate 메서드
+        func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+            guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                  let identityToken = appleIDCredential.identityToken,
+                  let tokenString = String(data: identityToken, encoding: .utf8) else {
+                print("Apple ID Credential 또는 identity token이 없습니다.")
+                currentReauthCompletion?(false)
+                return
+            }
+
+            let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: tokenString, rawNonce: "")
+
+            Auth.auth().currentUser?.reauthenticate(with: credential) { result, error in
+                if let error = error {
+                    print("Apple로 재인증 실패: \(error.localizedDescription)")
+                    self.currentReauthCompletion?(false)
+                } else {
+                    print("Apple로 재인증 성공.")
+                    self.currentReauthCompletion?(true)
+                }
+            }
+        }
+
+        func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+            print("Apple 로그인 에러: \(error.localizedDescription)")
+            currentReauthCompletion?(false)
+        }
+
+        // ASAuthorizationControllerPresentationContextProviding 메서드
+        func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+            return self.view.window!
+        }
+    
     
     //MARK: - 회원 탈퇴
-    func accountDeletion() {
-        let alert = UIAlertController(title: "회원 탈퇴", message: "회원탈퇴시, 모든 가입 정보가 삭제됩니다 \n 다시 로그인하려면 재가입이 필요합니다 \n\n 정말로 회원탈퇴를 진행하시겠습니까?", preferredStyle: .alert)
-        let cancle = UIAlertAction(title: "취소", style: .cancel) {
-            action in
-            print("취소")
+    func deleteUserAccount() {
+        guard let user = Auth.auth().currentUser else { return }
+        
+        let providerData = user.providerData.first
+        let providerID = providerData?.providerID
+        
+        let reauthenticate: (@escaping (Bool) -> Void) -> Void
+        
+        if providerID == "google.com" {
+            reauthenticate = reauthenticateWithGoogle
+        } else if providerID == "apple.com" {
+            reauthenticate = reauthenticateWithApple
+        } else {
+            print("Unsupported provider: \(providerID ?? "unknown")")
+            return
         }
-        let deletion = UIAlertAction(title: "탈퇴 하기", style: .destructive){ action in
-            print("탈퇴 눌렸습니다.")
-            self.deleteUserAccount()
+        
+        reauthenticate { [weak self] success in
+            guard let self = self else { return }
+            
+            if success {
+                self.deleteUserData { success in
+                    if success {
+                        user.delete { error in
+                            if let error = error {
+                                print("Error deleting user: \(error.localizedDescription)")
+                            } else {
+                                print("User account deleted successfully")
+                                // 로그인 화면으로 이동
+                                let loginViewController = LoginViewController()
+                                self.navigationController?.pushViewController(loginViewController, animated: true)
+                            }
+                        }
+                    } else {
+                        print("Failed to delete user data from Firestore")
+                    }
+                }
+            } else {
+                print("Re-authentication failed. Please try again.")
+            }
         }
-        alert.addAction(cancle)
-        alert.addAction(deletion)
-        present(alert, animated: true)
     }
+
     
     func deleteUserData(completion: @escaping(Bool) -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
@@ -184,28 +315,29 @@ extension ProfileViewController {
     }
     
     //애플 회원탈퇴
-    func deleteUserAccount() {
-        guard let user = Auth.auth().currentUser else { return }
-        
-        deleteUserData { success in
-            if success {
-                user.delete { error in
-                    if let error = error {
-                        print("Error deleting user: \(error.localizedDescription)")
-                        
-                    }
-                    else {
-                        print("User account deleted successfully")
-                        // 로그인 화면으로 이동
-                        let loginViewController = LoginViewController()
-                        self.navigationController?.pushViewController(loginViewController, animated: true)
-                    }
-                }
-            }
-            else {
-                print("Failed to delete user data from Firestore")
-            }
-            
-        }
-    }
+//    func deleteUserAccount() {
+//        guard let user = Auth.auth().currentUser else { return }
+//        
+//        deleteUserData { success in
+//            if success {
+//                user.delete { error in
+//                    if let error = error {
+//                        print("Error deleting user: \(error.localizedDescription)")
+//                        
+//                    }
+//                    else {
+//                        print("User account deleted successfully")
+//                        // 로그인 화면으로 이동
+//                        let loginViewController = LoginViewController()
+//                        self.navigationController?.pushViewController(loginViewController, animated: true)
+//                    }
+//                }
+//            }
+//            else {
+//                print("Failed to delete user data from Firestore")
+//            }
+//            
+//        }
+//    }
 }
+
