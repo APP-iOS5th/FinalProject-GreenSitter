@@ -56,7 +56,7 @@ class MainPostListViewController: UIViewController {
         guard let categoryText = selectedButton?.titleLabel?.text else {
             return
         }
-        viewModel.fetchPostsByCategory(for: categoryText)
+        viewModel.fetchPostsByCategoryAndLocation(for: categoryText)
 
         // 선택된 row 해제
         if let indexPath = tableView.indexPathForSelectedRow {
@@ -191,7 +191,7 @@ class MainPostListViewController: UIViewController {
         
         // 선택된 카테고리로 필터링
         guard let category = sender.titleLabel?.text else { return }
-        viewModel.fetchPostsByCategory(for: category)
+        viewModel.fetchPostsByCategoryAndLocation(for: category)
     }
     
     private func navigateToAddPostViewController(with postType: PostType) {

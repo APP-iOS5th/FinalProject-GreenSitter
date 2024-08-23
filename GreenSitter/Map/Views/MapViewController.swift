@@ -64,7 +64,7 @@ class MapViewController: UIViewController {
         setupUI()
         bindViewModel()
 //        setupMarkerAndOverlay(with: Post.samplePosts)  // TODO: 실제 서버 post 데이터로 변경
-        postViewModel.fetchAllPosts()
+        postViewModel.fetchPostsWithin3Km()
     }
     
     private func setupUI() {
