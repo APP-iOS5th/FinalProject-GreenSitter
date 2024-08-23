@@ -45,8 +45,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return textField
     }()
     
-    private let dividerLine1: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine1: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
@@ -78,8 +78,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return imageView
     }()
     
-    private let dividerLine2: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine2: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
@@ -96,6 +96,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         view.text = textViewPlaceHolder
         view.textColor = .lightGray
         view.delegate = self
+        view.sizeToFit()
+        view.isScrollEnabled = false
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -111,8 +113,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return label
     }()
     
-    private let dividerLine3: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine3: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
