@@ -153,7 +153,6 @@ extension ProfileViewController {
     }
     
     //MARK: - 구글 재인증
-
     func reauthenticateWithGoogle(completion: @escaping (Bool) -> Void) {
         guard let currentUser = Auth.auth().currentUser else {
             completion(false)
@@ -199,7 +198,7 @@ extension ProfileViewController {
     }
 
     
-    //Apple재인증
+    //MARK: - Apple재인증
     func reauthenticateWithApple(completion: @escaping (Bool) -> Void) {
             guard let user = Auth.auth().currentUser else {
                 completion(false)
@@ -256,7 +255,6 @@ extension ProfileViewController {
     
     
     //MARK: - 회원 탈퇴
-    
     func accountDeletion() {
         let alert = UIAlertController(title: "회원 탈퇴", message: "회원탈퇴시, 모든 가입 정보가 삭제됩니다 \n 다시 로그인하려면 재가입이 필요합니다 \n\n 정말로 회원탈퇴를 진행하시겠습니까?", preferredStyle: .alert)
         let cancle = UIAlertAction(title: "취소", style: .cancel) {
@@ -329,31 +327,5 @@ extension ProfileViewController {
             }
         }
     }
-    
-    //애플 회원탈퇴
-//    func deleteUserAccount() {
-//        guard let user = Auth.auth().currentUser else { return }
-//        
-//        deleteUserData { success in
-//            if success {
-//                user.delete { error in
-//                    if let error = error {
-//                        print("Error deleting user: \(error.localizedDescription)")
-//                        
-//                    }
-//                    else {
-//                        print("User account deleted successfully")
-//                        // 로그인 화면으로 이동
-//                        let loginViewController = LoginViewController()
-//                        self.navigationController?.pushViewController(loginViewController, animated: true)
-//                    }
-//                }
-//            }
-//            else {
-//                print("Failed to delete user data from Firestore")
-//            }
-//            
-//        }
-//    }
 }
 
