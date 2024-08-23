@@ -176,13 +176,31 @@ class AnnotationDetailViewController: UIViewController {
         postTitleLabel.text = post.postTitle
         postBodyLabel.text = post.postBody
         
-        if let imageName = post.postImages?.first {
-            postImageView.image = UIImage(named: imageName)
+        if let imageUrlString = post.postImages?.first, let imageUrl = URL(string: imageUrlString) {
+            print("Post Image is: \(imageUrlString)")
+            loadImage(from: imageUrl)
         } else {
-            postImageView.image = UIImage(systemName: "photo")
+            print("Post Image is nil")
+            postImageView.image = nil
         }
         
         descriptionLabel.text = "이 위치는 500m 반경 이내의 지역이 표시됩니다."
+    }
+    
+    private func loadImage(from url: URL) {
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                DispatchQueue.main.async {
+                    self.postImageView.image = nil
+                }
+                return
+            }
+            let image = UIImage(data: data)
+            DispatchQueue.main.async {
+                self.postImageView.image = image
+            }
+        }
+        task.resume()
     }
 }
 
