@@ -19,7 +19,7 @@ class LoginViewModel: ObservableObject {
     private init() {}
 
     func userFetchFirebase(profileImage: String, nickname: String, location: Location, docId: String) {
-        self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false, docId: docId)
+        self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false)
     }
     
     func firebaseFetch(docId: String) {
@@ -34,7 +34,7 @@ class LoginViewModel: ObservableObject {
             }
 
             let data = document.data()
-            let id = data?["id"] as? String ?? ""
+            let id = data?["id"] as? String ?? docId
             let enabled = data?["enabled"] as? Bool ?? false
             let createDate = (data?["createDate"] as? Timestamp)?.dateValue() ?? Date()
             let updateDate = (data?["updateDate"] as? Timestamp)?.dateValue() ?? Date()
@@ -82,7 +82,7 @@ class LoginViewModel: ObservableObject {
                                  levelPoint: Level(rawValue: levelPoint) ?? .fruit,
                                  exp: exp,
                                  aboutMe: aboutMe,
-                                 chatNotification: chatNotification, docId: docId)
+                                 chatNotification: chatNotification)
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
             }
         }
