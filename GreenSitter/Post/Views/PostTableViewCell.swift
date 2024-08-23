@@ -7,6 +7,8 @@
 
 import Foundation
 import UIKit
+import FirebaseFirestore
+import FirebaseStorage
 
 class PostTableViewCell: UITableViewCell {
 
@@ -69,31 +71,25 @@ class PostTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        // Add views to content view
         contentView.addSubview(postStatusLabel)
         contentView.addSubview(verticalStackView)
         contentView.addSubview(postImageView)
         
-        // Add labels to vertical stack view
         verticalStackView.addArrangedSubview(postTitleLabel)
         verticalStackView.addArrangedSubview(postBodyLabel)
         verticalStackView.addArrangedSubview(postDateLabel)
         
-        // Set up constraints
         NSLayoutConstraint.activate([
-            // postStatusLabel constraints
             postStatusLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             postStatusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            postStatusLabel.widthAnchor.constraint(equalToConstant: 60),
+            postStatusLabel.widthAnchor.constraint(equalToConstant: 40),
             postStatusLabel.heightAnchor.constraint(equalToConstant: 20),
             
-            // verticalStackView constraints
             verticalStackView.topAnchor.constraint(equalTo: postStatusLabel.bottomAnchor, constant: 8),
             verticalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             verticalStackView.trailingAnchor.constraint(equalTo: postImageView.leadingAnchor, constant: -16),
             verticalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             
-            // postImageView constraints
             postImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             postImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             postImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -107,27 +103,47 @@ class PostTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // Configure cell with post data
     func configure(with post: Post) {
         postStatusLabel.text = post.postStatus.rawValue
         postTitleLabel.text = post.postTitle
         postBodyLabel.text = post.postBody
         postDateLabel.text = timeAgoSinceDate(post.createDate)
-
+        
         guard let postImages = post.postImages, !postImages.isEmpty else {
-            postImageView.image = nil
+            postImageView.isHidden = true // 이미지가 없으면 이미지 뷰를 숨김
             return
         }
         
-        // Set image if available
-        // TODO: 이미지 불러오기
-        if let imageName = postImages.first {
-            postImageView.image = UIImage(named: imageName)
+        postImageView.isHidden = false // 이미지가 있으면 이미지 뷰를 보이도록 설정
+        
+        if let imageUrl = postImages.first {
+            loadImage(from: imageUrl) // Firestore에서 이미지 URL을 로드
         } else {
             postImageView.image = nil
         }
     }
     
+    // Firebase Storage에서 이미지를 로드하여 표시
+    private func loadImage(from urlString: String) {
+        guard let url = URL(string: urlString) else {
+            postImageView.image = UIImage(named: "defaultImage")
+            return
+        }
+
+        // 비동기적으로 이미지 로드
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self, let data = data, error == nil else {
+                DispatchQueue.main.async {
+                    self?.postImageView.image = UIImage(named: "defaultImage")
+                }
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.postImageView.image = UIImage(data: data)
+            }
+        }.resume()
+    }
     
     private func timeAgoSinceDate(_ date: Date) -> String {
         let calendar = Calendar.current
@@ -149,3 +165,4 @@ class PostTableViewCell: UITableViewCell {
         }
     }
 }
+
