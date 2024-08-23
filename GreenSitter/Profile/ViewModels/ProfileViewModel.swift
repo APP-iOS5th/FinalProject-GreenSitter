@@ -26,16 +26,17 @@ extension ProfileViewController {
         loginViewModel.firebaseFetch(docId: currentUserID)
         
         if let profileImageURL = loginViewModel.user?.profileImage {
-            loginViewModel.loadProfileImage(from: profileImageURL)
+            loginViewModel.loadProfileImage(from: profileImageURL) { [weak self] image in
+                guard let self = self else { return }
+                if let image = image {
+                    self.imageButton.setImage(image, for: .normal)
+                    print("Profile image successfully set to button.")
+                }
+            }
         }
         
         DispatchQueue.main.async {
             self.tableView.reloadData()
-            
-            // profileImage가 변경된 후 UI를 업데이트할 필요가 있는 경우
-            if let image = loginViewModel.profileImage {
-                self.imageButton.setImage(image, for: .normal)
-            }
         }
     }
 

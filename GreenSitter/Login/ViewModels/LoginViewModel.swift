@@ -22,8 +22,12 @@ class LoginViewModel: ObservableObject {
     func userFetchFirebase(profileImage: String, nickname: String, location: Location, docId: String) {
         self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false, docId: docId)
         
-        loadProfileImage(from: profileImage)
-    }
+        loadProfileImage(from: profileImage) { [weak self] image in
+            self?.profileImage = image
+            // Perform additional UI updates here if needed
+            print("Profile image successfully loaded and updated.")
+        }
+    }   
     
     func firebaseFetch(docId: String) {
         db.collection("users").document(docId).getDocument { (document, error) in
@@ -92,10 +96,11 @@ class LoginViewModel: ObservableObject {
         }
     }
     
-    func loadProfileImage(from gsURL: String) {
+    func loadProfileImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
         guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
               let url = URL(string: httpsURLString) else {
             print("Invalid URL string: \(gsURL)")
+            completion(nil)
             return
         }
         
@@ -103,34 +108,29 @@ class LoginViewModel: ObservableObject {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print("Image download error: \(error)")
+                completion(nil)
                 return
             }
             
-            if let httpResponse = response as? HTTPURLResponse {
-                print("HTTP Response Status Code: \(httpResponse.statusCode)")
-                if httpResponse.statusCode != 200 {
-                    print("HTTP Error: \(httpResponse.statusCode)")
-                    return
-                }
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("HTTP Error: \(httpResponse.statusCode)")
+                completion(nil)
+                return
             }
             
             guard let data = data, let image = UIImage(data: data) else {
                 print("No data received or failed to convert data to UIImage")
+                completion(nil)
                 return
             }
             
             DispatchQueue.main.async {
-                self.profileImage = image
-                print("Profile image successfully loaded.")
-                
-                // 이미지가 로드되면 ProfileViewController의 imageButton에 설정
-                if let viewController = UIApplication.shared.windows.first?.rootViewController as? ProfileViewController {
-                    viewController.imageButton.setImage(image, for: .normal)
-                }
+                completion(image)
             }
         }
         task.resume()
     }
+
 
         
         func convertToHttpsURL(gsURL: String) -> String? {
