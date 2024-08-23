@@ -13,6 +13,7 @@ class LoginViewModel: ObservableObject {
     static let shared = LoginViewModel()
     
     @Published var user: User?
+    @Published var profileImage: UIImage?
     
     let db = Firestore.firestore()
     
@@ -20,6 +21,8 @@ class LoginViewModel: ObservableObject {
 
     func userFetchFirebase(profileImage: String, nickname: String, location: Location, docId: String) {
         self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false, docId: docId)
+        
+        loadProfileImage(from: profileImage)
     }
     
     func firebaseFetch(docId: String) {
@@ -88,6 +91,56 @@ class LoginViewModel: ObservableObject {
             }
         }
     }
+    
+    func loadProfileImage(from gsURL: String) {
+        guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
+              let url = URL(string: httpsURLString) else {
+            print("Invalid URL string: \(gsURL)")
+            return
+        }
+        
+        print("Fetching image from URL: \(url)")
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Image download error: \(error)")
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                print("HTTP Response Status Code: \(httpResponse.statusCode)")
+                if httpResponse.statusCode != 200 {
+                    print("HTTP Error: \(httpResponse.statusCode)")
+                    return
+                }
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                print("No data received or failed to convert data to UIImage")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.profileImage = image
+                print("Profile image successfully loaded.")
+                
+                // 이미지가 로드되면 ProfileViewController의 imageButton에 설정
+                if let viewController = UIApplication.shared.windows.first?.rootViewController as? ProfileViewController {
+                    viewController.imageButton.setImage(image, for: .normal)
+                }
+            }
+        }
+        task.resume()
+    }
+
+        
+        func convertToHttpsURL(gsURL: String) -> String? {
+            let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
+            let encodedPath = gsURL
+                .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
+                .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+            return baseURL + (encodedPath ?? "") + "?alt=media"
+        }
+    
 
     func updateUserLocation(with location: Location) {
         guard let userId = Auth.auth().currentUser?.uid else {

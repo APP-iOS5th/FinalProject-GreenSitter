@@ -16,16 +16,29 @@ extension ProfileViewController {
     
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {
-        if user?.id == Auth.auth().currentUser?.uid {
-            if let profileImage = user?.profileImage {
-                self.loadProfileImage(from: profileImage)
-            }
+        let loginViewModel = LoginViewModel.shared
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            print("로그인된 사용자가 없습니다.")
+            return
+        }
+        
+        loginViewModel.firebaseFetch(docId: currentUserID)
+        
+        if let profileImageURL = loginViewModel.user?.profileImage {
+            loginViewModel.loadProfileImage(from: profileImageURL)
+        }
+        
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
             
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+            // profileImage가 변경된 후 UI를 업데이트할 필요가 있는 경우
+            if let image = loginViewModel.profileImage {
+                self.imageButton.setImage(image, for: .normal)
             }
         }
     }
+
     
     
     func updateNickname(_ profileImage: String) {
@@ -44,57 +57,51 @@ extension ProfileViewController {
         }
     }
     
-    
-    //MARK: - gs:// URL을 https:// URL로 변환
+
+    // MARK: - gs:// URL을 https:// URL로 변환
     func convertToHttpsURL(gsURL: String) -> String? {
         let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
         let encodedPath = gsURL
             .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
-            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 한 번만 호출
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
         return baseURL + (encodedPath ?? "") + "?alt=media"
     }
     
-    
-    
-    
-    //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
+    // MARK: - 이미지 파일 스토리지에서 이미지 파일 불러오기
     func loadProfileImage(from gsURL: String) {
         guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
               let url = URL(string: httpsURLString) else {
-            print("Invalid URL string: \(gsURL)")
+            print("Invalid URL string after conversion: \(gsURL)")
             return
         }
         
-        print("Fetching image from URL: \(url)") // URL을 로그로 출력하여 확인
+        print("Fetching image from URL: \(url)")
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print("이미지 다운로드 오류: \(error)")
+                print("Image download error: \(error)")
                 return
             }
             
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-                print("HTTP Error: \(httpResponse.statusCode)")
+            if let httpResponse = response as? HTTPURLResponse {
+                print("HTTP Response Status Code: \(httpResponse.statusCode)")
+                if httpResponse.statusCode != 200 {
+                    print("HTTP Error: \(httpResponse.statusCode)")
+                    return
+                }
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                print("No data received or failed to convert data to UIImage")
                 return
             }
             
-            guard let data = data else {
-                print("No data received")
-                return
-            }
-            
-            print("Data received with size: \(data.count) bytes")
-            
-            guard let image = UIImage(data: data) else {
-                print("error: 이미지로 변환 실패")
-                return
-            }
             DispatchQueue.main.async {
                 self.imageButton.setImage(image, for: .normal)
+                print("Profile image successfully set to button.")
             }
         }
         task.resume()
     }
-    
     
     
     
