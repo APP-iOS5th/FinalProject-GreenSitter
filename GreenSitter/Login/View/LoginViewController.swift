@@ -15,7 +15,6 @@ import GoogleSignIn
 
 class LoginViewController: UIViewController {
     var currentNonce: String? //Apple Login Property
-    var users: User?
     let db = Firestore.firestore()
     
     lazy var titleLabel: UILabel = {
@@ -78,7 +77,7 @@ class LoginViewController: UIViewController {
         appleButton.addTarget(self, action: #selector(appleLogin), for: .touchUpInside)
         textButton.addTarget(self, action: #selector(navigationTap), for: .touchUpInside)
         
-        showToast(withDuration: 1, delay: 4)
+        showToast(withDuration: 1, delay: 2)
         
         NSLayoutConstraint.activate([
             // Title Label
@@ -106,6 +105,7 @@ class LoginViewController: UIViewController {
             textButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40)
         ])
     }
+    
     //MARK: - ToastMessage
     func showToast(withDuration: Double, delay: Double) {
         let toastLabelWidth: CGFloat = 380
@@ -227,87 +227,45 @@ class LoginViewController: UIViewController {
                 
                 // Firebase Database에 사용자 정보 저장
                 let userRef = self.db.collection("users").document(user.uid)
-//                
-//                                let post = Post(
-//                                    id: UUID().uuidString,
-//                                    enabled: true,
-//                                    createDate: Date(),
-//                                    updateDate: Date(),
-//                                    userId: "exampleUserId",
-//                                    profileImage: "exampleProfileImageURL",
-//                                    nickname: "exampleNickname",
-//                                    userLocation: Location.seoulLocation,
-//                                    userNotification: false,
-//                                    postType: .offeringToSitter,
-//                                    postTitle: "exampleTitle",
-//                                    postBody: "exampleBody",
-//                                    postImages: ["exampleImage1", "exampleImage2"],
-//                                    postStatus: .beforeTrade,
-//                                    location: Location.seoulLocation
-//                                )
                 
-                //                let userA = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "exampleImage1", nickname: "", location: Location.seoulLocation, platform: "", levelPoint: 1, aboutMe: "", chatNotification: true)
-                
-                // Firestore에 문서 저장
-//                                userRef.setData([
-//                                    "platform": "google",
-//                                    
-//                                    "post":[
-//                                        "id": UUID().uuidString,
-//                                        "enabled": post.enabled,
-//                                        "createDate": Timestamp(date: post.createDate), // Date를 Timestamp로 변환
-//                                        "updateDate": Timestamp(date: post.updateDate), // Date를 Timestamp로 변환
-//                                        "userId": post.userId,
-//                                        "profileImage": post.profileImage,
-//                                        "nickname": post.nickname,
-//                                        "userLocation": [
-//                                            "latitude": post.userLocation.latitude,
-//                                            "longitude": post.userLocation.longitude
-//                                        ],
-//                                        "userNotification": post.userNotification,
-//                                        "postType": post.postType.rawValue,
-//                                        "postTitle": post.postTitle,
-//                                        "postBody": post.postBody,
-//                                        "postImages": post.postImages ?? [],
-//                                        "postStatus": "거래완료",
-//                                        "location": post.location != nil ? [
-//                                            "latitude": post.location?.latitude ?? 0,
-//                                            "longitude": post.location?.longitude ?? 0
-//                                        ] : NSNull() // 위치가 없을 경우 NSNull() 사용
-//                                    ],
-//                                ]) { error in
-//                                    if let error = error {
-//                                        print("Firestore 저장 오류: \(error.localizedDescription)")
-//                                    } else {
-//                                        print("Firestore에 사용자 정보 저장 성공")
-//                                    }
-//                                }
-                
-                
-                //                let newUser = User(id: user.uid, enabled: true, createDate: Date(), updateDate: Date(), profileImage: "", nickname: "", location: Location.sampleLocation, platform: "google", levelPoint: 0, aboutMe: "", chatNotification: false)
                 userRef.getDocument { document, error in
                     if let error = error {
                         print("Error fetching user document: \(error)")
                         
                     }
                     else if let document = document, document.exists {
-                        let profileViewController = ProfileViewController()
-                        if let navigationController = self.navigationController {
-                            navigationController.pushViewController(profileViewController, animated: true)
-                        }
-                        else {
-                            print("Error: The current view controller is not embedded in a UINavigationController.")
+                        // 재로그인 (유저 데이터가 있는 경우)
+                        DispatchQueue.main.async {
+                            // Setting local User
+                            LoginViewModel.shared.firebaseFetch(docId: user.uid)
+
+                            let profileViewController = ProfileViewController()
+                            if let navigationController = self.navigationController {
+                                navigationController.pushViewController(profileViewController, animated: true)
+                            }
+                            else {
+                                print("Error: The current view controller is not embedded in a UINavigationController.")
+                            }
                         }
                     }
                     
                     else {
-                        DispatchQueue.main.async {
-                            let setLocationViewController = SetLocationViewController()
-                            if let navigationController = self.navigationController {
-                                navigationController.pushViewController(setLocationViewController, animated: true)
-                            }
-                            else {
-                                print("Error: The current view controller is not embedded in a UINavigationController.")
+                        // 유저 데이터가 없는 경우, 회원가입 계속
+                        userRef.setData([
+                            "platform": "google"
+                        ]) { error in
+                            if let error = error {
+                                print("Firestore Writing Error: \(error)")
+                            } else {
+                                DispatchQueue.main.async {
+                                    let setLocationViewController = SetLocationViewController()
+                                    if let navigationController = self.navigationController {
+                                        navigationController.pushViewController(setLocationViewController, animated: true)
+                                    }
+                                    else {
+                                        print("Error: The current view controller is not embedded in a UINavigationController.")
+                                    }
+                                }
                             }
                         }
                     }
@@ -372,17 +330,20 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                     let db = Firestore.firestore()
                     let userRef = db.collection("users").document(user.uid)
                     
-//                                        userRef.setData([
-//                                            "platform": "ios"
-//                                        ])
                     userRef.getDocument { document, error in
                         if let error  = error {
                             print("Error fetching user document: \(error)")
                         }
                         else if let document = document, document.exists {
+                            // 재로그인 (유저 데이터가 있는 경우)
                             DispatchQueue.main.async {
+                                // Setting local User
+                                LoginViewModel.shared.firebaseFetch(docId: user.uid)
+                                // TODO: 비동기 프로그래밍
+                                
                                 let profileViewController = ProfileViewController()
                                 if let navigationController = self.navigationController {
+                                    print("LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
                                     navigationController.pushViewController(profileViewController, animated: true)
                                 }
                                 else {
@@ -391,15 +352,25 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                             }
                         }
                         else {
-                            DispatchQueue.main.async {
-                                let setLocationViewController = SetLocationViewController()
-                                if let navigationController = self.navigationController {
-                                    navigationController.pushViewController(setLocationViewController, animated: true)
-                                }
-                                else {
-                                    print("Error: The current view controller is not embedded in a UINavigationController.")
+                            // 유저 데이터가 없는 경우, 회원가입 계속
+                            userRef.setData([
+                                "platform": "apple"
+                            ]) { error in
+                                if let error = error {
+                                    print("Firestore Writing Error: \(error)")
+                                } else {
+                                    DispatchQueue.main.async {
+                                        let setLocationViewController = SetLocationViewController()
+                                        if let navigationController = self.navigationController {
+                                            navigationController.pushViewController(setLocationViewController, animated: true)
+                                        }
+                                        else {
+                                            print("Error: The current view controller is not embedded in a UINavigationController.")
+                                        }
+                                    }
                                 }
                             }
+
                         }
                     }
                 }
