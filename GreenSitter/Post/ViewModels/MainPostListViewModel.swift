@@ -64,7 +64,7 @@ class MainPostListViewModel {
                         lon2: postLocation.longitude
                     ) ?? Double.greatestFiniteMagnitude
                     
-                    return distance <= 3000 // 3km 이내의 게시물만 포함
+                    return distance <= 30000 // 30km 이내의 게시물만 포함
                 }.sorted(by: { $0.updateDate > $1.updateDate }) // 최신 업데이트 순으로 정렬
             }
     }
@@ -106,7 +106,7 @@ class MainPostListViewModel {
                     print("postLocation: \(postLocation.latitude), \(postLocation.longitude)")
                     print("Distance from user to post: \(distance) meters")
 
-                    return distance <= 3000 // 3km 이내의 게시물만 포함
+                    return distance <= 30000 // 30km 이내의 게시물만 포함
                 }.sorted(by: { $0.updateDate > $1.updateDate }) // 최신 업데이트 순으로 정렬
             }
     }
