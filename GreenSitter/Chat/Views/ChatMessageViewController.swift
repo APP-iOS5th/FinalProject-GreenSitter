@@ -50,7 +50,20 @@ class ChatMessageViewController: UIViewController {
                 self?.setupUI()
                 // 테이블 뷰를 리로드하여 최신 메시지를 표시
                 self?.tableView.reloadData()
+                
+                DispatchQueue.main.async {
+                    guard let numberOfSections = self?.tableView.numberOfSections,
+                          let numberOfRows = self?.tableView.numberOfRows(inSection: numberOfSections - 1) else {
+                        return
+                    }
+                    
+                    if numberOfRows > 0 {
+                        let indexPath = IndexPath(row: numberOfRows - 1, section: numberOfSections - 1)
+                        self?.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                    }
+                }
             }
+
             self.chatViewModel?.updateUI?()
         }
     }

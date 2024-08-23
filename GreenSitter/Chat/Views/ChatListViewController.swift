@@ -87,19 +87,17 @@ class ChatListViewController: UIViewController {
             chatViewModel.loadChatRooms { [weak self] updatedChatRooms in
                 guard let self = self else { return }
                 
-                let dispatchGroup = DispatchGroup()
+//                let dispatchGroup = DispatchGroup()
                 
                 for updatedChatRoom in updatedChatRooms {
-                    dispatchGroup.enter()
+//                    dispatchGroup.enter()
                     chatViewModel.loadLastMessages(chatRoomId: updatedChatRoom.id) {
-                        dispatchGroup.enter()
+//                        dispatchGroup.enter()
                         self.chatViewModel.loadUnreadMessages(chatRoomId: updatedChatRoom.id) {
                             // MARK: - 로그인/채팅방 있음
                             if self.chatViewModel.hasChats {
                                 self.chatViewModel.updateUI = { [weak self] in
                                     self?.setupChatListUI()
-                                    // 테이블 뷰를 리로드하여 최신 메시지를 표시
-                                    self?.tableView.reloadData()
                                 }
                                 
                             } else {
@@ -113,17 +111,20 @@ class ChatListViewController: UIViewController {
                                     }, for: .touchUpInside)
                                 }
                             }
-//                            self.chatViewModel.updateUI?()
+                            // 테이블 뷰를 리로드하여 최신 메시지를 표시
+                            self.tableView.reloadData()
+                            self.chatViewModel.updateUI?()
+
                             
-                            dispatchGroup.leave()
+//                            dispatchGroup.leave()
                         }
-                        dispatchGroup.leave()
+//                        dispatchGroup.leave()
                     }
                 }
                 // 모든 작업이 완료된 후 UI 업데이트
-                dispatchGroup.notify(queue: .main) {
-                    self.chatViewModel.updateUI?()
-                }
+//                dispatchGroup.notify(queue: .main) {
+//                    self.chatViewModel.updateUI?()
+//                }
             }
         } else {
             // MARK: - 비로그인

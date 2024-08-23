@@ -111,6 +111,14 @@ class ChatMessageTableViewCell: UITableViewCell {
         if isIncoming {
             contentView.addSubview(profileImageView)
             
+            // timeLabel이 충분한 공간을 차지하도록 우선순위 설정
+            timeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            timeLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+
+            // messageLabel은 공간이 남을 때 확장되도록 설정
+            messageLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            messageLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+            
             NSLayoutConstraint.activate([
                 messageLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 10),
                 messageLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -10),
@@ -134,6 +142,17 @@ class ChatMessageTableViewCell: UITableViewCell {
             ])
         } else {
             contentView.addSubview(isReadLabel)
+            
+            // isReadLabel과 timeLabel이 충분한 공간을 차지하도록 우선순위 설정
+            isReadLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            isReadLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+
+            timeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            timeLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+
+            // messageLabel은 공간이 남을 때 확장되도록 설정
+            messageLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            messageLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
             
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
