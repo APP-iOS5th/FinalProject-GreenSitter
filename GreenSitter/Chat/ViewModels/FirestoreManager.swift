@@ -115,7 +115,7 @@ class FirestoreManager {
             .whereField("postUserId", isEqualTo: userId)
             .whereField("postUserEnabled", isEqualTo: true)
         
-        userQuery.getDocuments { [weak self] userSnapshot, error in
+        userQuery.addSnapshotListener { [weak self] userSnapshot, error in
             guard self != nil else {
                 print("self is no longer available")
                 return
@@ -126,15 +126,29 @@ class FirestoreManager {
                 return
             }
             
-            postUserQuery.getDocuments { postUserSnapshot, error in
+            if userSnapshot?.metadata.hasPendingWrites == true {
+                // 로컬 쓰기가 아직 서버에 반영되지 않음
+                /// UI 업데이트 안전하게 처리
+                print("Local writes have not yet been committed to the server.")
+                return
+            }
+            
+            let userChatRooms = userSnapshot?.documents.compactMap { document in
+                return try? document.data(as: ChatRoom.self)
+            } ?? []
+            
+            postUserQuery.addSnapshotListener { postUserSnapshot, error in
                 if let error = error {
                     print("Error fetching chat rooms as sitter: \(error.localizedDescription)")
                     return
                 }
                 
-                let userChatRooms = userSnapshot?.documents.compactMap { document in
-                    return try? document.data(as: ChatRoom.self)
-                } ?? []
+                if postUserSnapshot?.metadata.hasPendingWrites == true {
+                    // 로컬 쓰기가 아직 서버에 반영되지 않음
+                    /// UI 업데이트 안전하게 처리
+                    print("Local writes have not yet been committed to the server.")
+                    return
+                }
                 
                 let postUserChatRooms = postUserSnapshot?.documents.compactMap { document in
                     return try? document.data(as: ChatRoom.self)

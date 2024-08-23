@@ -98,6 +98,8 @@ class ChatListViewController: UIViewController {
                             if self.chatViewModel.hasChats {
                                 self.chatViewModel.updateUI = { [weak self] in
                                     self?.setupChatListUI()
+                                    // 테이블 뷰를 리로드하여 최신 메시지를 표시
+                                    self?.tableView.reloadData()
                                 }
                                 
                             } else {
