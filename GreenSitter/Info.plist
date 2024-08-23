@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -11,10 +9,13 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.211284577045-lqc81q1kmkvv61216vlghtrf22qboc17</string>
+				<string>com.googleusercontent.apps.211284577045-5qpo20p08b835jai7c4l7nvbm06d3utr</string>
 			</array>
 		</dict>
+		<dict/>
 	</array>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>GIDClientID</key>
 	<string>211284577045-lqc81q1kmkvv61216vlghtrf22qboc17.apps.googleusercontent.com</string>
 	<key>UIApplicationSceneManifest</key>
