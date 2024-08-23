@@ -63,6 +63,7 @@ class PostDetailViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12)
         label.textColor = .gray
+        label.text = LoginViewModel.shared.user?.levelPoint.rawValue
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -182,6 +183,7 @@ class PostDetailViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(userProfileButton)
+        
         contentView.addSubview(profileImageView)
         contentView.addSubview(userNameLabel)
         contentView.addSubview(userLevelLabel)
@@ -204,6 +206,7 @@ class PostDetailViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.heightAnchor.constraint(equalTo: view.heightAnchor),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
@@ -214,7 +217,14 @@ class PostDetailViewController: UIViewController {
             
             userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            userProfileButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            userProfileButton.trailingAnchor.constraint(equalTo: contactButton.leadingAnchor),
+            userProfileButton.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor),
+            userProfileButton.bottomAnchor.constraint(equalTo: postTimeLabel.bottomAnchor),
+            
+            contactButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
+            contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            contactButton.widthAnchor.constraint(equalToConstant: 100),
+            contactButton.heightAnchor.constraint(equalToConstant: 40),
             
             profileImageView.leadingAnchor.constraint(equalTo: userProfileButton.leadingAnchor),
             profileImageView.topAnchor.constraint(equalTo: userProfileButton.topAnchor),
@@ -223,64 +233,61 @@ class PostDetailViewController: UIViewController {
             
             userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
             userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
+            userNameLabel.heightAnchor.constraint(equalToConstant: userNameLabel.font.pointSize),
             
             userLevelLabel.leadingAnchor.constraint(equalTo: userNameLabel.leadingAnchor),
             userLevelLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
-            
-            userProfileButton.bottomAnchor.constraint(equalTo: userLevelLabel.bottomAnchor),
+            userLevelLabel.heightAnchor.constraint(equalToConstant: userLevelLabel.font.pointSize),
             
             postTimeLabel.topAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 4),
             postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
             
-            statusLabel.bottomAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 50),
+            statusLabel.topAnchor.constraint(equalTo: userProfileButton.bottomAnchor, constant: 10),
             statusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             statusLabel.widthAnchor.constraint(equalToConstant: 40),
             statusLabel.heightAnchor.constraint(equalToConstant: 20),
             
-            postTitleLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 50),
+            postTitleLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 10),
             postTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-            dividerLine1.bottomAnchor.constraint(equalTo: postTitleLabel.topAnchor, constant: 35),
+            dividerLine1.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 10),
             dividerLine1.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            dividerLine1.widthAnchor.constraint(equalToConstant: 360),
+            dividerLine1.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine1.heightAnchor.constraint(equalToConstant: 1),
-            
-            dividerLine2.bottomAnchor.constraint(equalTo: dividerLine1.topAnchor, constant: 300),
-            dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            dividerLine2.widthAnchor.constraint(equalToConstant: 360),
-            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
-            
-            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
-            dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            dividerLine3.widthAnchor.constraint(equalToConstant: 360),
-            dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
             postImagesView.widthAnchor.constraint(equalToConstant: 190),
             postImagesView.heightAnchor.constraint(equalToConstant: 250),
             postImagesView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
             postImagesView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
+            dividerLine2.topAnchor.constraint(equalTo: postImagesView.bottomAnchor, constant: 20),
+            dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            dividerLine2.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
+            
             postBodyTextView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 10),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            postBodyTextView.widthAnchor.constraint(equalToConstant: 200),
-            postBodyTextView.heightAnchor.constraint(equalToConstant: 200),
+            postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            postBodyTextView.heightAnchor.constraint(greaterThanOrEqualTo: self.view.heightAnchor, multiplier: 0.2),
             
-            contactButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
-            contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            contactButton.widthAnchor.constraint(equalToConstant: 100),
-            contactButton.heightAnchor.constraint(equalToConstant: 40),
+            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10), // -5에서 10으로 조정
+            dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            dividerLine3.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
             mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8),
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8), // 10에서 8로 조정
+            mapLabel.heightAnchor.constraint(equalToConstant: mapLabel.font.pointSize),
             
-            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
-            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            mapView.heightAnchor.constraint(equalToConstant: 200),
-            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
-        ])
+            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8), // 5에서 8로 조정
+            mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            mapView.heightAnchor.constraint(equalToConstant: 150),
+            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16), // -10에서 -16으로 조정
+                    ])
     }
     
     private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
@@ -332,7 +339,7 @@ class PostDetailViewController: UIViewController {
         let chatViewModel = ChatViewModel()
         let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
         chatDetailViewController.chatViewModel = chatViewModel
-        navigationController?.pushViewController(chatDetailViewController, animated: true)
+        self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
 }
 

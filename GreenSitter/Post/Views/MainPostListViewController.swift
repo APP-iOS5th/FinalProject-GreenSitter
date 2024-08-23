@@ -42,11 +42,14 @@ class MainPostListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .bgPrimary
-        
+     
         setupCategoryButtons()
         setupNavigationBarButtons()
         setupTableView()
         bindViewModel()
+        
+        
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
