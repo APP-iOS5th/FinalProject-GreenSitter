@@ -87,10 +87,13 @@ class ChatListViewController: UIViewController {
             chatViewModel.loadChatRooms { [weak self] updatedChatRooms in
                 guard let self = self else { return }
                 
+                let dispatchGroup = DispatchGroup()
+                
                 for updatedChatRoom in updatedChatRooms {
+                    dispatchGroup.enter()
                     chatViewModel.loadLastMessages(chatRoomId: updatedChatRoom.id) {
+                        dispatchGroup.enter()
                         self.chatViewModel.loadUnreadMessages(chatRoomId: updatedChatRoom.id) {
-                            
                             // MARK: - 로그인/채팅방 있음
                             if self.chatViewModel.hasChats {
                                 self.chatViewModel.updateUI = { [weak self] in
@@ -108,9 +111,16 @@ class ChatListViewController: UIViewController {
                                     }, for: .touchUpInside)
                                 }
                             }
-                            self.chatViewModel.updateUI?()
+//                            self.chatViewModel.updateUI?()
+                            
+                            dispatchGroup.leave()
                         }
+                        dispatchGroup.leave()
                     }
+                }
+                // 모든 작업이 완료된 후 UI 업데이트
+                dispatchGroup.notify(queue: .main) {
+                    self.chatViewModel.updateUI?()
                 }
             }
         } else {
