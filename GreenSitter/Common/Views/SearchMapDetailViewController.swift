@@ -169,7 +169,7 @@ class SearchMapDetailViewController: UIViewController {
     @objc private func confirmButtonTapped() {
         // TODO: 확인 버튼 동작 구현
         // plan에서 필요한 기능
-        if let makePlanViewModel = self.makePlanViewModel {
+        if self.makePlanViewModel != nil {
             self.makePlanViewModel?.planPlace = location
             self.makePlanViewModel?.isPlaceSelected = true
             guard let parentViewController = self.presentingViewController else { return }
@@ -177,7 +177,7 @@ class SearchMapDetailViewController: UIViewController {
                 parentViewController.dismiss(animated: true)
             }
             // post 에서 필요한 기능
-        } else if let addPostViewModel = self.addPostViewModel {
+        } else if self.addPostViewModel != nil {
             self.addPostViewModel?.postLocation = location
             guard let parentViewController = self.presentingViewController else { return }
             self.dismiss(animated: true) {
@@ -186,7 +186,10 @@ class SearchMapDetailViewController: UIViewController {
             // login 에서 필요한 기능
         } else {
             LoginViewModel.shared.updateUserLocation(with: location)
-            self.dismiss(animated: true, completion: nil)
+            guard let parentViewController = self.presentingViewController else { return }
+            self.dismiss(animated: true) {
+                parentViewController.dismiss(animated: true)
+            }
         }
     }
 }
