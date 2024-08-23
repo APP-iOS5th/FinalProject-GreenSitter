@@ -75,6 +75,7 @@ class ProfileViewController: UIViewController,ASAuthorizationControllerDelegate,
         super.viewDidLoad()
         setupView()
         fetchUserFirebase()
+        self.navigationItem.hidesBackButton = true
         setupTextField()
     }
     
