@@ -68,8 +68,8 @@ class MainPostListViewModel {
                     let distance = self?.calculateDistance(
                         lat1: userLocation?.latitude ?? Location.seoulLocation.latitude,    // 위치 정보 파라미터 값 안받으면 기본 값은 서울 시청!
                         lon1: userLocation?.longitude ?? Location.seoulLocation.longitude,
-                        lat2: post.userLocation.latitude,
-                        lon2: post.userLocation.longitude
+                        lat2: post.location?.latitude ?? 0,
+                        lon2: post.location?.longitude ?? 0
                     ) ?? Double.greatestFiniteMagnitude
                     
                     return distance <= 3000 // 3km 이내의 게시물만 포함
