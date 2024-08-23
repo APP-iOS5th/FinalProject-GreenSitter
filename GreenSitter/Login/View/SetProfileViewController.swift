@@ -321,11 +321,6 @@ class SetProfileViewController: UIViewController {
             }
         }
         LoginViewModel.shared.firebaseFetch(docId: user.uid)
-        // 프로필 뷰로이동
-        DispatchQueue.main.async {
-            let profileViewController = ProfileViewController()
-            self.navigationController?.pushViewController(profileViewController, animated: true)
-        }
         
     }
     // 메인뷰로 이동

@@ -121,12 +121,12 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
                 return headerView
             }
             
-            if let profileUserID = user?.id {
+            if let profileUserID =  Auth.auth().currentUser?.uid {
                 // 유저 ID와 프로필 유저 ID를 출력하여 확인
                 print("Current User ID: \(currentUserID)")
                 print("Profile User ID: \(profileUserID)")
                 
-                if currentUserID == Auth.auth().currentUser?.uid{
+                if currentUserID == profileUserID{
                     let editButton = UIButton(type: .system)
                     editButton.setTitle("수정하기", for: .normal)
                     editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
