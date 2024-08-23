@@ -136,6 +136,18 @@ extension ReviewViewController {
                             print("Error writing review to post creator's Firestore document: \(error)")
                         } else {
                             print("Review successfully written to post creator's document!")
+                            
+                            // After saving the review, update the isReviewed field in the post document
+                            self.db.collection("posts").document(postId).updateData([
+                                "isReviewed": true
+                            ]) { error in
+                                if let error = error {
+                                    print("Error updating document: \(error)")
+                                } else {
+                                    print("Document successfully updated with isReviewed set to true")
+                                    // 리뷰 저장 후 뷰를 닫거나 다른 동작 수행
+                                }
+                            }
                         }
                     }
                 } else {
@@ -145,6 +157,7 @@ extension ReviewViewController {
                 print("Post document does not exist")
             }
         }
+
         
         DispatchQueue.main.async {
             let aboutMeViewController = AboutMeViewController()
@@ -175,6 +188,7 @@ extension ReviewViewController {
                         let updateDate = updateDateTimestamp.dateValue()
                         let postImages = postData["postImages"] as? [String] ?? []
                         let postId = postData["id"] as? String ?? ""
+                        let isReviewed = postData["isReviewed"] as? Bool
 
                         // Post 객체 생성 및 업데이트
                         self.review = Post(

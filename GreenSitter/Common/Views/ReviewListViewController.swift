@@ -49,15 +49,18 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         // 선택된 포스트 가져오기
         let selectedPost = post[indexPath.row]
         
-        // ReviewViewController 생성
-        let reviewViewController = ReviewViewController()
+        let currentDate = Date()
+        let postUpdateDate = selectedPost.updateDate
+        let calendar = Calendar.current
         
-        // 선택된 포스트를 ReviewViewController에 전달
-        reviewViewController.post = selectedPost
-        reviewViewController.postId = selectedPost.id 
-        
-        // 네비게이션 컨트롤러를 통해 화면 전환
-        navigationController?.pushViewController(reviewViewController, animated: true)
+        //업데이트한 날짜로부터 3일이 지나면 리뷰를 쓸수 없음
+        if let daysDifference = calendar.dateComponents([.day], from: postUpdateDate, to: currentDate).day, daysDifference <= 3 {
+            let reviewViewController = ReviewViewController()
+            reviewViewController.post = selectedPost
+            reviewViewController.postId = selectedPost.id
+            navigationController?.pushViewController(reviewViewController, animated: true)
+        }
+       
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
