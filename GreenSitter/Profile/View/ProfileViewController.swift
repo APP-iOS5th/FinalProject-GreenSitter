@@ -116,12 +116,12 @@ class ProfileViewController: UIViewController {
     // MARK: - Actions
     @objc func myProfilebuttonTap() {
         
-        guard let userDocId = LoginViewModel.shared.user?.docId else {
+        guard let userId = LoginViewModel.shared.user?.id else {
             print("User ID is not available")
             return
         }
         
-        let aboutMeViewController = AboutMeViewController(userId: userDocId)
+        let aboutMeViewController = AboutMeViewController(userId: userId)
         self.navigationController?.pushViewController(aboutMeViewController, animated: true)
     }
     

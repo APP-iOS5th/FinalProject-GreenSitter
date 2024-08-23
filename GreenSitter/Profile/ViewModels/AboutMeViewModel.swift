@@ -50,7 +50,6 @@ extension AboutMeViewController {
                 let exp = data?["exp"] as? Int
                 let aboutMe = data?["aboutMe"] as? String ?? "자기 소개를 입력해주세요"
                 let chatNotification = data?["chatNotification"] as? Bool
-                let docId = data?["docId"] as? String ?? ""
                 
                 print("Fetched levelPoint: \(levelPoint)")
                 print("자기소개: \(aboutMe)")
@@ -72,7 +71,7 @@ extension AboutMeViewController {
                 if !profileImage.isEmpty {
                     self.loadProfileImage(from: profileImage)
                 }
-                self.user = User(id: id, enabled: false, createDate: createDate ?? Date(), updateDate: updateDate ?? Date(), profileImage: profileImage, nickname: nickname, location: Location.sampleLocation, platform: platform, levelPoint: Level.flower, exp: 0, aboutMe: aboutMe, chatNotification: false, docId: docId)
+                self.user = User(id: id, enabled: false, createDate: createDate ?? Date(), updateDate: updateDate ?? Date(), profileImage: profileImage, nickname: nickname, location: Location.sampleLocation, platform: platform, levelPoint: Level.flower, exp: 0, aboutMe: aboutMe, chatNotification: false)
 
                 
                 // UI 업데이트

@@ -292,24 +292,22 @@ class SetProfileViewController: UIViewController {
         guard let selectedButtonIndex = [imageButton1, imageButton2, imageButton3, imageButton4, imageButton5, imageButton6].firstIndex(of: selectButton) else { return }
         let selectedImageUrl = imageUrls[selectedButtonIndex]
         
-        // Firestore에 사용자 데이터 저장
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
+            return
+        }
         let userData: [String: Any] = [
-            "id": UUID().uuidString,
+            "id": user.uid,
             "enabled": true,
             "createDate": Date(),
             "updateDate": Date(),
             "profileImage": selectedImageUrl,
-            "nickname": nickname,
+            "nickname": "기본 닉네임",   // TODO: 닉네임 자동생성기 호출
             "levelPoint": Level.seeds.rawValue,
             "exp": 0,
             "aboutMe": "",
             "chatNotification": false
         ]
-        
-        guard let user = Auth.auth().currentUser else {
-            print("Error: Firebase authResult is nil.")
-            return
-        }
         
         db.collection("users").document(user.uid).setData(userData, merge: true) { error in
             if let error = error {
@@ -336,8 +334,12 @@ class SetProfileViewController: UIViewController {
         
         let defaultImageUrl = "gs://greensitter-6dedd.appspot.com/꽃1.png"
         
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
+            return
+        }
         let userData: [String: Any] = [
-            "id": UUID().uuidString,
+            "id": user.uid,
             "enabled": true,
             "createDate": Date(),
             "updateDate": Date(),
@@ -349,10 +351,7 @@ class SetProfileViewController: UIViewController {
             "chatNotification": false
         ]
         
-        guard let user = Auth.auth().currentUser else {
-            print("Error: Firebase authResult is nil.")
-            return
-        }
+
         
         db.collection("users").document(user.uid).setData(userData, merge: true) { error in
             if let error = error {
