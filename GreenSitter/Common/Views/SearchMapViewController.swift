@@ -17,10 +17,10 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     private let placeholderLabel = UILabel()
     
     var makePlanViewModel: MakePlanViewModel?
+    var addPostViewModel: AddPostViewModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         view.backgroundColor = .bgPrimary
         setupNavigationBar()
@@ -203,6 +203,11 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
         let selectedLocation = locations[indexPath.row]
         if let makePlanViewModel = self.makePlanViewModel {
             let detailViewController = SearchMapDetailViewController(location: selectedLocation, makePlanViewModel: makePlanViewModel)
+            let navigationController = UINavigationController(rootViewController: detailViewController)
+            navigationController.modalPresentationStyle = .pageSheet
+            present(navigationController, animated: true, completion: nil)
+        } else if let addPostViewModel = self.addPostViewModel {
+            let detailViewController = SearchMapDetailViewController(location: selectedLocation, addPostViewModel: addPostViewModel)
             let navigationController = UINavigationController(rootViewController: detailViewController)
             navigationController.modalPresentationStyle = .pageSheet
             present(navigationController, animated: true, completion: nil)

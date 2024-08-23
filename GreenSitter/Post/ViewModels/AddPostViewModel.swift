@@ -16,7 +16,7 @@ class AddPostViewModel: ObservableObject {
     @Published var postBody: String = ""
     @Published var postImages: [UIImage] = []
     @Published var selectedImages: [UIImage] = []
-    @Published var location: Location? = .busanLocation
+    @Published var postLocation: Location?
     
     private var firestoreManager = FirestoreManager()
     private let postType: PostType
@@ -133,8 +133,8 @@ class AddPostViewModel: ObservableObject {
             return imageData
         }
     
-    // 게시물 저장 메서드
-    func savePost(userId: String, postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
+    // MARK: - 게시물 저장 메서드
+    func savePost(userId: String, userProfileImage: String, userNickname: String, userLocation: Location?, postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
         uploadImages { [weak self] result in
             guard let self = self else { return }
             
@@ -146,10 +146,10 @@ class AddPostViewModel: ObservableObject {
                     createDate: Date(),
                     updateDate: Date(),
                     
-                    userId: userId,  // 실제 사용자 정보로 대체해야 함
-                    profileImage: "currentProfileImage",  // 실제 프로필 이미지로 대체해야 함
-                    nickname: "currentNickname",  // 실제 닉네임으로 대체해야 함
-                    userLocation: self.location ?? Location.seoulLocation,  // 기본 위치를 서울로 설정
+                    userId: userId,
+                    profileImage: userProfileImage,
+                    nickname: userNickname,
+                    userLocation: userLocation ?? Location.seoulLocation,
                     userNotification: false,
                     
                     postType: self.postType,
@@ -157,7 +157,7 @@ class AddPostViewModel: ObservableObject {
                     postBody: postBody,
                     postImages: imageURLs,
                     postStatus: .beforeTrade,
-                    location: self.location
+                    location: self.postLocation
                 )
                 
                 do {

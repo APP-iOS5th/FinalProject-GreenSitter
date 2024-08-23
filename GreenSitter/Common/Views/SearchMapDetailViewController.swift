@@ -11,6 +11,7 @@ import MapKit
 class SearchMapDetailViewController: UIViewController {
     
     private var makePlanViewModel: MakePlanViewModel?
+    private var addPostViewModel: AddPostViewModel?
     private var location: Location
     private var isInitialLoad = true  // 초기 로드를 체크하기 위한 플래그
     
@@ -46,9 +47,10 @@ class SearchMapDetailViewController: UIViewController {
     }()
     
     
-    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil) {
+    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil, addPostViewModel: AddPostViewModel? = nil) {
         self.location = location
         self.makePlanViewModel = makePlanViewModel
+        self.addPostViewModel = addPostViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -166,7 +168,7 @@ class SearchMapDetailViewController: UIViewController {
     
     @objc private func confirmButtonTapped() {
         // TODO: 확인 버튼 동작 구현
-        //plan에서 필요한 기능
+        // plan에서 필요한 기능
         if let makePlanViewModel = self.makePlanViewModel {
             self.makePlanViewModel?.planPlace = location
             self.makePlanViewModel?.isPlaceSelected = true
@@ -174,8 +176,15 @@ class SearchMapDetailViewController: UIViewController {
             self.dismiss(animated: true) {
                 parentViewController.dismiss(animated: true)
             }
+            // post 에서 필요한 기능
+        } else if let addPostViewModel = self.addPostViewModel {
+            self.addPostViewModel?.postLocation = location
+            guard let parentViewController = self.presentingViewController else { return }
+            self.dismiss(animated: true) {
+                parentViewController.dismiss(animated: true)
+            }
+            // login 에서 필요한 기능
         } else {
-            print("Updating user location with address: \(location)") // 로그 추가
             LoginViewModel.shared.updateUserLocation(with: location)
             self.dismiss(animated: true, completion: nil)
         }
