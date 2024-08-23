@@ -11,6 +11,8 @@ class ChatMessageViewController: UIViewController {
     var chatViewModel: ChatViewModel?
     var chatRoom: ChatRoom
     
+    private let imageCache = NSCache<NSString, UIImage>()
+    
     init(chatRoom: ChatRoom) {
         self.chatRoom = chatRoom
         super.init(nibName: nil, bundle: nil)
@@ -21,9 +23,9 @@ class ChatMessageViewController: UIViewController {
     }
     
     // 임시 데이터
-//    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!", "어디까지 나오는지 테스트해보자아아아아아아아아아아아아아아아앙아아아아아", "읽었어?"]
-//    var isIncoming: [Bool] = [false, true, false, false, true, true, false]
-//    var isRead: [Bool] = [true, true, true, true, true, true, false]
+    //    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!", "어디까지 나오는지 테스트해보자아아아아아아아아아아아아아아아앙아아아아아", "읽었어?"]
+    //    var isIncoming: [Bool] = [false, true, false, false, true, true, false]
+    //    var isRead: [Bool] = [true, true, true, true, true, true, false]
     
     // 메세지 뷰
     private lazy var tableView: UITableView = {
@@ -38,7 +40,7 @@ class ChatMessageViewController: UIViewController {
         
         return tableView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -72,7 +74,7 @@ class ChatMessageViewController: UIViewController {
             tableView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         ])
     }
-
+    
 }
 
 extension ChatMessageViewController: UITableViewDataSource {
@@ -86,29 +88,31 @@ extension ChatMessageViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch chatViewModel?.messages[chatRoom.id]?[indexPath.row].messageType {
         case .text:
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
-        
-        guard let messages = self.chatViewModel?.messages[chatRoom.id],
-              indexPath.row < messages.count else {
-            fatalError("Unable to retrieve messages for the selected chat room")
-        }
-        
-        cell.backgroundColor = .clear
-        cell.messageLabel.text = messages[indexPath.row].text
-        
-        if chatViewModel?.userId == messages[indexPath.row].senderUserId {
-            cell.isIncoming = false
-        } else {
-            cell.isIncoming = true
-        }
-        
-        cell.isRead = messages[indexPath.row].isRead
-        
-        return cell
-
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
+            
+            guard let messages = self.chatViewModel?.messages[chatRoom.id],
+                  indexPath.row < messages.count else {
+                fatalError("Unable to retrieve messages for the selected chat room")
+            }
+            
+            cell.backgroundColor = .clear
+            cell.messageLabel.text = messages[indexPath.row].text
+            
+            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                cell.isIncoming = false
+            } else {
+                cell.isIncoming = true
+            }
+            
+            cell.isRead = messages[indexPath.row].isRead
+            
+            return cell
+            
         case .image:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
             cell.backgroundColor = .clear
+            
+            cell.tag = indexPath.row
             
             guard let messages = self.chatViewModel?.messages[chatRoom.id],
                   indexPath.row < messages.count else {
@@ -120,20 +124,53 @@ extension ChatMessageViewController: UITableViewDataSource {
             
             for _ in 0..<imageCounts {
                 if let photoImage = UIImage(systemName: "photo") {
-                    progressImages.append(photoImage)
+                    
+                    let targetSize = CGSize(width: 400, height: 400)
+                    UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
+                    photoImage.draw(in: CGRect(origin: .zero, size: targetSize))
+                    let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+                    UIGraphicsEndImageContext()
+                    
+                    if let resizedImage = resizedImage {
+                        progressImages.append(resizedImage)
+                    }
                 }
             }
             cell.images = progressImages
             
-            if let imagePaths = messages[indexPath.row].image {
-                Task {
-                    let images = await chatViewModel?.loadChatImages(imagePaths: imagePaths)
-                    print("images : \(String(describing: images))")
-                    DispatchQueue.main.async {
-                        cell.images = images ?? []
-                    }
+            let imagePaths = messages[indexPath.row].image ?? []
+            var cachedImages = [UIImage]()
+            var imagesToLoad = [String]()
+            
+            for imagePath in imagePaths {
+                if let cachedImage = imageCache.object(forKey: NSString(string: imagePath)) {
+                    cachedImages.append(cachedImage)
+                } else {
+                    imagesToLoad.append(imagePath)
                 }
             }
+            
+            if !imagesToLoad.isEmpty {
+                Task {
+                    let loadedImages = await chatViewModel?.loadChatImages(imagePaths: imagesToLoad)
+                    DispatchQueue.main.async {
+                        if cell.tag == indexPath.row {
+                            if let loadedImages = loadedImages {
+                                for (index, image) in loadedImages.enumerated() {
+                                    let path = imagesToLoad[index]
+                                    self.imageCache.setObject(image, forKey: NSString(string: path))
+                                    cachedImages.append(image)
+                                }
+                                cell.images = cachedImages
+                            }
+                        }
+                    }
+                }
+            } else {
+                cell.images = cachedImages
+            }
+            
+            cell.delegate = self
             
             if chatViewModel?.userId == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
@@ -216,5 +253,12 @@ extension ChatMessageViewController: UITableViewDataSource {
             
             return cell
         }
+    }
+}
+
+extension ChatMessageViewController: ChatMessageTableViewImageCellDelegate {
+    func imageViewTapped(images: [UIImage], index: Int) {
+        let imageDetailCollectionView = ImageDetailCollectionViewController(images: images, index: index)
+        self.present(imageDetailCollectionView, animated: true, completion: nil)
     }
 }
