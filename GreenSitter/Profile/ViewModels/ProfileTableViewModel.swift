@@ -164,7 +164,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         case (2, 0):
             logout()
         case (2, 1):
-            deleteUserAccount()
+            accountDeletion()
         case(3,0):
             let serviceViewController = ServiceViewController()
             self.navigationController?.pushViewController(serviceViewController, animated: true)

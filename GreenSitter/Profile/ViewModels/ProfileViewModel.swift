@@ -254,7 +254,23 @@ extension ProfileViewController {
         }
     
     
+    
     //MARK: - 회원 탈퇴
+    
+    func accountDeletion() {
+        let alert = UIAlertController(title: "회원 탈퇴", message: "회원탈퇴시, 모든 가입 정보가 삭제됩니다 \n 다시 로그인하려면 재가입이 필요합니다 \n\n 정말로 회원탈퇴를 진행하시겠습니까?", preferredStyle: .alert)
+        let cancle = UIAlertAction(title: "취소", style: .cancel) {
+            action in
+            print("취소")
+        }
+        let deletion = UIAlertAction(title: "탈퇴 하기", style: .destructive){ action in
+            print("탈퇴 눌렸습니다.")
+            self.deleteUserAccount()
+        }
+        alert.addAction(cancle)
+        alert.addAction(deletion)
+        present(alert, animated: true)
+    }
     func deleteUserAccount() {
         guard let user = Auth.auth().currentUser else { return }
         
