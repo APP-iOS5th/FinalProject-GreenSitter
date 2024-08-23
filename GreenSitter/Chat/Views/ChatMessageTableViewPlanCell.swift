@@ -162,9 +162,19 @@ class ChatMessageTableViewPlanCell: UITableViewCell {
         
         // 제약조건 재설정을 위한 기존 제약조건 제거
         NSLayoutConstraint.deactivate(contentView.constraints)
+        // profileImageView와 isReadLabel 제거
+        profileImageView.removeFromSuperview()
+        isReadLabel.removeFromSuperview()
         
         if isIncoming {
             contentView.addSubview(profileImageView)
+            // timeLabel이 충분한 공간을 차지하도록 우선순위 설정
+            timeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            timeLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+
+            // bubbleView은 공간이 남을 때 확장되도록 설정
+            bubbleView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            bubbleView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
             
             NSLayoutConstraint.activate([
                 titleLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 15),
@@ -213,6 +223,17 @@ class ChatMessageTableViewPlanCell: UITableViewCell {
             ])
         } else {
             contentView.addSubview(isReadLabel)
+            
+            // isReadLabel과 timeLabel이 충분한 공간을 차지하도록 우선순위 설정
+            isReadLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            isReadLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+
+            timeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            timeLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+
+            // bubbleView은 공간이 남을 때 확장되도록 설정
+            bubbleView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            bubbleView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
             
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
