@@ -125,12 +125,14 @@ class PostDetailViewController: UIViewController {
         return imageView
     }()
     
-    private let postBodyLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private let postBodyTextView: UITextView = {
+        let textView = UITextView()
+        textView.font = .systemFont(ofSize: 14)
+        textView.isEditable = false
+        textView.isSelectable = false
+        textView.sizeToFit()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        return textView
     }()
     
     private let contactButton: UIButton = {
@@ -187,7 +189,7 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
         contentView.addSubview(postImagesView)
-        contentView.addSubview(postBodyLabel)
+        contentView.addSubview(postBodyTextView)
         contentView.addSubview(dividerLine1)
         contentView.addSubview(dividerLine2)
         contentView.addSubview(dividerLine3)
@@ -249,7 +251,7 @@ class PostDetailViewController: UIViewController {
             dividerLine2.widthAnchor.constraint(equalToConstant: 360),
             dividerLine2.heightAnchor.constraint(equalToConstant: 1),
             
-            dividerLine3.topAnchor.constraint(equalTo: postBodyLabel.bottomAnchor, constant: 10),
+            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             dividerLine3.widthAnchor.constraint(equalToConstant: 360),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
@@ -259,11 +261,11 @@ class PostDetailViewController: UIViewController {
             postImagesView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
             postImagesView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
-            postBodyLabel.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 10),
-            postBodyLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            postBodyLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            postBodyLabel.widthAnchor.constraint(equalToConstant: 200),
-            postBodyLabel.heightAnchor.constraint(equalToConstant: 200),
+            postBodyTextView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 10),
+            postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postBodyTextView.widthAnchor.constraint(equalToConstant: 200),
+            postBodyTextView.heightAnchor.constraint(equalToConstant: 200),
             
             contactButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
             contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -301,7 +303,7 @@ class PostDetailViewController: UIViewController {
     private func configure(with post: Post) {
         userNameLabel.text = post.nickname
         postTitleLabel.text = post.postTitle
-        postBodyLabel.text = post.postBody
+        postBodyTextView.text = post.postBody
         statusLabel.text = post.postStatus.rawValue
         userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue // Assume level is set somewhere
 
