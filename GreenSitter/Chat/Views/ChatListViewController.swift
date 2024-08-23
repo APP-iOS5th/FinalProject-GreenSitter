@@ -88,29 +88,28 @@ class ChatListViewController: UIViewController {
                 guard let self = self else { return }
                 
                 for updatedChatRoom in updatedChatRooms {
-                    chatViewModel.loadMessages(chatRoomId: updatedChatRoom.id) {
-                        
-                        // MARK: - 로그인/채팅방 있음
-                        if self.chatViewModel.hasChats {
-                            self.chatViewModel.updateUI = { [weak self] in
-                                self?.setupChatListUI()
-                            }
+                    chatViewModel.loadLastMessages(chatRoomId: updatedChatRoom.id) {
+                        self.chatViewModel.loadUnreadMessages(chatRoomId: updatedChatRoom.id) {
                             
-                        } else {
-                            // MARK: - 로그인/채팅방 없음
-                            self.chatViewModel.updateUI = { [weak self] in
-                                self?.setupEmptyChatListUI()
+                            // MARK: - 로그인/채팅방 있음
+                            if self.chatViewModel.hasChats {
+                                self.chatViewModel.updateUI = { [weak self] in
+                                    self?.setupChatListUI()
+                                }
                                 
-                                // 버튼 클릭 시 홈 화면으로 이동
-                                self?.goToHomeButton.addAction(UIAction { [weak self] _ in
-                                    self?.navigateToHome()
-                                }, for: .touchUpInside)
+                            } else {
+                                // MARK: - 로그인/채팅방 없음
+                                self.chatViewModel.updateUI = { [weak self] in
+                                    self?.setupEmptyChatListUI()
+                                    
+                                    // 버튼 클릭 시 홈 화면으로 이동
+                                    self?.goToHomeButton.addAction(UIAction { [weak self] _ in
+                                        self?.navigateToHome()
+                                    }, for: .touchUpInside)
+                                }
                             }
-                            
-                            
+                            self.chatViewModel.updateUI?()
                         }
-                        self.chatViewModel.updateUI?()
-                        
                     }
                 }
             }

@@ -275,11 +275,28 @@ class ChatViewModel {
         
         let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
         
+        // 로컬 메시지 리스트에 메시지 추가
+        if var chatRoomMessages = self.messages[chatRoom.id] {
+            chatRoomMessages.append(planMessage)
+            self.messages[chatRoom.id] = chatRoomMessages
+        } else {
+            self.messages[chatRoom.id] = [planMessage]
+        }
+
+        // UI 업데이트
+        self.updateUI?()
+        
         Task {
             do {
                 try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: planMessage)
             } catch {
                 print("Failed to save message: \(error.localizedDescription)")
+                // Firestore에 저장 실패 시, 로컬 메시지 리스트에서 해당 메시지 제거
+                if var chatRoomMessages = self.messages[chatRoom.id] {
+                    chatRoomMessages.removeAll { $0.id == planMessage.id }
+                    self.messages[chatRoom.id] = chatRoomMessages
+                }
+                self.updateUI?()
                 return
             }
         }

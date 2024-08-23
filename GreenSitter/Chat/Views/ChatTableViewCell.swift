@@ -148,7 +148,7 @@ class ChatTableViewCell: UITableViewCell {
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
-        guard let lastMessage = chatViewModel?.messages[chatRoom!.id]?.last else {
+        guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
             return
         }
 
@@ -169,7 +169,7 @@ class ChatTableViewCell: UITableViewCell {
         
         // 안 읽은 메세지 수
         /// read = false인 메세지 수
-        let unreadCount = chatViewModel?.messages.values.flatMap { $0 }.filter {
+        let unreadCount = chatViewModel?.unreadMessages.values.flatMap { $0 }.filter {
             $0.receiverUserId == userId && !$0.isRead
         }.count
         if unreadCount! > 0 {
