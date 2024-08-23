@@ -53,25 +53,40 @@ class MainPostListViewModel {
     // 유저 위치 정보(옵셔널) 만 받기
     func fetchPostsWithin3Km(userLocation: Location?) {
         db.collection("posts")
-            .getDocuments { [weak self] snapshot, error in
+            .getDocuments { [weak self] (querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error)")
                     self?.filteredPosts = []
                     return
                 }
-                let posts = snapshot?.documents.compactMap { document in
+                guard let documents = querySnapshot?.documents else {
+                    self?.filteredPosts = []
+                    return
+                }
+
+                let posts = documents.compactMap { document in
                     try? document.data(as: Post.self)
-                } ?? []
+                }
                 
                 // 사용자 위치를 기준으로 3km 이내의 게시물 필터링 및 최신 업데이트 순으로 정렬
                 self?.filteredPosts = posts.filter { post in
+                    print("fetch Filter Posts before: \(String(describing: post.location))")
+
+                    // post.location이 nil인 경우 필터링에서 제외
+                    guard let postLocation = post.location else {
+                        return false
+                    }
+                    
                     let distance = self?.calculateDistance(
                         lat1: userLocation?.latitude ?? Location.seoulLocation.latitude,    // 위치 정보 파라미터 값 안받으면 기본 값은 서울 시청!
                         lon1: userLocation?.longitude ?? Location.seoulLocation.longitude,
-                        lat2: post.location?.latitude ?? 0,
-                        lon2: post.location?.longitude ?? 0
+                        lat2: postLocation.latitude,
+                        lon2: postLocation.longitude
                     ) ?? Double.greatestFiniteMagnitude
-                    
+                    print("userLocation: \(userLocation?.latitude), \(userLocation?.longitude)")
+                    print("postLocation: \(postLocation.latitude), \(postLocation.longitude)")
+                    print("Distance from user to post: \(distance) meters")
+
                     return distance <= 3000 // 3km 이내의 게시물만 포함
                 }.sorted(by: { $0.updateDate > $1.updateDate }) // 최신 업데이트 순으로 정렬
             }
@@ -95,7 +110,5 @@ class MainPostListViewModel {
 }
 
 extension Double {
-    var degreesToRadians: Double {
-        return self * .pi / 180.0
-    }
+    var degreesToRadians: Double { return self * .pi / 180 }
 }

@@ -16,6 +16,7 @@ class PostDetailViewController: UIViewController {
     
     init(post: Post) {
         self.post = post
+        print("PostDetailView - Post: \(post)")
         super.init(nibName: nil, bundle: nil)
     }
     
