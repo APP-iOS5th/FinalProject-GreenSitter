@@ -50,7 +50,35 @@ class MainPostListViewModel {
             }
     }
     
-    func fetchPostsWithin3Km() {
+    // 유저 위치 정보(옵셔널) 만 받기
+    func fetchPostsWithin3Km(userLocation: Location?) {
+        db.collection("posts")
+            .getDocuments { [weak self] snapshot, error in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                    self?.filteredPosts = []
+                    return
+                }
+                let posts = snapshot?.documents.compactMap { document in
+                    try? document.data(as: Post.self)
+                } ?? []
+                
+                // 사용자 위치를 기준으로 3km 이내의 게시물 필터링 및 최신 업데이트 순으로 정렬
+                self?.filteredPosts = posts.filter { post in
+                    let distance = self?.calculateDistance(
+                        lat1: userLocation?.latitude ?? Location.seoulLocation.latitude,    // 위치 정보 파라미터 값 안받으면 기본 값은 서울 시청!
+                        lon1: userLocation?.longitude ?? Location.seoulLocation.longitude,
+                        lat2: post.userLocation.latitude,
+                        lon2: post.userLocation.longitude
+                    ) ?? Double.greatestFiniteMagnitude
+                    
+                    return distance <= 3000 // 3km 이내의 게시물만 포함
+                }.sorted(by: { $0.updateDate > $1.updateDate }) // 최신 업데이트 순으로 정렬
+            }
+    }
+    
+    // 기존 코드
+    func fetchAllPosts() {
         db.collection("posts")
             .getDocuments { [weak self] snapshot, error in
                 if let error = error {

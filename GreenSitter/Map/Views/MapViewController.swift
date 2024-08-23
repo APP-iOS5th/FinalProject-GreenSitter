@@ -8,6 +8,7 @@
 import Combine
 import MapKit
 import UIKit
+import FirebaseAuth
 
 class MapViewController: UIViewController {
     
@@ -63,8 +64,17 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-//        setupMarkerAndOverlay(with: Post.samplePosts)  // TODO: 실제 서버 post 데이터로 변경
-        postViewModel.fetchPostsWithin3Km()
+        
+        // 로그인 했을 경우 그리고 위치 정보 있을 경우.
+        if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
+            print("MapView - userlocation: \(userLocation)")
+            postViewModel.fetchPostsWithin3Km(userLocation: userLocation)
+        } else {    // 비로그인, 혹은 위치 정보 없으면
+            print("MapView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
+            postViewModel.fetchPostsWithin3Km(userLocation: nil)
+        }
+        // 기존 코드
+//        postViewModel.fetchAllPosts()
     }
     
     private func setupUI() {
