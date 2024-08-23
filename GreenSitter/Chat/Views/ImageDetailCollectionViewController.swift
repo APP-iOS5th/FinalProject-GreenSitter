@@ -59,6 +59,7 @@ class ImageDetailCollectionViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(ImageDetailCollectionViewCell.self, forCellWithReuseIdentifier: "ImageDetailCollectionViewCell")
+        collectionView.backgroundColor = .black
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -69,6 +70,14 @@ class ImageDetailCollectionViewController: UIViewController {
         view.backgroundColor = .black
         
         setupUI()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        DispatchQueue.main.async {
+            self.setInitialPage()
+        }
     }
     
     private func setupUI() {
@@ -89,7 +98,16 @@ class ImageDetailCollectionViewController: UIViewController {
     }
     
     private func updateNavigationBar() {
-        navigationItem.title = "이미지 (\(index)/\(images.count)"
+        DispatchQueue.main.async {
+            self.navigationBar.topItem?.title = "이미지 (\(self.index + 1)/\(self.images.count))"
+        }
+    }
+    
+    private func setInitialPage() {
+        collectionView.isPagingEnabled = false
+        let indexPath = IndexPath(item: index, section: 0)
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        collectionView.isPagingEnabled = true
     }
     
     @objc private func closeButtonTapped() {
@@ -112,4 +130,9 @@ extension ImageDetailCollectionViewController: UICollectionViewDataSource, UICol
         return collectionView.bounds.size
     }
     
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let pageIndex = Int(scrollView.contentOffset.x / scrollView.frame.width)
+        index = pageIndex
+        self.updateNavigationBar()
+    }
 }
