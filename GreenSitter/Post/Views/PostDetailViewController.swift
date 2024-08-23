@@ -7,6 +7,8 @@
 
 import UIKit
 import MapKit
+import FirebaseStorage
+import FirebaseFirestore
 
 class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
@@ -23,7 +25,7 @@ class PostDetailViewController: UIViewController {
     }
     
     private let scrollView: UIScrollView = {
-        let scrollView =  UIScrollView()
+        let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
@@ -37,7 +39,7 @@ class PostDetailViewController: UIViewController {
     private let userProfileButton: UIButton = {
         let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .clear // 투명하게 만들어 배경이 보이지 않게
+        button.backgroundColor = .clear
         return button
     }()
     
@@ -62,7 +64,6 @@ class PostDetailViewController: UIViewController {
         label.font = .systemFont(ofSize: 12)
         label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = LoginViewModel.shared.user?.levelPoint.rawValue
         return label
     }()
     
@@ -75,22 +76,22 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    private let dividerLine1: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine1: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
-    private let dividerLine2: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine2: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
-    private let dividerLine3: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine3: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
@@ -117,11 +118,11 @@ class PostDetailViewController: UIViewController {
     }()
     
     private let postImagesView: UIImageView = {
-        let image = UIImageView()
-        image.backgroundColor = .lightGray
-        image.tintColor = .gray
-        image.translatesAutoresizingMaskIntoConstraints = false
-        return image
+        let imageView = UIImageView()
+        imageView.backgroundColor = .lightGray
+        imageView.tintColor = .gray
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
     
     private let postBodyLabel: UILabel = {
@@ -132,7 +133,6 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    // TODO: 채팅방 연결
     private let contactButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("채팅하기", for: .normal)
@@ -171,7 +171,6 @@ class PostDetailViewController: UIViewController {
             }
         }, for: .touchUpInside)
         
-        // ChatDetailView로 이동
         postDetailViewModel.onChatButtonTapped = { [weak self] chatRoom in
             self?.navigateToChatDetail(chatRoom: chatRoom)
         }
@@ -181,7 +180,6 @@ class PostDetailViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(userProfileButton)
-        
         contentView.addSubview(profileImageView)
         contentView.addSubview(userNameLabel)
         contentView.addSubview(userLevelLabel)
@@ -211,7 +209,6 @@ class PostDetailViewController: UIViewController {
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
-            
             
             userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -252,7 +249,7 @@ class PostDetailViewController: UIViewController {
             dividerLine2.widthAnchor.constraint(equalToConstant: 360),
             dividerLine2.heightAnchor.constraint(equalToConstant: 1),
             
-            dividerLine3.topAnchor.constraint(equalTo: postBodyLabel.bottomAnchor, constant: 10), // -5에서 10으로 조정
+            dividerLine3.topAnchor.constraint(equalTo: postBodyLabel.bottomAnchor, constant: 10),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             dividerLine3.widthAnchor.constraint(equalToConstant: 360),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
@@ -274,15 +271,31 @@ class PostDetailViewController: UIViewController {
             contactButton.heightAnchor.constraint(equalToConstant: 40),
             
             mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8), // 10에서 8로 조정
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8),
             
-            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8), // 5에서 8로 조정
+            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
             mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapView.heightAnchor.constraint(equalToConstant: 200),
-            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16) // -10에서 -16으로 조정
+            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
+    }
+    
+    private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
+        let storageRef = Storage.storage().reference(forURL: url)
         
+        storageRef.getData(maxSize: 10 * 1024 * 1024) { data, error in
+            if let error = error {
+                print("Error downloading image: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            if let data = data, let image = UIImage(data: data) {
+                completion(image)
+            } else {
+                completion(nil)
+            }
+        }
     }
     
     private func configure(with post: Post) {
@@ -290,12 +303,19 @@ class PostDetailViewController: UIViewController {
         postTitleLabel.text = post.postTitle
         postBodyLabel.text = post.postBody
         statusLabel.text = post.postStatus.rawValue
-        
+        userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue // Assume level is set somewhere
+
         profileImageView.image = UIImage(named: post.profileImage)
         
-        // 이미지뷰를 horizontal scrollview 로 바꾸고, 여러 개의 이미지 표시하기
-        if let imageName = post.postImages?.first {
-            postImagesView.image = UIImage(named: imageName)
+        if let imageUrls = post.postImages, !imageUrls.isEmpty {
+            let firstImageUrl = imageUrls.first
+            if let url = firstImageUrl {
+                loadImageFromStorage(url: url) { [weak self] image in
+                    DispatchQueue.main.async {
+                        self?.postImagesView.image = image
+                    }
+                }
+            }
         } else {
             postImagesView.image = nil
         }
@@ -306,12 +326,11 @@ class PostDetailViewController: UIViewController {
         navigationController?.pushViewController(aboutMeVC, animated: true)
     }
     
-    // 채팅창으로 이동
     private func navigateToChatDetail(chatRoom: ChatRoom) {
         let chatViewModel = ChatViewModel()
         let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
         chatDetailViewController.chatViewModel = chatViewModel
-        self.navigationController?.pushViewController(chatDetailViewController, animated: true)
+        navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
 }
 
