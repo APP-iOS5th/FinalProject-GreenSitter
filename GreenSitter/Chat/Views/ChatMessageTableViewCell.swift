@@ -17,9 +17,9 @@ class ChatMessageTableViewCell: UITableViewCell {
         }
     }
     
-    var isRead: Bool = false {
+    var isRead: Bool? {
         didSet {
-            isReadLabel.text = isRead ? "" : "읽지 않음"
+            isReadLabel.text = isRead! ? "" : "읽지 않음"
         }
     }
     
@@ -104,6 +104,9 @@ class ChatMessageTableViewCell: UITableViewCell {
         
         // 제약조건 재설정을 위한 기존 제약조건 제거
         NSLayoutConstraint.deactivate(contentView.constraints)
+        // profileImageView와 isReadLabel 제거
+        profileImageView.removeFromSuperview()
+        isReadLabel.removeFromSuperview()
         
         if isIncoming {
             contentView.addSubview(profileImageView)
