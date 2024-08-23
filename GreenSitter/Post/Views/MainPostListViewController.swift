@@ -46,13 +46,14 @@ class MainPostListViewController: UIViewController {
         
         setupCategoryButtons()
         setupNavigationBarButtons()
+                
+        fetchPostsByCategoryAndLocationWithViewModel()
+        
         setupTableView()
         bindViewModel()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
+    private func fetchPostsByCategoryAndLocationWithViewModel() {
         guard let categoryText = selectedButton?.titleLabel?.text else {
             return
         }
@@ -65,6 +66,16 @@ class MainPostListViewController: UIViewController {
             print("MainPostView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
             viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: nil)
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        guard let categoryText = selectedButton?.titleLabel?.text else {
+            return
+        }
+        
+        fetchPostsByCategoryAndLocationWithViewModel()
 
         // 선택된 row 해제
         if let indexPath = tableView.indexPathForSelectedRow {
