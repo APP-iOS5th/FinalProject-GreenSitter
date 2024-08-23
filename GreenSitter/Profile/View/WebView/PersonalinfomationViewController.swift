@@ -12,6 +12,7 @@ class PersonalinfomationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.topItem?.backButtonTitle = ""
         
         // WKWebView 초기화 및 설정
         webView = WKWebView(frame: self.view.frame)
