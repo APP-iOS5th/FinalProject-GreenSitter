@@ -27,6 +27,17 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         setupUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // 선택된 row 해제
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: false)
+        }
+    }
+    
+    // MARK: - NAVIGATION BAR
+    
     private func setupNavigationBar() {
         // Cancel button
         let cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
@@ -39,12 +50,13 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         searchBar.delegate = self
 
         navigationItem.titleView = searchBar
-        
     }
     
     @objc private func cancelButtonTapped() {
         dismiss(animated: true, completion: nil)
     }
+    
+    // MARK: - SETUP UI
     
     private func setupUI() {
         // UITableView 설정
@@ -75,15 +87,28 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     }
     
     private func updatePlaceholder(text: String, isPrimary: Bool) {
-        let attributedText = NSMutableAttributedString(
-            string: text,
-            attributes: [
-                .foregroundColor: isPrimary ? UIColor.label : UIColor.secondaryLabel,
-                .font: UIFont.preferredFont(forTextStyle: .body)
-            ]
-        )
-        placeholderLabel.attributedText = attributedText
+        let fullText = NSMutableAttributedString(string: text)
+        
+        // 설정할 기본 속성
+        let primaryAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: isPrimary ? UIColor.label : UIColor.secondaryLabel,
+            .font: UIFont.preferredFont(forTextStyle: .body)
+        ]
+        
+        let grayAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray, // 회색으로 설정
+            .font: UIFont.preferredFont(forTextStyle: .body)
+        ]
+        
+        // 텍스트를 부분적으로 나누어 적용
+        let grayTextRange = (text as NSString).range(of: "위치 선정이 어렵다면,\n찾기 쉬운 공공장소는 어떠세요?")
+        
+        fullText.addAttributes(primaryAttributes, range: NSRange(location: 0, length: text.count)) // 전체에 기본 속성 적용
+        fullText.addAttributes(grayAttributes, range: grayTextRange) // 회색 텍스트 부분만 회색으로 설정
+        
+        placeholderLabel.attributedText = fullText
     }
+
     
     private func updateUI() {
         if locations.isEmpty {
@@ -164,7 +189,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
 
 extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
     
-    // MARK: - UITableViewDataSource
+    // MARK: - UITABLEVIEW DATASOURCE
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return locations.count
@@ -183,11 +208,11 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
         
         // attributedText 설정
         let titleAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.label,
+            .foregroundColor: UIColor.labelsPrimary,
             .font: UIFont.preferredFont(forTextStyle: .body)
         ]
         let subtitleAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.secondaryLabel,
+            .foregroundColor: UIColor.labelsSecondary,
             .font: UIFont.preferredFont(forTextStyle: .subheadline)
         ]
         
@@ -220,7 +245,7 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
         
     }
 
-    // MARK: - UITableViewDelegate
+    // MARK: - UITABLEVIEW DELEGATE
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 40
