@@ -293,20 +293,20 @@ class PostDetailViewController: UIViewController {
             postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             postBodyTextView.heightAnchor.constraint(greaterThanOrEqualTo: self.view.heightAnchor, multiplier: 0.2),
             
-            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10), // -5에서 10으로 조정
+            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             dividerLine3.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
             mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8), // 10에서 8로 조정
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8),
             mapLabel.heightAnchor.constraint(equalToConstant: mapLabel.font.pointSize),
             
-            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8), // 5에서 8로 조정
+            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
             mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             mapView.heightAnchor.constraint(equalToConstant: 150),
-            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16), // -10에서 -16으로 조정
+            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16), 
         ])
     }
     
@@ -392,7 +392,7 @@ class PostDetailViewController: UIViewController {
         present(fullScreenPageVC, animated: true, completion: nil)
     }
 }
-
-#Preview {
-    return UINavigationController(rootViewController: PostDetailViewController(post: Post.samplePosts.first!))
-}
+//
+//#Preview {
+//    return UINavigationController(rootViewController: PostDetailViewController(post: Post.samplePosts.first!))
+//}

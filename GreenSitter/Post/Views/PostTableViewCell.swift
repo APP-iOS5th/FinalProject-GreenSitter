@@ -110,14 +110,14 @@ class PostTableViewCell: UITableViewCell {
         postDateLabel.text = timeAgoSinceDate(post.createDate)
         
         guard let postImages = post.postImages, !postImages.isEmpty else {
-            postImageView.isHidden = true // 이미지가 없으면 이미지 뷰를 숨김
+            postImageView.isHidden = true
             return
         }
         
-        postImageView.isHidden = false // 이미지가 있으면 이미지 뷰를 보이도록 설정
+        postImageView.isHidden = false 
         
         if let imageUrl = postImages.first {
-            loadImage(from: imageUrl) // Firestore에서 이미지 URL을 로드
+            loadImage(from: imageUrl)
         } else {
             postImageView.image = nil
         }

@@ -79,7 +79,6 @@ class FullScreenImageViewController: UIViewController, UIScrollViewDelegate {
                 
                 if let error = error {
                     print("Error downloading image: \(error.localizedDescription)")
-                    // 에러 메시지를 사용자에게 표시할 수 있습니다.
                     return
                 }
                 if let data = data, let image = UIImage(data: data) {
