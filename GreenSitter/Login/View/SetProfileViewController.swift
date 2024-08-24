@@ -15,7 +15,8 @@ class SetProfileViewController: UIViewController {
     
     let storage = Storage.storage()
     let db = Firestore.firestore()
-    var selectButton: UIButton? //선택한 버튼을 저장할 변수
+    var selectButton: UIButton? // 선택한 버튼을 저장할 변수
+    
     private let location: Location
     
     init(location: Location) {
@@ -30,7 +31,7 @@ class SetProfileViewController: UIViewController {
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "프로필 정보 입력"
-        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.font = UIFont.boldSystemFont(ofSize: 28)
         label.textColor = .labelsPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -38,9 +39,10 @@ class SetProfileViewController: UIViewController {
     
     func createImageButton() -> UIButton {
         let button = UIButton()
+        button.configuration?.imagePadding = 5        
+        button.imageView?.contentMode = .scaleAspectFit
+        //         button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.imageView?.contentMode = .scaleAspectFit // 이미지 버튼 내에 맞춰 표시
-        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5) // 이미지에 여백 추가
         return button
     }
     
@@ -56,16 +58,18 @@ class SetProfileViewController: UIViewController {
         let textField = UITextField()
         textField.frame.size.height = 30
         textField.borderStyle = .roundedRect
-        textField.backgroundColor = UIColor(named: "SeparatorsOpaque")
-        textField.placeholder = "닉네임을 입력해주세요"
-        textField.clearsOnBeginEditing = true //편집시 기존텍스트필드값 지우기
+        textField.backgroundColor = .fillPrimary
+        textField.textColor = .labelsPrimary
+        textField.placeholder = "닉네임을 입력해주세요."
+        textField.clearsOnBeginEditing = true
+        textField.autocapitalizationType = .none
+
         textField.translatesAutoresizingMaskIntoConstraints = false
         
-        // 위치 텍스트 추가
         let label = UILabel()
         label.text = "닉네임 "
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .labelsPrimary
+        label.font = UIFont.systemFont(ofSize: 15)
+        label.textColor = .labelsSecondary
         label.sizeToFit()
         
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: label.frame.width + 10, height: textField.frame.height))
@@ -78,12 +82,22 @@ class SetProfileViewController: UIViewController {
         return textField
     }()
     
+    lazy var nicknameStatusLabel: UILabel = {
+        let label = UILabel()
+        label.text = ""  // 처음에는 빈 문자열로 설정
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .red  // 에러 메시지는 빨간색으로 표시
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     lazy var nextButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("다음", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "DominentColor")
+        button.backgroundColor = .dominent
         button.layer.cornerRadius = 10
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
         button.addTarget(self, action: #selector(nextTap), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -92,7 +106,7 @@ class SetProfileViewController: UIViewController {
     lazy var skipButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("건너뛰기", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.labelsPrimary, for: .normal)
         button.addTarget(self, action: #selector(skipTap), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -116,28 +130,18 @@ class SetProfileViewController: UIViewController {
         return stackView
     }()
     
-    lazy var nicknameStatusLabel: UILabel = {
-        let label = UILabel()
-        label.text = ""  // 처음에는 빈 문자열로 설정
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .red  // 에러 메시지는 빨간색으로 표시
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .bgPrimary
         
         // 서브뷰 추가
         view.addSubview(titleLabel)
         view.addSubview(imageStackView1)
         view.addSubview(imageStackView2)
         view.addSubview(nickNameTextField)
+        view.addSubview(nicknameStatusLabel)
         view.addSubview(nextButton)
         view.addSubview(skipButton)
-        view.addSubview(nicknameStatusLabel)
         
         imageButton1.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         imageButton2.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
@@ -146,44 +150,43 @@ class SetProfileViewController: UIViewController {
         imageButton5.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         imageButton6.addTarget(self, action: #selector(imageButtonTap(_ :)), for: .touchUpInside)
         nickNameTextField.addTarget(self, action: #selector(nicknameTextChanged(_:)), for: .editingChanged)
-
         
         setupImage()
         
         // 제약 조건 설정
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
-             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-             
-             imageStackView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-             imageStackView1.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-             imageStackView1.widthAnchor.constraint(equalToConstant: 320),
-             imageStackView1.heightAnchor.constraint(equalToConstant: 100),
-             
-             imageStackView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-             imageStackView2.topAnchor.constraint(equalTo: imageStackView1.bottomAnchor, constant: 20),
-             imageStackView2.widthAnchor.constraint(equalToConstant: 320),
-             imageStackView2.heightAnchor.constraint(equalToConstant: 100),
-             
-             nickNameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-             nickNameTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 80),
-             nickNameTextField.widthAnchor.constraint(equalToConstant: 350),
-
-             nicknameStatusLabel.topAnchor.constraint(equalTo: nickNameTextField.bottomAnchor, constant: 8),
-             nicknameStatusLabel.leadingAnchor.constraint(equalTo: nickNameTextField.leadingAnchor),
-             nicknameStatusLabel.trailingAnchor.constraint(equalTo: nickNameTextField.trailingAnchor),
-
-             nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-             nextButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
-             nextButton.widthAnchor.constraint(equalToConstant: 350),
-             nextButton.heightAnchor.constraint(equalToConstant: 45),
-             
-             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-             skipButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -70),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            imageStackView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageStackView1.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
+            imageStackView1.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -80),
+            imageStackView1.heightAnchor.constraint(equalToConstant: 100),
+            
+            imageStackView2.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageStackView2.topAnchor.constraint(equalTo: imageStackView1.bottomAnchor, constant: 20),
+            imageStackView2.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -80),
+            imageStackView2.heightAnchor.constraint(equalToConstant: 100),
+            
+            nickNameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            nickNameTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 80),
+            nickNameTextField.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -50),
+            
+            nicknameStatusLabel.topAnchor.constraint(equalTo: nickNameTextField.bottomAnchor, constant: 8),
+            nicknameStatusLabel.leadingAnchor.constraint(equalTo: nickNameTextField.leadingAnchor),
+            nicknameStatusLabel.trailingAnchor.constraint(equalTo: nickNameTextField.trailingAnchor),
+            
+            nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            nextButton.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -15),
+            nextButton.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -50),
+            nextButton.heightAnchor.constraint(equalToConstant: 45),
+            
+            skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            skipButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
         ])
     }
     
-    //MARK: - 중복된 닉네임 체크
+    // MARK: - 중복된 닉네임 체크
     func checkNicknameAvailability(nickname: String) {
         let usersRef = db.collection("users")
         usersRef.whereField("nickname", isEqualTo: nickname).getDocuments { [weak self] (querySnapshot, error) in

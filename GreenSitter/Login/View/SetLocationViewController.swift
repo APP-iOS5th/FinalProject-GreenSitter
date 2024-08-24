@@ -72,10 +72,11 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         textField.borderStyle = .roundedRect
         textField.backgroundColor = .fillPrimary
         textField.textColor = .labelsPrimary
-        textField.placeholder = "현재 위치 가져오기 실패"
-        textField.clearsOnBeginEditing = true
+        textField.placeholder = "내 위치를 입력해주세요."
+//        textField.clearsOnBeginEditing = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.isUserInteractionEnabled = true
+        textField.autocapitalizationType = .none
 
         // 위치 텍스트 추가
         let label = UILabel()
@@ -126,7 +127,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         print("User 객체 상태: \(String(describing: users))")
         
         view.backgroundColor = .bgPrimary
-        
+        setupBackButton()
         view.addSubview(titleLabel)
         view.addSubview(bodyLabel)
         view.addSubview(locationTextField)
@@ -149,13 +150,12 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
             guideTextLabel.topAnchor.constraint(equalTo: locationTextField.bottomAnchor, constant: 10),
             
             nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nextButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            nextButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
             nextButton.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -50),
-            nextButton.heightAnchor.constraint(equalToConstant: 40),
+            nextButton.heightAnchor.constraint(equalToConstant: 45),
             
 
         ])
-//        getUserData()
     }
     
     private func bindViewModel() {
@@ -170,17 +170,76 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
     }
     
     
-    //MARK: - NextButton Method
+
+    
+    // MARK: - BACK BUTTON METHOD
+    
+    private func setupBackButton() {
+        navigationItem.hidesBackButton = true
+        
+        let backButton = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: #selector(backButtonTapped))
+        navigationItem.leftBarButtonItem = backButton
+    }
+    
+    @objc private func backButtonTapped() {
+        // 뒤로가기 버튼이 눌렸을 때 경고창을 띄웁니다.
+        let alert = UIAlertController(title: "회원가입 과정을 취소하시겠습니까?", message: nil, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let deleteAction = UIAlertAction(title: "확인", style: .destructive) { [weak self] _ in
+            self?.deleteUserDataAndPop()
+        }
+
+        alert.addAction(cancelAction)
+        alert.addAction(deleteAction)
+
+        present(alert, animated: true, completion: nil)
+    }
+
+    private func deleteUserDataAndPop() {
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
+            return
+        }
+
+        db.collection("users").document(user.uid).delete { [weak self] error in
+            if let error = error {
+                print("Firestore Deletion Error: \(error)")
+            } else {
+                print("User data successfully deleted!")
+                
+                // Firebase Authentication에서 사용자 삭제
+                user.delete { authError in
+                    if let authError = authError {
+                        print("Firebase Auth Deletion Error: \(authError)")
+                    } else {
+                        print("Firebase user successfully deleted!")
+                        
+                        self?.navigationController?.popViewController(animated: true)
+                    }
+                }
+            }
+        }
+    }
+
+    
+    // MARK: - NEXT BUTTON METHOD
+    
     @objc func nextTap() {
-        guard let currentLocation = mapViewModel.currentLocation else {
-            print("CurrentLocation is nil")
+        guard let addressText = locationTextField.text else {
             return
         }
         
-        updateLocationInFirestore(location: currentLocation)
+        if var currentLocation = mapViewModel.currentLocation {
+            currentLocation.address = addressText
+            updateLocationInFirestore(location: currentLocation)
+        } else {
+            print("mapViewModel: CurrentLocation is nil")
+            updateLocationInFirestore(location: Location.seoulLocation)
+        }
     }
     
-    //MARK: - 파이어베이스 위치정보 저장
+    // 파이어베이스 위치정보 저장
+    
     private func updateLocationInFirestore(location: Location) {
         guard let user = Auth.auth().currentUser else {
             print("Error: Firebase authResult is nil.")

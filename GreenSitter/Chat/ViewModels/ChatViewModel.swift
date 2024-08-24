@@ -13,7 +13,7 @@ class ChatViewModel {
     private let firestorageManager = FirestorageManager()
     
     // 로그인 여부를 나타내는 변수
-    var isLoggedIn = true /// 임시로 true, false로 바꾸기
+    var isLoggedIn = false /// 임시로 true, false로 바꾸기
     var hasChats = false
     
     // 임시 유저 id

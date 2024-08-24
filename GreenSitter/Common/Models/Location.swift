@@ -28,7 +28,7 @@ struct Location: Codable {
         // 기본값 설정: 위도와 경도가 nil일 경우 서울 시청으로 설정
         self.latitude = latitude ?? 37.566
         self.longitude = longitude ?? 126.97
-        self.placeName = placeName ?? "서울특별시청"
+        self.placeName = placeName ?? ""
         self.address = address ?? "서울 중구 세종대로"
     }
 }

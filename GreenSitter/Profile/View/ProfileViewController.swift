@@ -69,9 +69,26 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
-        fetchUserFirebase()
-        setupTextField()
+        
+        if (Auth.auth().currentUser != nil) {
+            setupView()
+            fetchUserFirebase()
+            setupTextField()
+        } else {
+            view.backgroundColor = .bgPrimary
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // 로그인 상태 확인
+        if Auth.auth().currentUser == nil {
+            let loginViewController = LoginViewController()
+            let navigationController = UINavigationController(rootViewController: loginViewController)
+            navigationController.modalPresentationStyle = .fullScreen
+            present(navigationController, animated: true, completion: nil)
+        }
     }
     
     private func setupView() {

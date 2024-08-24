@@ -36,6 +36,7 @@ class LoginViewController: UIViewController {
         """
         label.font = .systemFont(ofSize: 17)
         label.textColor = .labelsPrimary
+        label.textAlignment = .center
         label.numberOfLines = 0 // 여러 줄 텍스트를 지원
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -50,8 +51,8 @@ class LoginViewController: UIViewController {
     private let googleButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "googleLogin"), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.imageView?.contentMode = .scaleAspectFit
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -81,23 +82,23 @@ class LoginViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             // Title Label
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 90),
             
             // Body Label
-            bodyLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            bodyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             
             // Google Button
             googleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             googleButton.bottomAnchor.constraint(equalTo: appleButton.topAnchor, constant: -20),
-            googleButton.widthAnchor.constraint(equalToConstant: 230), // 너비를 230으로 설정
+            googleButton.widthAnchor.constraint(equalToConstant: 230),
             googleButton.heightAnchor.constraint(equalToConstant: 50),
             
             // Apple Button
             appleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             appleButton.bottomAnchor.constraint(equalTo: textButton.topAnchor, constant: -20),
-            appleButton.widthAnchor.constraint(equalToConstant: 230), // 너비를 230으로 설정
+            appleButton.widthAnchor.constraint(equalToConstant: 230),
             appleButton.heightAnchor.constraint(equalToConstant: 50),
             
             // Text Button
@@ -108,23 +109,22 @@ class LoginViewController: UIViewController {
     
     //MARK: - ToastMessage
     func showToast(withDuration: Double, delay: Double) {
-        let toastLabelWidth: CGFloat = 380
-        let toastLabelHeight: CGFloat = 80
         
         // UIView 생성
-        let toastView = UIView(frame: CGRect(x: (self.view.frame.size.width - toastLabelWidth) / 2, y: 75, width: toastLabelWidth, height: toastLabelHeight))
-        toastView.backgroundColor = UIColor.white
+        let toastView = UIView()
+        toastView.backgroundColor = .bgSecondary
         toastView.alpha = 1.0
         toastView.layer.cornerRadius = 25
         toastView.clipsToBounds = true
-        toastView.layer.borderColor = UIColor.gray.cgColor
+        toastView.layer.borderColor = UIColor.separatorsNonOpaque.cgColor
         toastView.layer.borderWidth = 1
         
         // 쉐도우 설정
-        toastView.layer.shadowColor = UIColor.gray.cgColor
+        toastView.layer.shadowColor = UIColor.separatorsNonOpaque.cgColor
         toastView.layer.shadowOpacity = 0.5 // 투명도
         toastView.layer.shadowOffset = CGSize(width: 4, height: 4) // 그림자 위치
-        toastView.layer.shadowRadius = 10
+        toastView.layer.shadowRadius = 4
+        toastView.translatesAutoresizingMaskIntoConstraints = false
         
         // UIImageView 생성 및 설정
         let image = UIImageView(image: UIImage(named: "logo7"))
@@ -136,15 +136,15 @@ class LoginViewController: UIViewController {
         
         // UILabel 생성 및 설정
         let labelOne = UILabel()
-        labelOne.text = "로그인이 권한이 필요한 기능입니다"
-        labelOne.textColor = .black
-        labelOne.font = UIFont.systemFont(ofSize: 13)
+        labelOne.text = "로그인 권한이 필요한 기능입니다"
+        labelOne.textColor = .labelsPrimary
+        labelOne.font = UIFont.boldSystemFont(ofSize: 13)
         labelOne.textAlignment = .left
         labelOne.translatesAutoresizingMaskIntoConstraints = false
         
         let labelTwo = UILabel()
-        labelTwo.text = "로그인화면으로 이동합니다"
-        labelTwo.textColor = .black
+        labelTwo.text = "로그인 화면으로 이동합니다"
+        labelTwo.textColor = .labelsSecondary
         labelTwo.font = UIFont.systemFont(ofSize: 11)
         labelTwo.textAlignment = .left
         labelTwo.translatesAutoresizingMaskIntoConstraints = false
@@ -164,20 +164,29 @@ class LoginViewController: UIViewController {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         toastView.addSubview(mainStackView)
-        
+        self.view.addSubview(toastView)
+
         // Auto Layout 설정
         NSLayoutConstraint.activate([
             mainStackView.leadingAnchor.constraint(equalTo: toastView.leadingAnchor, constant: 10),
             mainStackView.trailingAnchor.constraint(equalTo: toastView.trailingAnchor, constant: -10),
             mainStackView.topAnchor.constraint(equalTo: toastView.topAnchor, constant: 10),
-            mainStackView.bottomAnchor.constraint(equalTo: toastView.bottomAnchor, constant: -10)
+            mainStackView.bottomAnchor.constraint(equalTo: toastView.bottomAnchor, constant: -10),
+            toastView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
+            toastView.heightAnchor.constraint(equalToConstant: 80),
+            toastView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            toastView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
         ])
         
-        self.view.addSubview(toastView)
-        UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseOut, animations: {
-            toastView.alpha = 0.0
-        }, completion: {(isCompleted) in
-            toastView.removeFromSuperview()
+        UIView.animate(withDuration: withDuration, delay: 0.0, options: .curveEaseOut, animations: {
+            toastView.alpha = 1.0
+        }, completion: { _ in
+            // 사라지는 애니메이션
+            UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseIn, animations: {
+                toastView.alpha = 0.0
+            }, completion: { _ in
+                toastView.removeFromSuperview()
+            })
         })
     }
     
@@ -277,8 +286,10 @@ class LoginViewController: UIViewController {
     
     //MARK: - MainView move
     @objc func navigationTap() {
-        if let tabBarController = self.tabBarController {
-            tabBarController.selectedIndex = 0 // Home 탭으로 설정
+        if let window = UIApplication.shared.windows.first(where: \.isKeyWindow),
+           let tabBarController = window.rootViewController as? UITabBarController {
+            tabBarController.selectedIndex = 0 // 메인 뷰(홈) 탭으로 이동
+            dismiss(animated: true, completion: nil) // 로그인 뷰 닫기
         }
     }
 }
