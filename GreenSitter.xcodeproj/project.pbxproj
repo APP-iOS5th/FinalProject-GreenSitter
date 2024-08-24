@@ -34,6 +34,8 @@
 		3BAD24632C77340E004C2DBA /* ServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD24622C77340E004C2DBA /* ServiceViewController.swift */; };
 		3BAD24662C773DD0004C2DBA /* LocationServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD24652C773DD0004C2DBA /* LocationServiceViewController.swift */; };
 		3BAD24682C773E2A004C2DBA /* PersonalinfomationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD24672C773E2A004C2DBA /* PersonalinfomationViewController.swift */; };
+		4F822E822C79FC9D007402CB /* FullScreenImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E812C79FC9D007402CB /* FullScreenImageViewController.swift */; };
+		4F822E842C79FE6F007402CB /* FullScreenPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */; };
 		4FBC3A152C78140C00AC0C83 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4FBC3A142C78140C00AC0C83 /* APPKey.plist */; };
 		58D54A1F2C75831900332AA2 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 58D54A1E2C75831900332AA2 /* FirebaseAuth */; settings = {ATTRIBUTES = (Required, ); }; };
 		58D54A212C75831900332AA2 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 58D54A202C75831900332AA2 /* FirebaseFirestore */; };
@@ -165,6 +167,8 @@
 		3BAD24622C77340E004C2DBA /* ServiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceViewController.swift; sourceTree = "<group>"; };
 		3BAD24652C773DD0004C2DBA /* LocationServiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationServiceViewController.swift; sourceTree = "<group>"; };
 		3BAD24672C773E2A004C2DBA /* PersonalinfomationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalinfomationViewController.swift; sourceTree = "<group>"; };
+		4F822E812C79FC9D007402CB /* FullScreenImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageViewController.swift; sourceTree = "<group>"; };
+		4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenPageViewController.swift; sourceTree = "<group>"; };
 		4FBC3A142C78140C00AC0C83 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = Resources/APPKey.plist; sourceTree = "<group>"; };
 		4FCE70052C76098500279774 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
 		4FCE70062C76098500279774 /* EditCareSeekerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewController.swift; sourceTree = "<group>"; };
@@ -666,8 +670,10 @@
 				97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */,
 				97BC0DEF2C75BCCF00F4D0B4 /* EditPostViewController.swift */,
 				97BC0DF12C75BCCF00F4D0B4 /* MainPostListViewController.swift */,
-				97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */,
 				97BC0DF02C75BCCF00F4D0B4 /* PostDetailViewController.swift */,
+				4F822E812C79FC9D007402CB /* FullScreenImageViewController.swift */,
+				4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */,
+				97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */,
 				97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */,
 			);
 			path = Views;
@@ -695,8 +701,8 @@
 			children = (
 				97BC0DE32C747A9800F4D0B4 /* AddPostViewModel.swift */,
 				97BC0DE42C747A9800F4D0B4 /* EditPostViewModel.swift */,
-				97BC0DE12C747A9800F4D0B4 /* PostDetailViewModel.swift */,
 				97BC0DFF2C76F40600F4D0B4 /* MainPostListViewModel.swift */,
+				97BC0DE12C747A9800F4D0B4 /* PostDetailViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -817,6 +823,7 @@
 				3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */,
 				3B7D8F4D2C7589A200008F22 /* ReceiveReviewTableViewCell.swift in Sources */,
 				3B6D2C5E2C69A50F0076B1DA /* ProfileTableViewCell.swift in Sources */,
+				4F822E822C79FC9D007402CB /* FullScreenImageViewController.swift in Sources */,
 				156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */,
 				3B7D8F4B2C75898B00008F22 /* ReceiveReviewViewModel.swift in Sources */,
 				58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */,
@@ -824,6 +831,7 @@
 				3B61C6982C71CB1600337B66 /* SelfIntroductionViewController.swift in Sources */,
 				97934DFB2C62F87D00B38E0A /* User.swift in Sources */,
 				97D1BEBD2C6C9DF400F7A983 /* ChatListViewController.swift in Sources */,
+				4F822E842C79FE6F007402CB /* FullScreenPageViewController.swift in Sources */,
 				97D1BEA82C6C954100F7A983 /* DataManager.swift in Sources */,
 				97D1BE6C2C6C8B7D00F7A983 /* ProfileImageViewModel.swift in Sources */,
 				97BC0DE92C747A9800F4D0B4 /* EditPostViewModel.swift in Sources */,

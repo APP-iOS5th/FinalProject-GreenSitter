@@ -12,7 +12,7 @@ import FirebaseFirestore
 
 class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
-    
+    private var imageUrls: [String] = []
     private let post: Post
     
     init(post: Post) {
@@ -174,6 +174,7 @@ class PostDetailViewController: UIViewController {
         view.backgroundColor = .bgPrimary
         setupUI()
         configure(with: post)
+        addTapGestureToImages()
         
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -336,15 +337,18 @@ class PostDetailViewController: UIViewController {
         profileImageView.image = UIImage(named: post.profileImage)
         
         imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        imageUrls.removeAll()
         
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
-            for imageUrl in imageUrls {
+            self.imageUrls = imageUrls
+            for (index, imageUrl) in imageUrls.enumerated() {
                 let imageView = UIImageView()
                 imageView.contentMode = .scaleAspectFill
                 imageView.clipsToBounds = true
                 imageView.translatesAutoresizingMaskIntoConstraints = false
                 imageView.widthAnchor.constraint(equalToConstant: 190).isActive = true
                 imageView.heightAnchor.constraint(equalToConstant: 250).isActive = true
+                imageView.tag = index  // 여기에 태그를 추가합니다
                 
                 loadImageFromStorage(url: imageUrl) { image in
                     DispatchQueue.main.async {
@@ -354,6 +358,8 @@ class PostDetailViewController: UIViewController {
                 imagesStackView.addArrangedSubview(imageView)
             }
         }
+        
+        addTapGestureToImages()
     }
     
     @objc private func userProfileButtonTapped() {
@@ -367,8 +373,25 @@ class PostDetailViewController: UIViewController {
         chatDetailViewController.chatViewModel = chatViewModel
         self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
+    
+    private func addTapGestureToImages() {
+        for case let imageView as UIImageView in imagesStackView.arrangedSubviews {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:)))
+            imageView.isUserInteractionEnabled = true
+            imageView.addGestureRecognizer(tapGesture)
+        }
+    }
+    
+    @objc private func imageTapped(_ gesture: UITapGestureRecognizer) {
+        guard !imageUrls.isEmpty,
+              let tappedImageView = gesture.view as? UIImageView,
+              let index = imagesStackView.arrangedSubviews.firstIndex(of: tappedImageView) else { return }
+        
+        let fullScreenPageVC = FullScreenPageViewController(imageUrls: imageUrls, initialIndex: index)
+        fullScreenPageVC.modalPresentationStyle = .fullScreen
+        present(fullScreenPageVC, animated: true, completion: nil)
+    }
 }
-
 
 #Preview {
     return UINavigationController(rootViewController: PostDetailViewController(post: Post.samplePosts.first!))
