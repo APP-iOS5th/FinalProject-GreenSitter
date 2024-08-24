@@ -118,12 +118,20 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    private let postImagesView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.backgroundColor = .lightGray
-        imageView.tintColor = .gray
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+    private let imagesScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsHorizontalScrollIndicator = false
+        return scrollView
+    }()
+    
+    private let imagesStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
     }()
     
     private let postBodyTextView: UITextView = {
@@ -178,7 +186,7 @@ class PostDetailViewController: UIViewController {
             self?.navigateToChatDetail(chatRoom: chatRoom)
         }
     }
-
+    
     private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -190,7 +198,10 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(postTimeLabel)
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
-        contentView.addSubview(postImagesView)
+        
+        contentView.addSubview(imagesScrollView)
+        imagesScrollView.addSubview(imagesStackView)
+        
         contentView.addSubview(postBodyTextView)
         contentView.addSubview(dividerLine1)
         contentView.addSubview(dividerLine2)
@@ -257,12 +268,20 @@ class PostDetailViewController: UIViewController {
             dividerLine1.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine1.heightAnchor.constraint(equalToConstant: 1),
             
-            postImagesView.widthAnchor.constraint(equalToConstant: 190),
-            postImagesView.heightAnchor.constraint(equalToConstant: 250),
-            postImagesView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
-            postImagesView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
-            dividerLine2.topAnchor.constraint(equalTo: postImagesView.bottomAnchor, constant: 20),
+            imagesScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
+            imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            imagesScrollView.heightAnchor.constraint(equalToConstant: 250),
+            
+            
+            imagesStackView.topAnchor.constraint(equalTo: imagesScrollView.topAnchor),
+            imagesStackView.bottomAnchor.constraint(equalTo: imagesScrollView.bottomAnchor),
+            imagesStackView.leadingAnchor.constraint(equalTo: imagesScrollView.leadingAnchor),
+            imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
+            imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
+            
+            dividerLine2.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
             dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             dividerLine2.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine2.heightAnchor.constraint(equalToConstant: 1),
@@ -287,7 +306,7 @@ class PostDetailViewController: UIViewController {
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             mapView.heightAnchor.constraint(equalToConstant: 150),
             mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16), // -10에서 -16으로 조정
-                    ])
+        ])
     }
     
     private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
@@ -312,21 +331,28 @@ class PostDetailViewController: UIViewController {
         postTitleLabel.text = post.postTitle
         postBodyTextView.text = post.postBody
         statusLabel.text = post.postStatus.rawValue
-        userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue // Assume level is set somewhere
-
+        userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
+        
         profileImageView.image = UIImage(named: post.profileImage)
         
+        imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
-            let firstImageUrl = imageUrls.first
-            if let url = firstImageUrl {
-                loadImageFromStorage(url: url) { [weak self] image in
+            for imageUrl in imageUrls {
+                let imageView = UIImageView()
+                imageView.contentMode = .scaleAspectFill
+                imageView.clipsToBounds = true
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                imageView.widthAnchor.constraint(equalToConstant: 190).isActive = true
+                imageView.heightAnchor.constraint(equalToConstant: 250).isActive = true
+                
+                loadImageFromStorage(url: imageUrl) { image in
                     DispatchQueue.main.async {
-                        self?.postImagesView.image = image
+                        imageView.image = image
                     }
                 }
+                imagesStackView.addArrangedSubview(imageView)
             }
-        } else {
-            postImagesView.image = nil
         }
     }
     
