@@ -19,6 +19,8 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     var makePlanViewModel: MakePlanViewModel?
     var addPostViewModel: AddPostViewModel?
 
+    private var searchWorkItem: DispatchWorkItem?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -50,6 +52,17 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         searchBar.delegate = self
 
         navigationItem.titleView = searchBar
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchWorkItem?.cancel()
+        
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.searchPlaces(query: searchText)
+        }
+        
+        searchWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: workItem) // Adjust debounce time as needed
     }
     
     @objc private func cancelButtonTapped() {
@@ -91,12 +104,12 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         
         // 설정할 기본 속성
         let primaryAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: isPrimary ? UIColor.label : UIColor.secondaryLabel,
+            .foregroundColor: isPrimary ? UIColor.labelsPrimary : UIColor.labelsSecondary,
             .font: UIFont.preferredFont(forTextStyle: .body)
         ]
         
         let grayAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.gray, // 회색으로 설정
+            .foregroundColor: UIColor.labelsSecondary,
             .font: UIFont.preferredFont(forTextStyle: .body)
         ]
         
@@ -128,11 +141,18 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     }
 
     private func searchPlaces(query: String) {
+        
+        guard !query.isEmpty else {
+            locations.removeAll()
+            updateUI()
+            return
+        }
+        
         // 초기화
         locations.removeAll()
         currentPage = 1
         isEnd = false
-        updatePlaceholder(text: "검색 중...", isPrimary: false)
+//        updatePlaceholder(text: "검색 중...", isPrimary: false)
         updateUI()
         
         let location = Location.seoulLocation
