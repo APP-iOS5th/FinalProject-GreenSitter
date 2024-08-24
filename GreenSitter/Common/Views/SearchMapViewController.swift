@@ -16,6 +16,13 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     private let tableView = UITableView()
     private let placeholderLabel = UILabel()
     
+    private let userLocation: Location = {
+        guard let location = LoginViewModel.shared.user?.location else {
+            return Location.seoulLocation   // location 없으면 서울 시청으로
+        }
+        return location
+    }()
+    
     var makePlanViewModel: MakePlanViewModel?
     var addPostViewModel: AddPostViewModel?
 
@@ -154,10 +161,9 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         isEnd = false
 //        updatePlaceholder(text: "검색 중...", isPrimary: false)
         updateUI()
-        
-        let location = Location.seoulLocation
 
-        KakaoAPIService.shared.searchPlacesNearby(query: query, location: location, page: currentPage) { [weak self] result in
+
+        KakaoAPIService.shared.searchPlacesNearby(query: query, location: self.userLocation, page: currentPage) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let (newLocations, isEnd)):
@@ -188,9 +194,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         }
         currentPage += 1
 
-        let location = Location.sampleLocation
-
-        KakaoAPIService.shared.searchPlacesNearby(query: query, location: location, page: currentPage) { [weak self] result in
+        KakaoAPIService.shared.searchPlacesNearby(query: query, location: self.userLocation, page: currentPage) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let (newLocations, isEnd)):
