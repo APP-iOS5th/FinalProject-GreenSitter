@@ -11,7 +11,7 @@ import FirebaseFirestore
 import FirebaseStorage
 
 class PostTableViewCell: UITableViewCell {
-
+    
     // Define custom labels
     private let postStatusLabel: UILabel = {
         let label = UILabel()
@@ -129,7 +129,7 @@ class PostTableViewCell: UITableViewCell {
             postImageView.image = UIImage(named: "defaultImage")
             return
         }
-
+        
         // 비동기적으로 이미지 로드
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let self = self, let data = data, error == nil else {

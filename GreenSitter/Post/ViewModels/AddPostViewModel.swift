@@ -31,7 +31,7 @@ class AddPostViewModel: ObservableObject {
     func addImage(_ image: UIImage) {
         postImages.append(image)
     }
-
+    
     // 선택된 이미지를 추가하는 메서드
     func addSelectedImages(results: [PHPickerResult], completion: @escaping () -> Void) {
         let dispatchGroup = DispatchGroup()
@@ -116,22 +116,22 @@ class AddPostViewModel: ObservableObject {
         }
     }
     func imageToData(image: UIImage) -> Data? {
-            var compressionQuality: CGFloat = 1.0
-            let minCompressionQuality: CGFloat = 0.1 // 너무 낮은 품질은 피하기 위해 최소 값 설정
-            let step: CGFloat = 0.1
-
-            var imageData: Data? = image.jpegData(compressionQuality: compressionQuality)
-            
-            let maxSize = 4 * 1024 * 1024
-            // 이미지가 maxSize를 초과할 경우 compressionQuality를 줄여나감
-            while let data = imageData, data.count > maxSize, compressionQuality > minCompressionQuality {
-                compressionQuality -= step
-                imageData = image.jpegData(compressionQuality: compressionQuality)
-            }
-            
-            // 최종적으로 압축된 이미지 데이터를 반환
-            return imageData
+        var compressionQuality: CGFloat = 1.0
+        let minCompressionQuality: CGFloat = 0.1 // 너무 낮은 품질은 피하기 위해 최소 값 설정
+        let step: CGFloat = 0.1
+        
+        var imageData: Data? = image.jpegData(compressionQuality: compressionQuality)
+        
+        let maxSize = 4 * 1024 * 1024
+        // 이미지가 maxSize를 초과할 경우 compressionQuality를 줄여나감
+        while let data = imageData, data.count > maxSize, compressionQuality > minCompressionQuality {
+            compressionQuality -= step
+            imageData = image.jpegData(compressionQuality: compressionQuality)
         }
+        
+        // 최종적으로 압축된 이미지 데이터를 반환
+        return imageData
+    }
     
     // 게시물 저장 메서드
     func savePost(userId: String, postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
