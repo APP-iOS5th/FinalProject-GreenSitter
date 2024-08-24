@@ -29,37 +29,65 @@ class ChatMessageTableViewImageCell: UITableViewCell {
     var images: [UIImage] = [] {
         didSet {
             DispatchQueue.main.async {
-                self.updateImageStackView()
+                self.updateBubbleView()
             }
         }
     }
     
-    var imageViews = [UIImageView]()
-    
-    lazy var imageStackView: UIStackView = {
-       let imageStackView = UIStackView(arrangedSubviews: imageViews)
-        imageStackView.axis = .horizontal
-        imageStackView.spacing = 10
-        imageStackView.distribution = .fillEqually
-        imageStackView.translatesAutoresizingMaskIntoConstraints = false
-        return imageStackView
+    private lazy var firstImageView: UIImageView = {
+       let firstImageView = UIImageView()
+        firstImageView.layer.cornerRadius = 10
+        firstImageView.backgroundColor = .white
+        firstImageView.clipsToBounds = true
+        firstImageView.contentMode = .scaleAspectFit
+        firstImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
+        firstImageView.isUserInteractionEnabled = true
+        firstImageView.addGestureRecognizer(tapGesture)
+        return firstImageView
     }()
     
-    lazy var firstVStackView: UIStackView = {
-        let firstVStackView = UIStackView()
-        firstVStackView.axis = .vertical
-        firstVStackView.spacing = 10
-        firstVStackView.distribution = .fillEqually
-        return firstVStackView
+    private lazy var secondImageView: UIImageView = {
+       let secondImageView = UIImageView()
+        secondImageView.layer.cornerRadius = 10
+        secondImageView.backgroundColor = .white
+        secondImageView.clipsToBounds = true
+        secondImageView.contentMode = .scaleAspectFit
+        secondImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
+        secondImageView.isUserInteractionEnabled = true
+        secondImageView.addGestureRecognizer(tapGesture)
+        return secondImageView
     }()
     
-    lazy var secondVStackView: UIStackView = {
-        let secondVStackView = UIStackView()
-        secondVStackView.axis = .vertical
-        secondVStackView.spacing = 10
-        secondVStackView.distribution = .fillEqually
-
-        return secondVStackView
+    private lazy var thirdImageView: UIImageView = {
+       let thirdImageView = UIImageView()
+        thirdImageView.layer.cornerRadius = 10
+        thirdImageView.backgroundColor = .white
+        thirdImageView.clipsToBounds = true
+        thirdImageView.contentMode = .scaleAspectFit
+        thirdImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
+        thirdImageView.isUserInteractionEnabled = true
+        thirdImageView.addGestureRecognizer(tapGesture)
+        return thirdImageView
+    }()
+    
+    private lazy var fourthImageView: UIImageView = {
+       let fourthImageView = UIImageView()
+        fourthImageView.layer.cornerRadius = 10
+        fourthImageView.backgroundColor = .white
+        fourthImageView.clipsToBounds = true
+        fourthImageView.contentMode = .scaleAspectFit
+        fourthImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
+        fourthImageView.isUserInteractionEnabled = true
+        fourthImageView.addGestureRecognizer(tapGesture)
+        return fourthImageView
     }()
     
     lazy var morePhotosLabel: UILabel = {
@@ -70,7 +98,20 @@ class ChatMessageTableViewImageCell: UITableViewCell {
         morePhotosLabel.translatesAutoresizingMaskIntoConstraints = false
         morePhotosLabel.numberOfLines = 0
         morePhotosLabel.textAlignment = .center
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleMorePhotosLabelTap(_:)))
+        morePhotosLabel.isUserInteractionEnabled = true
+        morePhotosLabel.addGestureRecognizer(tapGesture)
         return morePhotosLabel
+    }()
+    
+    lazy var bubbleView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.cornerRadius = 12
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
     }()
     
     lazy var profileImageView: UIImageView = {
@@ -127,105 +168,309 @@ class ChatMessageTableViewImageCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        print("layoutSubviews")
+        
+
+        // bubbleView의 너비를 동적으로 계산
+        let bubbleViewWidth = bubbleView.bounds.width
+        let spacing = 10
+        var imageSize: CGFloat
+        
+        switch images.count {
+        case 1...3:
+            imageSize = (bubbleViewWidth - CGFloat(spacing * ( images.count - 1 )))  / CGFloat(images.count)
+        default:
+            imageSize = (bubbleViewWidth - CGFloat(spacing)) / 2
+        }
+        
+        bubbleView.subviews.forEach { NSLayoutConstraint.deactivate($0.constraints) }
+        
+        switch images.count {
+        case 0:
+            break
+        case 1:
+            NSLayoutConstraint.activate([
+                firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -10),
+            ])
+        case 2:
+            bubbleView.addSubview(firstImageView)
+            bubbleView.addSubview(secondImageView)
+            
+            NSLayoutConstraint.activate([
+                firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                
+                secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                secondImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                secondImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                secondImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+            ])
+        case 3:
+            bubbleView.addSubview(firstImageView)
+            bubbleView.addSubview(secondImageView)
+            bubbleView.addSubview(thirdImageView)
+        case 4:
+            bubbleView.addSubview(firstImageView)
+            bubbleView.addSubview(secondImageView)
+            bubbleView.addSubview(thirdImageView)
+            bubbleView.addSubview(fourthImageView)
+            
+            NSLayoutConstraint.activate([
+                firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                
+                secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                secondImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                secondImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                
+                thirdImageView.topAnchor.constraint(equalTo: firstImageView.bottomAnchor, constant: 10),
+                thirdImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                thirdImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                
+                
+                fourthImageView.topAnchor.constraint(equalTo: secondImageView.bottomAnchor, constant: 10),
+                fourthImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                fourthImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                fourthImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+            ])
+        default:
+            bubbleView.addSubview(firstImageView)
+            bubbleView.addSubview(secondImageView)
+            bubbleView.addSubview(thirdImageView)
+            bubbleView.addSubview(morePhotosLabel)
+            
+            NSLayoutConstraint.activate([
+                firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                
+                secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                secondImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                secondImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                
+                thirdImageView.topAnchor.constraint(equalTo: firstImageView.bottomAnchor, constant: 10),
+                thirdImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                thirdImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                
+                morePhotosLabel.topAnchor.constraint(equalTo: secondImageView.bottomAnchor, constant: 10),
+                morePhotosLabel.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                morePhotosLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                morePhotosLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+            ])
+        }
+        
+        NSLayoutConstraint.activate([
+            firstImageView.heightAnchor.constraint(equalToConstant: imageSize),
+            secondImageView.heightAnchor.constraint(equalToConstant: imageSize),
+            thirdImageView.heightAnchor.constraint(equalToConstant: imageSize),
+            fourthImageView.heightAnchor.constraint(equalToConstant: imageSize),
+            morePhotosLabel.heightAnchor.constraint(equalToConstant: imageSize),
+        ])
+        
+    }
+    
     // MARK: - Setup UI
     private func setupUI() {
+        print("setupUI")
         contentView.subviews.forEach { $0.removeFromSuperview() }
-        
-        updateImageStackView()
-        contentView.addSubview(imageStackView)
-        contentView.addSubview(timeLabel)
-        
         // 제약조건 재설정을 위한 기존 제약조건 제거
+        contentView.subviews.forEach { NSLayoutConstraint.deactivate($0.constraints) }
         NSLayoutConstraint.deactivate(contentView.constraints)
-        // profileImageView와 isReadLabel 제거
-        profileImageView.removeFromSuperview()
-        isReadLabel.removeFromSuperview()
+//        NSLayoutConstraint.deactivate(bubbleView.constraints)
+        
+        contentView.addSubview(bubbleView)
+        contentView.addSubview(timeLabel)
         
         if isIncoming {
             contentView.addSubview(profileImageView)
             
+            // timeLabel이 충분한 공간을 차지하도록 우선순위 설정
+            timeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            timeLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+            
             NSLayoutConstraint.activate([
                 profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-                profileImageView.topAnchor.constraint(equalTo: imageStackView.topAnchor),
+                profileImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 profileImageView.widthAnchor.constraint(equalToConstant: 52),
                 profileImageView.heightAnchor.constraint(equalToConstant: 52),
                 
-                imageStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-                imageStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-                imageStackView.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 5),
+                bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+                bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+                bubbleView.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 5),
                 
-                timeLabel.bottomAnchor.constraint(equalTo: imageStackView.bottomAnchor, constant: -5),
-                timeLabel.leadingAnchor.constraint(equalTo: imageStackView.trailingAnchor, constant: 5),
-                timeLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -100)
+                timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
+                timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
+                timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100)
             ])
         } else {
             contentView.addSubview(isReadLabel)
             
+            // isReadLabel과 timeLabel이 충분한 공간을 차지하도록 우선순위 설정
+            isReadLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            isReadLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+
+            timeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            timeLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+
             NSLayoutConstraint.activate([
-                isReadLabel.bottomAnchor.constraint(equalTo: imageStackView.bottomAnchor, constant: -5),
-                isReadLabel.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 100),
+                isReadLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
+                isReadLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100),
                 
-                timeLabel.bottomAnchor.constraint(equalTo: imageStackView.bottomAnchor, constant: -5),
+                timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: isReadLabel.trailingAnchor, constant: 5),
                 
-                imageStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-                imageStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-                imageStackView.leadingAnchor.constraint(equalTo: timeLabel.trailingAnchor, constant: 5),
-                imageStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+                bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+                bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+                bubbleView.leadingAnchor.constraint(equalTo: timeLabel.trailingAnchor, constant: 5),
+                bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
 
+            ])
+        }
+        setupImageView()
+    }
+    
+//    private func initHeight() {
+//        NSLayoutConstraint.activate([
+//            firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor)
+//        ])
+//    }
+    
+    private func setupImageView() {
+        print("setupImageView")
+        bubbleView.subviews.forEach { $0.removeFromSuperview() }
+        bubbleView.subviews.forEach { NSLayoutConstraint.deactivate($0.constraints) }
+        NSLayoutConstraint.deactivate(bubbleView.constraints)
+        
+        switch images.count {
+        case 0:
+            break
+        case 1:
+            bubbleView.addSubview(firstImageView)
+            
+            NSLayoutConstraint.activate([
+                firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
+                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -10),
+            ])
+        case 2:
+            bubbleView.addSubview(firstImageView)
+            bubbleView.addSubview(secondImageView)
+            
+            NSLayoutConstraint.activate([
+                firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
+                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                
+                secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                secondImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                secondImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                secondImageView.heightAnchor.constraint(equalTo: secondImageView.widthAnchor),
+                secondImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+            ])
+        case 3:
+            bubbleView.addSubview(firstImageView)
+            bubbleView.addSubview(secondImageView)
+            bubbleView.addSubview(thirdImageView)
+        case 4:
+            bubbleView.addSubview(firstImageView)
+            bubbleView.addSubview(secondImageView)
+            bubbleView.addSubview(thirdImageView)
+            bubbleView.addSubview(fourthImageView)
+            
+            NSLayoutConstraint.activate([
+                firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
+                
+                secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                secondImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                secondImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                secondImageView.heightAnchor.constraint(equalTo: secondImageView.widthAnchor),
+                
+                thirdImageView.topAnchor.constraint(equalTo: firstImageView.bottomAnchor, constant: 10),
+                thirdImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                thirdImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                thirdImageView.heightAnchor.constraint(equalTo: thirdImageView.widthAnchor),
+                thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                
+                
+                fourthImageView.topAnchor.constraint(equalTo: secondImageView.bottomAnchor, constant: 10),
+                fourthImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                fourthImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                fourthImageView.heightAnchor.constraint(equalTo: secondImageView.widthAnchor),
+                fourthImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+            ])
+        default:
+            bubbleView.addSubview(firstImageView)
+            bubbleView.addSubview(secondImageView)
+            bubbleView.addSubview(thirdImageView)
+            bubbleView.addSubview(morePhotosLabel)
+            
+            NSLayoutConstraint.activate([
+                firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
+                
+                secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                secondImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                secondImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                secondImageView.heightAnchor.constraint(equalTo: secondImageView.widthAnchor),
+                
+                thirdImageView.topAnchor.constraint(equalTo: firstImageView.bottomAnchor, constant: 10),
+                thirdImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                thirdImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                thirdImageView.heightAnchor.constraint(equalTo: thirdImageView.widthAnchor),
+                thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                
+                morePhotosLabel.topAnchor.constraint(equalTo: secondImageView.bottomAnchor, constant: 10),
+                morePhotosLabel.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                morePhotosLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                morePhotosLabel.heightAnchor.constraint(equalTo: secondImageView.widthAnchor),
+                morePhotosLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
             ])
         }
     }
     
-    private func updateImageStackView() {
-        imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        firstVStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        secondVStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        imageViews = images.map { image in
-            let imageView = UIImageView(image: image)
-            imageView.layer.cornerRadius = 10
-            imageView.backgroundColor = .white
-            imageView.clipsToBounds = true
-            imageView.contentMode = .scaleAspectFit
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
-            imageView.isUserInteractionEnabled = true
-            imageView.addGestureRecognizer(tapGesture)
-            
-            NSLayoutConstraint.activate([
-                imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
-            ])
-            return imageView
-        }
-        
-        switch imageViews.count {
+    private func updateBubbleView() {
+        print("updateBubbleView")
+        switch images.count {
         case 0:
             break
-        case 1...3:
-            imageViews.forEach { imageStackView.addArrangedSubview($0) }
+        case 1:
+            firstImageView.image = images[0]
+        case 2:
+            firstImageView.image = images[0]
+            secondImageView.image = images[1]
+        case 3:
+            firstImageView.image = images[0]
+            secondImageView.image = images[1]
+            thirdImageView.image = images[2]
         case 4:
-            firstVStackView.addArrangedSubview(imageViews[0])
-            secondVStackView.addArrangedSubview(imageViews[1])
-            firstVStackView.addArrangedSubview(imageViews[2])
-            secondVStackView.addArrangedSubview(imageViews[3])
-            
-            imageStackView.addArrangedSubview(firstVStackView)
-            imageStackView.addArrangedSubview(secondVStackView)
+            firstImageView.image = images[0]
+            secondImageView.image = images[1]
+            thirdImageView.image = images[2]
+            fourthImageView.image = images[3]
         default:
-            morePhotosLabel.text = "+ \(imageViews.count - 3)\n더보기"
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleMorePhotosLabelTap(_:)))
-            morePhotosLabel.isUserInteractionEnabled = true
-            morePhotosLabel.addGestureRecognizer(tapGesture)
-            
-            firstVStackView.addArrangedSubview(imageViews[0])
-            secondVStackView.addArrangedSubview(imageViews[1])
-            firstVStackView.addArrangedSubview(imageViews[2])
-            secondVStackView.addArrangedSubview(morePhotosLabel)
-            
-            imageStackView.addArrangedSubview(firstVStackView)
-            imageStackView.addArrangedSubview(secondVStackView)
+            firstImageView.image = images[0]
+            secondImageView.image = images[1]
+            thirdImageView.image = images[2]
+            morePhotosLabel.text = "+ \(images.count - 3)\n더보기"
         }
     }
     
@@ -240,9 +485,11 @@ class ChatMessageTableViewImageCell: UITableViewCell {
     
     @objc
     private func handleMorePhotosLabelTap(_ sender: UITapGestureRecognizer) {
-        guard let morePhotosLabel = sender.view as? UILabel else { return }
+        guard let _ = sender.view as? UILabel else { return }
         
         delegate?.imageViewTapped(images: images, index: 3)
     }
 }
+
+
 
