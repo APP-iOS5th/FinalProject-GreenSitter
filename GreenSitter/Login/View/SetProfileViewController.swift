@@ -200,12 +200,14 @@ class SetProfileViewController: UIViewController {
                 DispatchQueue.main.async {
                     self?.nicknameStatusLabel.text = "중복된 닉네임입니다."
                     self?.nicknameStatusLabel.textColor = .red
+                    self?.nextButton.isEnabled = false
                 }
             } else {
                 // 닉네임을 사용할 수 있는 경우
                 DispatchQueue.main.async {
                     self?.nicknameStatusLabel.text = "사용 가능한 닉네임입니다."
                     self?.nicknameStatusLabel.textColor = .green
+                    self?.nextButton.isEnabled = true
                 }
             }
         }
@@ -274,12 +276,11 @@ class SetProfileViewController: UIViewController {
 
     //MARK: - nextButton을 눌렀을때 닉네임을 파이어베이스에 저장
     @objc func nextTap() {
-        guard let nicknameStatus = nicknameStatusLabel.text, nicknameStatus == "사용 가능한 닉네임입니다." else {
-            // 중복된 닉네임일 경우 처리
+        
+        guard let nickname = nickNameTextField.text, !nickname.isEmpty else {
+            
             return
         }
-        //MARK: - 파이어베이스 저장
-        guard let nickname = nickNameTextField.text, !nickname.isEmpty else { return }
         guard let selectButton = selectButton else { return }
         
         let imageUrls = [
@@ -299,13 +300,14 @@ class SetProfileViewController: UIViewController {
             print("Error: Firebase authResult is nil.")
             return
         }
+        
         let userData: [String: Any] = [
             "id": user.uid,
             "enabled": true,
             "createDate": Date(),
             "updateDate": Date(),
             "profileImage": selectedImageUrl,
-            "nickname": "기본 닉네임",   // TODO: 닉네임 자동생성기 호출
+            "nickname": nickname,
             "levelPoint": Level.seeds.rawValue,
             "exp": 0,
             "aboutMe": "",
@@ -327,7 +329,6 @@ class SetProfileViewController: UIViewController {
             let profileViewController = ProfileViewController()
             self.navigationController?.pushViewController(profileViewController, animated: true)
         }
-        
     }
     // 메인뷰로 이동
     @objc func skipTap() {
