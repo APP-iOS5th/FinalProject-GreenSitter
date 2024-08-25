@@ -13,7 +13,18 @@ import FirebaseCore
 import FirebaseFirestore
 import GoogleSignIn
 
-class LoginViewController: UIViewController {
+protocol LoginViewControllerDelegate: AnyObject {
+    func didCompleteLogin()
+}
+
+class LoginViewController: UIViewController, SetLocationViewControllerDelegate {
+    func didCompleteLocationSetup() {
+        self.delegate?.didCompleteLogin()
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    weak var delegate: LoginViewControllerDelegate?
+    
     var currentNonce: String? //Apple Login Property
     let db = Firestore.firestore()
     
@@ -261,16 +272,11 @@ class LoginViewController: UIViewController {
                     else if let document = document, document.exists {
                         // 재로그인 (유저 데이터가 있는 경우)
                         DispatchQueue.main.async {
-                            // Setting local User
                             LoginViewModel.shared.firebaseFetch(docId: user.uid)
-
-                            let profileViewController = ProfileViewController()
-                            if let navigationController = self.navigationController {
-                                navigationController.pushViewController(profileViewController, animated: true)
-                            }
-                            else {
-                                print("Error: The current view controller is not embedded in a UINavigationController.")
-                            }
+                            self.navigationController?.popToRootViewController(animated: false) // 모든 푸시된 뷰를 pop
+                            self.dismiss(animated: true, completion: {
+                                self.delegate?.didCompleteLogin()
+                            })
                         }
                     }
                     
@@ -284,12 +290,8 @@ class LoginViewController: UIViewController {
                             } else {
                                 DispatchQueue.main.async {
                                     let setLocationViewController = SetLocationViewController()
-                                    if let navigationController = self.navigationController {
-                                        navigationController.pushViewController(setLocationViewController, animated: true)
-                                    }
-                                    else {
-                                        print("Error: The current view controller is not embedded in a UINavigationController.")
-                                    }
+                                    setLocationViewController.delegate = self
+                                    self.navigationController?.pushViewController(setLocationViewController, animated: true)
                                 }
                             }
                         }
@@ -365,18 +367,12 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                         else if let document = document, document.exists {
                             // 재로그인 (유저 데이터가 있는 경우)
                             DispatchQueue.main.async {
-                                // Setting local User
                                 LoginViewModel.shared.firebaseFetch(docId: user.uid)
-                                // TODO: 비동기 프로그래밍
-                                
-                                let profileViewController = ProfileViewController()
-                                if let navigationController = self.navigationController {
-                                    print("LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
-                                    navigationController.pushViewController(profileViewController, animated: true)
-                                }
-                                else {
-                                    print("Error: The current view controller is not embedded in a UINavigationController.")
-                                }
+                                self.navigationController?.popToRootViewController(animated: false) // 모든 푸시된 뷰를 pop
+                                self.dismiss(animated: true, completion: {
+                                    self.delegate?.didCompleteLogin()
+                                })
+
                             }
                         }
                         else {
@@ -389,12 +385,8 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                                 } else {
                                     DispatchQueue.main.async {
                                         let setLocationViewController = SetLocationViewController()
-                                        if let navigationController = self.navigationController {
-                                            navigationController.pushViewController(setLocationViewController, animated: true)
-                                        }
-                                        else {
-                                            print("Error: The current view controller is not embedded in a UINavigationController.")
-                                        }
+                                        setLocationViewController.delegate = self
+                                        self.navigationController?.pushViewController(setLocationViewController, animated: true)
                                     }
                                 }
                             }

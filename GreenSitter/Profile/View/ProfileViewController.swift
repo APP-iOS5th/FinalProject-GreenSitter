@@ -11,7 +11,13 @@ import FirebaseAuth
 import FirebaseStorage
 import Combine
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: UIViewController, LoginViewControllerDelegate {
+    func didCompleteLogin() {
+        setupView()
+        fetchUserFirebase()
+        setupTextField()
+    }
+    
     
     // MARK: - Properties
     var sectionTitle = ["내 정보", "돌봄 정보", "시스템", "이용약관 및 개인정보 처리방침" ]
@@ -85,10 +91,12 @@ class ProfileViewController: UIViewController {
         // 로그인 상태 확인
         if Auth.auth().currentUser == nil {
             let loginViewController = LoginViewController()
+            loginViewController.delegate = self
             let navigationController = UINavigationController(rootViewController: loginViewController)
             navigationController.modalPresentationStyle = .fullScreen
             present(navigationController, animated: true, completion: nil)
         }
+        
     }
     
     private func setupView() {

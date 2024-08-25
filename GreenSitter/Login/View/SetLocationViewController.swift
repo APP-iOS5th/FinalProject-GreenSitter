@@ -11,8 +11,18 @@ import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
 
-class SetLocationViewController: UIViewController, UITextFieldDelegate {
-    
+protocol SetLocationViewControllerDelegate: AnyObject {
+    func didCompleteLocationSetup()
+}
+
+class SetLocationViewController: UIViewController, UITextFieldDelegate, SetProfileViewControllerDelegate {
+    func didCompleteProfileSetup() {
+        self.delegate?.didCompleteLocationSetup()
+        self.navigationController?.popToRootViewController(animated: true)
+    }
+
+    weak var delegate: SetLocationViewControllerDelegate?
+
     private let mapViewModel = MapViewModel()
     private var cancellables = Set<AnyCancellable>()
 
@@ -262,6 +272,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         
         DispatchQueue.main.async {
             let setProfileViewController = SetProfileViewController(location: location)
+            setProfileViewController.delegate = self
             self.navigationController?.pushViewController(setProfileViewController, animated: true)
         }
     }

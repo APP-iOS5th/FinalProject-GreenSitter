@@ -11,8 +11,13 @@ import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
 
+protocol SetProfileViewControllerDelegate: AnyObject {
+    func didCompleteProfileSetup()
+}
+
 class SetProfileViewController: UIViewController {
-    
+    weak var delegate: SetProfileViewControllerDelegate?
+
     let storage = Storage.storage()
     let db = Firestore.firestore()
     var selectButton: UIButton? // 선택한 버튼을 저장할 변수
@@ -347,7 +352,8 @@ class SetProfileViewController: UIViewController {
                 print("Nickname successfully saved!")
             }
         }
-        dismiss(animated: true, completion: nil)
+        self.delegate?.didCompleteProfileSetup()
+        self.navigationController?.popToRootViewController(animated: true)
     }
     
     @objc func skipTap() {
@@ -380,7 +386,8 @@ class SetProfileViewController: UIViewController {
             }
         }
         
-        dismiss(animated: true, completion: nil)
+        self.delegate?.didCompleteProfileSetup()
+        self.navigationController?.popToRootViewController(animated: true)
     }
 }
 
