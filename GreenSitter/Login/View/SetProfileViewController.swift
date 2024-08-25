@@ -152,7 +152,8 @@ class SetProfileViewController: UIViewController {
         nickNameTextField.addTarget(self, action: #selector(nicknameTextChanged(_:)), for: .editingChanged)
         
         setupImage()
-        
+        updateNextButtonAppearance(isUniqueNickname: false)
+
         // 제약 조건 설정
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
@@ -169,7 +170,7 @@ class SetProfileViewController: UIViewController {
             imageStackView2.heightAnchor.constraint(equalToConstant: 100),
             
             nickNameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nickNameTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 80),
+            nickNameTextField.topAnchor.constraint(equalTo: imageStackView2.bottomAnchor, constant: 20),
             nickNameTextField.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -50),
             
             nicknameStatusLabel.topAnchor.constraint(equalTo: nickNameTextField.bottomAnchor, constant: 8),
@@ -200,25 +201,47 @@ class SetProfileViewController: UIViewController {
                 DispatchQueue.main.async {
                     self?.nicknameStatusLabel.text = "중복된 닉네임입니다."
                     self?.nicknameStatusLabel.textColor = .red
-                    self?.nextButton.isEnabled = false
+                    self?.updateNextButtonAppearance(isUniqueNickname: false)
                 }
             } else {
                 // 닉네임을 사용할 수 있는 경우
                 DispatchQueue.main.async {
                     self?.nicknameStatusLabel.text = "사용 가능한 닉네임입니다."
                     self?.nicknameStatusLabel.textColor = .green
-                    self?.nextButton.isEnabled = true
+                    self?.updateNextButtonAppearance(isUniqueNickname: true)
                 }
             }
         }
     }
     
     @objc func nicknameTextChanged(_ textField: UITextField) {
-        guard let nickname = textField.text, !nickname.isEmpty else {
+        // 닉네임 필드가 비어 있는 경우
+        if let nickname = textField.text, !nickname.isEmpty {
+            checkNicknameAvailability(nickname: nickname)
+        } else {
+            // 닉네임 필드가 비어 있으면 상태 레이블을 비우고 버튼 비활성화
             nicknameStatusLabel.text = ""
-            return
+            updateNextButtonAppearance(isUniqueNickname: false)
         }
-        checkNicknameAvailability(nickname: nickname)
+    }
+    
+    
+    private func updateNextButtonAppearance(isUniqueNickname: Bool) {
+        // 닉네임 텍스트 필드가 비어 있는지 확인
+        let isNicknameEmpty = nickNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        
+        // 버튼의 활성화 상태를 설정
+        let isEnabled = !isNicknameEmpty && isUniqueNickname
+        nextButton.isEnabled = isEnabled
+        
+        // 버튼의 배경색 및 텍스트 색상을 설정
+        if isEnabled {
+            nextButton.backgroundColor = .dominent // 활성화된 버튼 색상
+            nextButton.setTitleColor(.white, for: .normal)
+        } else {
+            nextButton.backgroundColor = .gray // 비활성화된 버튼 색상
+            nextButton.setTitleColor(.lightGray, for: .normal)
+        }
     }
     
     func setupImage() {
@@ -278,7 +301,7 @@ class SetProfileViewController: UIViewController {
     @objc func nextTap() {
         
         guard let nickname = nickNameTextField.text, !nickname.isEmpty else {
-            
+            nickNameTextField.text = "기본 닉네임"
             return
         }
         guard let selectButton = selectButton else { return }
