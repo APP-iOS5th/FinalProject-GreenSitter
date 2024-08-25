@@ -124,6 +124,8 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         bindViewModel()
+        mapViewModel.checkLocationAuthorization()
+
         print("User 객체 상태: \(String(describing: users))")
         
         view.backgroundColor = .bgPrimary
