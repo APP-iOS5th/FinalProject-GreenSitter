@@ -138,14 +138,14 @@ class LoginViewController: UIViewController {
         let labelOne = UILabel()
         labelOne.text = "로그인 권한이 필요한 기능입니다"
         labelOne.textColor = .labelsPrimary
-        labelOne.font = UIFont.boldSystemFont(ofSize: 13)
+        labelOne.font = UIFont.boldSystemFont(ofSize: 15)
         labelOne.textAlignment = .left
         labelOne.translatesAutoresizingMaskIntoConstraints = false
         
         let labelTwo = UILabel()
         labelTwo.text = "로그인 화면으로 이동합니다"
         labelTwo.textColor = .labelsSecondary
-        labelTwo.font = UIFont.systemFont(ofSize: 11)
+        labelTwo.font = UIFont.systemFont(ofSize: 12)
         labelTwo.textAlignment = .left
         labelTwo.translatesAutoresizingMaskIntoConstraints = false
         
