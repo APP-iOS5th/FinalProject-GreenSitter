@@ -17,7 +17,7 @@ struct User: Codable {
     var location: Location
     let platform: String
     var levelPoint: Level
-    let exp: Int
+    var exp: Int
     var aboutMe: String
     let chatNotification: Bool
     var docId: String

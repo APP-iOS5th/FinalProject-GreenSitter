@@ -79,6 +79,16 @@ extension ReviewViewController {
             return .average
         }()
         
+        let expChange: Int
+        switch rating {
+        case .bad:
+            expChange = -3
+        case .average:
+            expChange = 3
+        case .good:
+            expChange = 7
+        }
+        
         // Get the selected texts
         var selectedTexts = [String]()
         if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell {
@@ -123,6 +133,7 @@ extension ReviewViewController {
                 print("Review successfully written!")
             }
         }
+        
 
         // 게시물 작성자 Firestore에 저장
         db.collection("posts").document(postId).getDocument { document, error in
@@ -137,17 +148,26 @@ extension ReviewViewController {
                         } else {
                             print("Review successfully written to post creator's document!")
                             
-                            // After saving the review, update the isReviewed field in the post document
-                            self.db.collection("posts").document(postId).updateData([
-                                "isReviewed": true
-                            ]) { error in
-                                if let error = error {
-                                    print("Error updating document: \(error)")
-                                } else {
-                                    print("Document successfully updated with isReviewed set to true")
-                                    // 리뷰 저장 후 뷰를 닫거나 다른 동작 수행
+                            //상대방 exp 업데이트
+                            self.db.collection("users").document(creatorId).getDocument { documentSnapshot, error in
+                                guard let document = documentSnapshot, var creatorUser = try? document.data(as: User.self) else {
+                                    print("Error retrieving creator's user document: \(String(describing: error))")
+                                    return
+                                }
+                                
+                                creatorUser.exp += expChange
+                                
+                                self.db.collection("user").document(creatorId).setData(creatorUser.toDictionary(), merge: true) { error in
+                                    
+                                    if let error = error {
+                                        print("exp 업데이트 실패: \(error)")
+                                    }
+                                    else {
+                                        print("exp 업데이트 성공")
+                                    }
                                 }
                             }
+                            
                         }
                     }
                 } else {

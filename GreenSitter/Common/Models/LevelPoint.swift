@@ -14,4 +14,5 @@ enum Level: String, Codable {
     case seedling = "유묘"
     case flower = "꽃"
     case fruit = "열매"
+    
 }
