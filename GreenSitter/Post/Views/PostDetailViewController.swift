@@ -167,9 +167,11 @@ class PostDetailViewController: UIViewController {
             // 해당 post 가 자신이 올린 Post 라면, 삭제/편집 기능 있는 네비게이션 바로 표시
             if LoginViewModel.shared.user?.id == post.userId {
                 setupNavigationBarWithEdit()
+                // TODO: 채팅도 표시하지 않아야함
             } else {
                 // 그게 아니면 차단 기능있는 네비게이션 바 표시
                 setupNavigationBarWithBlock()
+                
             }
         }
         

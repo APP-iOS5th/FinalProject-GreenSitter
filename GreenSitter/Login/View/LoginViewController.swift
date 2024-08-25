@@ -64,9 +64,25 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private lazy var closeButton: UIBarButtonItem = {
+        let button = UIBarButtonItem()
+        button.image = UIImage(systemName: "xmark")
+        button.style = .plain
+        button.tintColor = .labelsPrimary
+        button.target = self
+        button.action = #selector(navigationTap)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
+    }
+    
+    private func setupUI() {
         view.backgroundColor = .bgPrimary
+        
+        navigationItem.leftBarButtonItem = closeButton
         
         view.addSubview(bodyLabel)
         view.addSubview(titleLabel)
@@ -286,7 +302,8 @@ class LoginViewController: UIViewController {
     
     //MARK: - MainView move
     @objc func navigationTap() {
-        if let window = UIApplication.shared.windows.first(where: \.isKeyWindow),
+        if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let window = windowScene.windows.first(where: \.isKeyWindow),
            let tabBarController = window.rootViewController as? UITabBarController {
             tabBarController.selectedIndex = 0 // 메인 뷰(홈) 탭으로 이동
             dismiss(animated: true, completion: nil) // 로그인 뷰 닫기

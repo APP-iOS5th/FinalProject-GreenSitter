@@ -298,6 +298,7 @@ class SetProfileViewController: UIViewController {
     }
 
     //MARK: - nextButton을 눌렀을때 닉네임을 파이어베이스에 저장
+    
     @objc func nextTap() {
         
         guard let nickname = nickNameTextField.text, !nickname.isEmpty else {
@@ -341,24 +342,15 @@ class SetProfileViewController: UIViewController {
             if let error = error {
                 print("Firestore Writing Error: \(error)")
             } else {
+                LoginViewModel.shared.firebaseFetch(docId: user.uid)
+
                 print("Nickname successfully saved!")
-                let profileViewController = ProfileViewController()
-                self.navigationController?.pushViewController(profileViewController, animated: true)
             }
         }
-        LoginViewModel.shared.firebaseFetch(docId: user.uid)
-        // 프로필 뷰로이동
-        DispatchQueue.main.async {
-            let profileViewController = ProfileViewController()
-            self.navigationController?.pushViewController(profileViewController, animated: true)
-        }
+        dismiss(animated: true, completion: nil)
     }
-    // 메인뷰로 이동
+    
     @objc func skipTap() {
-        
-        // 스킵을 하는 경우에도 user data 가 기본값으로 저장되어야 하므로
-        // Firestore에 사용자 데이터 저장
-        
         let defaultImageUrl = "gs://greensitter-6dedd.appspot.com/꽃1.png"
         
         guard let user = Auth.auth().currentUser else {
@@ -378,22 +370,17 @@ class SetProfileViewController: UIViewController {
             "chatNotification": false
         ]
         
-
-        
         db.collection("users").document(user.uid).setData(userData, merge: true) { error in
             if let error = error {
                 print("Firestore Writing Error: \(error)")
             } else {
+                LoginViewModel.shared.firebaseFetch(docId: user.uid)
+                
                 print("Nickname successfully saved!")
             }
         }
-//        LoginViewModel.shared.userFetchFirebase(profileImage: defaultImageUrl, nickname: "기본 닉네임", location: location, docId: user.uid)
-        LoginViewModel.shared.firebaseFetch(docId: user.uid)
-
-        let postListViewController = MainPostListViewController()
-        navigationController?.pushViewController(postListViewController, animated: true)
+        
+        dismiss(animated: true, completion: nil)
     }
-    
-    
 }
 

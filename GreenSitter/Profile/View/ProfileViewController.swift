@@ -94,7 +94,7 @@ class ProfileViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = UIColor(named: "BGSecondary")
         navigationItem.title = "프로필"
-        
+        navigationItem.hidesBackButton = true
         view.addSubview(circleView)
         view.addSubview(imageButton)
         view.addSubview(profileButton)
