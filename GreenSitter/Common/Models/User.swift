@@ -21,6 +21,21 @@ struct User: Codable {
     var aboutMe: String
     let chatNotification: Bool
     var docId: String
+    
+    mutating func updateExp(by expChange: Int) {
+        //경험치 업데이트
+        exp += expChange
+        
+        while exp >= 100 {
+            let extraExp = exp - 100
+            exp = extraExp
+            levelPoint = levelPoint.nextLevel()
+        }
+        
+        while exp < 0 {
+            levelPoint = levelPoint.previousLevel()
+        }
+    }
 }
 
 extension User {

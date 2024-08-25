@@ -91,6 +91,7 @@ class LoginViewModel: ObservableObject {
                                  exp: exp,
                                  aboutMe: aboutMe,
                                  chatNotification: chatNotification, docId: docId)
+                self.user?.updateExp(by: exp) //경험치 업데이트
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
             }
         }
