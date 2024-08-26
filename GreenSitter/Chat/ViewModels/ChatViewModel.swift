@@ -17,7 +17,7 @@ class ChatViewModel {
     var hasChats = false
     
     // 임시 유저 id
-    let userId = "250e8400-e29b-41d4-a716-446655440002"
+    let userId = "250e8400-e29b-41d4-a716-446655440003"
     var user: User? {
         didSet {
 //            isLoggedIn = user != nil
@@ -63,49 +63,27 @@ class ChatViewModel {
         }
     }
     
-    func loadChatRooms(completion: @escaping ([ChatRoom]) -> Void) {
-        firestoreManager.fetchChatRooms(userId: userId) { [weak self] updatedChatRooms in
-            guard let self = self else { return }
+    func loadChatRooms() async throws -> [ChatRoom] {
+        do {
+            let updatedChatRooms = try await firestoreManager.fetchChatRooms(userId: userId)
             self.chatRooms = updatedChatRooms
-            
-            completion(updatedChatRooms)
+            return updatedChatRooms
+        } catch {
+            print("Error loading chat rooms: \(error.localizedDescription)")
+            throw error
         }
     }
     
-    func loadLastMessages(chatRoomId: String, completion: @escaping () -> Void) {
-        firestoreManager.fetchLastMessages(chatRoomId: chatRoomId) { [weak self] updatedMessages in
-            guard let self = self else {
-                completion()
-                return
-            }
-            self.lastMessages[chatRoomId] = updatedMessages
-            
-            completion()
-        }
+    func loadLastMessages(chatRoomId: String) async -> AsyncStream<[Message]> {
+        return firestoreManager.fetchLastMessages(chatRoomId: chatRoomId)
     }
     
-    func loadUnreadMessages(chatRoomId: String, completion: @escaping () -> Void) {
-        firestoreManager.fetchUnreadMessages(chatRoomId: chatRoomId, userId: userId) { [weak self] updatedMessages in
-            guard let self = self else {
-                completion()
-                return
-            }
-            self.unreadMessages[chatRoomId] = updatedMessages
-            
-            completion()
-        }
+    func loadUnreadMessages(chatRoomId: String) async -> AsyncStream<[Message]> {
+        return firestoreManager.fetchUnreadMessages(chatRoomId: chatRoomId, userId: userId)
     }
     
-    func loadMessages(chatRoomId: String, completion: @escaping () -> Void) {
-        firestoreManager.fetchMessages(chatRoomId: chatRoomId) { [weak self] updatedMessages in
-            guard let self = self else {
-                completion()
-                return
-            }
-            self.messages[chatRoomId] = updatedMessages
-            
-            completion()
-        }
+    func loadMessages(chatRoomId: String) async -> AsyncStream<[Message]>  {
+        return firestoreManager.fetchMessages(chatRoomId: chatRoomId)
     }
     
     func deleteChatRoom(at index: Int) async throws {
@@ -114,7 +92,7 @@ class ChatViewModel {
             return
         }
         
-        var chatRoom = self.chatRooms[index]
+        let chatRoom = self.chatRooms[index]
         
         do {
             let idString = chatRoom.id
@@ -187,9 +165,6 @@ class ChatViewModel {
         } else {
             self.messages[chatRoom.id] = [textMessage]
         }
-
-        // UI 업데이트
-//        self.updateUI?()
         
         Task {
             do {
@@ -201,7 +176,6 @@ class ChatViewModel {
                     chatRoomMessages.removeAll { $0.id == textMessage.id }
                     self.messages[chatRoom.id] = chatRoomMessages
                 }
-//                self.updateUI?()
                 return
             }
         }

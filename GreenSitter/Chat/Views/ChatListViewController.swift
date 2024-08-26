@@ -10,6 +10,8 @@ import UIKit
 class ChatListViewController: UIViewController {
     private var chatViewModel = ChatViewModel()
     private var chatRoom: ChatRoom?
+    private var lastMessageListeners: [Task<Void, Never>] = []
+    private var unreadMessageListeners: [Task<Void, Never>] = []
     
     // container
     private lazy var container: UIView = {
@@ -78,53 +80,61 @@ class ChatListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .bgSecondary
-        
         // 로그인 이벤트 수신
         NotificationCenter.default.addObserver(self, selector: #selector(userDidLogin), name: NSNotification.Name("UserDidLoginNotification"), object: nil)
+    }
+    
+    // MARK: - ViewWillAppear
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         
         if chatViewModel.isLoggedIn {
-            chatViewModel.loadChatRooms { [weak self] updatedChatRooms in
-                guard let self = self else { return }
-                
-//                let dispatchGroup = DispatchGroup()
-                
-                for updatedChatRoom in updatedChatRooms {
-//                    dispatchGroup.enter()
-                    chatViewModel.loadLastMessages(chatRoomId: updatedChatRoom.id) {
-//                        dispatchGroup.enter()
-                        self.chatViewModel.loadUnreadMessages(chatRoomId: updatedChatRoom.id) {
-                            // MARK: - 로그인/채팅방 있음
-                            if self.chatViewModel.hasChats {
-                                self.chatViewModel.updateUI = { [weak self] in
-                                    self?.setupChatListUI()
-                                }
-                                
-                            } else {
-                                // MARK: - 로그인/채팅방 없음
-                                self.chatViewModel.updateUI = { [weak self] in
-                                    self?.setupEmptyChatListUI()
-                                    
-                                    // 버튼 클릭 시 홈 화면으로 이동
-                                    self?.goToHomeButton.addAction(UIAction { [weak self] _ in
-                                        self?.navigateToHome()
-                                    }, for: .touchUpInside)
-                                }
-                            }
-                            // 테이블 뷰를 리로드하여 최신 메시지를 표시
-                            self.tableView.reloadData()
-                            self.chatViewModel.updateUI?()
-
-                            
-//                            dispatchGroup.leave()
-                        }
-//                        dispatchGroup.leave()
-                    }
+            Task {
+                guard let updatedChatRooms = try? await chatViewModel.loadChatRooms() else {
+                    return
                 }
-                // 모든 작업이 완료된 후 UI 업데이트
-//                dispatchGroup.notify(queue: .main) {
-//                    self.chatViewModel.updateUI?()
-//                }
+                
+                for chatRoom in updatedChatRooms {
+                    // 채팅방의 마지막 메시지 실시간 업데이트 리스너 설정
+                    let lastMessageListener = Task {
+                        for await messages in await chatViewModel.loadLastMessages(chatRoomId: chatRoom.id) {
+                            self.chatViewModel.lastMessages[chatRoom.id] = messages
+                        }
+                    }
+                    lastMessageListeners.append(lastMessageListener)
+                    
+                    // 읽지 않은 메시지 리스너 설정
+                    let unreadMessageListener = Task {
+                        for await messages in await chatViewModel.loadUnreadMessages(chatRoomId: chatRoom.id) {
+                            self.chatViewModel.unreadMessages[chatRoom.id] = messages
+                        }
+                    }
+                    unreadMessageListeners.append(unreadMessageListener)
+                }
+                
+                // UI 업데이트
+                await MainActor.run {
+                    // MARK: - 로그인/채팅방 있음
+                    if self.chatViewModel.hasChats {
+                        self.chatViewModel.updateUI = { [weak self] in
+                            self?.setupChatListUI()
+                            self?.tableView.reloadData()
+                        }
+                    } else {
+                        // MARK: - 로그인/채팅방 없음
+                        self.chatViewModel.updateUI = { [weak self] in
+                            self?.setupEmptyChatListUI()
+                            
+                            // 버튼 클릭 시 홈 화면으로 이동
+                            self?.goToHomeButton.addAction(UIAction { [weak self] _ in
+                                self?.navigateToHome()
+                            }, for: .touchUpInside)
+                        }
+                    }
+                    
+                    chatViewModel.updateUI?()
+                }
+                
             }
         } else {
             // MARK: - 비로그인
@@ -132,19 +142,31 @@ class ChatListViewController: UIViewController {
         }
     }
     
-    // MARK: - viewwillAppear
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
+    // MARK: - viewWillDisappear
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
         
-        self.tableView.reloadData()
+        // 메세지 리스너 해제
+        for listener in lastMessageListeners {
+            listener.cancel()
+        }
+
+        for listener in unreadMessageListeners {
+            listener.cancel()
+        }
+
+        lastMessageListeners.removeAll()
+        unreadMessageListeners.removeAll()
     }
     
     // MARK: - Setup ChatList UI
     func setupChatListUI() {
+        self.view.backgroundColor = .bgSecondary
+        
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
+        //        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
         
         self.view.addSubview(tableView)
         

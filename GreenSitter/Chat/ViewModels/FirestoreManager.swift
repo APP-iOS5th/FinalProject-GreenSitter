@@ -106,7 +106,7 @@ class FirestoreManager {
     }
     
     // 채팅방 데이터 가져오기
-    func fetchChatRooms(userId: String, onUpdate: @escaping ([ChatRoom]) -> Void) {
+    func fetchChatRooms(userId: String) async throws -> [ChatRoom] {
         // 사용자 아이디와 userId가 같은 문서와 사용자 아이디와 postUserId가 같은 문서 필터링
         let userQuery = db.collection("chatRooms")
             .whereField("userId", isEqualTo: userId)
@@ -115,37 +115,26 @@ class FirestoreManager {
             .whereField("postUserId", isEqualTo: userId)
             .whereField("postUserEnabled", isEqualTo: true)
         
-        userQuery.getDocuments { [weak self] userSnapshot, error in
-            guard self != nil else {
-                print("self is no longer available")
-                return
+        do {
+            // 사용자 관련 채팅방 가져오기
+            let userSnapshot = try await userQuery.getDocuments()
+            let userChatRooms = userSnapshot.documents.compactMap { document in
+                return try? document.data(as: ChatRoom.self)
             }
             
-            if let error = error {
-                print("Error fetching chat rooms as owner: \(error.localizedDescription)")
-                return
+            // 게시물 사용자 관련 채팅방 가져오기
+            let postUserSnapshot = try await postUserQuery.getDocuments()
+            let postUserChatRooms = postUserSnapshot.documents.compactMap { document in
+                return try? document.data(as: ChatRoom.self)
             }
-
             
-            postUserQuery.getDocuments { postUserSnapshot, error in
-                if let error = error {
-                    print("Error fetching chat rooms as sitter: \(error.localizedDescription)")
-                    return
-                }
-                
-                let userChatRooms = userSnapshot?.documents.compactMap { document in
-                    return try? document.data(as: ChatRoom.self)
-                } ?? []
-                
-                let postUserChatRooms = postUserSnapshot?.documents.compactMap { document in
-                    return try? document.data(as: ChatRoom.self)
-                } ?? []
-                
-                let allChatRooms = Array(userChatRooms + postUserChatRooms)
-                
-                onUpdate(allChatRooms)
-
-            }
+            // 두 채팅방 리스트를 합치기
+            let allChatRooms = Array(userChatRooms + postUserChatRooms)
+            
+            return allChatRooms
+        } catch {
+            print("Error fetching chat rooms: \(error.localizedDescription)")
+            throw error
         }
     }
     
@@ -230,168 +219,121 @@ class FirestoreManager {
     }
     
     // 채팅목록 마지막 메세지 데이터 가져오기
-    func fetchLastMessages(chatRoomId: String, onUpdate: @escaping ([Message]) -> Void) {
-        let messagesQuery = db.collection("chatRooms")
-            .document(chatRoomId)
-            .collection("messages")
-            .order(by: "createDate", descending: true) // 최신순 정렬
-            .limit(to: 1)
-        
-        messagesQuery.addSnapshotListener { snapshot, error in
-            if let error = error {
-                print("Error fetching messages: \(error.localizedDescription)")
-                return
-            }
+    /// listener를 통한 실시간 데이터 변경사항 반영
+    func fetchLastMessages(chatRoomId: String) -> AsyncStream<[Message]> {
+        AsyncStream { continuation in
+            let messagesQuery = db.collection("chatRooms")
+                .document(chatRoomId)
+                .collection("messages")
+                .order(by: "createDate", descending: true)
+                .limit(to: 1)
             
-            // 스냅샷 발생 이유에 대한 로그 출력
-            if let snapshot = snapshot {
-                print("Snapshot metadata: \(snapshot.metadata)")
-                print("Is from cache: \(snapshot.metadata.isFromCache)")
-                print("Has pending writes: \(snapshot.metadata.hasPendingWrites)")
+            let listener = messagesQuery.addSnapshotListener { snapshot, error in
+                if let error = error {
+                    continuation.yield(with: .failure(error as! Never))
+                    return
+                }
+                
+                guard let snapshot = snapshot else {
+                    continuation.yield(with: .success([]))
+                    return
+                }
                 
                 if snapshot.metadata.hasPendingWrites {
-                    print("Snapshot contains local writes that have not yet been sent to the server.")
+                    print("Local writes have not yet been committed to the server.")
+                    return
                 }
                 
-                if snapshot.metadata.isFromCache {
-                    print("Snapshot is from cache and may not reflect the most recent server state.")
-                } else {
-                    print("Snapshot is from the server and reflects the most up-to-date state.")
+                let messages: [Message] = snapshot.documents.compactMap { document in
+                    do {
+                        return try document.data(as: Message.self)
+                    } catch {
+                        print("Error decoding message: \(error.localizedDescription)")
+                        return nil
+                    }
                 }
-            } else {
-                print("No snapshot received.")
+                
+                continuation.yield(with: .success(messages))
             }
             
-            if snapshot?.metadata.hasPendingWrites == true {
-                // 로컬 쓰기가 아직 서버에 반영되지 않음
-                /// UI 업데이트 안전하게 처리
-                print("Local writes have not yet been committed to the server.")
-                return
+            // AsyncStream이 종료될 때 listener 해제
+            continuation.onTermination = { _ in
+                listener.remove()
             }
-            
-            guard let documents = snapshot?.documents else {
-                print("No messages found")
-                return
-            }
-            
-            let messages: [Message] = documents.compactMap { document in
-                do {
-                    return try document.data(as: Message.self)
-                } catch {
-                    print("Error decoding message: \(error.localizedDescription)")
-                    return nil
-                }
-            }
-            
-            onUpdate(messages)
         }
     }
     
     // 안읽은 메세지 데이터 가져오기
-    func fetchUnreadMessages(chatRoomId: String, userId: String, onUpdate: @escaping ([Message]) -> Void) {
-        let messagesQuery = db.collection("chatRooms")
-            .document(chatRoomId)
-            .collection("messages")
-            .whereField("isRead", isEqualTo: false) // 읽지 않은 메시지 필터링
-            .whereField("receiverUserId", isEqualTo: userId) // 수신자가 현재 사용자
-//            .order(by: "createDate", descending: false) // 메세지 보낸 시간순 정렬
-        
-        messagesQuery.addSnapshotListener { snapshot, error in
-            if let error = error {
-                print("Error fetching messages: \(error.localizedDescription)")
-                return
-            }
+    /// listener를 통한 실시간 데이터 변경사항 반영
+    func fetchUnreadMessages(chatRoomId: String, userId: String) -> AsyncStream<[Message]> {
+        AsyncStream { continuation in
+            let messagesQuery = db.collection("chatRooms")
+                .document(chatRoomId)
+                .collection("messages")
+                .whereField("isRead", isEqualTo: false) // 읽지 않은 메시지 필터링
+                .whereField("receiverUserId", isEqualTo: userId) // 수신자가 현재 사용자
             
-            // 스냅샷 발생 이유에 대한 로그 출력
-            if let snapshot = snapshot {
-                print("Snapshot metadata: \(snapshot.metadata)")
-                print("Is from cache: \(snapshot.metadata.isFromCache)")
-                print("Has pending writes: \(snapshot.metadata.hasPendingWrites)")
+            let listener = messagesQuery.addSnapshotListener { snapshot, error in
+                if let error = error {
+                    continuation.yield(with: .failure(error as! Never))
+                    return
+                }
+                
+                guard let snapshot = snapshot else {
+                    continuation.yield(with: .success([]))
+                    return
+                }
                 
                 if snapshot.metadata.hasPendingWrites {
-                    print("Snapshot contains local writes that have not yet been sent to the server.")
+                    print("Local writes have not yet been committed to the server.")
+                    return
                 }
                 
-                if snapshot.metadata.isFromCache {
-                    print("Snapshot is from cache and may not reflect the most recent server state.")
-                } else {
-                    print("Snapshot is from the server and reflects the most up-to-date state.")
+                let messages: [Message] = snapshot.documents.compactMap { document in
+                    do {
+                        return try document.data(as: Message.self)
+                    } catch {
+                        print("Error decoding message: \(error.localizedDescription)")
+                        return nil
+                    }
                 }
-            } else {
-                print("No snapshot received.")
+                
+                continuation.yield(with: .success(messages))
             }
             
-            if snapshot?.metadata.hasPendingWrites == true {
-                // 로컬 쓰기가 아직 서버에 반영되지 않음
-                /// UI 업데이트 안전하게 처리
-                print("Local writes have not yet been committed to the server.")
-                return
+            // AsyncStream이 종료될 때 listener 해제
+            continuation.onTermination = { _ in
+                listener.remove()
             }
-            
-            guard let documents = snapshot?.documents else {
-                print("No messages found")
-                return
-            }
-            
-            let messages: [Message] = documents.compactMap { document in
-                do {
-                    return try document.data(as: Message.self)
-                } catch {
-                    print("Error decoding message: \(error.localizedDescription)")
-                    return nil
-                }
-            }
-            
-            onUpdate(messages)
         }
     }
     
     // 메세지 데이터 가져오기
     /// listener를 통한 실시간 데이터 변경사항 반영
-    func fetchMessages(chatRoomId: String, onUpdate: @escaping ([Message]) -> Void) {
+    func fetchMessages(chatRoomId: String) -> AsyncStream<[Message]> {
+        AsyncStream { continuation in
         let messagesQuery = db.collection("chatRooms")
             .document(chatRoomId)
             .collection("messages")
-            .order(by: "createDate", descending: false) // 메세지 보낸 시간순 정렬
-        
-        messagesQuery.addSnapshotListener { snapshot, error in
+            .order(by: "createDate", descending: false) // 메시지 보낸 시간순 정렬
+
+        let listener = messagesQuery.addSnapshotListener { snapshot, error in
             if let error = error {
-                print("Error fetching messages: \(error.localizedDescription)")
+                continuation.yield(with: .failure(error as! Never))
                 return
             }
             
-            // 스냅샷 발생 이유에 대한 로그 출력
-            if let snapshot = snapshot {
-                print("Snapshot metadata: \(snapshot.metadata)")
-                print("Is from cache: \(snapshot.metadata.isFromCache)")
-                print("Has pending writes: \(snapshot.metadata.hasPendingWrites)")
-                
-                if snapshot.metadata.hasPendingWrites {
-                    print("Snapshot contains local writes that have not yet been sent to the server.")
-                }
-                
-                if snapshot.metadata.isFromCache {
-                    print("Snapshot is from cache and may not reflect the most recent server state.")
-                } else {
-                    print("Snapshot is from the server and reflects the most up-to-date state.")
-                }
-            } else {
-                print("No snapshot received.")
+            guard let snapshot = snapshot else {
+                continuation.yield(with: .success([]))
+                return
             }
             
-            if snapshot?.metadata.hasPendingWrites == true {
-                // 로컬 쓰기가 아직 서버에 반영되지 않음
-                /// UI 업데이트 안전하게 처리
+            if snapshot.metadata.hasPendingWrites {
                 print("Local writes have not yet been committed to the server.")
                 return
             }
             
-            guard let documents = snapshot?.documents else {
-                print("No messages found")
-                return
-            }
-            
-            let messages: [Message] = documents.compactMap { document in
+            let messages: [Message] = snapshot.documents.compactMap { document in
                 do {
                     return try document.data(as: Message.self)
                 } catch {
@@ -400,8 +342,14 @@ class FirestoreManager {
                 }
             }
             
-            onUpdate(messages)
+            continuation.yield(with: .success(messages))
+        }
+        
+        // AsyncStream이 종료될 때 listener 해제
+        continuation.onTermination = { _ in
+            listener.remove()
         }
     }
+}
     
 }
