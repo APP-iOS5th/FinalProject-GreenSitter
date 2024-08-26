@@ -73,7 +73,6 @@ class PostDetailViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12)
         label.textColor = .gray
-        label.text = LoginViewModel.shared.user?.levelPoint.rawValue
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -207,6 +206,9 @@ class PostDetailViewController: UIViewController {
 
 
     private func configureUI(with post: Post) {
+        setupUI()
+        configure(with: post)
+        
         if Auth.auth().currentUser != nil {
             // 해당 post 가 자신이 올린 Post 라면, 삭제/편집 기능 있는 네비게이션 바로 표시
             if LoginViewModel.shared.user?.id == post.userId {
@@ -220,9 +222,6 @@ class PostDetailViewController: UIViewController {
                 configureChatButton(with: post)
             }
         }
-        
-        setupUI()
-        configure(with: post)
     }
     
     private func setupNavigationBarWithEdit(post: Post) {
@@ -292,6 +291,7 @@ class PostDetailViewController: UIViewController {
     // MARK: - 채팅 버튼
     
     private func configureChatButton(with post: Post) {
+        contactButton.isHidden = false
         // post.id 로 접근하시면 됩니다
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -368,6 +368,9 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(mapView)
         
         userProfileButton.addTarget(self, action: #selector(userProfileButtonTapped), for: .touchUpInside)
+        
+        // 기본값은 안보이게
+        contactButton.isHidden = true
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
