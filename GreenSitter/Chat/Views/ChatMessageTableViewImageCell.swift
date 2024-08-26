@@ -26,6 +26,8 @@ class ChatMessageTableViewImageCell: UITableViewCell {
         }
     }
     
+    var imageSize: CGFloat?
+    
     var images: [UIImage] = [] {
         didSet {
             DispatchQueue.main.async {
@@ -195,7 +197,7 @@ class ChatMessageTableViewImageCell: UITableViewCell {
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
                 firstImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
-                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -10),
+                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
             ])
         case 2:
             bubbleView.addSubview(firstImageView)
@@ -282,11 +284,17 @@ class ChatMessageTableViewImageCell: UITableViewCell {
     // MARK: - Setup UI
     private func setupUI() {
         print("setupUI")
-        contentView.subviews.forEach { $0.removeFromSuperview() }
-        // 제약조건 재설정을 위한 기존 제약조건 제거
-        contentView.subviews.forEach { NSLayoutConstraint.deactivate($0.constraints) }
-        NSLayoutConstraint.deactivate(contentView.constraints)
+//        contentView.subviews.forEach { $0.removeFromSuperview() }
+//        // 제약조건 재설정을 위한 기존 제약조건 제거
+//        contentView.subviews.forEach { NSLayoutConstraint.deactivate($0.constraints) }
+//        NSLayoutConstraint.deactivate(contentView.constraints)
 //        NSLayoutConstraint.deactivate(bubbleView.constraints)
+        
+        // 제약조건 재설정을 위한 기존 제약조건 제거
+        NSLayoutConstraint.deactivate(contentView.constraints)
+        // profileImageView와 isReadLabel 제거
+        profileImageView.removeFromSuperview()
+        isReadLabel.removeFromSuperview()
         
         contentView.addSubview(bubbleView)
         contentView.addSubview(timeLabel)
@@ -339,17 +347,11 @@ class ChatMessageTableViewImageCell: UITableViewCell {
         setupImageView()
     }
     
-//    private func initHeight() {
-//        NSLayoutConstraint.activate([
-//            firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor)
-//        ])
-//    }
-    
     private func setupImageView() {
         print("setupImageView")
-        bubbleView.subviews.forEach { $0.removeFromSuperview() }
         bubbleView.subviews.forEach { NSLayoutConstraint.deactivate($0.constraints) }
-        NSLayoutConstraint.deactivate(bubbleView.constraints)
+        bubbleView.subviews.forEach { $0.removeFromSuperview() }
+//        NSLayoutConstraint.deactivate(bubbleView.constraints)
         
         switch images.count {
         case 0:
@@ -362,7 +364,7 @@ class ChatMessageTableViewImageCell: UITableViewCell {
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
                 firstImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
                 firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
-                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -10),
+                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
             ])
         case 2:
             bubbleView.addSubview(firstImageView)

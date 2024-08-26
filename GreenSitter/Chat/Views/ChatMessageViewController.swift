@@ -75,6 +75,7 @@ class ChatMessageViewController: UIViewController {
         tableView.register(ChatMessageTableViewCell.self, forCellReuseIdentifier: "ChatMessageCell")
         tableView.register(ChatMessageTableViewImageCell.self, forCellReuseIdentifier: "ChatMessageImageCell")
         tableView.register(ChatMessageTableViewPlanCell.self, forCellReuseIdentifier: "ChatMessagePlanCell")
+        tableView.register(OneImageTableViewCell.self, forCellReuseIdentifier: "OneImageCell")
         
         self.view.addSubview(tableView)
         
@@ -121,7 +122,8 @@ extension ChatMessageViewController: UITableViewDataSource {
             return cell
             
         case .image:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "OneImageCell", for: indexPath) as! OneImageTableViewCell
             cell.backgroundColor = .clear
             
             cell.tag = indexPath.row
