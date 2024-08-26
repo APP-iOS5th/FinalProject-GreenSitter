@@ -176,9 +176,9 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         }
     }
     
-    @objc private func pickerImageViewTapped() {
-        presentImagePickerController()
-    }
+//    @objc private func pickerImageViewTapped() {
+//        presentImagePickerController()
+//    }
     
     @objc private func saveButtonTapped() {
         guard validateInputs() else { return }
@@ -305,7 +305,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
             mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
             mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8), //
-                    
+            
             mapIconButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
             mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
             mapIconButton.heightAnchor.constraint(equalToConstant: 50),
@@ -419,6 +419,44 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
                 self?.updateImageStackView()
             }
         }
+    }
+    
+    
+    @objc private func pickerImageViewTapped() {
+        checkPhotoLibraryPermission()
+    }
+    
+    private func checkPhotoLibraryPermission() {
+        PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] status in
+            DispatchQueue.main.async {
+                switch status {
+                case .authorized, .limited:
+                    self?.presentImagePickerController()
+                case .denied, .restricted:
+                    self?.showPhotoLibraryAccessDeniedAlert()
+                case .notDetermined:
+                    // 권한 요청 대화상자가 표시됩니다.
+                    break
+                @unknown default:
+                    break
+                }
+            }
+        }
+    }
+    
+    private func showPhotoLibraryAccessDeniedAlert() {
+        let alert = UIAlertController(
+            title: "사진 접근 권한이 없습니다",
+            message: "사진을 선택하려면 '설정'에서 사진 접근 권한을 허용해주세요.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
+        })
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(alert, animated: true)
     }
     
     private func presentImagePickerController() {
