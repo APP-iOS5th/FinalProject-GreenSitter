@@ -27,7 +27,7 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "돌봄 기록"
+        navigationItem.title = "돌봄 후기"
         
         view.addSubview(tableView)
         

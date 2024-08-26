@@ -81,9 +81,6 @@ extension LeavePlantListViewController {
         }
     }
     
-
-    
-    
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
         guard let url = URL(string: gsURL) else {
