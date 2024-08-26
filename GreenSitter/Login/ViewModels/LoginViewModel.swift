@@ -19,15 +19,7 @@ class LoginViewModel: ObservableObject {
     
     private init() {}
 
-    // func userFetchFirebase(profileImage: String, nickname: String, location: Location, docId: String) {
-    //     self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false, docId: docId)
-        
-    //     loadProfileImage(from: profileImage) { [weak self] image in
-    //         self?.profileImage = image
-    //         // Perform additional UI updates here if needed
-    //         print("Profile image successfully loaded and updated.")
-    //     }
-    // }   
+
     
     func firebaseFetch(docId: String) {
         db.collection("users").document(docId).getDocument { (document, error) in

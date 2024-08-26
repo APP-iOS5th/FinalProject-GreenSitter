@@ -30,9 +30,6 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
 
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
-
-    let user = LoginViewModel.shared.user
-
     
     // MARK: - UI Components
     lazy var circleView: UIView = {
@@ -75,6 +72,8 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBindings()
+
         
         if (Auth.auth().currentUser != nil) {
             setupView()
@@ -87,6 +86,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        fetchUserFirebase()
         
         // 로그인 상태 확인
         if Auth.auth().currentUser == nil {
@@ -244,5 +244,15 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         fetchUserFirebase()
     }
     
-    
+    private func setupBindings() {
+        LoginViewModel.shared.$user
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] user in
+                self?.updateUI(with: user)
+            }
+            .store(in: &cancellables)
+    }   
+    private func updateUI(with user: User?) {
+        tableView.reloadData()
+    }
 }

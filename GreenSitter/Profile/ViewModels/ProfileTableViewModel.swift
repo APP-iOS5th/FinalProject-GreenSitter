@@ -34,7 +34,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
-        
+        let user = LoginViewModel.shared.user
         switch (indexPath.section, indexPath.row) {
         case (0, 0):
             // "이름" 셀
@@ -44,8 +44,12 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             (cell as! ProfileTableViewCell).bodyLabel.textColor = .black
             (cell as! ProfileTableViewCell).actionButton.isHidden = false
             (cell as! ProfileTableViewCell).actionButton.setTitle("변경", for: .normal)
+            // 이전 타겟을 모두 제거하고 새로운 타겟을 추가
+            (cell as! ProfileTableViewCell).actionButton.removeTarget(nil, action: nil, for: .allEvents)
             (cell as! ProfileTableViewCell).actionButton.addTarget(self, action: #selector(changeNicknameButtonTap), for: .touchUpInside)
+
             (cell as! ProfileTableViewCell).setIconHidden(true)
+            
             
         case (0, 1):
             // "사는 곳" 셀
