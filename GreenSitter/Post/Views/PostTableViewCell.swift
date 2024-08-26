@@ -114,7 +114,7 @@ class PostTableViewCell: UITableViewCell {
             return
         }
         
-        postImageView.isHidden = false 
+        postImageView.isHidden = false
         
         if let imageUrl = postImages.first {
             loadImage(from: imageUrl)
