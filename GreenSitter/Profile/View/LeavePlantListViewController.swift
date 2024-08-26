@@ -68,8 +68,6 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
         } else {
             cell.plantImage.image = UIImage(named: "logo7")
         }
-        
         return cell
-        
     }
 }

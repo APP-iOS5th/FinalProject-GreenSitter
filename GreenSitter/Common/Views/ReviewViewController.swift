@@ -80,7 +80,7 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 (cell as! ReviewPostTableViewCell).plantImage.image = UIImage(named: "logo7")
             }
 
-            cell.backgroundColor = UIColor.white
+            cell.backgroundColor = UIColor(named: "BGPrimary")
             return cell
         case 1:
             cell = tableView.dequeueReusableCell(withIdentifier: "reviewSendTableViewCell", for: indexPath) as! ReviewSendTableViewCell

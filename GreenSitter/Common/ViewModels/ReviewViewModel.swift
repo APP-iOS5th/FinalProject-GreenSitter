@@ -45,7 +45,7 @@ extension ReviewViewController {
         
         if isSelected {
             // 선택 해제시 기본 상태로 복구
-            sender.backgroundColor = UIColor.white
+            sender.backgroundColor = UIColor(named: "BGPrimary")
         } else {
             sender.backgroundColor = UIColor(named: "ComplementaryColor")
         }
