@@ -310,17 +310,66 @@ extension ProfileViewController {
     
     func deleteUserData(completion: @escaping(Bool) -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        
-        db.collection("users").document(userId).delete() { error in
+
+        // Firestore 참조 생성
+        let db = Firestore.firestore()
+
+        // 여러 삭제 작업을 수행하기 위해 배치를 시작
+        let batch = db.batch()
+
+        // 'users' 컬렉션에서 사용자의 문서 삭제
+        let userDocRef = db.collection("users").document(userId)
+        batch.deleteDocument(userDocRef)
+
+        // 사용자가 작성한 모든 포스트 삭제
+        let postsRef = db.collection("posts").whereField("userId", isEqualTo: userId)
+        postsRef.getDocuments { querySnapshot, error in
             if let error = error {
-                print("Error deleting user data: \(error.localizedDescription)")
+                print("포스트를 가져오는 중 오류 발생: \(error.localizedDescription)")
                 completion(false)
+                return
             }
-            else {
-                print("User data deleted successfully from Firestore")
-                completion(true)
+            
+            guard let documents = querySnapshot?.documents else {
+                completion(true) // 문서가 없으면 완료 처리
+                return
+            }
+            
+            for document in documents {
+                batch.deleteDocument(document.reference)
+            }
+
+            // 사용자가 속한 모든 채팅방 삭제
+            let chatRoomsRef = db.collection("chatRooms").whereField("userId", isEqualTo: userId)
+            chatRoomsRef.getDocuments { querySnapshot, error in
+                if let error = error {
+                    print("채팅방을 가져오는 중 오류 발생: \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+
+                guard let documents = querySnapshot?.documents else {
+                    completion(true) // 문서가 없으면 완료 처리
+                    return
+                }
+
+                for document in documents {
+                    batch.deleteDocument(document.reference)
+                }
+
+                // Firestore에 배치 커밋
+                batch.commit { error in
+                    if let error = error {
+                        print("사용자 데이터 삭제 중 오류 발생: \(error.localizedDescription)")
+                        completion(false)
+                    } else {
+                        print("Firestore에서 사용자 데이터가 성공적으로 삭제되었습니다.")
+                        completion(true)
+                    }
+                }
             }
         }
     }
+
 
 }
