@@ -160,7 +160,7 @@ class AnnotationDetailViewController: UIViewController {
     }
 
     @objc private func didTapPostButton() {
-        let postDetailViewController = PostDetailViewController(post: post)
+        let postDetailViewController = PostDetailViewController(postId: post.id)
         navigationController?.pushViewController(postDetailViewController, animated: true)
         delegate?.annotationDetailViewControllerDidDismiss(self)
     }

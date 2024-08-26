@@ -10,20 +10,29 @@ import MapKit
 import FirebaseAuth
 import FirebaseStorage
 
+
+//TODO: Post -> PostId
+
 class PostDetailViewController: UIViewController {
+    
+    // MARK: - Properties
+    
     private var postDetailViewModel = PostDetailViewModel()
     private var imageUrls: [String] = []
-    private let post: Post
+    private let postId: String
     
-    init(post: Post) {
-        self.post = post
-        print("PostDetailView - Post: \(post)")
+    // MARK: - Initializer
+    
+    init(postId: String) {
+        self.postId = postId
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - UI Elements
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -169,39 +178,54 @@ class PostDetailViewController: UIViewController {
         return mapView
     }()
     
+    // MARK: - Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
         
+        // postId 를 가지고 파이어베이스에서 해당 post 불러오기
+        loadPost(with: postId)
+    }
+    
+    // MARK: - Helpful Functions
+    
+    private func loadPost(with postId: String) {
+        postDetailViewModel.fetchPostById(postId: postId) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let post):
+                DispatchQueue.main.async {
+                    self.configureUI(with: post)
+                }
+            case .failure(let error):
+                print("Failed to fetch post with id: \(postId), error: \(error.localizedDescription)")
+            }
+        }
+    }
+
+
+    private func configureUI(with post: Post) {
         if Auth.auth().currentUser != nil {
             // 해당 post 가 자신이 올린 Post 라면, 삭제/편집 기능 있는 네비게이션 바로 표시
             if LoginViewModel.shared.user?.id == post.userId {
-                setupNavigationBarWithEdit()
+                setupNavigationBarWithEdit(post: post)
                 // TODO: 채팅도 표시하지 않아야함
             } else {
                 // 그게 아니면 차단 기능있는 네비게이션 바 표시
-                setupNavigationBarWithBlock()
+                setupNavigationBarWithBlock(post: post)
                 
+                // 로그인을 한 유저 중, 다른 사람의 게시물을 보고 있는 경우에만 chat button 보이게
+                configureChatButton(with: post)
             }
         }
         
         setupUI()
         configure(with: post)
-        addTapGestureToImages()
-        
-        contactButton.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
-            Task {
-                await self.postDetailViewModel.chatButtonTapped()
-            }
-        }, for: .touchUpInside)
-        
-        postDetailViewModel.onChatButtonTapped = { [weak self] chatRoom in
-            self?.navigateToChatDetail(chatRoom: chatRoom)
-        }
     }
     
-    private func setupNavigationBarWithEdit() {
+    private func setupNavigationBarWithEdit(post: Post) {
         let menu = UIMenu(title: "", children: [
             UIAction(title: "수정하기", image: UIImage(systemName: "pencil")) { [weak self] _ in
                 guard let self = self else {
@@ -214,7 +238,7 @@ class PostDetailViewController: UIViewController {
             },
             UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { [weak self] _ in
                 guard let self = self else { return }
-                self.postDetailViewModel.deletePost(postId: self.post.id) { [weak self] success in
+                self.postDetailViewModel.deletePost(postId: postId) { [weak self] success in
                     DispatchQueue.main.async {
                         if success {
                             let alert = UIAlertController(title: "성공", message: "삭제가 완료되었습니다.", preferredStyle: .alert)
@@ -244,7 +268,7 @@ class PostDetailViewController: UIViewController {
         navigationItem.rightBarButtonItem = menuBarButtonItem
     }
     
-    private func setupNavigationBarWithBlock() {
+    private func setupNavigationBarWithBlock(post: Post) {
         let menu = UIMenu(title: "", children: [
             UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { _ in
                 
@@ -264,6 +288,61 @@ class PostDetailViewController: UIViewController {
         let menuBarButtonItem = UIBarButtonItem(customView: menuButton)
         navigationItem.rightBarButtonItem = menuBarButtonItem
     }
+    
+    // MARK: - 채팅 버튼
+    
+    private func configureChatButton(with post: Post) {
+        // post.id 로 접근하시면 됩니다
+        contactButton.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            Task {
+                await self.postDetailViewModel.chatButtonTapped()
+            }
+        }, for: .touchUpInside)
+        
+        postDetailViewModel.onChatButtonTapped = { [weak self] chatRoom in
+            self?.navigateToChatDetail(chatRoom: chatRoom)
+        }
+    }
+    
+    private func configure(with post: Post) {
+        userNameLabel.text = post.nickname
+        postTitleLabel.text = post.postTitle
+        postTimeLabel.text = timeAgoSinceDate(post.updateDate)
+        postBodyTextView.text = post.postBody
+        statusLabel.text = post.postStatus.rawValue
+        userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
+        
+        profileImageView.image = UIImage(named: post.profileImage)
+        
+        imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        imageUrls.removeAll()
+        
+        
+        if let imageUrls = post.postImages, !imageUrls.isEmpty {
+            self.imageUrls = imageUrls
+            for (index, imageUrl) in imageUrls.enumerated() {
+                let imageView = UIImageView()
+                imageView.contentMode = .scaleAspectFill
+                imageView.clipsToBounds = true
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                imageView.widthAnchor.constraint(equalToConstant: 190).isActive = true
+                imageView.heightAnchor.constraint(equalToConstant: 250).isActive = true
+                imageView.tag = index  // 여기에 태그를 추가합니다
+                
+                loadImageFromStorage(url: imageUrl) { image in
+                    DispatchQueue.main.async {
+                        imageView.image = image
+                    }
+                }
+                imagesStackView.addArrangedSubview(imageView)
+            }
+        }
+        
+        addTapGestureToImages()
+    }
+
+    
     
     private func setupUI() {
         view.addSubview(scrollView)
@@ -404,41 +483,6 @@ class PostDetailViewController: UIViewController {
         }
     }
     
-    private func configure(with post: Post) {
-        userNameLabel.text = post.nickname
-        postTitleLabel.text = post.postTitle
-        postTimeLabel.text = timeAgoSinceDate(post.updateDate)
-        postBodyTextView.text = post.postBody
-        statusLabel.text = post.postStatus.rawValue
-        userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
-        
-        profileImageView.image = UIImage(named: post.profileImage)
-        
-        imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        imageUrls.removeAll()
-        
-        if let imageUrls = post.postImages, !imageUrls.isEmpty {
-            self.imageUrls = imageUrls
-            for (index, imageUrl) in imageUrls.enumerated() {
-                let imageView = UIImageView()
-                imageView.contentMode = .scaleAspectFill
-                imageView.clipsToBounds = true
-                imageView.translatesAutoresizingMaskIntoConstraints = false
-                imageView.widthAnchor.constraint(equalToConstant: 190).isActive = true
-                imageView.heightAnchor.constraint(equalToConstant: 250).isActive = true
-                imageView.tag = index  // 여기에 태그를 추가합니다
-                
-                loadImageFromStorage(url: imageUrl) { image in
-                    DispatchQueue.main.async {
-                        imageView.image = image
-                    }
-                }
-                imagesStackView.addArrangedSubview(imageView)
-            }
-        }
-        
-        addTapGestureToImages()
-    }
     
     private func timeAgoSinceDate(_ date: Date) -> String {
         let calendar = Calendar.current
@@ -461,8 +505,8 @@ class PostDetailViewController: UIViewController {
     }
     
     @objc private func userProfileButtonTapped() {
-        let aboutMeVC = AboutMeViewController(userId: post.userId)
-        navigationController?.pushViewController(aboutMeVC, animated: true)
+//        let aboutMeVC = AboutMeViewController(userId: post.userId)
+//        navigationController?.pushViewController(aboutMeVC, animated: true)
     }
     
     private func navigateToChatDetail(chatRoom: ChatRoom) {
