@@ -131,10 +131,10 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     private let mapIconButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(systemName: "map.fill")
+        let image = UIImage(named: "lookingForSitterIcon")
         button.setImage(image, for: .normal)
-        button.tintColor = .gray
         button.contentMode = .scaleAspectFit
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -302,14 +302,14 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             dividerLine3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
-            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            
-            mapIconButton.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
-            mapIconButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            mapIconButton.heightAnchor.constraint(equalToConstant: 24),
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
+            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
+            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8), //
+                    
+            mapIconButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
+            mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
+            mapIconButton.heightAnchor.constraint(equalToConstant: 50),
+            mapIconButton.widthAnchor.constraint(equalToConstant: 50),
             
             mapView.topAnchor.constraint(equalTo: mapIconButton.bottomAnchor, constant: 16),
             mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),

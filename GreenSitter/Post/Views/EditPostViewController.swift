@@ -18,7 +18,6 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         self.post = post
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-
     }
     
     required init?(coder: NSCoder) {
@@ -132,9 +131,8 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     private let mapIconView: UIImageView = {
         let imageView = UIImageView()
-        let image = UIImage(systemName: "map.fill")
+        let image = UIImage(named: "lookingForSitterIcon")
         imageView.image = image
-        imageView.tintColor = .gray
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -153,7 +151,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .dominent
         button.layer.cornerRadius = 20
-        //        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -317,13 +315,17 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             dividerLine3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
-            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
-            mapIconView.centerYAnchor.constraint(equalTo: mapLabel.centerYAnchor),
-            mapIconView.leadingAnchor.constraint(equalTo: mapLabel.trailingAnchor, constant: 8),
-            mapIconView.widthAnchor.constraint(equalToConstant: 20),
-            mapIconView.heightAnchor.constraint(equalToConstant: 20),
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
+            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
+            mapLabel.trailingAnchor.constraint(equalTo: mapIconView.leadingAnchor, constant: -8), //
+            
+            mapIconView.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
+            mapIconView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
+            mapIconView.heightAnchor.constraint(equalToConstant: 50),
+            mapIconView.widthAnchor.constraint(equalToConstant: 50),
+            
+            
             
             mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 10),
             mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
