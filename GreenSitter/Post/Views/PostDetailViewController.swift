@@ -64,44 +64,45 @@ class PostDetailViewController: UIViewController {
     
     private let userNameLabel: UILabel = {
         let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 16)
+        label.font = .boldSystemFont(ofSize: 17)
+        label.textColor = .labelsPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let userLevelLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .gray
+        label.font = .systemFont(ofSize: 13)
+        label.textColor = .labelsSecondary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let postTimeLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .gray
+        label.font = .systemFont(ofSize: 13)
+        label.textColor = .labelsSecondary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let dividerLine1: UIView = {
         let line = UIView()
-        line.backgroundColor = .lightGray
+        line.backgroundColor = .separatorsNonOpaque
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
     private let dividerLine2: UIView = {
         let line = UIView()
-        line.backgroundColor = .lightGray
+        line.backgroundColor = .separatorsNonOpaque
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
     private let dividerLine3: UIView = {
         let line = UIView()
-        line.backgroundColor = .lightGray
+        line.backgroundColor = .separatorsNonOpaque
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
@@ -120,7 +121,8 @@ class PostDetailViewController: UIViewController {
     
     private let postTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .labelsPrimary
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -144,7 +146,9 @@ class PostDetailViewController: UIViewController {
     
     private let postBodyTextView: UITextView = {
         let textView = UITextView()
-        textView.font = .systemFont(ofSize: 14)
+        textView.font = .systemFont(ofSize: 17)
+        textView.textColor = .labelsPrimary
+        textView.backgroundColor = .clear
         textView.isEditable = false
         textView.isSelectable = false
         textView.sizeToFit()
@@ -171,7 +175,7 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    private let mapView: MKMapView = {
+    private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.translatesAutoresizingMaskIntoConstraints = false
         return mapView
@@ -309,7 +313,8 @@ class PostDetailViewController: UIViewController {
         userNameLabel.text = post.nickname
         postTitleLabel.text = post.postTitle
         postTimeLabel.text = timeAgoSinceDate(post.updateDate)
-        postBodyTextView.text = post.postBody
+        configurePostBodyTextView(with: post.postBody)
+
         statusLabel.text = post.postStatus.rawValue
         userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
         
@@ -395,9 +400,8 @@ class PostDetailViewController: UIViewController {
             userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             userProfileButton.trailingAnchor.constraint(equalTo: contactButton.leadingAnchor),
             userProfileButton.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor),
-            userProfileButton.bottomAnchor.constraint(equalTo: postTimeLabel.bottomAnchor),
             
-            contactButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
+            contactButton.centerYAnchor.constraint(equalTo: userProfileButton.centerYAnchor),
             contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             contactButton.widthAnchor.constraint(equalToConstant: 100),
             contactButton.heightAnchor.constraint(equalToConstant: 40),
@@ -408,19 +412,19 @@ class PostDetailViewController: UIViewController {
             profileImageView.heightAnchor.constraint(equalToConstant: 50),
             
             userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
-            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
+            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor, constant: 5),
             userNameLabel.heightAnchor.constraint(equalToConstant: userNameLabel.font.pointSize),
             
-            userLevelLabel.leadingAnchor.constraint(equalTo: userNameLabel.leadingAnchor),
-            userLevelLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
+            userLevelLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            userLevelLabel.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: -5),
             userLevelLabel.heightAnchor.constraint(equalToConstant: userLevelLabel.font.pointSize),
             
-            postTimeLabel.topAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 4),
-            postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
+            postTimeLabel.centerYAnchor.constraint(equalTo: statusLabel.centerYAnchor),
+            postTimeLabel.leadingAnchor.constraint(equalTo: statusLabel.trailingAnchor, constant: 10),
             
-            statusLabel.topAnchor.constraint(equalTo: userProfileButton.bottomAnchor, constant: 10),
+            statusLabel.topAnchor.constraint(equalTo: userProfileButton.bottomAnchor, constant: 20),
             statusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            statusLabel.widthAnchor.constraint(equalToConstant: 40),
+            statusLabel.widthAnchor.constraint(equalToConstant: 50),
             statusLabel.heightAnchor.constraint(equalToConstant: 20),
             
             postTitleLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 10),
@@ -469,9 +473,24 @@ class PostDetailViewController: UIViewController {
             mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
             mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            mapView.heightAnchor.constraint(equalToConstant: 150),
-            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16), 
+            mapView.heightAnchor.constraint(equalToConstant: 200),
+            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
         ])
+    }
+    
+    private func configurePostBodyTextView(with text: String) {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 10
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .paragraphStyle: paragraphStyle,
+            .font: UIFont.systemFont(ofSize: 14),
+            .foregroundColor: UIColor.labelsPrimary
+        ]
+        
+        let attributedString = NSAttributedString(string: text, attributes: attributes)
+        
+        postBodyTextView.attributedText = attributedString
     }
     
     private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
@@ -537,3 +556,5 @@ class PostDetailViewController: UIViewController {
         present(fullScreenPageVC, animated: true, completion: nil)
     }
 }
+
+
