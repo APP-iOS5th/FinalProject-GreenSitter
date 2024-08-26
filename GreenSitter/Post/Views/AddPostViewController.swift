@@ -205,7 +205,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         
         if titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
             titleTextField.attributedPlaceholder = NSAttributedString(string: "제목을 입력하세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.red])
-            titleTextField.layer.borderColor = UIColor.red.cgColor
+            titleTextField.layer.borderColor = UIColor.clear.cgColor
             titleTextField.layer.borderWidth = 1.0
             isValid = false
         } else {
