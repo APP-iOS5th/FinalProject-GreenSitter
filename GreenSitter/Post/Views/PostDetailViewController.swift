@@ -201,6 +201,7 @@ class PostDetailViewController: UIViewController {
             case .success(let post):
                 DispatchQueue.main.async {
                     self.configureUI(with: post)
+                    self.configureMapView(with: post)
                 }
             case .failure(let error):
                 print("Failed to fetch post with id: \(postId), error: \(error.localizedDescription)")
@@ -555,6 +556,120 @@ class PostDetailViewController: UIViewController {
         fullScreenPageVC.modalPresentationStyle = .fullScreen
         present(fullScreenPageVC, animated: true, completion: nil)
     }
+    
+    private var overlayPostMapping: [MKCircle: Post] = [:]
+
 }
 
 
+extension PostDetailViewController: MKMapViewDelegate {
+    
+    private func configureMapView(with post: Post) {
+        print("Post Detail Map with Post: \(post)")
+//        mapView.removeAnnotations(mapView.annotations)
+//        mapView.removeOverlays(mapView.overlays)
+//        overlayPostMapping.removeAll()
+        guard let latitude = post.location?.latitude,
+              let longitude = post.location?.longitude else { return }
+        
+        let circleCenter = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+
+        // make random Center
+        let randomOffset = generateRandomOffset(for: circleCenter, radius: 500)
+        let randomCenter = CLLocationCoordinate2D (
+            latitude: circleCenter.latitude + randomOffset.latitudeDelta,
+            longitude: circleCenter.longitude + randomOffset.longitudeDelta
+        )
+        
+        let circle = MKCircle(center: randomCenter, radius: 500)
+        
+        // setRegion
+        let region = MKCoordinateRegion(center: randomCenter, latitudinalMeters: 500, longitudinalMeters: 500)
+        mapView.setRegion(region, animated: false)
+        
+        // 맵 뷰에 오버레이 추가하기 전에, post 값을 circle 키에 넣기
+        overlayPostMapping[circle] = post
+        mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
+        
+        let annotation = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
+        mapView.addAnnotation(annotation)  // MKAnnotationView
+
+    }
+
+    // 실제 위치(center) 기준으로 반경 내의 무작위 좌표를 새로운 중심점으로 설정
+    func generateRandomOffset(for center: CLLocationCoordinate2D, radius: Double) -> (latitudeDelta: Double, longitudeDelta: Double) {
+        let earthRadius: Double = 6378137 // meters
+        let dLat = (radius / earthRadius) * (180 / .pi)
+        let dLong = dLat / cos(center.latitude * .pi / 180)
+        
+        let randomLatDelta = Double.random(in: -dLat...dLat)
+        let randomLongDelta = Double.random(in: -dLong...dLong)
+        
+        return (latitudeDelta: randomLatDelta, longitudeDelta: randomLongDelta)
+    }
+    
+    // MKAnnotationView
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard let annotation = annotation as? CustomAnnotation else {
+            return nil
+        }
+           
+        var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: CustomAnnotationView.identifier)
+        
+        if annotationView == nil {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: CustomAnnotationView.identifier)
+            annotationView?.canShowCallout = false
+            annotationView?.contentMode = .scaleAspectFit
+        } else {
+            annotationView?.annotation = annotation
+        }
+        
+        // postType 따라서 어노테이션에 이미지 다르게 적용
+        let sesacImage: UIImage!
+        let size = CGSize(width: 50, height: 50)
+        UIGraphicsBeginImageContext(size)
+        
+        switch annotation.postType {
+        case .lookingForSitter:
+            sesacImage = UIImage(named: "lookingForSitterIcon")
+        case .offeringToSitter:
+            sesacImage = UIImage(named: "offeringToSitterIcon")
+        default:
+            sesacImage = UIImage(systemName: "mappin.circle.fill")
+        }
+        
+        sesacImage.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        annotationView?.image = resizedImage
+        
+        return annotationView
+    }
+    
+    
+    // MKOverlayRenderer
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let circleOverlay = overlay as? MKCircle {
+            let circleRenderer = MKCircleRenderer(circle: circleOverlay)
+//            print("rendererFor methods: dict: \(overlayPostMapping)")
+            
+            // 딕셔너리로부터 해당 circleOverlay에 저장된 Post 가져오기
+            if let post = overlayPostMapping[circleOverlay] {
+                // 오버레이 색 적용
+                switch post.postType {
+                case .lookingForSitter:
+                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.3)
+                case .offeringToSitter:
+                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3)
+                }
+            } else {
+                print("post is nil")
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3) // Default color
+            }
+
+            circleRenderer.strokeColor = .separatorsNonOpaque
+            circleRenderer.lineWidth = 2
+            return circleRenderer
+        }
+        return MKOverlayRenderer()
+    }
+}
