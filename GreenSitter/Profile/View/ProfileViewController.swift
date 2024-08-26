@@ -75,12 +75,13 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         setupBindings()
 
         
-        if (Auth.auth().currentUser != nil) {
+        if Auth.auth().currentUser != nil {
             setupView()
             fetchUserFirebase()
             setupTextField()
         } else {
-            view.backgroundColor = .bgPrimary
+            // 로그인 상태가 아닐 때 로그인 화면 표시
+            showLoginScreen()
         }
     }
     
@@ -254,5 +255,12 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     }   
     private func updateUI(with user: User?) {
         tableView.reloadData()
+    }
+    private func showLoginScreen() {
+        let loginViewController = LoginViewController()
+        loginViewController.delegate = self
+        let navigationController = UINavigationController(rootViewController: loginViewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true, completion: nil)
     }
 }
