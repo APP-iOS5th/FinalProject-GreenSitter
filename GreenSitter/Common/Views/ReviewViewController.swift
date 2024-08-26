@@ -15,8 +15,9 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
     var selectedRatingButton: UIButton?
     var review: Post?
     var selectedTextButtons: Set<UIButton> = []
-    var post: Post?
-    var postId: String?  
+    var post: [Post] = []
+    var postId: String?
+   
 
     
     lazy var tableView: UITableView = {
@@ -61,13 +62,24 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:  UITableViewCell
+        let currentPost = post[indexPath.row]
         switch indexPath.section {
         case 0:
             cell = tableView.dequeueReusableCell(withIdentifier: "reviewPostTableViewCell", for: indexPath) as! ReviewPostTableViewCell
-            (cell as! ReviewPostTableViewCell).titleLabel.text = post?.postTitle
-            (cell as! ReviewPostTableViewCell).bodyLabel.text = post?.postBody
-            (cell as! ReviewPostTableViewCell).timeLabel.text = DateFormatter.localizedString(from: post?.updateDate ?? Date(), dateStyle: .short, timeStyle: .short)
-            (cell as! ReviewPostTableViewCell).plantImage.image = UIImage(named: "logo7")
+            (cell as! ReviewPostTableViewCell).titleLabel.text = currentPost.postTitle
+            (cell as! ReviewPostTableViewCell).bodyLabel.text = currentPost.postBody
+            (cell as! ReviewPostTableViewCell).timeLabel.text = DateFormatter.localizedString(from: currentPost.updateDate, dateStyle: .short, timeStyle: .short)
+            if let imageURL = currentPost.postImages?.first {
+                loadImage(from: imageURL) { image in
+                    DispatchQueue.main.async {
+                        (cell as! ReviewPostTableViewCell).plantImage.image = image ?? UIImage(named: "logo7")
+                    }
+                }
+            }
+            else {
+                (cell as! ReviewPostTableViewCell).plantImage.image = UIImage(named: "logo7")
+            }
+
             cell.backgroundColor = UIColor.white
             return cell
         case 1:
