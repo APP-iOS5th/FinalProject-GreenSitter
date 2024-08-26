@@ -399,6 +399,13 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     func textViewDidChange(_ textView: UITextView) {
         let text = textView.text ?? ""
+        
+        if text == textViewPlaceHolder {
+                textView.textColor = .lightGray
+            } else {
+                textView.textColor = .black
+            }
+        
         remainCountLabel.text = "\(text.count)/700"
         textView.isScrollEnabled = text.count > 700
         
