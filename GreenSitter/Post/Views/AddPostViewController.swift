@@ -349,6 +349,19 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             remainCountLabel.textColor = .lightGray
         }
         
+       
+        let size = CGSize(width: textView.frame.width, height: .infinity)
+        let estimatedSize = textView.sizeThatFits(size)
+        
+        let minHeight: CGFloat = 200 // 최소 높이
+        
+        textView.constraints.forEach { (constraint) in
+            if constraint.firstAttribute == .height {
+                constraint.constant = max(minHeight, estimatedSize.height)
+            }
+        }
+        
+        // 내용이 비어있을 때 처리
         if textView.text.isEmpty {
             textView.text = textViewPlaceHolder
             textView.textColor = .lightGray
@@ -358,6 +371,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             textView.textColor = .black
         }
     }
+
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == .lightGray {

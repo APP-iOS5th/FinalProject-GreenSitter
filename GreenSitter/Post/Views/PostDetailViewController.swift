@@ -10,10 +10,12 @@ import MapKit
 import FirebaseAuth
 import FirebaseStorage
 
-class PostDetailViewController: UIViewController {
+class PostDetailViewController: UIViewController, UITextViewDelegate {
+    
     private var postDetailViewModel = PostDetailViewModel()
     private var imageUrls: [String] = []
     private let post: Post
+    private var postBodyTextViewHeightConstraint: NSLayoutConstraint?
     
     init(post: Post) {
         self.post = post
@@ -138,8 +140,9 @@ class PostDetailViewController: UIViewController {
         let textView = UITextView()
         textView.font = .systemFont(ofSize: 14)
         textView.isEditable = false
-        textView.isSelectable = false
-        textView.sizeToFit()
+        textView.isSelectable = true
+        textView.isScrollEnabled = false
+//        textView.sizeToFit()
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
@@ -174,20 +177,18 @@ class PostDetailViewController: UIViewController {
         view.backgroundColor = .bgPrimary
         
         if Auth.auth().currentUser != nil {
-            // 해당 post 가 자신이 올린 Post 라면, 삭제/편집 기능 있는 네비게이션 바로 표시
             if LoginViewModel.shared.user?.id == post.userId {
                 setupNavigationBarWithEdit()
-                // TODO: 채팅도 표시하지 않아야함
             } else {
-                // 그게 아니면 차단 기능있는 네비게이션 바 표시
                 setupNavigationBarWithBlock()
-                
             }
         }
         
         setupUI()
         configure(with: post)
         addTapGestureToImages()
+        
+        postBodyTextView.delegate = self
         
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -200,6 +201,7 @@ class PostDetailViewController: UIViewController {
             self?.navigateToChatDetail(chatRoom: chatRoom)
         }
     }
+    
     
     private func setupNavigationBarWithEdit() {
         let menu = UIMenu(title: "", children: [
@@ -231,7 +233,7 @@ class PostDetailViewController: UIViewController {
                 }
             }
         ])
-
+        
         
         let menuButton = UIButton(type: .system)
         menuButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
@@ -298,11 +300,16 @@ class PostDetailViewController: UIViewController {
             scrollView.heightAnchor.constraint(equalTo: view.heightAnchor),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
+                    contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+                    contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+                    contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+                    contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+//            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+//            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+//            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+//            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+//            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+//            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
             
             userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -368,7 +375,8 @@ class PostDetailViewController: UIViewController {
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-            postBodyTextView.heightAnchor.constraint(greaterThanOrEqualTo: self.view.heightAnchor, multiplier: 0.2),
+            
+            
             
             dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -383,8 +391,9 @@ class PostDetailViewController: UIViewController {
             mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             mapView.heightAnchor.constraint(equalToConstant: 150),
-            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16), 
+            mapView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16)
         ])
+        
     }
     
     private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
@@ -411,6 +420,12 @@ class PostDetailViewController: UIViewController {
         postBodyTextView.text = post.postBody
         statusLabel.text = post.postStatus.rawValue
         userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
+        
+        DispatchQueue.main.async {
+            self.adjustTextViewHeight()
+            self.view.setNeedsLayout()
+        }
+        //        adjustTextViewHeight()
         
         profileImageView.image = UIImage(named: post.profileImage)
         
@@ -488,5 +503,30 @@ class PostDetailViewController: UIViewController {
         let fullScreenPageVC = FullScreenPageViewController(imageUrls: imageUrls, initialIndex: index)
         fullScreenPageVC.modalPresentationStyle = .fullScreen
         present(fullScreenPageVC, animated: true, completion: nil)
+    }
+    
+    // 텍스트뷰 높이를 자동으로 조정하는 메서드
+    private func adjustTextViewHeight() {
+        let size = postBodyTextView.sizeThatFits(CGSize(width: postBodyTextView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        if postBodyTextViewHeightConstraint == nil {
+            postBodyTextViewHeightConstraint = postBodyTextView.heightAnchor.constraint(equalToConstant: size.height)
+            postBodyTextViewHeightConstraint?.isActive = true
+        } else {
+            postBodyTextViewHeightConstraint?.constant = size.height
+        }
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+    }
+    
+    // 텍스트가 변경될 때 호출되는 델리게이트 메서드
+    func textViewDidChange(_ textView: UITextView) {
+        adjustTextViewHeight()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        let contentHeight = mapView.frame.maxY + 16
+        scrollView.contentSize = CGSize(width: view.frame.width, height: contentHeight)
     }
 }
