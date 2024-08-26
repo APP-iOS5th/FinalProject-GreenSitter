@@ -203,12 +203,12 @@ class ChatListViewController: UIViewController {
         self.view.addSubview(container)
         
         NSLayoutConstraint.activate([
+            container.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+            container.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
             container.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             container.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
-            container.widthAnchor.constraint(equalToConstant: 333),
-            container.heightAnchor.constraint(equalToConstant: 281),
             
-            iconImageView.topAnchor.constraint(equalTo: container.topAnchor),
+            iconImageView.topAnchor.constraint(equalTo: container.topAnchor, constant: 150),
             iconImageView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
             iconImageView.widthAnchor.constraint(equalToConstant: 121),
             iconImageView.heightAnchor.constraint(equalToConstant: 121),
