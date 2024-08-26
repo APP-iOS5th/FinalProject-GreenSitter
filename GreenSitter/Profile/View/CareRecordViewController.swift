@@ -46,6 +46,13 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
         return post.count
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedPost = post[indexPath.row]
+        
+        let postDetailViewController = PostDetailViewController(post: Post.samplePosts.first!)
+        navigationController?.pushViewController(postDetailViewController, animated: true)
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
         let currentPost = post[indexPath.row]

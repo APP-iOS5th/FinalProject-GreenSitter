@@ -66,7 +66,7 @@ extension ReviewListViewController {
                     postStatus: postStatus,
                     location: nil
                 )
-
+                self.post.append(post)
                 // 테이블 뷰 업데이트
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
