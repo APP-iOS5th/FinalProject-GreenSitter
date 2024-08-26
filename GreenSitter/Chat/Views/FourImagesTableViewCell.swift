@@ -1,5 +1,5 @@
 //
-//  TwoImagesTableViewCell.swift
+//  FourImagesTableViewCell.swift
 //  GreenSitter
 //
 //  Created by 김영훈 on 8/26/24.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TwoImagesTableViewCell: UITableViewCell {
+class FourImagesTableViewCell: UITableViewCell {
     weak var delegate: ChatMessageTableViewImageCellDelegate?
     
     var isIncoming: Bool = false {
@@ -58,6 +58,34 @@ class TwoImagesTableViewCell: UITableViewCell {
         secondImageView.isUserInteractionEnabled = true
         secondImageView.addGestureRecognizer(tapGesture)
         return secondImageView
+    }()
+    
+    private lazy var thirdImageView: UIImageView = {
+       let thirdImageView = UIImageView()
+        thirdImageView.layer.cornerRadius = 10
+        thirdImageView.backgroundColor = .white
+        thirdImageView.clipsToBounds = true
+        thirdImageView.contentMode = .scaleAspectFit
+        thirdImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
+        thirdImageView.isUserInteractionEnabled = true
+        thirdImageView.addGestureRecognizer(tapGesture)
+        return thirdImageView
+    }()
+    
+    private lazy var fourthImageView: UIImageView = {
+       let fourthImageView = UIImageView()
+        fourthImageView.layer.cornerRadius = 10
+        fourthImageView.backgroundColor = .white
+        fourthImageView.clipsToBounds = true
+        fourthImageView.contentMode = .scaleAspectFit
+        fourthImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
+        fourthImageView.isUserInteractionEnabled = true
+        fourthImageView.addGestureRecognizer(tapGesture)
+        return fourthImageView
     }()
     
     lazy var bubbleView: UIView = {
@@ -133,13 +161,17 @@ class TwoImagesTableViewCell: UITableViewCell {
         if imageSize == nil {
             imageSize = ( bubbleViewWidth - 10 ) / 2
         }
-
+        
         guard let imageSize = imageSize else { return }
         NSLayoutConstraint.activate([
             firstImageView.heightAnchor.constraint(equalToConstant: imageSize),
             firstImageView.widthAnchor.constraint(equalToConstant: imageSize),
             secondImageView.heightAnchor.constraint(equalToConstant: imageSize),
             secondImageView.widthAnchor.constraint(equalToConstant: imageSize),
+            thirdImageView.heightAnchor.constraint(equalToConstant: imageSize),
+            thirdImageView.widthAnchor.constraint(equalToConstant: imageSize),
+            thirdImageView.heightAnchor.constraint(equalToConstant: imageSize),
+            thirdImageView.widthAnchor.constraint(equalToConstant: imageSize),
         ])
     }
     
@@ -153,6 +185,8 @@ class TwoImagesTableViewCell: UITableViewCell {
         
         bubbleView.addSubview(firstImageView)
         bubbleView.addSubview(secondImageView)
+        bubbleView.addSubview(thirdImageView)
+        bubbleView.addSubview(fourthImageView)
         
         contentView.addSubview(bubbleView)
         contentView.addSubview(timeLabel)
@@ -177,14 +211,26 @@ class TwoImagesTableViewCell: UITableViewCell {
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
                 firstImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
-                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: -5),
                 firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
                 
                 secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 secondImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
                 secondImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
-                secondImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                secondImageView.bottomAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: -5),
                 secondImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
+                
+                thirdImageView.topAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: 5),
+                thirdImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                thirdImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                thirdImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
+                
+                fourthImageView.topAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: 5),
+                fourthImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                fourthImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                fourthImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                fourthImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
             ])
         } else {
             contentView.addSubview(isReadLabel)
@@ -204,15 +250,26 @@ class TwoImagesTableViewCell: UITableViewCell {
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
                 firstImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
-                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                firstImageView.bottomAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: -5),
                 firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
                 
                 secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 secondImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
                 secondImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
-                secondImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                secondImageView.bottomAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: -5),
                 secondImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
                 
+                thirdImageView.topAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: 5),
+                thirdImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                thirdImageView.trailingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: -5),
+                thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                thirdImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
+                
+                fourthImageView.topAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: 5),
+                fourthImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                fourthImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                fourthImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                fourthImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
             ])
         }
     }
@@ -220,6 +277,8 @@ class TwoImagesTableViewCell: UITableViewCell {
     private func updateBubbleView() {
         firstImageView.image = images[0]
         secondImageView.image = images[1]
+        thirdImageView.image = images[2]
+        fourthImageView.image = images[3]
     }
     
     @objc
@@ -231,5 +290,4 @@ class TwoImagesTableViewCell: UITableViewCell {
         delegate?.imageViewTapped(images: images, index: index)
     }
 }
-
 

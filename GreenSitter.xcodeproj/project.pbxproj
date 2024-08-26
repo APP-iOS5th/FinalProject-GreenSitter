@@ -19,6 +19,7 @@
 		15F618B22C7A2DFD00A936D8 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 15F618B12C7A2DFD00A936D8 /* APPKey.plist */; };
 		15F618B42C7C039000A936D8 /* OneImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F618B32C7C039000A936D8 /* OneImageTableViewCell.swift */; };
 		15F618B62C7C466500A936D8 /* TwoImagesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F618B52C7C466500A936D8 /* TwoImagesTableViewCell.swift */; };
+		15F618B82C7C4FBF00A936D8 /* FourImagesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F618B72C7C4FBF00A936D8 /* FourImagesTableViewCell.swift */; };
 		3B57780B2C733533000643C9 /* ReviewSendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B57780A2C733533000643C9 /* ReviewSendTableViewCell.swift */; };
 		3B57780D2C73356E000643C9 /* ReviewPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B57780C2C73356E000643C9 /* ReviewPostTableViewCell.swift */; };
 		3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */; };
@@ -149,6 +150,7 @@
 		15F618B12C7A2DFD00A936D8 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
 		15F618B32C7C039000A936D8 /* OneImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneImageTableViewCell.swift; sourceTree = "<group>"; };
 		15F618B52C7C466500A936D8 /* TwoImagesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoImagesTableViewCell.swift; sourceTree = "<group>"; };
+		15F618B72C7C4FBF00A936D8 /* FourImagesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourImagesTableViewCell.swift; sourceTree = "<group>"; };
 		3B57780A2C733533000643C9 /* ReviewSendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSendTableViewCell.swift; sourceTree = "<group>"; };
 		3B57780C2C73356E000643C9 /* ReviewPostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPostTableViewCell.swift; sourceTree = "<group>"; };
 		3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionTableCell.swift; sourceTree = "<group>"; };
@@ -698,6 +700,7 @@
 				15C8208B2C776FA2002991DE /* ImageDetailCollectionViewCell.swift */,
 				15F618B32C7C039000A936D8 /* OneImageTableViewCell.swift */,
 				15F618B52C7C466500A936D8 /* TwoImagesTableViewCell.swift */,
+				15F618B72C7C4FBF00A936D8 /* FourImagesTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -826,6 +829,7 @@
 				3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */,
 				97D1BE6E2C6C8B7D00F7A983 /* ProfileViewModel.swift in Sources */,
 				97934DFD2C62F88600B38E0A /* Review.swift in Sources */,
+				15F618B82C7C4FBF00A936D8 /* FourImagesTableViewCell.swift in Sources */,
 				3B6DE1AC2C72D24B009DD41A /* CareRecordViewController.swift in Sources */,
 				3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */,
 				3B7D8F4D2C7589A200008F22 /* ReceiveReviewTableViewCell.swift in Sources */,
