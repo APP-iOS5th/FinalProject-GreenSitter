@@ -26,8 +26,13 @@ class MapViewModel: NSObject, ObservableObject {
     override init() {
         super.init()
         locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    }
+    
+    func checkLocationAuthorization() {
+        DispatchQueue.main.async { [weak self] in
+            self?.locationManager.requestWhenInUseAuthorization()
+        }
     }
     
     func startUpdatingLocation() {
@@ -75,19 +80,23 @@ extension MapViewModel: CLLocationManagerDelegate {
     
     // 위치 권한 여부에 따른 처리
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        switch manager.authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse:
-            isLocationAuthorized = .authorized
-            startUpdatingLocation()
-        case .restricted, .notDetermined:
-            isLocationAuthorized = .restrictedOrNotDetermined
-            print("isLocationAuthorized: restriceted or notDetermined")
-            useDefaultLocation()
-        case .denied:
-            isLocationAuthorized = .denied
-            useDefaultLocation()
-        default:
-            break
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            switch manager.authorizationStatus {
+            case .authorizedAlways, .authorizedWhenInUse:
+                self.isLocationAuthorized = .authorized
+                self.startUpdatingLocation()
+            case .restricted, .notDetermined:
+                self.isLocationAuthorized = .restrictedOrNotDetermined
+                print("isLocationAuthorized: restricted or notDetermined")
+                self.useDefaultLocation()
+            case .denied:
+                self.isLocationAuthorized = .denied
+                self.useDefaultLocation()
+            @unknown default:
+                break
+            }
         }
     }
     

@@ -7,8 +7,8 @@
 
 import UIKit
 import MapKit
+import FirebaseAuth
 import FirebaseStorage
-import FirebaseFirestore
 
 class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
@@ -17,6 +17,7 @@ class PostDetailViewController: UIViewController {
     
     init(post: Post) {
         self.post = post
+        print("PostDetailView - Post: \(post)")
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -73,7 +74,6 @@ class PostDetailViewController: UIViewController {
         label.font = .systemFont(ofSize: 12)
         label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "2시간 전"
         return label
     }()
     
@@ -172,6 +172,19 @@ class PostDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
+        
+        if Auth.auth().currentUser != nil {
+            // 해당 post 가 자신이 올린 Post 라면, 삭제/편집 기능 있는 네비게이션 바로 표시
+            if LoginViewModel.shared.user?.id == post.userId {
+                setupNavigationBarWithEdit()
+                // TODO: 채팅도 표시하지 않아야함
+            } else {
+                // 그게 아니면 차단 기능있는 네비게이션 바 표시
+                setupNavigationBarWithBlock()
+                
+            }
+        }
+        
         setupUI()
         configure(with: post)
         addTapGestureToImages()
@@ -186,6 +199,70 @@ class PostDetailViewController: UIViewController {
         postDetailViewModel.onChatButtonTapped = { [weak self] chatRoom in
             self?.navigateToChatDetail(chatRoom: chatRoom)
         }
+    }
+    
+    private func setupNavigationBarWithEdit() {
+        let menu = UIMenu(title: "", children: [
+            UIAction(title: "수정하기", image: UIImage(systemName: "pencil")) { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                let editPostViewController = EditPostViewController(post: post, viewModel: EditPostViewModel(selectedPost: post))
+                let navigationController = UINavigationController(rootViewController: editPostViewController)
+                navigationController.modalPresentationStyle = .fullScreen
+                self.present(navigationController, animated: true)
+            },
+            UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { [weak self] _ in
+                guard let self = self else { return }
+                self.postDetailViewModel.deletePost(postId: self.post.id) { [weak self] success in
+                    DispatchQueue.main.async {
+                        if success {
+                            let alert = UIAlertController(title: "성공", message: "삭제가 완료되었습니다.", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "확인", style: .default) { _ in
+                                self?.navigationController?.popViewController(animated: true)
+                            })
+                            self?.present(alert, animated: true)
+                        } else {
+                            let alert = UIAlertController(title: "실패", message: "삭제에 실패했습니다. 다시 시도해 주세요.", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "확인", style: .default))
+                            self?.present(alert, animated: true)
+                        }
+                    }
+                }
+            }
+        ])
+
+        
+        let menuButton = UIButton(type: .system)
+        menuButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
+        menuButton.tintColor = .labelsPrimary
+        menuButton.menu = menu
+        menuButton.showsMenuAsPrimaryAction = true
+        menuButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let menuBarButtonItem = UIBarButtonItem(customView: menuButton)
+        navigationItem.rightBarButtonItem = menuBarButtonItem
+    }
+    
+    private func setupNavigationBarWithBlock() {
+        let menu = UIMenu(title: "", children: [
+            UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { _ in
+                
+            },
+            UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { _ in
+                
+            }
+        ])
+        
+        let menuButton = UIButton(type: .system)
+        menuButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
+        menuButton.tintColor = .labelsPrimary
+        menuButton.menu = menu
+        menuButton.showsMenuAsPrimaryAction = true
+        menuButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let menuBarButtonItem = UIBarButtonItem(customView: menuButton)
+        navigationItem.rightBarButtonItem = menuBarButtonItem
     }
     
     private func setupUI() {
@@ -330,6 +407,7 @@ class PostDetailViewController: UIViewController {
     private func configure(with post: Post) {
         userNameLabel.text = post.nickname
         postTitleLabel.text = post.postTitle
+        postTimeLabel.text = timeAgoSinceDate(post.updateDate)
         postBodyTextView.text = post.postBody
         statusLabel.text = post.postStatus.rawValue
         userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
@@ -362,6 +440,26 @@ class PostDetailViewController: UIViewController {
         addTapGestureToImages()
     }
     
+    private func timeAgoSinceDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let now = Date()
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date, to: now)
+        
+        if let year = components.year, year > 0 {
+            return "\(year)년 전"
+        } else if let month = components.month, month > 0 {
+            return "\(month)개월 전"
+        } else if let day = components.day, day > 0 {
+            return "\(day)일 전"
+        } else if let hour = components.hour, hour > 0 {
+            return "\(hour)시간 전"
+        } else if let minute = components.minute, minute > 0 {
+            return "\(minute)분 전"
+        } else {
+            return "방금 전"
+        }
+    }
+    
     @objc private func userProfileButtonTapped() {
         let aboutMeVC = AboutMeViewController(userId: post.userId)
         navigationController?.pushViewController(aboutMeVC, animated: true)
@@ -392,7 +490,3 @@ class PostDetailViewController: UIViewController {
         present(fullScreenPageVC, animated: true, completion: nil)
     }
 }
-//
-//#Preview {
-//    return UINavigationController(rootViewController: PostDetailViewController(post: Post.samplePosts.first!))
-//}

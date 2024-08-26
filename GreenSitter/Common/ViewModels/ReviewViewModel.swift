@@ -79,6 +79,16 @@ extension ReviewViewController {
             return .average
         }()
         
+        let expChange: Int
+        switch rating {
+        case .bad:
+            expChange = -3
+        case .average:
+            expChange = 3
+        case .good:
+            expChange = 7
+        }
+        
         // Get the selected texts
         var selectedTexts = [String]()
         if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell {
@@ -123,6 +133,7 @@ extension ReviewViewController {
                 print("Review successfully written!")
             }
         }
+        
 
         // 게시물 작성자 Firestore에 저장
         db.collection("posts").document(postId).getDocument { document, error in
@@ -136,6 +147,27 @@ extension ReviewViewController {
                             print("Error writing review to post creator's Firestore document: \(error)")
                         } else {
                             print("Review successfully written to post creator's document!")
+                            
+                            //상대방 exp 업데이트
+                            self.db.collection("users").document(creatorId).getDocument { documentSnapshot, error in
+                                guard let document = documentSnapshot, var creatorUser = try? document.data(as: User.self) else {
+                                    print("Error retrieving creator's user document: \(String(describing: error))")
+                                    return
+                                }
+                                
+                                creatorUser.exp += expChange
+                                
+                                self.db.collection("user").document(creatorId).setData(creatorUser.toDictionary(), merge: true) { error in
+                                    
+                                    if let error = error {
+                                        print("exp 업데이트 실패: \(error)")
+                                    }
+                                    else {
+                                        print("exp 업데이트 성공")
+                                    }
+                                }
+                            }
+                            
                         }
                     }
                 } else {
@@ -145,15 +177,16 @@ extension ReviewViewController {
                 print("Post document does not exist")
             }
         }
+
         
         DispatchQueue.main.async {
             
-            guard let userDocId = LoginViewModel.shared.user?.docId else {
+            guard let userId = LoginViewModel.shared.user?.id else {
                 print("User ID is not available")
                 return
             }
             
-            let aboutMeViewController = AboutMeViewController(userId: userDocId)
+            let aboutMeViewController = AboutMeViewController(userId: userId)
             self.navigationController?.pushViewController(aboutMeViewController, animated: true)
         }
     }
@@ -181,6 +214,7 @@ extension ReviewViewController {
                         let updateDate = updateDateTimestamp.dateValue()
                         let postImages = postData["postImages"] as? [String] ?? []
                         let postId = postData["id"] as? String ?? ""
+                        let isReviewed = postData["isReviewed"] as? Bool
 
                         // Post 객체 생성 및 업데이트
                         self.review = Post(

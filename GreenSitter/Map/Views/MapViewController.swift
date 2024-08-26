@@ -8,6 +8,7 @@
 import Combine
 import MapKit
 import UIKit
+import FirebaseAuth
 
 class MapViewController: UIViewController {
     
@@ -20,7 +21,7 @@ class MapViewController: UIViewController {
         mapView.showsUserLocation = true
         return mapView
     }()
-
+    
     // 커스텀 어노테이션, 오버레이 만들기 위한 Dictionary
     private var overlayPostMapping: [MKCircle: Post] = [:]
     
@@ -63,8 +64,18 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-//        setupMarkerAndOverlay(with: Post.samplePosts)  // TODO: 실제 서버 post 데이터로 변경
-        postViewModel.fetchAllPosts()
+        viewModel.checkLocationAuthorization()
+
+        // 로그인 했을 경우 그리고 위치 정보 있을 경우.
+        if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
+            print("MapView - userlocation: \(userLocation)")
+            postViewModel.fetchPostsWithin3Km(userLocation: userLocation)
+        } else {    // 비로그인, 혹은 위치 정보 없으면
+            print("MapView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
+            postViewModel.fetchPostsWithin3Km(userLocation: nil)
+        }
+        // 기존 코드
+        //        postViewModel.fetchAllPosts()
     }
     
     private func setupUI() {
@@ -101,13 +112,13 @@ class MapViewController: UIViewController {
         let zoomedRegion = MKCoordinateRegion(center: region.center, span: MKCoordinateSpan(latitudeDelta: region.span.latitudeDelta / 2, longitudeDelta: region.span.longitudeDelta / 2))
         mapView.setRegion(zoomedRegion, animated: true)
     }
-
+    
     @objc private func zoomOut() {
         let region = mapView.region
         let zoomedRegion = MKCoordinateRegion(center: region.center, span: MKCoordinateSpan(latitudeDelta: region.span.latitudeDelta * 2, longitudeDelta: region.span.longitudeDelta * 2))
         mapView.setRegion(zoomedRegion, animated: true)
     }
-
+    
     @objc private func centerUserLocation() {
         guard let location = viewModel.currentLocation else { return }
         let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude), latitudinalMeters: 1000, longitudinalMeters: 1000)
@@ -120,7 +131,7 @@ class MapViewController: UIViewController {
             .compactMap { $0 }  // nil 이 아닌 경우만 처리
             .sink { [weak self] location in
                 print("Updated Location: \(location.latitude), \(location.longitude), Address: \(location.address), placeName: \(location.placeName)")
-
+                
                 let region = MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
                     latitudinalMeters: 1000,
@@ -135,13 +146,13 @@ class MapViewController: UIViewController {
             .sink { [weak self] status in
                 switch status {
                 case .denied:
-                    self?.showToast(withDuration: 1, delay: 4)
+                    self?.showToast(withDuration: 1, delay: 2)
                 case .restrictedOrNotDetermined:
                     print("Authorization Status: Restricted or NotDetermined, No Toast")
                 case .authorized:
                     print("Authorization Status: Authorized")
                 }
-
+                
             }.store(in: &cancellables)
         
         postViewModel.$filteredPosts
@@ -157,23 +168,21 @@ class MapViewController: UIViewController {
     // MARK: - 위치 권한 거부 시 나오는 Toast message
     
     func showToast(withDuration: Double, delay: Double) {
-        let toastLabelWidth: CGFloat = 380
-        let toastLabelHeight: CGFloat = 80
-        
         // UIView 생성
-        let toastView = UIView(frame: CGRect(x: (self.view.frame.size.width - toastLabelWidth) / 2, y: 75, width: toastLabelWidth, height: toastLabelHeight))
-        toastView.backgroundColor = UIColor.white
+        let toastView = UIView()
+        toastView.backgroundColor = .bgSecondary
         toastView.alpha = 1.0
         toastView.layer.cornerRadius = 25
         toastView.clipsToBounds = true
-        toastView.layer.borderColor = UIColor.gray.cgColor
+        toastView.layer.borderColor = UIColor.separatorsNonOpaque.cgColor
         toastView.layer.borderWidth = 1
         
         // 쉐도우 설정
-        toastView.layer.shadowColor = UIColor.gray.cgColor
+        toastView.layer.shadowColor = UIColor.separatorsNonOpaque.cgColor
         toastView.layer.shadowOpacity = 0.5 // 투명도
         toastView.layer.shadowOffset = CGSize(width: 4, height: 4) // 그림자 위치
-        toastView.layer.shadowRadius = 10
+        toastView.layer.shadowRadius = 4
+        toastView.translatesAutoresizingMaskIntoConstraints = false
         
         // UIImageView 생성 및 설정
         let image = UIImageView(image: UIImage(named: "logo7"))
@@ -183,34 +192,17 @@ class MapViewController: UIViewController {
         image.widthAnchor.constraint(equalToConstant: 50).isActive = true  // 이미지의 크기를 설정.
         image.heightAnchor.constraint(equalToConstant: 80).isActive = true
         
-        // UIButton 생성
-        let toastButton = UIButton()
-        toastButton.titleLabel?.font = .systemFont(ofSize: 13)
-        toastButton.setTitle("설정", for: .normal)
-        toastButton.setTitleColor(.white, for: .normal)
-        toastButton.backgroundColor = UIColor(.dominent)
-        toastButton.layer.cornerRadius = 4
-        toastButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        toastButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        let buttonAction = UIAction { _ in
-            print("Button Action")
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-        }
-        
-        toastButton.addAction(buttonAction, for: .touchUpInside)
-        
         // UILabel 생성 및 설정
         let labelOne = UILabel()
         labelOne.text = "위치 권한이 필요한 기능입니다."
-        labelOne.textColor = .black
-        labelOne.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        labelOne.textColor = .labelsPrimary
+        labelOne.font = UIFont.boldSystemFont(ofSize: 15)
         labelOne.textAlignment = .left
         labelOne.translatesAutoresizingMaskIntoConstraints = false
         
         let labelTwo = UILabel()
         labelTwo.text = "위치 권한 설정 화면으로 이동합니다."
-        labelTwo.textColor = .black
+        labelTwo.textColor = .labelsSecondary
         labelTwo.font = UIFont.systemFont(ofSize: 12)
         labelTwo.textAlignment = .left
         labelTwo.translatesAutoresizingMaskIntoConstraints = false
@@ -223,30 +215,31 @@ class MapViewController: UIViewController {
         labelStackView.translatesAutoresizingMaskIntoConstraints = false
         
         // StackView 생성 및 설정 (Horizontal Stack)
-        let mainStackView = UIStackView(arrangedSubviews: [image, labelStackView, toastButton])
+        let mainStackView = UIStackView(arrangedSubviews: [image, labelStackView])
         mainStackView.axis = .horizontal
         mainStackView.alignment = .center
         mainStackView.spacing = 10
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         toastView.addSubview(mainStackView)
-        
+        self.view.addSubview(toastView)
         // Auto Layout 설정
         NSLayoutConstraint.activate([
             mainStackView.leadingAnchor.constraint(equalTo: toastView.leadingAnchor, constant: 10),
             mainStackView.trailingAnchor.constraint(equalTo: toastView.trailingAnchor, constant: -10),
             mainStackView.topAnchor.constraint(equalTo: toastView.topAnchor, constant: 10),
-            mainStackView.bottomAnchor.constraint(equalTo: toastView.bottomAnchor, constant: -10)
+            mainStackView.bottomAnchor.constraint(equalTo: toastView.bottomAnchor, constant: -10),
+            
+            toastView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
+            toastView.heightAnchor.constraint(equalToConstant: 80),
+            toastView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            toastView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
         ])
         
-        self.view.addSubview(toastView) // toastView를 self.view에 추가
-        self.view.bringSubviewToFront(toastView) // toastView를 최상단으로
-        
-        print(self.view.subviews)
-
-        UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseIn, animations: {
+            toastView.isUserInteractionEnabled = false
             toastView.alpha = 0.0
-        }, completion: {(isCompleted) in
+        }, completion: { _ in
             toastView.removeFromSuperview()
         })
     }
@@ -373,7 +366,7 @@ extension MapViewController: MKMapViewDelegate {
                     detailViewController.view.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor),
                     detailViewController.view.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor),
                     detailViewController.view.bottomAnchor.constraint(equalTo: keyWindow.bottomAnchor),
-                    detailViewController.view.heightAnchor.constraint(equalToConstant: 200) // 원하는 높이 설정
+                    detailViewController.view.heightAnchor.constraint(equalToConstant: 200)
                 ])
                 
                 addChild(detailViewController)
@@ -404,13 +397,13 @@ extension MapViewController: MKMapViewDelegate {
                 // 오버레이 색 적용
                 switch post.postType {
                 case .lookingForSitter:
-                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.6)
+                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.3)
                 case .offeringToSitter:
-                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.6)
+                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3)
                 }
             } else {
                 print("post is nil")
-                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.6) // Default color
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3) // Default color
             }
 
             circleRenderer.strokeColor = .separatorsNonOpaque

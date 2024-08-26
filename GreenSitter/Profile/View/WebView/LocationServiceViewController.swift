@@ -12,7 +12,7 @@ class LocationServiceViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.navigationController?.navigationBar.topItem?.backButtonTitle = ""
         // WKWebView 초기화 및 설정
         webView = WKWebView(frame: self.view.frame)
         self.view.addSubview(webView)
@@ -24,5 +24,6 @@ class LocationServiceViewController: UIViewController {
             // 웹 페이지 로드
             webView.load(request)
         }
+        
     }
 }

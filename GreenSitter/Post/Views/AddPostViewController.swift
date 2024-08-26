@@ -129,14 +129,14 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return label
     }()
     
-    private let mapIconView: UIImageView = {
-        let imageView = UIImageView()
+    private let mapIconButton: UIButton = {
+        let button = UIButton()
         let image = UIImage(systemName: "map.fill")
-        imageView.image = image
-        imageView.tintColor = .gray
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+        button.setImage(image, for: .normal)
+        button.tintColor = .gray
+        button.contentMode = .scaleAspectFit
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     private let mapView: MKMapView = {
@@ -168,6 +168,14 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         updateImageStackView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // TODO: 단순히 address으로 표시 -> Map 으로 표시
+        if let address = viewModel.postLocation?.address {
+            mapLabel.text = address
+        }
+    }
+    
     @objc private func pickerImageViewTapped() {
         presentImagePickerController()
     }
@@ -175,18 +183,18 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     @objc private func saveButtonTapped() {
         guard validateInputs() else { return }
         
-        guard let userDocId = LoginViewModel.shared.user?.docId else {
+        guard let currentUser = LoginViewModel.shared.user else {
             print("User ID is not available")
             return
         }
         
-        viewModel.savePost(userId: userDocId, postTitle: titleTextField.text!, postBody: textView.text) { result in
+        viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, postTitle: titleTextField.text!, postBody: textView.text) { result in
             switch result {
             case .success(let newPost):
                 print("Add Post: \(newPost)")
                 self.navigationController?.popViewController(animated: true)
             case .failure(let error):
-                print("Error add post \(error.localizedDescription)")
+                print("Error add post: \(error.localizedDescription)")
                 self.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
             }
         }
@@ -236,9 +244,11 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         contentView.addSubview(remainCountLabel)
         contentView.addSubview(dividerLine3)
         contentView.addSubview(mapLabel)
-        contentView.addSubview(mapIconView)
+        contentView.addSubview(mapIconButton)
         contentView.addSubview(mapView)
         contentView.addSubview(saveButton)
+        
+        mapIconButton.addTarget(self, action: #selector(mapIconButtonTapped), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -296,12 +306,12 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             mapLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            mapIconView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
-            mapIconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapIconView.widthAnchor.constraint(equalToConstant: 24),
-            mapIconView.heightAnchor.constraint(equalToConstant: 24),
+            mapIconButton.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
+            mapIconButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            mapIconButton.heightAnchor.constraint(equalToConstant: 24),
             
-            mapView.topAnchor.constraint(equalTo: mapIconView.bottomAnchor, constant: 16),
+            mapView.topAnchor.constraint(equalTo: mapIconButton.bottomAnchor, constant: 16),
             mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapView.heightAnchor.constraint(equalToConstant: 200),
@@ -312,6 +322,14 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30),
             saveButton.heightAnchor.constraint(equalToConstant: 52)
         ])
+    }
+    
+    @objc private func mapIconButtonTapped() {
+        let searchMapViewController = SearchMapViewController()
+        searchMapViewController.addPostViewModel = viewModel
+        let navigationController = UINavigationController(rootViewController: searchMapViewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true, completion: nil)
     }
     
     func textViewDidChange(_ textView: UITextView) {

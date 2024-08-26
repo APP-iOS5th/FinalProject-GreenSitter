@@ -13,14 +13,21 @@ class LoginViewModel: ObservableObject {
     static let shared = LoginViewModel()
     
     @Published var user: User?
+    @Published var profileImage: UIImage?
     
     let db = Firestore.firestore()
     
     private init() {}
 
-    func userFetchFirebase(profileImage: String, nickname: String, location: Location, docId: String) {
-        self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false, docId: docId)
-    }
+    // func userFetchFirebase(profileImage: String, nickname: String, location: Location, docId: String) {
+    //     self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false, docId: docId)
+        
+    //     loadProfileImage(from: profileImage) { [weak self] image in
+    //         self?.profileImage = image
+    //         // Perform additional UI updates here if needed
+    //         print("Profile image successfully loaded and updated.")
+    //     }
+    // }   
     
     func firebaseFetch(docId: String) {
         db.collection("users").document(docId).getDocument { (document, error) in
@@ -34,7 +41,7 @@ class LoginViewModel: ObservableObject {
             }
 
             let data = document.data()
-            let id = data?["id"] as? String ?? ""
+            let id = data?["id"] as? String ?? docId
             let enabled = data?["enabled"] as? Bool ?? false
             let createDate = (data?["createDate"] as? Timestamp)?.dateValue() ?? Date()
             let updateDate = (data?["updateDate"] as? Timestamp)?.dateValue() ?? Date()
@@ -50,10 +57,8 @@ class LoginViewModel: ObservableObject {
             var location: Location?
             if let locationData = data?["location"] as? [String: Any] {
                 // 위치 정보 문자열을 Double로 변환
-                let latitudeString = locationData["latitude"] as? String ?? ""
-                let longitudeString = locationData["longitude"] as? String ?? ""
-                let latitude = Double(latitudeString) ?? 0.0
-                let longitude = Double(longitudeString) ?? 0.0
+                let latitude = locationData["latitude"] as? Double ?? 37.566 // 기본값 설정
+                let longitude = locationData["longitude"] as? Double ?? 126.97 // 기본값 설정
 
                 let locationId = locationData["locationId"] as? String ?? ""
                 let enabled = (locationData["enabled"] as? Bool) ?? false
@@ -71,7 +76,6 @@ class LoginViewModel: ObservableObject {
             } else {
                 print("위치정보 없음")
             }
-            
             DispatchQueue.main.async {
                 self.user = User(id: id,
                                  enabled: enabled,
@@ -79,18 +83,63 @@ class LoginViewModel: ObservableObject {
                                  updateDate: updateDate,
                                  profileImage: profileImage,
                                  nickname: nickname,
-                                 location: location ?? Location(locationId: "", enabled: true, createDate: Date(), updateDate: Date()),
+                                 location: location ?? Location.seoulLocation,
                                  platform: platform,
                                  levelPoint: Level(rawValue: levelPoint) ?? .fruit,
                                  exp: exp,
                                  aboutMe: aboutMe,
-                                 chatNotification: chatNotification, docId: docId)
+                                 chatNotification: chatNotification)
+                self.user?.updateExp(by: exp) //경험치 업데이트
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
             }
         }
     }
-
     
+    func loadProfileImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
+        guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
+              let url = URL(string: httpsURLString) else {
+            print("Invalid URL string: \(gsURL)")
+            completion(nil)
+            return
+        }
+        
+        print("Fetching image from URL: \(url)")
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Image download error: \(error)")
+                completion(nil)
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("HTTP Error: \(httpResponse.statusCode)")
+                completion(nil)
+                return
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                print("No data received or failed to convert data to UIImage")
+                completion(nil)
+                return
+            }
+            
+            DispatchQueue.main.async {
+                completion(image)
+            }
+        }
+        task.resume()
+    }
+
+
+        func convertToHttpsURL(gsURL: String) -> String? {
+            let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
+            let encodedPath = gsURL
+                .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
+                .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+            return baseURL + (encodedPath ?? "") + "?alt=media"
+        }
+    
+
     func updateUserLocation(with location: Location) {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("No logged in user")

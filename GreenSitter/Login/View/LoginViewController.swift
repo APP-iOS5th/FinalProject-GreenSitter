@@ -13,7 +13,18 @@ import FirebaseCore
 import FirebaseFirestore
 import GoogleSignIn
 
-class LoginViewController: UIViewController {
+protocol LoginViewControllerDelegate: AnyObject {
+    func didCompleteLogin()
+}
+
+class LoginViewController: UIViewController, SetLocationViewControllerDelegate {
+    func didCompleteLocationSetup() {
+        self.delegate?.didCompleteLogin()
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    weak var delegate: LoginViewControllerDelegate?
+    
     var currentNonce: String? //Apple Login Property
     let db = Firestore.firestore()
     
@@ -36,6 +47,7 @@ class LoginViewController: UIViewController {
         """
         label.font = .systemFont(ofSize: 17)
         label.textColor = .labelsPrimary
+        label.textAlignment = .center
         label.numberOfLines = 0 // 여러 줄 텍스트를 지원
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -50,8 +62,8 @@ class LoginViewController: UIViewController {
     private let googleButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "googleLogin"), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.imageView?.contentMode = .scaleAspectFit
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -63,9 +75,25 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private lazy var closeButton: UIBarButtonItem = {
+        let button = UIBarButtonItem()
+        button.image = UIImage(systemName: "xmark")
+        button.style = .plain
+        button.tintColor = .labelsPrimary
+        button.target = self
+        button.action = #selector(navigationTap)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
+    }
+    
+    private func setupUI() {
         view.backgroundColor = .bgPrimary
+        
+        navigationItem.leftBarButtonItem = closeButton
         
         view.addSubview(bodyLabel)
         view.addSubview(titleLabel)
@@ -81,23 +109,23 @@ class LoginViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             // Title Label
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 90),
             
             // Body Label
-            bodyLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            bodyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             
             // Google Button
             googleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             googleButton.bottomAnchor.constraint(equalTo: appleButton.topAnchor, constant: -20),
-            googleButton.widthAnchor.constraint(equalToConstant: 230), // 너비를 230으로 설정
+            googleButton.widthAnchor.constraint(equalToConstant: 230),
             googleButton.heightAnchor.constraint(equalToConstant: 50),
             
             // Apple Button
             appleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             appleButton.bottomAnchor.constraint(equalTo: textButton.topAnchor, constant: -20),
-            appleButton.widthAnchor.constraint(equalToConstant: 230), // 너비를 230으로 설정
+            appleButton.widthAnchor.constraint(equalToConstant: 230),
             appleButton.heightAnchor.constraint(equalToConstant: 50),
             
             // Text Button
@@ -108,23 +136,22 @@ class LoginViewController: UIViewController {
     
     //MARK: - ToastMessage
     func showToast(withDuration: Double, delay: Double) {
-        let toastLabelWidth: CGFloat = 380
-        let toastLabelHeight: CGFloat = 80
         
         // UIView 생성
-        let toastView = UIView(frame: CGRect(x: (self.view.frame.size.width - toastLabelWidth) / 2, y: 75, width: toastLabelWidth, height: toastLabelHeight))
-        toastView.backgroundColor = UIColor.white
+        let toastView = UIView()
+        toastView.backgroundColor = .bgSecondary
         toastView.alpha = 1.0
         toastView.layer.cornerRadius = 25
         toastView.clipsToBounds = true
-        toastView.layer.borderColor = UIColor.gray.cgColor
+        toastView.layer.borderColor = UIColor.separatorsNonOpaque.cgColor
         toastView.layer.borderWidth = 1
         
         // 쉐도우 설정
-        toastView.layer.shadowColor = UIColor.gray.cgColor
+        toastView.layer.shadowColor = UIColor.separatorsNonOpaque.cgColor
         toastView.layer.shadowOpacity = 0.5 // 투명도
         toastView.layer.shadowOffset = CGSize(width: 4, height: 4) // 그림자 위치
-        toastView.layer.shadowRadius = 10
+        toastView.layer.shadowRadius = 4
+        toastView.translatesAutoresizingMaskIntoConstraints = false
         
         // UIImageView 생성 및 설정
         let image = UIImageView(image: UIImage(named: "logo7"))
@@ -136,16 +163,16 @@ class LoginViewController: UIViewController {
         
         // UILabel 생성 및 설정
         let labelOne = UILabel()
-        labelOne.text = "로그인이 권한이 필요한 기능입니다"
-        labelOne.textColor = .black
-        labelOne.font = UIFont.systemFont(ofSize: 13)
+        labelOne.text = "로그인 권한이 필요한 기능입니다"
+        labelOne.textColor = .labelsPrimary
+        labelOne.font = UIFont.boldSystemFont(ofSize: 15)
         labelOne.textAlignment = .left
         labelOne.translatesAutoresizingMaskIntoConstraints = false
         
         let labelTwo = UILabel()
-        labelTwo.text = "로그인화면으로 이동합니다"
-        labelTwo.textColor = .black
-        labelTwo.font = UIFont.systemFont(ofSize: 11)
+        labelTwo.text = "로그인 화면으로 이동합니다"
+        labelTwo.textColor = .labelsSecondary
+        labelTwo.font = UIFont.systemFont(ofSize: 12)
         labelTwo.textAlignment = .left
         labelTwo.translatesAutoresizingMaskIntoConstraints = false
         
@@ -164,20 +191,29 @@ class LoginViewController: UIViewController {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         toastView.addSubview(mainStackView)
-        
+        self.view.addSubview(toastView)
+
         // Auto Layout 설정
         NSLayoutConstraint.activate([
             mainStackView.leadingAnchor.constraint(equalTo: toastView.leadingAnchor, constant: 10),
             mainStackView.trailingAnchor.constraint(equalTo: toastView.trailingAnchor, constant: -10),
             mainStackView.topAnchor.constraint(equalTo: toastView.topAnchor, constant: 10),
-            mainStackView.bottomAnchor.constraint(equalTo: toastView.bottomAnchor, constant: -10)
+            mainStackView.bottomAnchor.constraint(equalTo: toastView.bottomAnchor, constant: -10),
+            toastView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
+            toastView.heightAnchor.constraint(equalToConstant: 80),
+            toastView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            toastView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
         ])
         
-        self.view.addSubview(toastView)
-        UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseOut, animations: {
-            toastView.alpha = 0.0
-        }, completion: {(isCompleted) in
-            toastView.removeFromSuperview()
+        UIView.animate(withDuration: withDuration, delay: 0.0, options: .curveEaseOut, animations: {
+            toastView.alpha = 1.0
+        }, completion: { _ in
+            // 사라지는 애니메이션
+            UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseIn, animations: {
+                toastView.alpha = 0.0
+            }, completion: { _ in
+                toastView.removeFromSuperview()
+            })
         })
     }
     
@@ -236,16 +272,11 @@ class LoginViewController: UIViewController {
                     else if let document = document, document.exists {
                         // 재로그인 (유저 데이터가 있는 경우)
                         DispatchQueue.main.async {
-                            // Setting local User
                             LoginViewModel.shared.firebaseFetch(docId: user.uid)
-
-                            let profileViewController = ProfileViewController()
-                            if let navigationController = self.navigationController {
-                                navigationController.pushViewController(profileViewController, animated: true)
-                            }
-                            else {
-                                print("Error: The current view controller is not embedded in a UINavigationController.")
-                            }
+                            self.navigationController?.popToRootViewController(animated: false) // 모든 푸시된 뷰를 pop
+                            self.dismiss(animated: true, completion: {
+                                self.delegate?.didCompleteLogin()
+                            })
                         }
                     }
                     
@@ -259,12 +290,8 @@ class LoginViewController: UIViewController {
                             } else {
                                 DispatchQueue.main.async {
                                     let setLocationViewController = SetLocationViewController()
-                                    if let navigationController = self.navigationController {
-                                        navigationController.pushViewController(setLocationViewController, animated: true)
-                                    }
-                                    else {
-                                        print("Error: The current view controller is not embedded in a UINavigationController.")
-                                    }
+                                    setLocationViewController.delegate = self
+                                    self.navigationController?.pushViewController(setLocationViewController, animated: true)
                                 }
                             }
                         }
@@ -277,8 +304,11 @@ class LoginViewController: UIViewController {
     
     //MARK: - MainView move
     @objc func navigationTap() {
-        if let tabBarController = self.tabBarController {
-            tabBarController.selectedIndex = 0 // Home 탭으로 설정
+        if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let window = windowScene.windows.first(where: \.isKeyWindow),
+           let tabBarController = window.rootViewController as? UITabBarController {
+            tabBarController.selectedIndex = 0 // 메인 뷰(홈) 탭으로 이동
+            dismiss(animated: true, completion: nil) // 로그인 뷰 닫기
         }
     }
 }
@@ -337,18 +367,12 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                         else if let document = document, document.exists {
                             // 재로그인 (유저 데이터가 있는 경우)
                             DispatchQueue.main.async {
-                                // Setting local User
                                 LoginViewModel.shared.firebaseFetch(docId: user.uid)
-                                // TODO: 비동기 프로그래밍
-                                
-                                let profileViewController = ProfileViewController()
-                                if let navigationController = self.navigationController {
-                                    print("LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
-                                    navigationController.pushViewController(profileViewController, animated: true)
-                                }
-                                else {
-                                    print("Error: The current view controller is not embedded in a UINavigationController.")
-                                }
+                                self.navigationController?.popToRootViewController(animated: false) // 모든 푸시된 뷰를 pop
+                                self.dismiss(animated: true, completion: {
+                                    self.delegate?.didCompleteLogin()
+                                })
+
                             }
                         }
                         else {
@@ -361,12 +385,8 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                                 } else {
                                     DispatchQueue.main.async {
                                         let setLocationViewController = SetLocationViewController()
-                                        if let navigationController = self.navigationController {
-                                            navigationController.pushViewController(setLocationViewController, animated: true)
-                                        }
-                                        else {
-                                            print("Error: The current view controller is not embedded in a UINavigationController.")
-                                        }
+                                        setLocationViewController.delegate = self
+                                        self.navigationController?.pushViewController(setLocationViewController, animated: true)
                                     }
                                 }
                             }

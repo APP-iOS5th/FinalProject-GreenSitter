@@ -50,7 +50,6 @@ extension AboutMeViewController {
                 let exp = data?["exp"] as? Int
                 let aboutMe = data?["aboutMe"] as? String ?? "자기 소개를 입력해주세요"
                 let chatNotification = data?["chatNotification"] as? Bool
-                let docId = data?["docId"] as? String ?? ""
                 
                 print("Fetched levelPoint: \(levelPoint)")
                 print("자기소개: \(aboutMe)")
@@ -72,7 +71,7 @@ extension AboutMeViewController {
                 if !profileImage.isEmpty {
                     self.loadProfileImage(from: profileImage)
                 }
-                self.user = User(id: id, enabled: false, createDate: createDate ?? Date(), updateDate: updateDate ?? Date(), profileImage: profileImage, nickname: nickname, location: Location.sampleLocation, platform: platform, levelPoint: Level.flower, exp: 0, aboutMe: aboutMe, chatNotification: false, docId: docId)
+                self.user = User(id: id, enabled: false, createDate: createDate ?? Date(), updateDate: updateDate ?? Date(), profileImage: profileImage, nickname: nickname, location: Location.sampleLocation, platform: platform, levelPoint: Level.flower, exp: 0, aboutMe: aboutMe, chatNotification: false)
 
                 
                 // UI 업데이트
@@ -90,10 +89,16 @@ extension AboutMeViewController {
     
 
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
-    func loadProfileImage(from gsURL: String) {
-        guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
-              let url = URL(string: httpsURLString) else {
-            print("Invalid URL string: \(gsURL)")
+    func loadProfileImage(from urlString: String) {
+        var imageUrlString = urlString
+        
+        // 만약 URL이 gs:// 형식이라면 https:// 형식으로 변환
+        if urlString.starts(with: "gs://") {
+            imageUrlString = convertToHttpsURL(gsURL: urlString) ?? ""
+        }
+        
+        guard let url = URL(string: imageUrlString) else {
+            print("Invalid URL string: \(imageUrlString)")
             return
         }
         
@@ -120,12 +125,14 @@ extension AboutMeViewController {
                 print("error: 이미지로 변환 실패")
                 return
             }
+            
             DispatchQueue.main.async {
                 self.profileImage.image = image
             }
         }
         task.resume()
     }
+
     //MARK: - gs:// URL을 https:// URL로 변환
     func convertToHttpsURL(gsURL: String) -> String? {
         let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
@@ -134,6 +141,5 @@ extension AboutMeViewController {
             .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 한 번만 호출
         return baseURL + (encodedPath ?? "") + "?alt=media"
     }
-    
     
 }

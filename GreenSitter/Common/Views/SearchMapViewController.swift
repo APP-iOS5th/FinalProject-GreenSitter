@@ -16,16 +16,36 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     private let tableView = UITableView()
     private let placeholderLabel = UILabel()
     
+    private let userLocation: Location = {
+        guard let location = LoginViewModel.shared.user?.location else {
+            return Location.seoulLocation   // location 없으면 서울 시청으로
+        }
+        return location
+    }()
+    
     var makePlanViewModel: MakePlanViewModel?
+    var addPostViewModel: AddPostViewModel?
+
+    private var searchWorkItem: DispatchWorkItem?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         view.backgroundColor = .bgPrimary
         setupNavigationBar()
         setupUI()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // 선택된 row 해제
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: false)
+        }
+    }
+    
+    // MARK: - NAVIGATION BAR
     
     private func setupNavigationBar() {
         // Cancel button
@@ -39,12 +59,24 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         searchBar.delegate = self
 
         navigationItem.titleView = searchBar
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchWorkItem?.cancel()
         
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.searchPlaces(query: searchText)
+        }
+        
+        searchWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: workItem) // Adjust debounce time as needed
     }
     
     @objc private func cancelButtonTapped() {
         dismiss(animated: true, completion: nil)
     }
+    
+    // MARK: - SETUP UI
     
     private func setupUI() {
         // UITableView 설정
@@ -75,15 +107,28 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     }
     
     private func updatePlaceholder(text: String, isPrimary: Bool) {
-        let attributedText = NSMutableAttributedString(
-            string: text,
-            attributes: [
-                .foregroundColor: isPrimary ? UIColor.label : UIColor.secondaryLabel,
-                .font: UIFont.preferredFont(forTextStyle: .body)
-            ]
-        )
-        placeholderLabel.attributedText = attributedText
+        let fullText = NSMutableAttributedString(string: text)
+        
+        // 설정할 기본 속성
+        let primaryAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: isPrimary ? UIColor.labelsPrimary : UIColor.labelsSecondary,
+            .font: UIFont.preferredFont(forTextStyle: .body)
+        ]
+        
+        let grayAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.labelsSecondary,
+            .font: UIFont.preferredFont(forTextStyle: .body)
+        ]
+        
+        // 텍스트를 부분적으로 나누어 적용
+        let grayTextRange = (text as NSString).range(of: "위치 선정이 어렵다면,\n찾기 쉬운 공공장소는 어떠세요?")
+        
+        fullText.addAttributes(primaryAttributes, range: NSRange(location: 0, length: text.count)) // 전체에 기본 속성 적용
+        fullText.addAttributes(grayAttributes, range: grayTextRange) // 회색 텍스트 부분만 회색으로 설정
+        
+        placeholderLabel.attributedText = fullText
     }
+
     
     private func updateUI() {
         if locations.isEmpty {
@@ -103,16 +148,22 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     }
 
     private func searchPlaces(query: String) {
+        
+        guard !query.isEmpty else {
+            locations.removeAll()
+            updateUI()
+            return
+        }
+        
         // 초기화
         locations.removeAll()
         currentPage = 1
         isEnd = false
-        updatePlaceholder(text: "검색 중...", isPrimary: false)
+//        updatePlaceholder(text: "검색 중...", isPrimary: false)
         updateUI()
-        
-        let location = Location.seoulLocation
 
-        KakaoAPIService.shared.searchPlacesNearby(query: query, location: location, page: currentPage) { [weak self] result in
+
+        KakaoAPIService.shared.searchPlacesNearby(query: query, location: self.userLocation, page: currentPage) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let (newLocations, isEnd)):
@@ -143,9 +194,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
         }
         currentPage += 1
 
-        let location = Location.sampleLocation
-
-        KakaoAPIService.shared.searchPlacesNearby(query: query, location: location, page: currentPage) { [weak self] result in
+        KakaoAPIService.shared.searchPlacesNearby(query: query, location: self.userLocation, page: currentPage) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let (newLocations, isEnd)):
@@ -164,7 +213,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
 
 extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
     
-    // MARK: - UITableViewDataSource
+    // MARK: - UITABLEVIEW DATASOURCE
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return locations.count
@@ -183,11 +232,11 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
         
         // attributedText 설정
         let titleAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.label,
+            .foregroundColor: UIColor.labelsPrimary,
             .font: UIFont.preferredFont(forTextStyle: .body)
         ]
         let subtitleAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.secondaryLabel,
+            .foregroundColor: UIColor.labelsSecondary,
             .font: UIFont.preferredFont(forTextStyle: .subheadline)
         ]
         
@@ -206,6 +255,11 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
             let navigationController = UINavigationController(rootViewController: detailViewController)
             navigationController.modalPresentationStyle = .pageSheet
             present(navigationController, animated: true, completion: nil)
+        } else if let addPostViewModel = self.addPostViewModel {
+            let detailViewController = SearchMapDetailViewController(location: selectedLocation, addPostViewModel: addPostViewModel)
+            let navigationController = UINavigationController(rootViewController: detailViewController)
+            navigationController.modalPresentationStyle = .pageSheet
+            present(navigationController, animated: true, completion: nil)
         } else {
             let detailViewController = SearchMapDetailViewController(location: selectedLocation)
             let navigationController = UINavigationController(rootViewController: detailViewController)
@@ -215,7 +269,7 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
         
     }
 
-    // MARK: - UITableViewDelegate
+    // MARK: - UITABLEVIEW DELEGATE
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 40

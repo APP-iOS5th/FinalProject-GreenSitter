@@ -107,42 +107,34 @@ class PostTableViewCell: UITableViewCell {
         postStatusLabel.text = post.postStatus.rawValue
         postTitleLabel.text = post.postTitle
         postBodyLabel.text = post.postBody
-        postDateLabel.text = timeAgoSinceDate(post.createDate)
-        
+        postDateLabel.text = timeAgoSinceDate(post.updateDate)
+
         guard let postImages = post.postImages, !postImages.isEmpty else {
             postImageView.isHidden = true
             return
         }
         
-        postImageView.isHidden = false
-        
-        if let imageUrl = postImages.first {
+        if let imageUrlString = postImages.first, let imageUrl = URL(string: imageUrlString) {
             loadImage(from: imageUrl)
         } else {
+            print("Post Image is nil")
             postImageView.image = nil
         }
     }
-    
-    // Firebase Storage에서 이미지를 로드하여 표시
-    private func loadImage(from urlString: String) {
-        guard let url = URL(string: urlString) else {
-            postImageView.image = UIImage(named: "defaultImage")
-            return
-        }
-        
-        // 비동기적으로 이미지 로드
-        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let self = self, let data = data, error == nil else {
+    private func loadImage(from url: URL) {
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    self?.postImageView.image = UIImage(named: "defaultImage")
+                    self.postImageView.image = nil
                 }
                 return
             }
-            
+            let image = UIImage(data: data)
             DispatchQueue.main.async {
-                self.postImageView.image = UIImage(data: data)
+                self.postImageView.image = image
             }
-        }.resume()
+        }
+        task.resume()
     }
     
     private func timeAgoSinceDate(_ date: Date) -> String {

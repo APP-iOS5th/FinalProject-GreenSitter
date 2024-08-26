@@ -13,7 +13,7 @@ class ChatViewModel {
     private let firestorageManager = FirestorageManager()
     
     // 로그인 여부를 나타내는 변수
-    var isLoggedIn = true /// 임시로 true, false로 바꾸기
+    var isLoggedIn = false /// 임시로 true, false로 바꾸기
     var hasChats = false
     
     // 임시 유저 id
@@ -21,7 +21,7 @@ class ChatViewModel {
     var user: User? {
         didSet {
 //            isLoggedIn = user != nil
-            updateUI?()
+//            updateUI?()
         }
     }
     
@@ -32,7 +32,23 @@ class ChatViewModel {
         }
     }
     
-    var messages: [String:[Message]] = [:]
+    var lastMessages: [String:[Message]] = [:] {
+        didSet {
+            updateUI?()
+        }
+    }
+    
+    var unreadMessages: [String:[Message]] = [:] {
+        didSet {
+            updateUI?()
+        }
+    }
+    
+    var messages: [String:[Message]] = [:] {
+        didSet {
+            updateUI?()
+        }
+    }
 
     var updateUI: (() -> Void)?
     
@@ -47,24 +63,36 @@ class ChatViewModel {
         }
     }
     
-    func loadChatRooms(completion: @escaping () -> Void) {
-        firestoreManager.fetchChatRooms(userId: userId) { [weak self] updatedchatRooms in
+    func loadChatRooms(completion: @escaping ([ChatRoom]) -> Void) {
+        firestoreManager.fetchChatRooms(userId: userId) { [weak self] updatedChatRooms in
             guard let self = self else { return }
-            self.chatRooms = updatedchatRooms
-            let dispatchGroup = DispatchGroup()
+            self.chatRooms = updatedChatRooms
             
-            for updatedChatRoom in updatedchatRooms {
-                dispatchGroup.enter()
-                self.loadMessages(chatRoomId: updatedChatRoom.id) {
-                    // TODO: - 새로운 메세지가 self.messages에 잘 저장되는데 불러올 때 에러남
-                    dispatchGroup.leave()
-                }
-            }
-            dispatchGroup.notify(queue: .main) {
+            completion(updatedChatRooms)
+        }
+    }
+    
+    func loadLastMessages(chatRoomId: String, completion: @escaping () -> Void) {
+        firestoreManager.fetchLastMessages(chatRoomId: chatRoomId) { [weak self] updatedMessages in
+            guard let self = self else {
                 completion()
-                
+                return
             }
+            self.lastMessages[chatRoomId] = updatedMessages
             
+            completion()
+        }
+    }
+    
+    func loadUnreadMessages(chatRoomId: String, completion: @escaping () -> Void) {
+        firestoreManager.fetchUnreadMessages(chatRoomId: chatRoomId, userId: userId) { [weak self] updatedMessages in
+            guard let self = self else {
+                completion()
+                return
+            }
+            self.unreadMessages[chatRoomId] = updatedMessages
+            
+            completion()
         }
     }
     
@@ -81,17 +109,17 @@ class ChatViewModel {
     }
     
     func deleteChatRoom(at index: Int) async throws {
-        guard index >= 0 && index < chatRooms.count else {
+        guard index >= 0 && index < self.chatRooms.count else {
             print("index out of range")
             return
         }
         
-        var chatRoom = chatRooms[index]
+        var chatRoom = self.chatRooms[index]
         
         do {
             let idString = chatRoom.id
-            try await firestoreManager.deleteChatRoom(docId: idString, userId: userId, chatRoom: &chatRoom)
-            self.chatRooms.remove(at: index)
+            let updatedChatRoom = try await firestoreManager.deleteChatRoom(docId: idString, userId: userId, chatRoom: chatRoom)
+            self.chatRooms[index] = updatedChatRoom
         } catch {
             print("Error deleting chat room: \(error.localizedDescription)")
         }
@@ -113,6 +141,26 @@ class ChatViewModel {
             }
         }.resume()
     }
+    
+    // 채팅방 알림 설정 업데이트
+    func updateNotification(chatRoomId: String, userNotification: Bool, postUserNotification: Bool) async throws {
+        do {
+            try await firestoreManager.updateNotificationSetting(chatRoomId: chatRoomId, userNotification: userNotification, postUserNotification: postUserNotification)
+        } catch {
+            print("Error updating notification of chatRoom: \(error.localizedDescription)")
+        }
+    }
+    
+    // 채팅방 읽음 처리 업데이트
+    func updateUnread(chatRoomId: String) async throws {
+        do {
+            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: self.userId, unreadMessages: self.unreadMessages[chatRoomId]!)
+            self.unreadMessages[chatRoomId] = []
+        } catch {
+            print("Error updating notification of chatRoom: \(error.localizedDescription)")
+        }
+    }
+    
     
     // MARK: - MessageInputViewController Button Methods
     // send button
@@ -141,7 +189,7 @@ class ChatViewModel {
         }
 
         // UI 업데이트
-        self.updateUI?()
+//        self.updateUI?()
         
         Task {
             do {
@@ -153,7 +201,7 @@ class ChatViewModel {
                     chatRoomMessages.removeAll { $0.id == textMessage.id }
                     self.messages[chatRoom.id] = chatRoomMessages
                 }
-                self.updateUI?()
+//                self.updateUI?()
                 return
             }
         }
@@ -204,10 +252,28 @@ class ChatViewModel {
             }
             // 파이어 스토어 메세지 저장
             let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
+            
+            // 로컬 메시지 리스트에 메시지 추가
+            if var chatRoomMessages = self.messages[chatRoom.id] {
+                chatRoomMessages.append(imageMessage)
+                self.messages[chatRoom.id] = chatRoomMessages
+            } else {
+                self.messages[chatRoom.id] = [imageMessage]
+            }
+
+            // UI 업데이트
+//            self.updateUI?()
+            
             do {
                 try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: imageMessage)
             } catch {
                 print("Failed to save message: \(error.localizedDescription)")
+                // Firestore에 저장 실패 시, 로컬 메시지 리스트에서 해당 메시지 제거
+                if var chatRoomMessages = self.messages[chatRoom.id] {
+                    chatRoomMessages.removeAll { $0.id == imageMessage.id }
+                    self.messages[chatRoom.id] = chatRoomMessages
+                }
+//                self.updateUI?()
                 return
             }
         }
@@ -253,11 +319,28 @@ class ChatViewModel {
         
         let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
         
+        // 로컬 메시지 리스트에 메시지 추가
+        if var chatRoomMessages = self.messages[chatRoom.id] {
+            chatRoomMessages.append(planMessage)
+            self.messages[chatRoom.id] = chatRoomMessages
+        } else {
+            self.messages[chatRoom.id] = [planMessage]
+        }
+
+        // UI 업데이트
+//        self.updateUI?()
+        
         Task {
             do {
                 try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: planMessage)
             } catch {
                 print("Failed to save message: \(error.localizedDescription)")
+                // Firestore에 저장 실패 시, 로컬 메시지 리스트에서 해당 메시지 제거
+                if var chatRoomMessages = self.messages[chatRoom.id] {
+                    chatRoomMessages.removeAll { $0.id == planMessage.id }
+                    self.messages[chatRoom.id] = chatRoomMessages
+                }
+//                self.updateUI?()
                 return
             }
         }

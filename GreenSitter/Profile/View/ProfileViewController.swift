@@ -10,8 +10,15 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 import Combine
+import AuthenticationServices
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    func didCompleteLogin() {
+        setupView()
+        fetchUserFirebase()
+        setupTextField()
+        self.tableView.reloadData()
+    }
     
     // MARK: - Properties
     var sectionTitle = ["내 정보", "돌봄 정보", "시스템", "이용약관 및 개인정보 처리방침" ]
@@ -19,14 +26,10 @@ class ProfileViewController: UIViewController {
     let db = Firestore.firestore()
     let storage = Storage.storage()
     let someIndexPath = IndexPath(row: 0, section: 0) // 적절한 인덱스 경로로 대체
+    var currentReauthCompletion: ((Bool) -> Void)?
 
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
-
-    var user: User? {
-        print("Profile View - LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
-        return LoginViewModel.shared.user
-    }
     
     // MARK: - UI Components
     lazy var circleView: UIView = {
@@ -69,15 +72,34 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
-        fetchUserFirebase()
-        setupTextField()
+        
+        if (Auth.auth().currentUser != nil) {
+            setupView()
+            fetchUserFirebase()
+            setupTextField()
+        } else {
+            view.backgroundColor = .bgPrimary
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // 로그인 상태 확인
+        if Auth.auth().currentUser == nil {
+            let loginViewController = LoginViewController()
+            loginViewController.delegate = self
+            let navigationController = UINavigationController(rootViewController: loginViewController)
+            navigationController.modalPresentationStyle = .fullScreen
+            present(navigationController, animated: true, completion: nil)
+        }
+        
     }
     
     private func setupView() {
         view.backgroundColor = UIColor(named: "BGSecondary")
         navigationItem.title = "프로필"
-        
+        navigationItem.hidesBackButton = true
         view.addSubview(circleView)
         view.addSubview(imageButton)
         view.addSubview(profileButton)
@@ -116,12 +138,12 @@ class ProfileViewController: UIViewController {
     // MARK: - Actions
     @objc func myProfilebuttonTap() {
         
-        guard let userDocId = LoginViewModel.shared.user?.docId else {
+        guard let userId = LoginViewModel.shared.user?.id else {
             print("User ID is not available")
             return
         }
         
-        let aboutMeViewController = AboutMeViewController(userId: userDocId)
+        let aboutMeViewController = AboutMeViewController(userId: userId)
         self.navigationController?.pushViewController(aboutMeViewController, animated: true)
     }
     
@@ -218,5 +240,6 @@ class ProfileViewController: UIViewController {
     @objc func handleNicknameChanged() {
         fetchUserFirebase()
     }
+    
     
 }

@@ -7,6 +7,7 @@
 
 import Combine
 import UIKit
+import FirebaseAuth
 
 class MainPostListViewController: UIViewController {
     
@@ -32,7 +33,13 @@ class MainPostListViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+    private let locationLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        label.textColor = .labelsPrimary
+        return label
+    }()
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -45,13 +52,39 @@ class MainPostListViewController: UIViewController {
         
         setupCategoryButtons()
         setupNavigationBarButtons()
+        setupLocationLabel()
+
+        fetchPostsByCategoryAndLocationWithViewModel()
+        
         setupTableView()
         bindViewModel()
+    }
+    
+    private func fetchPostsByCategoryAndLocationWithViewModel() {
+        guard let categoryText = selectedButton?.titleLabel?.text else {
+            return
+        }
+        
+        // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
+        if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
+            print("MainPostView - userlocation: \(userLocation)")
+            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: userLocation)
+        } else {    // 비로그인, 혹은 위치 정보 없으면
+            print("MainPostView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
+            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: nil)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        guard let categoryText = selectedButton?.titleLabel?.text else {
+            return
+        }
+        
+        fetchPostsByCategoryAndLocationWithViewModel()
+        setupLocationLabel()
+
         // 선택된 row 해제
         if let indexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: false)
@@ -72,10 +105,10 @@ class MainPostListViewController: UIViewController {
         // Create a menu with actions for each PostType
         let menu = UIMenu(title: "", children: [
             UIAction(title: PostType.offeringToSitter.rawValue, image: UIImage(systemName: "hand.raised.fill")) { [weak self] _ in
-                self?.navigateToAddPostViewController(with: .offeringToSitter)
+                self?.handleAddPostButtonTapped(postType: .offeringToSitter)
             },
             UIAction(title: PostType.lookingForSitter.rawValue, image: UIImage(systemName: "person.fill")) { [weak self] _ in
-                self?.navigateToAddPostViewController(with: .lookingForSitter)
+                self?.handleAddPostButtonTapped(postType: .lookingForSitter)
             },
         ])
         
@@ -86,7 +119,11 @@ class MainPostListViewController: UIViewController {
         // Add the search button as a UIBarButtonItem
         let searchBarButton = UIBarButtonItem(customView: searchPostButton)
         let addBarButton = UIBarButtonItem(customView: addPostButton)
+        
+        let locationBarButton = UIBarButtonItem(customView: locationLabel)
+        
         navigationItem.rightBarButtonItems = [addBarButton, searchBarButton]
+        navigationItem.leftBarButtonItem = locationBarButton
         
         // TODO: post 검색 기능
         let searchPostButtonAction = UIAction { [weak self] _ in
@@ -96,6 +133,23 @@ class MainPostListViewController: UIViewController {
         searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
     }
     
+    private func handleAddPostButtonTapped(postType: PostType) {
+        if Auth.auth().currentUser != nil {
+            navigateToAddPostViewController(with: postType)
+        } else {
+            if let tabBarController = self.tabBarController {
+                tabBarController.selectedIndex = 3
+            }
+        }
+    }
+    
+    private func setupLocationLabel() {
+        if let userAddress = LoginViewModel.shared.user?.location.address {
+            locationLabel.text = userAddress
+        } else {
+            locationLabel.text = ""
+        }
+    }
     
     func setupCategoryButtons() {
         let careProviderButton = UIButton()
@@ -127,51 +181,6 @@ class MainPostListViewController: UIViewController {
         
         categoryButtonTapped(careProviderButton)
     }
-    
-    func setupSearchPostButton() {
-        view.addSubview(searchPostButton)
-        
-        let searchPostButtonAction = UIAction {[weak self] _ in
-            print("searchPostButton Tapped")
-        }
-        
-        searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-            searchPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            searchPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-            searchPostButton.widthAnchor.constraint(equalToConstant: 40),
-            searchPostButton.heightAnchor.constraint(equalToConstant: 40)
-        ])
-    }
-    
-    func setupAddPostButton() {
-        view.addSubview(addPostButton)
-        
-        let addPostButtonAction = UIAction { [weak self] _ in
-            guard let self = self else { return }
-            
-            
-            let addPostViewController = AddPostViewController(postType: .lookingForSitter, viewModel: AddPostViewModel(postType: .lookingForSitter))
-            
-            
-            if let navigationController = self.navigationController {
-                navigationController.pushViewController(addPostViewController, animated: true)
-            } else {
-                print("Navigation controller not found.")
-            }
-        }
-        
-        addPostButton.addAction(addPostButtonAction, for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-            addPostButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            addPostButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            addPostButton.widthAnchor.constraint(equalToConstant: 40),
-            addPostButton.heightAnchor.constraint(equalToConstant: 40)
-        ])
-    }
-    
     
     func setupTableView() {
         tableView.dataSource = self
@@ -221,7 +230,15 @@ class MainPostListViewController: UIViewController {
         
         // 선택된 카테고리로 필터링
         guard let category = sender.titleLabel?.text else { return }
-        viewModel.fetchPostsByCategory(for: category)
+        
+        // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
+        if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
+            print("MainPostView - userlocation: \(userLocation)")
+            viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: userLocation)
+        } else {    // 비로그인, 혹은 위치 정보 없으면
+            print("MainPostView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
+            viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: nil)
+        }
     }
     
     private func navigateToAddPostViewController(with postType: PostType) {

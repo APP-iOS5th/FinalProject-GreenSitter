@@ -12,7 +12,6 @@ import Combine
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
-    private var cancellables = Set<AnyCancellable>() // Combine의 Cancellable 객체를 저장할 배열
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
@@ -39,16 +38,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
         
         // Profile
-        let profileViewController: UIViewController
-        if Auth.auth().currentUser != nil {
-            // 사용자가 로그인한 경우: ProfileViewController로 이동
-            profileViewController = ProfileViewController()
-        } else {
-            // 사용자가 로그인하지 않은 경우: LoginViewController로 이동
-            profileViewController = LoginViewController()
-        }
-
-        let fourthNavigationController = UINavigationController(rootViewController: profileViewController)
+        let fourthNavigationController = UINavigationController(rootViewController: ProfileViewController())
         fourthNavigationController.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.fill"), tag: 3)
         
         let tabBarController = UITabBarController()
