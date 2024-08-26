@@ -57,6 +57,7 @@ class PostTableViewCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 8
         imageView.layer.masksToBounds = true
+        imageView.image = UIImage(named: "defaultImage") // 기본 이미지 설정
         return imageView
     }()
     
@@ -108,30 +109,34 @@ class PostTableViewCell: UITableViewCell {
         postTitleLabel.text = post.postTitle
         postBodyLabel.text = post.postBody
         postDateLabel.text = timeAgoSinceDate(post.updateDate)
-
+        
+        postImageView.image = UIImage(named: "defaultImage") // 기본 이미지 설정
+        
         guard let postImages = post.postImages, !postImages.isEmpty else {
             postImageView.isHidden = true
             return
         }
         
+        postImageView.isHidden = false
         if let imageUrlString = postImages.first, let imageUrl = URL(string: imageUrlString) {
             loadImage(from: imageUrl)
         } else {
             print("Post Image is nil")
-            postImageView.image = nil
+            postImageView.image = UIImage(named: "defaultImage") // 기본 이미지 설정
         }
     }
+    
     private func loadImage(from url: URL) {
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    self.postImageView.image = nil
+                    self?.postImageView.image = UIImage(named: "defaultImage") // 오류 시 기본 이미지 사용
                 }
                 return
             }
             let image = UIImage(data: data)
             DispatchQueue.main.async {
-                self.postImageView.image = image
+                self?.postImageView.image = image
             }
         }
         task.resume()
