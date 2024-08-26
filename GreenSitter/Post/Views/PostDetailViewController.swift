@@ -318,6 +318,12 @@ class PostDetailViewController: UIViewController {
         imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         imageUrls.removeAll()
         
+        userProfileButton.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            
+            let aboutMeVC = AboutMeViewController(userId: post.userId)
+            self.navigationController?.pushViewController(aboutMeVC, animated: true)
+        }, for: .touchUpInside)
         
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
             self.imageUrls = imageUrls
@@ -367,7 +373,6 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(mapLabel)
         contentView.addSubview(mapView)
         
-        userProfileButton.addTarget(self, action: #selector(userProfileButtonTapped), for: .touchUpInside)
         
         // 기본값은 안보이게
         contactButton.isHidden = true
@@ -505,11 +510,6 @@ class PostDetailViewController: UIViewController {
         } else {
             return "방금 전"
         }
-    }
-    
-    @objc private func userProfileButtonTapped() {
-//        let aboutMeVC = AboutMeViewController(userId: post.userId)
-//        navigationController?.pushViewController(aboutMeVC, animated: true)
     }
     
     private func navigateToChatDetail(chatRoom: ChatRoom) {
