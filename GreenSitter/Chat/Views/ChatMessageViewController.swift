@@ -44,6 +44,13 @@ class ChatMessageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        Task {
+            try await self.chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
+        }
+//        self.chatViewModel?.updateUI = { [weak self] in
+//            self?.setupUI()
+//        }
+        
         self.chatViewModel?.loadMessages(chatRoomId: chatRoom.id) { [weak self] in
             guard let self = self else { return }
             self.chatViewModel?.updateUI = { [weak self] in
@@ -64,8 +71,14 @@ class ChatMessageViewController: UIViewController {
                 }
             }
 
-            self.chatViewModel?.updateUI?()
+//            self.chatViewModel?.updateUI?()
         }
+    }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(true)
+        
+
     }
     
     // MARK: - Setup UI
