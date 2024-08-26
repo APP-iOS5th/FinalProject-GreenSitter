@@ -17,6 +17,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         setupView()
         fetchUserFirebase()
         setupTextField()
+        self.tableView.reloadData()
     }
     
     // MARK: - Properties
@@ -30,10 +31,8 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
 
-    var user: User? {
-        print("Profile View - LoginViewModel.shared.user: \(String(describing: LoginViewModel.shared.user))")
-        return LoginViewModel.shared.user
-    }
+    let user = LoginViewModel.shared.user
+
     
     // MARK: - UI Components
     lazy var circleView: UIView = {
