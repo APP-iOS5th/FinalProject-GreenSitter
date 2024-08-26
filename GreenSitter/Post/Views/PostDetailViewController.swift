@@ -508,16 +508,21 @@ class PostDetailViewController: UIViewController, UITextViewDelegate {
     // 텍스트뷰 높이를 자동으로 조정하는 메서드
     private func adjustTextViewHeight() {
         let size = postBodyTextView.sizeThatFits(CGSize(width: postBodyTextView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        
+        // 텍스트뷰의 최소 높이를 200으로 설정
+        let newHeight = max(size.height, 200)
+        
         if postBodyTextViewHeightConstraint == nil {
-            postBodyTextViewHeightConstraint = postBodyTextView.heightAnchor.constraint(equalToConstant: size.height)
+            postBodyTextViewHeightConstraint = postBodyTextView.heightAnchor.constraint(equalToConstant: newHeight)
             postBodyTextViewHeightConstraint?.isActive = true
         } else {
-            postBodyTextViewHeightConstraint?.constant = size.height
+            postBodyTextViewHeightConstraint?.constant = newHeight
         }
+        
         view.setNeedsLayout()
         view.layoutIfNeeded()
     }
-    
+
     // 텍스트가 변경될 때 호출되는 델리게이트 메서드
     func textViewDidChange(_ textView: UITextView) {
         adjustTextViewHeight()
