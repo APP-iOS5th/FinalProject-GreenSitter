@@ -349,7 +349,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             remainCountLabel.textColor = .lightGray
         }
         
-       
+        
         let size = CGSize(width: textView.frame.width, height: .infinity)
         let estimatedSize = textView.sizeThatFits(size)
         
@@ -371,7 +371,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             textView.textColor = .black
         }
     }
-
+    
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == .lightGray {
@@ -394,13 +394,20 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             }
         }
         
+        // 선택된 이미지를 imageStackView에 추가
         viewModel.selectedImages.forEach { image in
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
             imageView.widthAnchor.constraint(equalToConstant: 130).isActive = true
             imageView.heightAnchor.constraint(equalToConstant: 130).isActive = true
-            imageStackView.insertArrangedSubview(imageView, at: imageStackView.arrangedSubviews.count - 1)
+            imageStackView.addArrangedSubview(imageView) // 새 이미지를 뒤로 추가
+        }
+        
+        // pickerImageView를 맨 앞에 고정
+        if imageStackView.arrangedSubviews.first != pickerImageView {
+            imageStackView.removeArrangedSubview(pickerImageView)
+            imageStackView.insertArrangedSubview(pickerImageView, at: 0)
         }
     }
     
@@ -416,12 +423,10 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     private func presentImagePickerController() {
         var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 10 // 사진 최대 10개까지 추가가능
+        configuration.selectionLimit = 10
         configuration.filter = .images
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
         present(picker, animated: true, completion: nil)
     }
 }
-
-
