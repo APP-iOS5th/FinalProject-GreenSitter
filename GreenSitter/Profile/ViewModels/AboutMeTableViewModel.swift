@@ -121,31 +121,25 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
                 return headerView
             }
             
-            if let profileUserID =  Auth.auth().currentUser?.uid {
-                // 유저 ID와 프로필 유저 ID를 출력하여 확인
-                print("Current User ID: \(currentUserID)")
-                print("Profile User ID: \(profileUserID)")
+            if currentUserID == userId {
+                let editButton = UIButton(type: .system)
+                editButton.setTitle("수정하기", for: .normal)
+                editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+                editButton.translatesAutoresizingMaskIntoConstraints = false
+                headerView.addSubview(editButton)
                 
-                if currentUserID == profileUserID {
-                    let editButton = UIButton(type: .system)
-                    editButton.setTitle("수정하기", for: .normal)
-                    editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
-                    editButton.translatesAutoresizingMaskIntoConstraints = false
-                    headerView.addSubview(editButton)
+                NSLayoutConstraint.activate([
+                    titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+                    titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
                     
-                    NSLayoutConstraint.activate([
-                        titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
-                        titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-                        
-                        editButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
-                        editButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
-                    ])
-                } else {
-                    NSLayoutConstraint.activate([
-                        titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
-                        titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
-                    ])
-                }
+                    editButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
+                    editButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+                ])
+            } else {
+                NSLayoutConstraint.activate([
+                    titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+                    titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+                ])
             }
             
             return headerView

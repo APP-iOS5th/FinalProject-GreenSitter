@@ -143,10 +143,7 @@ extension ProfileViewController {
         let firebaseAuth = Auth.auth()
         do {
             try firebaseAuth.signOut()
-            
-            // LoginViewController 인스턴스 생성
-            let loginViewController = LoginViewController() // 스토리보드 없이 직접 생성
-            navigationController?.pushViewController(loginViewController, animated: true)
+            self.viewWillAppear(true)
         } catch let signOutError as NSError {
             print("Error signing out: %@", signOutError)
         }
@@ -297,9 +294,7 @@ extension ProfileViewController {
                                 print("Error deleting user: \(error.localizedDescription)")
                             } else {
                                 print("User account deleted successfully")
-                                // 로그인 화면으로 이동
-                                let loginViewController = LoginViewController()
-                                self.navigationController?.pushViewController(loginViewController, animated: true)
+                                self.viewWillAppear(true)
                             }
                         }
                     } else {
