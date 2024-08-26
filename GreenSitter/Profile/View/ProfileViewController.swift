@@ -180,6 +180,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     @objc func confirmButtonTapped() {
         textFieldContainer?.isHidden = true
     }
+    //MARK: - Level설명
     private func setupTextField() {
         //Container 설정
         let container = UIView()
@@ -221,7 +222,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
             container.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             container.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             container.widthAnchor.constraint(equalToConstant: 300),
-            container.heightAnchor.constraint(equalToConstant: 200),
+            container.heightAnchor.constraint(equalToConstant: 150),
             
             textTitle.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
             textTitle.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
