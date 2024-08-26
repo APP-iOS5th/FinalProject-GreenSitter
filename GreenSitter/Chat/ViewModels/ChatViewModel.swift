@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 @MainActor
 class ChatViewModel {
@@ -17,11 +18,10 @@ class ChatViewModel {
     var hasChats = false
     
     // 임시 유저 id
-    let userId = "250e8400-e29b-41d4-a716-446655440002"
-    var user: User? {
+//    let userId = "250e8400-e29b-41d4-a716-446655440003"
+    var userId: String? {
         didSet {
-//            isLoggedIn = user != nil
-//            updateUI?()
+            isLoggedIn = userId != nil
         }
     }
     
@@ -53,59 +53,39 @@ class ChatViewModel {
     var updateUI: (() -> Void)?
     
     init() {
-        loadUser {}
+        // 현재 사용자 ID 설정
+        self.userId = Auth.auth().currentUser?.uid
+        self.isLoggedIn = userId != nil
     }
     
-    func loadUser(completion: @escaping () -> Void) {
-        firestoreManager.fetchUser() { [weak self] updatedUser in
-            self?.user = updatedUser
-            completion()
-        }
-    }
+//    func loadUser(completion: @escaping () -> Void) {
+//        firestoreManager.fetchUser() { [weak self] updatedUser in
+//            self?.user = updatedUser
+//            completion()
+//        }
+//    }
     
-    func loadChatRooms(completion: @escaping ([ChatRoom]) -> Void) {
-        firestoreManager.fetchChatRooms(userId: userId) { [weak self] updatedChatRooms in
-            guard let self = self else { return }
+    func loadChatRooms() async throws -> [ChatRoom] {
+        do {
+            let updatedChatRooms = try await firestoreManager.fetchChatRooms(userId: userId!)
             self.chatRooms = updatedChatRooms
-            
-            completion(updatedChatRooms)
+            return updatedChatRooms
+        } catch {
+            print("Error loading chat rooms: \(error.localizedDescription)")
+            throw error
         }
     }
     
-    func loadLastMessages(chatRoomId: String, completion: @escaping () -> Void) {
-        firestoreManager.fetchLastMessages(chatRoomId: chatRoomId) { [weak self] updatedMessages in
-            guard let self = self else {
-                completion()
-                return
-            }
-            self.lastMessages[chatRoomId] = updatedMessages
-            
-            completion()
-        }
+    func loadLastMessages(chatRoomId: String) async -> AsyncStream<[Message]> {
+        return firestoreManager.fetchLastMessages(chatRoomId: chatRoomId)
     }
     
-    func loadUnreadMessages(chatRoomId: String, completion: @escaping () -> Void) {
-        firestoreManager.fetchUnreadMessages(chatRoomId: chatRoomId, userId: userId) { [weak self] updatedMessages in
-            guard let self = self else {
-                completion()
-                return
-            }
-            self.unreadMessages[chatRoomId] = updatedMessages
-            
-            completion()
-        }
+    func loadUnreadMessages(chatRoomId: String) async -> AsyncStream<[Message]> {
+        return firestoreManager.fetchUnreadMessages(chatRoomId: chatRoomId, userId: userId!)
     }
     
-    func loadMessages(chatRoomId: String, completion: @escaping () -> Void) {
-        firestoreManager.fetchMessages(chatRoomId: chatRoomId) { [weak self] updatedMessages in
-            guard let self = self else {
-                completion()
-                return
-            }
-            self.messages[chatRoomId] = updatedMessages
-            
-            completion()
-        }
+    func loadMessages(chatRoomId: String) async -> AsyncStream<[Message]>  {
+        return firestoreManager.fetchMessages(chatRoomId: chatRoomId)
     }
     
     func deleteChatRoom(at index: Int) async throws {
@@ -114,11 +94,11 @@ class ChatViewModel {
             return
         }
         
-        var chatRoom = self.chatRooms[index]
+        let chatRoom = self.chatRooms[index]
         
         do {
             let idString = chatRoom.id
-            let updatedChatRoom = try await firestoreManager.deleteChatRoom(docId: idString, userId: userId, chatRoom: chatRoom)
+            let updatedChatRoom = try await firestoreManager.deleteChatRoom(docId: idString, userId: userId!, chatRoom: chatRoom)
             self.chatRooms[index] = updatedChatRoom
         } catch {
             print("Error deleting chat room: \(error.localizedDescription)")
@@ -154,7 +134,7 @@ class ChatViewModel {
     // 채팅방 읽음 처리 업데이트
     func updateUnread(chatRoomId: String) async throws {
         do {
-            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: self.userId, unreadMessages: self.unreadMessages[chatRoomId]!)
+            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: self.userId!, unreadMessages: self.unreadMessages[chatRoomId]!)
             self.unreadMessages[chatRoomId] = []
         } catch {
             print("Error updating notification of chatRoom: \(error.localizedDescription)")
@@ -178,7 +158,7 @@ class ChatViewModel {
             receiverUserId = chatRoom.userId
         }
         
-        let textMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .text, text: messageText, image: nil, plan: nil)
+        let textMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId!, receiverUserId: receiverUserId!, isRead: false, messageType: .text, text: messageText, image: nil, plan: nil)
         
         // 로컬 메시지 리스트에 메시지 추가
         if var chatRoomMessages = self.messages[chatRoom.id] {
@@ -187,9 +167,6 @@ class ChatViewModel {
         } else {
             self.messages[chatRoom.id] = [textMessage]
         }
-
-        // UI 업데이트
-//        self.updateUI?()
         
         Task {
             do {
@@ -201,7 +178,6 @@ class ChatViewModel {
                     chatRoomMessages.removeAll { $0.id == textMessage.id }
                     self.messages[chatRoom.id] = chatRoomMessages
                 }
-//                self.updateUI?()
                 return
             }
         }
@@ -251,7 +227,7 @@ class ChatViewModel {
                 }
             }
             // 파이어 스토어 메세지 저장
-            let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
+            let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId!, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
             
             // 로컬 메시지 리스트에 메시지 추가
             if var chatRoomMessages = self.messages[chatRoom.id] {
@@ -317,7 +293,7 @@ class ChatViewModel {
             receiverUserId = chatRoom.userId
         }
         
-        let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
+        let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId!, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
         
         // 로컬 메시지 리스트에 메시지 추가
         if var chatRoomMessages = self.messages[chatRoom.id] {
