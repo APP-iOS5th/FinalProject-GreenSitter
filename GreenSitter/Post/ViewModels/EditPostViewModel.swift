@@ -25,20 +25,24 @@ class EditPostViewModel: ObservableObject {
     private let postId: String
     private let postType: PostType
     
+    private let selectedPost: Post
     
-    init(post: Post) {
-        self.postId = post.id
-        self.postTitle = post.postTitle
-        self.postBody = post.postBody
-        self.location = post.location
-        self.postType = post.postType
+    init(selectedPost: Post) {
+        self.selectedPost = selectedPost
+        self.postId = selectedPost.id
+        self.postTitle = selectedPost.postTitle
+        self.postBody = selectedPost.postBody
+        self.location = selectedPost.location
+        self.postType = selectedPost.postType
         
         // 옵셔널 바인딩을 사용하여 postImages 처리
-        if let postImageURLs = post.postImages {
+        if let postImageURLs = selectedPost.postImages {
             loadExistingImages(from: postImageURLs) {
                 print("All images loaded")
             }
         }
+        
+        print("selectedPost: \(self.selectedPost)")
     }
     
     func loadExistingImages(from urls: [String], completion: @escaping () -> Void) {

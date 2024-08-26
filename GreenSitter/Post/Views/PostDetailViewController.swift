@@ -8,6 +8,7 @@
 import UIKit
 import MapKit
 import FirebaseAuth
+import FirebaseStorage
 
 class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
@@ -206,9 +207,10 @@ class PostDetailViewController: UIViewController {
                 guard let self = self else {
                     return
                 }
-                let editPostViewController = EditPostViewController(post: post)
-                editPostViewController.modalPresentationStyle = .fullScreen
-                self.present(editPostViewController, animated: true)
+                let editPostViewController = EditPostViewController(post: post, viewModel: EditPostViewModel(selectedPost: post))
+                let navigationController = UINavigationController(rootViewController: editPostViewController)
+                navigationController.modalPresentationStyle = .fullScreen
+                self.present(navigationController, animated: true)
             },
             UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { [weak self] _ in
                 guard let self = self else { return }

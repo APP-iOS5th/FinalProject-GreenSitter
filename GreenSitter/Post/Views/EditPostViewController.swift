@@ -15,9 +15,10 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     private var viewModel: EditPostViewModel
     
     init(post: Post, viewModel: EditPostViewModel) {
-        self.postType = postType
+        self.post = post
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+
     }
     
     required init?(coder: NSCoder) {
@@ -152,8 +153,17 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .dominent
         button.layer.cornerRadius = 20
-        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+        //        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private lazy var closeButton: UIBarButtonItem = {
+        let button = UIBarButtonItem()
+        button.image = UIImage(systemName: "xmark")
+        button.tintColor = .labelsPrimary
+        button.target = self
+        button.action = #selector(closeButtonTapped)
         return button
     }()
     
@@ -175,7 +185,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     @objc private func saveButtonTapped() {
         guard validateInputs() else { return }
         
-        guard let userDocId = LoginViewModel.shared.user?.docId else {
+        guard let userDocId = LoginViewModel.shared.user?.id else {
             print("User ID is not available")
             return
         }
@@ -192,7 +202,10 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             }
         }
     }
-
+    
+    @objc private func closeButtonTapped() {
+        dismiss(animated: true)
+    }
     
     private func validateInputs() -> Bool {
         var isValid = true
@@ -224,7 +237,14 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     }
     
     private func setupLayout() {
-        self.title = postType.rawValue
+        self.title = post.postType.rawValue
+        navigationItem.leftBarButtonItem = closeButton
+        
+        titleTextField.text = viewModel.postTitle
+        // 이미지
+        textView.text = viewModel.postBody
+        
+        
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
@@ -239,6 +259,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         contentView.addSubview(mapIconView)
         contentView.addSubview(mapView)
         contentView.addSubview(saveButton)
+        saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         imageScrollView.addSubview(imageStackView)
         imageStackView.addArrangedSubview(pickerImageView)
         
