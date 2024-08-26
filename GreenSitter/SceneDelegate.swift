@@ -34,8 +34,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         secondNavigationController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
         
         // Chat
-        let thirdViewController = ChatListViewController()
-        let thirdNavigationController = UINavigationController(rootViewController: thirdViewController)
+        let chatListViewController: UIViewController
+        if Auth.auth().currentUser != nil {
+            chatListViewController = ChatListViewController()
+        } else {
+            chatListViewController = LoginViewController()
+        }
+        let thirdNavigationController = UINavigationController(rootViewController: chatListViewController)
         thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
         
         // Profile

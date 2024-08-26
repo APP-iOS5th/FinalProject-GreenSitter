@@ -80,6 +80,8 @@ class ChatListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.backgroundColor = .bgSecondary
+        
         // 로그인 이벤트 수신
         NotificationCenter.default.addObserver(self, selector: #selector(userDidLogin), name: NSNotification.Name("UserDidLoginNotification"), object: nil)
     }
@@ -161,7 +163,7 @@ class ChatListViewController: UIViewController {
     
     // MARK: - Setup ChatList UI
     func setupChatListUI() {
-        self.view.backgroundColor = .bgSecondary
+//        self.view.backgroundColor = .bgSecondary
         
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -227,7 +229,7 @@ class ChatListViewController: UIViewController {
     // MARK: - 로그인/채팅 목록 없음 Methods
     // goToHomeButton 눌렀을 때
     private func navigateToHome() {
-        let homeViewController = PostListViewController()
+        let homeViewController = MainPostListViewController()
         self.navigationController?.pushViewController(homeViewController, animated: true)
     }
     
@@ -236,14 +238,15 @@ class ChatListViewController: UIViewController {
     private func presentLoginViewController() {
         let loginViewController = LoginViewController()
         loginViewController.modalPresentationStyle = .fullScreen
-        self.present(loginViewController, animated: true) {
-            let image = UIImage(named: "profileIcon")
-            let title = "로그인 권한이 필요한 기능입니다."
-            let subtitle = "로그인 화면으로 이동합니다."
-            if let image = image {
-                self.showToast(image: image, title: title, subtitle: subtitle, on: loginViewController)
-            }
-        }
+        self.present(loginViewController, animated: true)
+//        self.present(loginViewController, animated: true) {
+//            let image = UIImage(named: "profileIcon")
+//            let title = "로그인 권한이 필요한 기능입니다."
+//            let subtitle = "로그인 화면으로 이동합니다."
+//            if let image = image {
+//                self.showToast(image: image, title: title, subtitle: subtitle, on: loginViewController)
+//            }
+//        }
     }
     
     // 비로그인 시 토스트 메세지 창
@@ -346,7 +349,7 @@ extension ChatListViewController: UITableViewDataSource {
         chatRoom = chatViewModel.chatRooms[indexPath.row]
         cell.chatRoom = chatRoom!
         cell.chatViewModel = self.chatViewModel
-        cell.configure(userId: self.chatViewModel.userId)
+        cell.configure(userId: self.chatViewModel.userId!)
         cell.setupUI()
         
         return cell
