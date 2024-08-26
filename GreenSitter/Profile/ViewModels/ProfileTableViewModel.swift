@@ -34,7 +34,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
-        
+        let user = LoginViewModel.shared.user
         switch (indexPath.section, indexPath.row) {
         case (0, 0):
             // "이름" 셀
