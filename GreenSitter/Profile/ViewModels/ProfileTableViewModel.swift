@@ -72,17 +72,35 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             profileCell.setIconHidden(true)
             
         case (0, 2):
-            cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
-            let profileCell = cell as! ProfileTableViewCell
-            profileCell.titleLabel.text = nil
-            profileCell.bodyLabel.text = user?.levelPoint.rawValue
-            profileCell.iconImageView.image = UIImage(named: "logo7")
-            profileCell.actionButton.setImage(UIImage(systemName: "exclamationmark.circle"), for: .normal)
-            profileCell.actionButton.setTitle(nil, for: .normal) // '변경' 텍스트 제거
-            profileCell.actionButton.removeTarget(nil, action: nil, for: .allEvents) // 기존 타겟 제거
-            profileCell.actionButton.addTarget(self, action: #selector(inpoButtonTap), for: .touchUpInside)
-            profileCell.actionButton.isHidden = false
-            profileCell.setIconHidden(false)
+             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
+             let profileCell = cell as! ProfileTableViewCell
+             profileCell.titleLabel.text = nil
+             profileCell.bodyLabel.text = user?.levelPoint.rawValue
+             
+             // Fetch level image URL based on user level
+             if let level = user?.levelPoint, let imageURLString = imageURLForLevel(level), let httpsURLString = convertToHttpsURL(gsURL: imageURLString), let imageURL = URL(string: httpsURLString) {
+                 // Asynchronously load the image
+                 downloadImage(from: httpsURLString) { image in
+                     DispatchQueue.main.async {
+                         if let image = image {
+                             profileCell.iconImageView.image = image
+                         } else {
+                             profileCell.iconImageView.image = UIImage(named: "defaultImage") // Placeholder image
+                         }
+                     }
+                 }
+             } else {
+                 profileCell.iconImageView.image = UIImage(named: "defaultImage") // Placeholder image
+             }
+             
+             profileCell.actionButton.setImage(UIImage(systemName: "exclamationmark.circle"), for: .normal)
+             profileCell.actionButton.setTitle(nil, for: .normal) // '변경' 텍스트 제거
+             profileCell.actionButton.removeTarget(nil, action: nil, for: .allEvents) // 기존 타겟 제거
+             profileCell.actionButton.addTarget(self, action: #selector(inpoButtonTap), for: .touchUpInside)
+             profileCell.actionButton.isHidden = false
+             profileCell.setIconHidden(false)
+            // 레벨 이미지를 설정
+
         case (1, 0):
             // "내가 맡긴 식물" 셀
             cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell

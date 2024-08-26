@@ -73,6 +73,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBindings()
+        fetchUserLevelAndUpdateImage()
 
         
         if Auth.auth().currentUser != nil {

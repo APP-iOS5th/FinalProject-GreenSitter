@@ -59,7 +59,73 @@ extension ProfileViewController {
         }
     }
     
-
+    func fetchUserLevelAndUpdateImage() {
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            print("로그인된 사용자가 없습니다.")
+            return
+        }
+        
+        // Firestore에서 현재 사용자의 레벨을 가져옵니다.
+        db.collection("users").document(currentUserID).getDocument { [weak self] document, error in
+            if let error = error {
+                print("Firestore 읽기 오류: \(error)")
+                return
+            }
+            
+            guard let document = document, document.exists,
+                  let data = document.data(),
+                  let levelString = data["levelPoint"] as? String,
+                  let level = Level(rawValue: levelString) else {
+                print("레벨 정보를 가져오는 중 오류 발생")
+                return
+            }
+            
+            // 레벨에 따른 이미지 URL을 가져옵니다.
+            guard let imageURLString = self?.imageURLForLevel(level),
+                  let httpsURLString = self?.convertToHttpsURL(gsURL: imageURLString),
+                  let imageURL = URL(string: httpsURLString) else {
+                print("레벨에 맞는 이미지 URL을 생성할 수 없습니다.")
+                return
+            }
+            
+            // URL에서 이미지를 다운로드합니다.
+            self?.downloadImage(from: httpsURLString) { image in
+                DispatchQueue.main.async {
+                    if let image = image {
+                        self?.imageButton.setImage(image, for: .normal)
+                        print("Profile image successfully set to button.")
+                    }
+                }
+            }
+        }
+    }
+    
+    //MARK: - Level이미지 불러오기
+    func downloadImage(from url: String, completion: @escaping (UIImage?) -> Void) {
+        let imageRef = storage.reference(forURL: url)
+        
+        imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
+            if let error = error {
+                print("Image download error: \(error)")
+                completion(nil)
+            } else if let data = data, let image = UIImage(data: data) {
+                completion(image)
+            }
+        }
+    }
+    // 레벨에 따라 이미지 URL을 반환하는 함수
+    func imageURLForLevel(_ level: Level) -> String? {
+        let levelImageURLs: [Level: String] = [
+            .rottenSeeds: "gs://greensitter-6dedd.appspot.com/level_image/썩은 씨앗2.png",
+            .seeds: "gs://greensitter-6dedd.appspot.com/level_image/씨앗3.png",
+            .sprout: "gs://greensitter-6dedd.appspot.com/level_image/유묘1.jpg",
+            .seedling: "gs://greensitter-6dedd.appspot.com/level_image/꽃1.png",
+            .flower: "gs://greensitter-6dedd.appspot.com/level_image/열매2.png",
+            .fruit: "" // 필요한 URL 추가
+        ]
+        
+        return levelImageURLs[level]
+    }
     // MARK: - gs:// URL을 https:// URL로 변환
     func convertToHttpsURL(gsURL: String) -> String? {
         let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
