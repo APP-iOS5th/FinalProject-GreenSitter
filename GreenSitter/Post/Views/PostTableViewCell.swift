@@ -7,9 +7,11 @@
 
 import Foundation
 import UIKit
+import FirebaseFirestore
+import FirebaseStorage
 
 class PostTableViewCell: UITableViewCell {
-
+    
     // Define custom labels
     private let postStatusLabel: UILabel = {
         let label = UILabel()
@@ -69,31 +71,25 @@ class PostTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        // Add views to content view
         contentView.addSubview(postStatusLabel)
         contentView.addSubview(verticalStackView)
         contentView.addSubview(postImageView)
         
-        // Add labels to vertical stack view
         verticalStackView.addArrangedSubview(postTitleLabel)
         verticalStackView.addArrangedSubview(postBodyLabel)
         verticalStackView.addArrangedSubview(postDateLabel)
         
-        // Set up constraints
         NSLayoutConstraint.activate([
-            // postStatusLabel constraints
             postStatusLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             postStatusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            postStatusLabel.widthAnchor.constraint(equalToConstant: 60),
+            postStatusLabel.widthAnchor.constraint(equalToConstant: 40),
             postStatusLabel.heightAnchor.constraint(equalToConstant: 20),
             
-            // verticalStackView constraints
             verticalStackView.topAnchor.constraint(equalTo: postStatusLabel.bottomAnchor, constant: 8),
             verticalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             verticalStackView.trailingAnchor.constraint(equalTo: postImageView.leadingAnchor, constant: -16),
             verticalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             
-            // postImageView constraints
             postImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             postImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             postImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -107,7 +103,6 @@ class PostTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // Configure cell with post data
     func configure(with post: Post) {
         postStatusLabel.text = post.postStatus.rawValue
         postTitleLabel.text = post.postTitle
@@ -115,12 +110,11 @@ class PostTableViewCell: UITableViewCell {
         postDateLabel.text = timeAgoSinceDate(post.updateDate)
 
         guard let postImages = post.postImages, !postImages.isEmpty else {
-            postImageView.image = nil
+            postImageView.isHidden = true
             return
         }
         
         if let imageUrlString = postImages.first, let imageUrl = URL(string: imageUrlString) {
-            print("Post Image is: \(imageUrlString)")
             loadImage(from: imageUrl)
         } else {
             print("Post Image is nil")
@@ -163,3 +157,4 @@ class PostTableViewCell: UITableViewCell {
         }
     }
 }
+

@@ -15,7 +15,7 @@ class MainPostListViewController: UIViewController {
     private var selectedButton: UIButton?
     private let viewModel = MainPostListViewModel()
     private var cancellables = Set<AnyCancellable>()
-
+    
     private let addPostButton: UIButton = {
         let button = UIButton(type: .system)
         let image = UIImage(systemName: "plus.circle")
@@ -251,7 +251,7 @@ class MainPostListViewController: UIViewController {
         }
     }
 }
-    
+
 extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate {
     // MARK: - UITABLE VIEW DATA SOURCE
     
@@ -262,7 +262,7 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! PostTableViewCell
         let post = viewModel.filteredPosts[indexPath.row]
-
+        
         cell.configure(with: post)
         
         return cell
@@ -276,5 +276,5 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
         postDetailViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(postDetailViewController, animated: true)
     }
-
+    
 }

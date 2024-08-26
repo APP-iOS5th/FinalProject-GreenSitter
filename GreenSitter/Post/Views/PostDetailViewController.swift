@@ -11,7 +11,7 @@ import FirebaseAuth
 
 class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
-    
+    private var imageUrls: [String] = []
     private let post: Post
     
     init(post: Post) {
@@ -25,7 +25,7 @@ class PostDetailViewController: UIViewController {
     }
     
     private let scrollView: UIScrollView = {
-        let scrollView =  UIScrollView()
+        let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
@@ -39,7 +39,7 @@ class PostDetailViewController: UIViewController {
     private let userProfileButton: UIButton = {
         let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .clear // 투명하게 만들어 배경이 보이지 않게
+        button.backgroundColor = .clear
         return button
     }()
     
@@ -63,8 +63,8 @@ class PostDetailViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12)
         label.textColor = .gray
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = LoginViewModel.shared.user?.levelPoint.rawValue
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -76,22 +76,22 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    private let dividerLine1: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine1: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
-    private let dividerLine2: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine2: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
-    private let dividerLine3: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine3: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
@@ -117,23 +117,32 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    private let postImagesView: UIImageView = {
-        let image = UIImageView()
-        image.backgroundColor = .lightGray
-        image.tintColor = .gray
-        image.translatesAutoresizingMaskIntoConstraints = false
-        return image
+    private let imagesScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsHorizontalScrollIndicator = false
+        return scrollView
     }()
     
-    private let postBodyLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private let imagesStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
     }()
     
-    // TODO: 채팅방 연결
+    private let postBodyTextView: UITextView = {
+        let textView = UITextView()
+        textView.font = .systemFont(ofSize: 14)
+        textView.isEditable = false
+        textView.isSelectable = false
+        textView.sizeToFit()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        return textView
+    }()
+    
     private let contactButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("채팅하기", for: .normal)
@@ -177,6 +186,7 @@ class PostDetailViewController: UIViewController {
         
         setupUI()
         configure(with: post)
+        addTapGestureToImages()
         
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -185,7 +195,6 @@ class PostDetailViewController: UIViewController {
             }
         }, for: .touchUpInside)
         
-        // ChatDetailView로 이동
         postDetailViewModel.onChatButtonTapped = { [weak self] chatRoom in
             self?.navigateToChatDetail(chatRoom: chatRoom)
         }
@@ -265,8 +274,11 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(postTimeLabel)
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
-        contentView.addSubview(postImagesView)
-        contentView.addSubview(postBodyLabel)
+        
+        contentView.addSubview(imagesScrollView)
+        imagesScrollView.addSubview(imagesStackView)
+        
+        contentView.addSubview(postBodyTextView)
         contentView.addSubview(dividerLine1)
         contentView.addSubview(dividerLine2)
         contentView.addSubview(dividerLine3)
@@ -281,6 +293,7 @@ class PostDetailViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.heightAnchor.constraint(equalTo: view.heightAnchor),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
@@ -289,10 +302,16 @@ class PostDetailViewController: UIViewController {
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
             
-            
             userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            userProfileButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            userProfileButton.trailingAnchor.constraint(equalTo: contactButton.leadingAnchor),
+            userProfileButton.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor),
+            userProfileButton.bottomAnchor.constraint(equalTo: postTimeLabel.bottomAnchor),
+            
+            contactButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
+            contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            contactButton.widthAnchor.constraint(equalToConstant: 100),
+            contactButton.heightAnchor.constraint(equalToConstant: 40),
             
             profileImageView.leadingAnchor.constraint(equalTo: userProfileButton.leadingAnchor),
             profileImageView.topAnchor.constraint(equalTo: userProfileButton.topAnchor),
@@ -301,84 +320,122 @@ class PostDetailViewController: UIViewController {
             
             userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
             userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
+            userNameLabel.heightAnchor.constraint(equalToConstant: userNameLabel.font.pointSize),
             
             userLevelLabel.leadingAnchor.constraint(equalTo: userNameLabel.leadingAnchor),
             userLevelLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
-            
-            userProfileButton.bottomAnchor.constraint(equalTo: userLevelLabel.bottomAnchor),
+            userLevelLabel.heightAnchor.constraint(equalToConstant: userLevelLabel.font.pointSize),
             
             postTimeLabel.topAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 4),
             postTimeLabel.leadingAnchor.constraint(equalTo: userLevelLabel.leadingAnchor),
             
-            statusLabel.bottomAnchor.constraint(equalTo: userLevelLabel.bottomAnchor, constant: 50),
+            statusLabel.topAnchor.constraint(equalTo: userProfileButton.bottomAnchor, constant: 10),
             statusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             statusLabel.widthAnchor.constraint(equalToConstant: 40),
             statusLabel.heightAnchor.constraint(equalToConstant: 20),
             
-            postTitleLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 50),
+            postTitleLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 10),
             postTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-            dividerLine1.bottomAnchor.constraint(equalTo: postTitleLabel.topAnchor, constant: 35),
+            dividerLine1.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 10),
             dividerLine1.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            dividerLine1.widthAnchor.constraint(equalToConstant: 360),
+            dividerLine1.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine1.heightAnchor.constraint(equalToConstant: 1),
             
-            dividerLine2.bottomAnchor.constraint(equalTo: dividerLine1.topAnchor, constant: 300),
+            
+            imagesScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
+            imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            imagesScrollView.heightAnchor.constraint(equalToConstant: 250),
+            
+            
+            imagesStackView.topAnchor.constraint(equalTo: imagesScrollView.topAnchor),
+            imagesStackView.bottomAnchor.constraint(equalTo: imagesScrollView.bottomAnchor),
+            imagesStackView.leadingAnchor.constraint(equalTo: imagesScrollView.leadingAnchor),
+            imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
+            imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
+            
+            dividerLine2.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
             dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            dividerLine2.widthAnchor.constraint(equalToConstant: 360),
+            dividerLine2.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine2.heightAnchor.constraint(equalToConstant: 1),
             
-            dividerLine3.topAnchor.constraint(equalTo: postBodyLabel.bottomAnchor, constant: 10), // -5에서 10으로 조정
+            postBodyTextView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 10),
+            postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            postBodyTextView.heightAnchor.constraint(greaterThanOrEqualTo: self.view.heightAnchor, multiplier: 0.2),
+            
+            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            dividerLine3.widthAnchor.constraint(equalToConstant: 360),
+            dividerLine3.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            postImagesView.widthAnchor.constraint(equalToConstant: 190),
-            postImagesView.heightAnchor.constraint(equalToConstant: 250),
-            postImagesView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
-            postImagesView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            
-            postBodyLabel.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 10),
-            postBodyLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            postBodyLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            postBodyLabel.widthAnchor.constraint(equalToConstant: 200),
-            postBodyLabel.heightAnchor.constraint(equalToConstant: 200),
-            
-            contactButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
-            contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            contactButton.widthAnchor.constraint(equalToConstant: 100),
-            contactButton.heightAnchor.constraint(equalToConstant: 40),
-            
             mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8), // 10에서 8로 조정
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8),
+            mapLabel.heightAnchor.constraint(equalToConstant: mapLabel.font.pointSize),
             
-            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8), // 5에서 8로 조정
-            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            mapView.heightAnchor.constraint(equalToConstant: 200),
-            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16) // -10에서 -16으로 조정
+            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
+            mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            mapView.heightAnchor.constraint(equalToConstant: 150),
+            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16), 
         ])
+    }
+    
+    private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
+        let storageRef = Storage.storage().reference(forURL: url)
         
+        storageRef.getData(maxSize: 10 * 1024 * 1024) { data, error in
+            if let error = error {
+                print("Error downloading image: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            if let data = data, let image = UIImage(data: data) {
+                completion(image)
+            } else {
+                completion(nil)
+            }
+        }
     }
     
     private func configure(with post: Post) {
         userNameLabel.text = post.nickname
         postTitleLabel.text = post.postTitle
-        postBodyLabel.text = post.postBody
         postTimeLabel.text = timeAgoSinceDate(post.updateDate)
+        postBodyTextView.text = post.postBody
         statusLabel.text = post.postStatus.rawValue
+        userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
         
         profileImageView.image = UIImage(named: post.profileImage)
         
-        // 이미지뷰를 horizontal scrollview 로 바꾸고, 여러 개의 이미지 표시하기
-        if let imageUrlString = post.postImages?.first, let imageUrl = URL(string: imageUrlString) {
-            print("Post Image is: \(imageUrlString)")
-            loadImage(from: imageUrl)
-        } else {
-            print("Post Image is nil")
-            postImagesView.image = nil
+        imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        imageUrls.removeAll()
+        
+        if let imageUrls = post.postImages, !imageUrls.isEmpty {
+            self.imageUrls = imageUrls
+            for (index, imageUrl) in imageUrls.enumerated() {
+                let imageView = UIImageView()
+                imageView.contentMode = .scaleAspectFill
+                imageView.clipsToBounds = true
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                imageView.widthAnchor.constraint(equalToConstant: 190).isActive = true
+                imageView.heightAnchor.constraint(equalToConstant: 250).isActive = true
+                imageView.tag = index  // 여기에 태그를 추가합니다
+                
+                loadImageFromStorage(url: imageUrl) { image in
+                    DispatchQueue.main.async {
+                        imageView.image = image
+                    }
+                }
+                imagesStackView.addArrangedSubview(imageView)
+            }
         }
+        
+        addTapGestureToImages()
     }
     
     private func timeAgoSinceDate(_ date: Date) -> String {
@@ -401,38 +458,33 @@ class PostDetailViewController: UIViewController {
         }
     }
     
-    private func loadImage(from url: URL) {
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
-                DispatchQueue.main.async {
-                    self.postImagesView.image = nil
-                }
-                return
-            }
-            let image = UIImage(data: data)
-            DispatchQueue.main.async {
-                self.postImagesView.image = image
-            }
-        }
-        task.resume()
-    }
-
-    
     @objc private func userProfileButtonTapped() {
         let aboutMeVC = AboutMeViewController(userId: post.userId)
         navigationController?.pushViewController(aboutMeVC, animated: true)
     }
     
-    // 채팅창으로 이동
     private func navigateToChatDetail(chatRoom: ChatRoom) {
         let chatViewModel = ChatViewModel()
         let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
         chatDetailViewController.chatViewModel = chatViewModel
         self.navigationController?.pushViewController(chatDetailViewController, animated: true)
     }
-}
-
-
-#Preview {
-    return UINavigationController(rootViewController: PostDetailViewController(post: Post.samplePosts.first!))
+    
+    private func addTapGestureToImages() {
+        for case let imageView as UIImageView in imagesStackView.arrangedSubviews {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:)))
+            imageView.isUserInteractionEnabled = true
+            imageView.addGestureRecognizer(tapGesture)
+        }
+    }
+    
+    @objc private func imageTapped(_ gesture: UITapGestureRecognizer) {
+        guard !imageUrls.isEmpty,
+              let tappedImageView = gesture.view as? UIImageView,
+              let index = imagesStackView.arrangedSubviews.firstIndex(of: tappedImageView) else { return }
+        
+        let fullScreenPageVC = FullScreenPageViewController(imageUrls: imageUrls, initialIndex: index)
+        fullScreenPageVC.modalPresentationStyle = .fullScreen
+        present(fullScreenPageVC, animated: true, completion: nil)
+    }
 }

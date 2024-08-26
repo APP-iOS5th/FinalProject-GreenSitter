@@ -12,7 +12,7 @@ import Combine
 class MainPostListViewModel {
     private let db = Firestore.firestore()
     private var cancellables = Set<AnyCancellable>()
-
+    
     @Published var filteredPosts: [Post] = []
 
     // Haversine 공식을 사용하여 두 위치 간의 거리 계산 (단위: 미터)
@@ -34,7 +34,7 @@ class MainPostListViewModel {
             filteredPosts = []
             return
         }
-
+        
         db.collection("posts")
             .whereField("postType", isEqualTo: postType.rawValue)
             .getDocuments { [weak self] (querySnapshot, error) in
@@ -117,7 +117,7 @@ class MainPostListViewModel {
                     self?.filteredPosts = []
                     return
                 }
-
+                
                 self?.filteredPosts = snapshot?.documents.compactMap { document in
                     try? document.data(as: Post.self)
                 } ?? []

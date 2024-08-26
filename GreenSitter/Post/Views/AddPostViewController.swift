@@ -45,8 +45,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return textField
     }()
     
-    private let dividerLine1: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine1: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
@@ -78,8 +78,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return imageView
     }()
     
-    private let dividerLine2: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine2: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
@@ -96,6 +96,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         view.text = textViewPlaceHolder
         view.textColor = .lightGray
         view.delegate = self
+        view.sizeToFit()
+        view.isScrollEnabled = false
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -111,8 +113,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return label
     }()
     
-    private let dividerLine3: UIImageView = {
-        let line = UIImageView()
+    private let dividerLine3: UIView = {
+        let line = UIView()
         line.backgroundColor = .lightGray
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
@@ -179,22 +181,14 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     }
     
     @objc private func saveButtonTapped() {
-        guard let titleText = titleTextField.text, !titleText.isEmpty else {
-            showAlert(title: "제목 오류", message: "제목을 입력하세요.")
-            return
-        }
-        
-        guard let textViewText = textView.text, textViewText != textViewPlaceHolder, !textViewText.isEmpty else {
-            showAlert(title: "내용 오류", message: "내용을 입력하세요.")
-            return
-        }
+        guard validateInputs() else { return }
         
         guard let currentUser = LoginViewModel.shared.user else {
             print("User ID is not available")
             return
         }
         
-        viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, postTitle: titleText, postBody: textViewText) { result in
+        viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, postTitle: titleTextField.text!, postBody: textView.text) { result in
             switch result {
             case .success(let newPost):
                 print("Add Post: \(newPost)")
@@ -206,39 +200,34 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         }
     }
     
-    @objc private func titleTextFieldDidChange() {
-        titleTextField.layer.borderColor = UIColor.clear.cgColor
-        titleTextField.attributedPlaceholder = NSAttributedString(string: "제목을 입력하세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+    private func validateInputs() -> Bool {
+        var isValid = true
+        
+        if titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
+            titleTextField.attributedPlaceholder = NSAttributedString(string: "제목을 입력하세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.red])
+            titleTextField.layer.borderColor = UIColor.red.cgColor
+            titleTextField.layer.borderWidth = 1.0
+            isValid = false
+        } else {
+            titleTextField.layer.borderColor = UIColor.clear.cgColor
         }
+        
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || textView.text == textViewPlaceHolder {
+            textView.textColor = .red
+            textView.text = textViewPlaceHolder
+            isValid = false
+        } else {
+            textView.layer.borderColor = UIColor.clear.cgColor
+        }
+        
+        return isValid
+    }
     
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
-    
-    private func validateInputs() -> Bool {
-            var isValid = true
-            
-            if titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
-                titleTextField.attributedPlaceholder = NSAttributedString(string: "제목을 입력하세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.red])
-                titleTextField.layer.borderColor = UIColor.red.cgColor
-                titleTextField.layer.borderWidth = 1.0
-                isValid = false
-            } else {
-                titleTextField.layer.borderColor = UIColor.clear.cgColor
-            }
-            
-            if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || textView.text == textViewPlaceHolder {
-                textView.textColor = .red
-                textView.text = textViewPlaceHolder
-                isValid = false
-            } else {
-                textView.layer.borderColor = UIColor.clear.cgColor
-            }
-            
-            return isValid
-        }
     
     private func setupLayout() {
         self.title = postType.rawValue
@@ -294,7 +283,6 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             
             pickerImageView.widthAnchor.constraint(equalToConstant: 100),
             pickerImageView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
-            pickerImageView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
             dividerLine2.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: 16),
             dividerLine2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -304,7 +292,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             textView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 16),
             textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            textView.heightAnchor.constraint(equalToConstant: 300),
+            textView.heightAnchor.constraint(equalToConstant: 200),
             
             remainCountLabel.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 8),
             remainCountLabel.trailingAnchor.constraint(equalTo: textView.trailingAnchor),
@@ -346,12 +334,24 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     func textViewDidChange(_ textView: UITextView) {
         let textCount = textView.text.count
-        remainCountLabel.text = "\(textCount)/700"
+        let maxLength = 700
+        
+        if textCount > maxLength {
+            let index = textView.text.index(textView.text.startIndex, offsetBy: maxLength)
+            textView.text = String(textView.text[..<index])
+        }
+        
+        remainCountLabel.text = "\(textView.text.count)/\(maxLength)"
+        
+        if textView.text.count == maxLength {
+            remainCountLabel.textColor = .red
+        } else {
+            remainCountLabel.textColor = .lightGray
+        }
         
         if textView.text.isEmpty {
             textView.text = textViewPlaceHolder
             textView.textColor = .lightGray
-            // Adjust the text view's cursor position when placeholder is set
             textView.selectedTextRange = nil
             textView.resignFirstResponder()
         } else if textView.textColor == .lightGray && textView.text != textViewPlaceHolder {
@@ -367,12 +367,11 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-            if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                textView.text = textViewPlaceHolder
-                textView.textColor = .red
-            }
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            textView.text = textViewPlaceHolder
+            textView.textColor = .red
         }
-    
+    }
     
     private func updateImageStackView() {
         imageStackView.arrangedSubviews.forEach { view in
@@ -385,8 +384,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
-            imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-            imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+            imageView.widthAnchor.constraint(equalToConstant: 130).isActive = true
+            imageView.heightAnchor.constraint(equalToConstant: 130).isActive = true
             imageStackView.insertArrangedSubview(imageView, at: imageStackView.arrangedSubviews.count - 1)
         }
     }
@@ -403,11 +402,12 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     private func presentImagePickerController() {
         var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 0
+        configuration.selectionLimit = 10 // 사진 최대 10개까지 추가가능
         configuration.filter = .images
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
         present(picker, animated: true, completion: nil)
     }
 }
+
 
