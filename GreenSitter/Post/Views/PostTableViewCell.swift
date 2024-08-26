@@ -39,7 +39,7 @@ class PostTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = UIColor.labelsSecondary
-        label.numberOfLines = 2
+        label.numberOfLines = 1
         return label
     }()
     
