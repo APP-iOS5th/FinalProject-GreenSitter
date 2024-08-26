@@ -11,21 +11,36 @@ import FirebaseAuth
 import FirebaseStorage
 import Combine
 import AuthenticationServices
+import GoogleSignIn
 
 extension ProfileViewController {
     
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {
-        if user?.id == Auth.auth().currentUser?.uid {
-            if let profileImage = user?.profileImage {
-                self.loadProfileImage(from: profileImage)
-            }
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+        let loginViewModel = LoginViewModel.shared
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            print("로그인된 사용자가 없습니다.")
+            return
+        }
+        
+        loginViewModel.firebaseFetch(docId: currentUserID)
+        
+        if let profileImageURL = loginViewModel.user?.profileImage {
+            loginViewModel.loadProfileImage(from: profileImageURL) { [weak self] image in
+                guard let self = self else { return }
+                if let image = image {
+                    self.imageButton.setImage(image, for: .normal)
+                    print("Profile image successfully set to button.")
+                }
             }
         }
+        
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
+
     
     
     func updateNickname(_ profileImage: String) {
@@ -44,57 +59,51 @@ extension ProfileViewController {
         }
     }
     
-    
-    //MARK: - gs:// URL을 https:// URL로 변환
+
+    // MARK: - gs:// URL을 https:// URL로 변환
     func convertToHttpsURL(gsURL: String) -> String? {
         let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
         let encodedPath = gsURL
             .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
-            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 한 번만 호출
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
         return baseURL + (encodedPath ?? "") + "?alt=media"
     }
     
-    
-    
-    
-    //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
+    // MARK: - 이미지 파일 스토리지에서 이미지 파일 불러오기
     func loadProfileImage(from gsURL: String) {
         guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
               let url = URL(string: httpsURLString) else {
-            print("Invalid URL string: \(gsURL)")
+            print("Invalid URL string after conversion: \(gsURL)")
             return
         }
         
-        print("Fetching image from URL: \(url)") // URL을 로그로 출력하여 확인
+        print("Fetching image from URL: \(url)")
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print("이미지 다운로드 오류: \(error)")
+                print("Image download error: \(error)")
                 return
             }
             
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-                print("HTTP Error: \(httpResponse.statusCode)")
+            if let httpResponse = response as? HTTPURLResponse {
+                print("HTTP Response Status Code: \(httpResponse.statusCode)")
+                if httpResponse.statusCode != 200 {
+                    print("HTTP Error: \(httpResponse.statusCode)")
+                    return
+                }
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                print("No data received or failed to convert data to UIImage")
                 return
             }
             
-            guard let data = data else {
-                print("No data received")
-                return
-            }
-            
-            print("Data received with size: \(data.count) bytes")
-            
-            guard let image = UIImage(data: data) else {
-                print("error: 이미지로 변환 실패")
-                return
-            }
             DispatchQueue.main.async {
                 self.imageButton.setImage(image, for: .normal)
+                print("Profile image successfully set to button.")
             }
         }
         task.resume()
     }
-    
     
     
     
@@ -143,6 +152,107 @@ extension ProfileViewController {
         }
     }
     
+    //MARK: - 구글 재인증
+    func reauthenticateWithGoogle(completion: @escaping (Bool) -> Void) {
+        guard let currentUser = Auth.auth().currentUser else {
+            completion(false)
+            return
+        }
+        
+        guard let presentingViewController = UIApplication.shared.windows.first?.rootViewController else {
+            completion(false)
+            return
+        }
+
+        GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController) { signInResult, error in
+            if let error = error {
+                print("Google sign-in error: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            guard let authentication = signInResult?.user else {
+                print("Google authentication failed.")
+                completion(false)
+                return
+            }
+            
+            guard let idToken = authentication.idToken?.tokenString else {
+                print("Failed to retrieve ID token.")
+                completion(false)
+                return
+            }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken.tokenString)
+
+            currentUser.reauthenticate(with: credential) { result, error in
+                if let error = error {
+                    print("Re-authentication with Google failed: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    print("Re-authentication with Google succeeded.")
+                    completion(true)
+                }
+            }
+        }
+    }
+
+    
+    //MARK: - Apple재인증
+    func reauthenticateWithApple(completion: @escaping (Bool) -> Void) {
+            guard let user = Auth.auth().currentUser else {
+                completion(false)
+                return
+            }
+
+            let appleIDProvider = ASAuthorizationAppleIDProvider()
+            let request = appleIDProvider.createRequest()
+            request.requestedScopes = [.fullName, .email]
+
+            let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+            authorizationController.delegate = self
+            authorizationController.presentationContextProvider = self
+            
+            // completion 클로저를 저장합니다.
+            self.currentReauthCompletion = completion
+            
+            authorizationController.performRequests()
+        }
+
+        // ASAuthorizationControllerDelegate 메서드
+        func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+            guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                  let identityToken = appleIDCredential.identityToken,
+                  let tokenString = String(data: identityToken, encoding: .utf8) else {
+                print("Apple ID Credential 또는 identity token이 없습니다.")
+                currentReauthCompletion?(false)
+                return
+            }
+
+            let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: tokenString, rawNonce: "")
+
+            Auth.auth().currentUser?.reauthenticate(with: credential) { result, error in
+                if let error = error {
+                    print("Apple로 재인증 실패: \(error.localizedDescription)")
+                    self.currentReauthCompletion?(false)
+                } else {
+                    print("Apple로 재인증 성공.")
+                    self.currentReauthCompletion?(true)
+                }
+            }
+        }
+
+        func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+            print("Apple 로그인 에러: \(error.localizedDescription)")
+            currentReauthCompletion?(false)
+        }
+
+        // ASAuthorizationControllerPresentationContextProviding 메서드
+        func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+            return self.view.window!
+        }
+    
+    
     
     //MARK: - 회원 탈퇴
     func accountDeletion() {
@@ -159,6 +269,49 @@ extension ProfileViewController {
         alert.addAction(deletion)
         present(alert, animated: true)
     }
+    func deleteUserAccount() {
+        guard let user = Auth.auth().currentUser else { return }
+        
+        let providerData = user.providerData.first
+        let providerID = providerData?.providerID
+        
+        let reauthenticate: (@escaping (Bool) -> Void) -> Void
+        
+        if providerID == "google.com" {
+            reauthenticate = reauthenticateWithGoogle
+        } else if providerID == "apple.com" {
+            reauthenticate = reauthenticateWithApple
+        } else {
+            print("Unsupported provider: \(providerID ?? "unknown")")
+            return
+        }
+        
+        reauthenticate { [weak self] success in
+            guard let self = self else { return }
+            
+            if success {
+                self.deleteUserData { success in
+                    if success {
+                        user.delete { error in
+                            if let error = error {
+                                print("Error deleting user: \(error.localizedDescription)")
+                            } else {
+                                print("User account deleted successfully")
+                                // 로그인 화면으로 이동
+                                let loginViewController = LoginViewController()
+                                self.navigationController?.pushViewController(loginViewController, animated: true)
+                            }
+                        }
+                    } else {
+                        print("Failed to delete user data from Firestore")
+                    }
+                }
+            } else {
+                print("Re-authentication failed. Please try again.")
+            }
+        }
+    }
+
     
     func deleteUserData(completion: @escaping(Bool) -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
@@ -174,30 +327,6 @@ extension ProfileViewController {
             }
         }
     }
-    
-    //애플 회원탈퇴
-    func deleteUserAccount() {
-        guard let user = Auth.auth().currentUser else { return }
-        
-        deleteUserData { success in
-            if success {
-                user.delete { error in
-                    if let error = error {
-                        print("Error deleting user: \(error.localizedDescription)")
-                        
-                    }
-                    else {
-                        print("User account deleted successfully")
-                        // 로그인 화면으로 이동
-                        let loginViewController = LoginViewController()
-                        self.navigationController?.pushViewController(loginViewController, animated: true)
-                    }
-                }
-            }
-            else {
-                print("Failed to delete user data from Firestore")
-            }
-            
-        }
-    }
+
 }
+

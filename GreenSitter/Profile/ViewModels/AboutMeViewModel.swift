@@ -89,10 +89,16 @@ extension AboutMeViewController {
     
 
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
-    func loadProfileImage(from gsURL: String) {
-        guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
-              let url = URL(string: httpsURLString) else {
-            print("Invalid URL string: \(gsURL)")
+    func loadProfileImage(from urlString: String) {
+        var imageUrlString = urlString
+        
+        // 만약 URL이 gs:// 형식이라면 https:// 형식으로 변환
+        if urlString.starts(with: "gs://") {
+            imageUrlString = convertToHttpsURL(gsURL: urlString) ?? ""
+        }
+        
+        guard let url = URL(string: imageUrlString) else {
+            print("Invalid URL string: \(imageUrlString)")
             return
         }
         
@@ -119,12 +125,14 @@ extension AboutMeViewController {
                 print("error: 이미지로 변환 실패")
                 return
             }
+            
             DispatchQueue.main.async {
                 self.profileImage.image = image
             }
         }
         task.resume()
     }
+
     //MARK: - gs:// URL을 https:// URL로 변환
     func convertToHttpsURL(gsURL: String) -> String? {
         let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
@@ -133,6 +141,5 @@ extension AboutMeViewController {
             .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 한 번만 호출
         return baseURL + (encodedPath ?? "") + "?alt=media"
     }
-    
     
 }

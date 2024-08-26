@@ -107,83 +107,68 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
     
     //MARK: - 헤더뷰를 반환하는 Method
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        // "자기소개" 섹션에만 수정 버튼 추가
         if section == 0 {
             let headerView = UIView()
             headerView.backgroundColor = .clear
-
+            
             let titleLabel = UILabel()
             titleLabel.text = sectionTitle[section]
             titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
-
-            let editButton = UIButton(type: .system)
-            editButton.setTitle("수정하기", for: .normal)
-            editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
-            editButton.translatesAutoresizingMaskIntoConstraints = false
-
             headerView.addSubview(titleLabel)
-            headerView.addSubview(editButton)
-//            // 현재 로그인한 사용자의 ID를 가져옵니다
-//            guard let currentUserID = Auth.auth().currentUser?.uid else {
-//                return headerView
-//            }
             
-//            // 프로필의 사용자 ID와 현재 로그인한 사용자의 ID를 비교합니다
-//            if let profileUserID = user?.id, currentUserID == profileUserID {
-//                let editButton = UIButton(type: .system)
-//                editButton.setTitle("수정하기", for: .normal)
-//                editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
-//                editButton.translatesAutoresizingMaskIntoConstraints = false
-//                headerView.addSubview(titleLabel)
-//
-//                
-//                NSLayoutConstraint.activate([
-//                    titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
-//                    titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-//
-//                    editButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
-//                    editButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
-//                ])
-//            }
-//            else {
-//                // 수정 버튼을 표시하지 않음
-//                NSLayoutConstraint.activate([
-//                    titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
-//                    titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
-//                ])
-//            }
-
-            NSLayoutConstraint.activate([
-                titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
-                titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-
-                editButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
-                editButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
-            ])
-
+            guard let currentUserID = Auth.auth().currentUser?.uid else {
+                return headerView
+            }
+            
+            if let profileUserID =  Auth.auth().currentUser?.uid {
+                // 유저 ID와 프로필 유저 ID를 출력하여 확인
+                print("Current User ID: \(currentUserID)")
+                print("Profile User ID: \(profileUserID)")
+                
+                if currentUserID == profileUserID {
+                    let editButton = UIButton(type: .system)
+                    editButton.setTitle("수정하기", for: .normal)
+                    editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+                    editButton.translatesAutoresizingMaskIntoConstraints = false
+                    headerView.addSubview(editButton)
+                    
+                    NSLayoutConstraint.activate([
+                        titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+                        titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                        
+                        editButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
+                        editButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+                    ])
+                } else {
+                    NSLayoutConstraint.activate([
+                        titleLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+                        titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor)
+                    ])
+                }
+            }
+            
             return headerView
         }
-
-        // 다른 섹션의 경우 기본 섹션 헤더로 대체 가능
+        
         let defaultHeaderView = UIView()
         defaultHeaderView.backgroundColor = .clear
-
+        
         let titleLabel = UILabel()
         titleLabel.text = sectionTitle[section]
         titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-
         defaultHeaderView.addSubview(titleLabel)
-
+        
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: defaultHeaderView.leadingAnchor, constant: 16),
-            titleLabel.centerYAnchor.constraint(equalTo: defaultHeaderView.centerYAnchor),
+            titleLabel.centerYAnchor.constraint(equalTo: defaultHeaderView.centerYAnchor)
         ])
-
+        
         return defaultHeaderView
     }
-    
+
+
     //MARK: - cell 클릭시 발생하는 이벤트
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 && indexPath.row == 0 {

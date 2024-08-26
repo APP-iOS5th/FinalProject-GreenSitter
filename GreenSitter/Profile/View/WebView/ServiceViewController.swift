@@ -16,6 +16,7 @@ class ServiceViewController: UIViewController {
         
         // WKWebView 초기화 및 설정
         webView = WKWebView(frame: self.view.frame)
+        webView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(webView)
         
         // URL 생성
@@ -25,6 +26,13 @@ class ServiceViewController: UIViewController {
             // 웹 페이지 로드
             webView.load(request)
         }
+        // 내비게이션 바 백 버튼 숨기기
+        self.navigationController?.navigationBar.topItem?.backButtonTitle = ""
+
+        
+        NSLayoutConstraint.activate([
+        ])
+        
     }
 }
 

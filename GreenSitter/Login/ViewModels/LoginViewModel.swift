@@ -13,11 +13,22 @@ class LoginViewModel: ObservableObject {
     static let shared = LoginViewModel()
     
     @Published var user: User?
+    @Published var profileImage: UIImage?
     
     let db = Firestore.firestore()
     
     private init() {}
 
+    // func userFetchFirebase(profileImage: String, nickname: String, location: Location, docId: String) {
+    //     self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false, docId: docId)
+        
+    //     loadProfileImage(from: profileImage) { [weak self] image in
+    //         self?.profileImage = image
+    //         // Perform additional UI updates here if needed
+    //         print("Profile image successfully loaded and updated.")
+    //     }
+    // }   
+    
     func firebaseFetch(docId: String) {
         db.collection("users").document(docId).getDocument { (document, error) in
             if let error = error {
@@ -65,7 +76,6 @@ class LoginViewModel: ObservableObject {
             } else {
                 print("위치정보 없음")
             }
-            
             DispatchQueue.main.async {
                 self.user = User(id: id,
                                  enabled: enabled,
@@ -79,10 +89,56 @@ class LoginViewModel: ObservableObject {
                                  exp: exp,
                                  aboutMe: aboutMe,
                                  chatNotification: chatNotification)
+                self.user?.updateExp(by: exp) //경험치 업데이트
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
             }
         }
     }
+    
+    func loadProfileImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
+        guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
+              let url = URL(string: httpsURLString) else {
+            print("Invalid URL string: \(gsURL)")
+            completion(nil)
+            return
+        }
+        
+        print("Fetching image from URL: \(url)")
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Image download error: \(error)")
+                completion(nil)
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("HTTP Error: \(httpResponse.statusCode)")
+                completion(nil)
+                return
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                print("No data received or failed to convert data to UIImage")
+                completion(nil)
+                return
+            }
+            
+            DispatchQueue.main.async {
+                completion(image)
+            }
+        }
+        task.resume()
+    }
+
+
+        func convertToHttpsURL(gsURL: String) -> String? {
+            let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
+            let encodedPath = gsURL
+                .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
+                .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+            return baseURL + (encodedPath ?? "") + "?alt=media"
+        }
+    
 
     func updateUserLocation(with location: Location) {
         guard let userId = Auth.auth().currentUser?.uid else {

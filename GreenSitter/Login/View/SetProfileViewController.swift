@@ -390,4 +390,3 @@ class SetProfileViewController: UIViewController {
         self.navigationController?.popToRootViewController(animated: true)
     }
 }
-
