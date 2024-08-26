@@ -1,5 +1,5 @@
 //
-//  FourImagesTableViewCell.swift
+//  MoreImagesTableViewCell.swift
 //  GreenSitter
 //
 //  Created by 김영훈 on 8/26/24.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FourImagesTableViewCell: UITableViewCell {
+class MoreImagesTableViewCell: UITableViewCell {
     weak var delegate: ChatMessageTableViewImageCellDelegate?
     
     var isIncoming: Bool = false {
@@ -74,18 +74,21 @@ class FourImagesTableViewCell: UITableViewCell {
         return thirdImageView
     }()
     
-    private lazy var fourthImageView: UIImageView = {
-       let fourthImageView = UIImageView()
-        fourthImageView.layer.cornerRadius = 10
-        fourthImageView.backgroundColor = .white
-        fourthImageView.clipsToBounds = true
-        fourthImageView.contentMode = .scaleAspectFit
-        fourthImageView.translatesAutoresizingMaskIntoConstraints = false
+    lazy var moreImagesLabel: UILabel = {
+        let moreImagesLabel = UILabel()
+        moreImagesLabel.layer.cornerRadius = 10
+        moreImagesLabel.backgroundColor = .white
+        moreImagesLabel.clipsToBounds = true
+        moreImagesLabel.translatesAutoresizingMaskIntoConstraints = false
+        moreImagesLabel.numberOfLines = 0
+        moreImagesLabel.textAlignment = .center
+        moreImagesLabel.text = "더보기"
+        moreImagesLabel.numberOfLines = 0
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
-        fourthImageView.isUserInteractionEnabled = true
-        fourthImageView.addGestureRecognizer(tapGesture)
-        return fourthImageView
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleMorePhotosLabelTap(_:)))
+        moreImagesLabel.isUserInteractionEnabled = true
+        moreImagesLabel.addGestureRecognizer(tapGesture)
+        return moreImagesLabel
     }()
     
     lazy var bubbleView: UIView = {
@@ -129,7 +132,6 @@ class FourImagesTableViewCell: UITableViewCell {
         label.text = "오후 1:43"
         label.textColor = .labelsSecondary
         label.font = UIFont.systemFont(ofSize: 11)
-        
         return label
     }()
     
@@ -138,7 +140,7 @@ class FourImagesTableViewCell: UITableViewCell {
         label.textColor = .complementary
         label.font = UIFont.systemFont(ofSize: 11)
         label.translatesAutoresizingMaskIntoConstraints = false
-        
+        label.sizeToFit()
         return label
     }()
     
@@ -170,8 +172,8 @@ class FourImagesTableViewCell: UITableViewCell {
             secondImageView.widthAnchor.constraint(equalToConstant: imageSize),
             thirdImageView.heightAnchor.constraint(equalToConstant: imageSize),
             thirdImageView.widthAnchor.constraint(equalToConstant: imageSize),
-            fourthImageView.heightAnchor.constraint(equalToConstant: imageSize),
-            fourthImageView.widthAnchor.constraint(equalToConstant: imageSize),
+            moreImagesLabel.heightAnchor.constraint(equalToConstant: imageSize),
+            moreImagesLabel.widthAnchor.constraint(equalToConstant: imageSize),
         ])
     }
     
@@ -186,7 +188,7 @@ class FourImagesTableViewCell: UITableViewCell {
         bubbleView.addSubview(firstImageView)
         bubbleView.addSubview(secondImageView)
         bubbleView.addSubview(thirdImageView)
-        bubbleView.addSubview(fourthImageView)
+        bubbleView.addSubview(moreImagesLabel)
         
         contentView.addSubview(bubbleView)
         contentView.addSubview(timeLabel)
@@ -207,6 +209,7 @@ class FourImagesTableViewCell: UITableViewCell {
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
                 timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100),
+                timeLabel.widthAnchor.constraint(equalToConstant: 45),
                 
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
@@ -226,11 +229,11 @@ class FourImagesTableViewCell: UITableViewCell {
                 thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
                 thirdImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
                 
-                fourthImageView.topAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: 5),
-                fourthImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
-                fourthImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
-                fourthImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
-                fourthImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
+                moreImagesLabel.topAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: 5),
+                moreImagesLabel.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                moreImagesLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                moreImagesLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                moreImagesLabel.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
             ])
         } else {
             contentView.addSubview(isReadLabel)
@@ -238,9 +241,12 @@ class FourImagesTableViewCell: UITableViewCell {
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 isReadLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100),
+                isReadLabel.widthAnchor.constraint(equalToConstant: 41.333333333333336),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: isReadLabel.trailingAnchor, constant: 5),
+                timeLabel.widthAnchor.constraint(equalToConstant: 45),
+
                 
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
@@ -265,11 +271,11 @@ class FourImagesTableViewCell: UITableViewCell {
                 thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
                 thirdImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
                 
-                fourthImageView.topAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: 5),
-                fourthImageView.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
-                fourthImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
-                fourthImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
-                fourthImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
+                moreImagesLabel.topAnchor.constraint(equalTo: bubbleView.centerYAnchor, constant: 5),
+                moreImagesLabel.leadingAnchor.constraint(equalTo: bubbleView.centerXAnchor, constant: 5),
+                moreImagesLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
+                moreImagesLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                moreImagesLabel.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
             ])
         }
     }
@@ -278,7 +284,7 @@ class FourImagesTableViewCell: UITableViewCell {
         firstImageView.image = images[0]
         secondImageView.image = images[1]
         thirdImageView.image = images[2]
-        fourthImageView.image = images[3]
+        moreImagesLabel.text = "+ \(images.count - 3)\n더보기"
     }
     
     @objc
@@ -288,6 +294,13 @@ class FourImagesTableViewCell: UITableViewCell {
         guard let index = images.firstIndex(of: image) else { return }
         
         delegate?.imageViewTapped(images: images, index: index)
+    }
+    
+    @objc
+    private func handleMorePhotosLabelTap(_ sender: UITapGestureRecognizer) {
+        guard let _ = sender.view as? UILabel else { return }
+        
+        delegate?.imageViewTapped(images: images, index: 3)
     }
 }
 
