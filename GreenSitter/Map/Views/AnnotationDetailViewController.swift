@@ -87,7 +87,7 @@ class AnnotationDetailViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.preferredFont(forTextStyle: .footnote)
-        label.textColor = .gray
+        label.textColor = .labelsSecondary
         label.numberOfLines = 0
         label.textAlignment = .center
         return label
@@ -160,7 +160,7 @@ class AnnotationDetailViewController: UIViewController {
     }
 
     @objc private func didTapPostButton() {
-        let postDetailViewController = PostDetailViewController(post: post)
+        let postDetailViewController = PostDetailViewController(postId: post.id)
         navigationController?.pushViewController(postDetailViewController, animated: true)
         delegate?.annotationDetailViewControllerDidDismiss(self)
     }

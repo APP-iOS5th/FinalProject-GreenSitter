@@ -115,7 +115,7 @@ class ChatPostViewController: UIViewController {
     
     // MARK: - UITapGestureRecognizer action
     @objc private func handleTap() {
-        let postDetailViewController = PostDetailViewController(post: Post.samplePosts.first!)
+        let postDetailViewController = PostDetailViewController(postId: Post.samplePosts.first!.id)
         
         // TODO: - 특정 게시물로 이동
 //        postDetailViewController.postId = postId
