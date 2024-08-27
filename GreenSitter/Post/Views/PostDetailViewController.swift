@@ -189,6 +189,8 @@ class PostDetailViewController: UIViewController {
         configure(with: post)
         addTapGestureToImages()
         
+        postDetailViewModel.delegate = self
+        
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             Task {
@@ -488,5 +490,12 @@ class PostDetailViewController: UIViewController {
         let fullScreenPageVC = FullScreenPageViewController(imageUrls: imageUrls, initialIndex: index)
         fullScreenPageVC.modalPresentationStyle = .fullScreen
         present(fullScreenPageVC, animated: true, completion: nil)
+    }
+}
+
+extension PostDetailViewController: PostDetailViewModelDelegate {
+    func navigateToLoginViewController() {
+        let loginViewController = LoginViewController()
+        self.navigationController?.pushViewController(loginViewController, animated: true)
     }
 }
