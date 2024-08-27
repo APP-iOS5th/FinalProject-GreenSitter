@@ -70,13 +70,8 @@ class PostDetailViewModel: ObservableObject {
         }
     }
 
-    
-    
     // 임시 데이터
-    var user = SampleChatData.exampleUsers[2]
-    var post = SampleChatData.examplePosts[1]
-    
-    var onChatButtonTapped: ((ChatRoom) -> Void)?
+    var user = LoginViewModel.shared.user
     
     // 채팅버튼 클릭 시 호출될 메서드
     func chatButtonTapped() async {
