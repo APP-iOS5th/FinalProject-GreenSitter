@@ -21,13 +21,14 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(CareRecordTableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.backgroundColor = UIColor(named: "BGSecondary")
         return tableView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(named: "BGSecondary")
+        view.backgroundColor = UIColor(named: "SeparatorsOpaque")
         navigationItem.title = "돌봄 기록"
         
         view.addSubview(tableView)

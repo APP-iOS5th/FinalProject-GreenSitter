@@ -67,7 +67,7 @@ class AboutMeViewController: UIViewController {
     lazy var levelIcon: UIImageView = {
         let icon = UIImageView()
         icon.image = UIImage(systemName: "leaf.fill")
-        icon.tintColor = UIColor(named: "BGPrimary")
+        icon.tintColor = .white
         icon.translatesAutoresizingMaskIntoConstraints = false
         return icon
     }()

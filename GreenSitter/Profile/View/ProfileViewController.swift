@@ -56,7 +56,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         let button = UIButton(type: .system)
         button.setTitle("내 프로필 보기", for: .normal)
         button.setTitleColor(UIColor(named: "LabelsPrimary"), for: .normal)
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "BGPrimary")
         button.addTarget(self, action: #selector(myProfilebuttonTap), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

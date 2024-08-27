@@ -41,7 +41,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProfileTableViewCell
             (cell as! ProfileTableViewCell).titleLabel.text = "이름"
             (cell as! ProfileTableViewCell).bodyLabel.text = user?.nickname
-            (cell as! ProfileTableViewCell).bodyLabel.textColor = .black
+            (cell as! ProfileTableViewCell).bodyLabel.textColor = UIColor(named: "LabelsPrimary")
             (cell as! ProfileTableViewCell).actionButton.isHidden = false
             (cell as! ProfileTableViewCell).actionButton.setTitle("변경", for: .normal)
             // 이전 타겟을 모두 제거하고 새로운 타겟을 추가
@@ -107,7 +107,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "leaf.fill")
             (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
             (cell as! CustomTableCell).textsLabel.text = "내가 맡긴 식물"
-            (cell as! CustomTableCell).textsLabel.textColor = .black
+            (cell as! CustomTableCell).textsLabel.textColor = UIColor(named: "LabelsPrimary")
             
         case (1, 1):
             // "내가 쓴 돌봄 후기" 셀
@@ -115,7 +115,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "list.bullet.rectangle.fill")
             (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
             (cell as! CustomTableCell).textsLabel.text = "내가 쓴 돌봄 후기"
-            (cell as! CustomTableCell).textsLabel.textColor = .black
+            (cell as! CustomTableCell).textsLabel.textColor = UIColor(named: "LabelsPrimary")
             
         case (2, 0):
             // "로그아웃" 셀
