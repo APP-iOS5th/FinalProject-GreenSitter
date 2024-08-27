@@ -9,10 +9,10 @@ import Foundation
 import UIKit
 import FirebaseFirestore
 import FirebaseStorage
+import Kingfisher
 
 class PostTableViewCell: UITableViewCell {
     
-    // Define custom labels
     private let postStatusLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -110,7 +110,8 @@ class PostTableViewCell: UITableViewCell {
         postBodyLabel.text = post.postBody
         postDateLabel.text = timeAgoSinceDate(post.updateDate)
         
-        postImageView.image = UIImage(named: "defaultImage") // 기본 이미지 설정
+        // 기본 이미지 설정
+        postImageView.image = UIImage(named: "defaultImage")
         
         guard let postImages = post.postImages, !postImages.isEmpty else {
             postImageView.isHidden = true
@@ -119,27 +120,12 @@ class PostTableViewCell: UITableViewCell {
         
         postImageView.isHidden = false
         if let imageUrlString = postImages.first, let imageUrl = URL(string: imageUrlString) {
-            loadImage(from: imageUrl)
-        } else {
-            print("Post Image is nil")
-            postImageView.image = UIImage(named: "defaultImage") // 기본 이미지 설정
+            // Kingfisher를 사용하여 이미지를 로드
+            postImageView.kf.setImage(
+                with: imageUrl,
+                placeholder: UIImage(named: "defaultImage") // 기본 이미지
+            )
         }
-    }
-    
-    private func loadImage(from url: URL) {
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let data = data, error == nil else {
-                DispatchQueue.main.async {
-                    self?.postImageView.image = UIImage(named: "defaultImage") // 오류 시 기본 이미지 사용
-                }
-                return
-            }
-            let image = UIImage(data: data)
-            DispatchQueue.main.async {
-                self?.postImageView.image = image
-            }
-        }
-        task.resume()
     }
     
     private func timeAgoSinceDate(_ date: Date) -> String {
@@ -162,4 +148,3 @@ class PostTableViewCell: UITableViewCell {
         }
     }
 }
-
