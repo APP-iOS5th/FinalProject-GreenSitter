@@ -54,7 +54,8 @@ class ChatViewModel {
     
     init() {
         // 현재 사용자 ID 설정
-        self.userId = Auth.auth().currentUser?.uid
+//        self.userId = Auth.auth().currentUser?.uid
+        self.userId = LoginViewModel.shared.user?.id
         self.isLoggedIn = userId != nil
     }
     

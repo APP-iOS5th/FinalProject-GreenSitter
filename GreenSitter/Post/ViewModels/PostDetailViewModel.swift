@@ -11,6 +11,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 class PostDetailViewModel: ObservableObject {
     private let db = Firestore.firestore()
@@ -31,10 +32,7 @@ class PostDetailViewModel: ObservableObject {
         }
     }
     
-
-    // 임시 데이터
-    var user = SampleChatData.exampleUsers[2]
-    var post = SampleChatData.examplePosts[1]
+    var user = Auth.auth().currentUser
     
     var onChatButtonTapped: ((ChatRoom) -> Void)?
     
@@ -79,17 +77,18 @@ class PostDetailViewModel: ObservableObject {
     }
     
     // ChatRoom 객체 생성
-    func makeChat() -> ChatRoom? {
+    private func makeChat() -> ChatRoom? {
         
         // 게시물 썸네일
-        guard let postThumbnail = post.postImages?.first else {
+        guard let postThumbnail = selectedPost?.postImages?.first else {
             return nil
         }
         
         // TODO: - messages는 하위 컬렉션으로 저장
-        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: post.userId, userNickname: user.nickname, postUserNickname: post.nickname, userProfileImage: user.profileImage, postUserProfileImage: post.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: post.userNotification, userLocation: user.location, postUserLocation: post.userLocation, messages: [], postId: post.id, postImage: postThumbnail, postTitle: post.postTitle, postStatus: post.postStatus)
+//        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user!.uid, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost!.userNotification, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus)
         
-        return newChat
+//        return newChat
+        return nil
     }
     
 }

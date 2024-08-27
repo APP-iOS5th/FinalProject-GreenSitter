@@ -139,7 +139,7 @@ class ChatTableViewCell: UITableViewCell {
         //        userLocationLabel.text = location
         
         // 임시 위치 데이터
-        userLocationLabel.text = "상도동"
+//        userLocationLabel.text = "상도동"
         
         // 알림 여부
         guard let notification = chatRoom?.userId == userId ? chatRoom?.postUserNotification : chatRoom?.userNotification else {
@@ -234,7 +234,7 @@ class ChatTableViewCell: UITableViewCell {
     func setupUI() {
         leftStackView.addSubview(userNicknameLabel)
         leftStackView.addSubview(lastMessageLabel)
-        leftStackView.addSubview(userLocationLabel)
+//        leftStackView.addSubview(userLocationLabel)
         leftStackView.addSubview(notificationImageView)
         
         circleView.addSubview(unreadCountLabel)
@@ -264,7 +264,8 @@ class ChatTableViewCell: UITableViewCell {
             userLocationLabel.leadingAnchor.constraint(equalTo: userNicknameLabel.trailingAnchor, constant: 10),
             userLocationLabel.centerYAnchor.constraint(equalTo: userNicknameLabel.centerYAnchor),
             
-            notificationImageView.leadingAnchor.constraint(equalTo: userLocationLabel.trailingAnchor, constant: 10),
+//            notificationImageView.leadingAnchor.constraint(equalTo: userLocationLabel.trailingAnchor, constant: 10),
+            notificationImageView.leadingAnchor.constraint(equalTo: userNicknameLabel.trailingAnchor, constant: 10),
             notificationImageView.centerYAnchor.constraint(equalTo: userNicknameLabel.centerYAnchor),
             notificationImageView.widthAnchor.constraint(equalToConstant: 15),
             notificationImageView.heightAnchor.constraint(equalToConstant: 15),

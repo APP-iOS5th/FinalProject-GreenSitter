@@ -15,9 +15,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        if let currentUser = Auth.auth().currentUser {
-            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid)
-        }
+//        if let currentUser = Auth.auth().currentUser {
+//            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid)
+//        }
         
         // UIWindow 및 루트 뷰 컨트롤러 설정
         window = UIWindow(windowScene: windowScene)
@@ -33,13 +33,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         secondNavigationController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
         
         // Chat
-        let chatListViewController: UIViewController
-        if Auth.auth().currentUser != nil {
-            chatListViewController = ChatListViewController()
+        var chatListViewController: UIViewController?
+        if let currentUser = Auth.auth().currentUser {
+            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid) {
+                // 데이터 가져온 후 ChatListViewController 실행
+                chatListViewController = ChatListViewController()
+            }
         } else {
             chatListViewController = LoginViewController()
         }
-        let thirdNavigationController = UINavigationController(rootViewController: chatListViewController)
+        let thirdNavigationController = UINavigationController(rootViewController: chatListViewController!)
         thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
         
         // Profile

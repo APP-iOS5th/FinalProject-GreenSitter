@@ -47,7 +47,7 @@ class MessageInputViewController: UIViewController {
         let largeConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular, scale: .large)
         let largeSymbolImage = UIImage(systemName: "plus.circle.fill", withConfiguration: largeConfig)
         button.setImage(largeSymbolImage, for: .normal)
-        button.tintColor = .fillSecondary
+        button.tintColor = .fillTertiary
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.addAction(UIAction { [weak self] _ in
@@ -119,5 +119,14 @@ class MessageInputViewController: UIViewController {
         chatAdditionalButtonsViewController.chatViewModel = self.chatViewModel
         present(chatAdditionalButtonsViewController, animated: true)
     }
+}
 
+// MARK: - UITextFieldDelegate
+extension MessageInputViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // TextField의 텍스트가 비어 있는지 확인
+        sendButton.isEnabled = !(messageInputField.text?.isEmpty ?? true)
+        
+        return true
+    }
 }

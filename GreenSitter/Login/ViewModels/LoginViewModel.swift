@@ -29,7 +29,7 @@ class LoginViewModel: ObservableObject {
     //     }
     // }   
     
-    func firebaseFetch(docId: String) {
+    func firebaseFetch(docId: String, completion: @escaping () -> Void) {
         db.collection("users").document(docId).getDocument { (document, error) in
             if let error = error {
                 print("데이터 불러오기 실패: \(error.localizedDescription)")
@@ -93,6 +93,7 @@ class LoginViewModel: ObservableObject {
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
             }
         }
+        completion()
     }
     
     func loadProfileImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
