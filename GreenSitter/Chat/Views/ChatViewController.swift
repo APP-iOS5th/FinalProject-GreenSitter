@@ -40,7 +40,7 @@ class ChatViewController: UIViewController {
             self.title = chatRoom.userNickname
         }
         
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .systemBackground
         self.navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .never
         
