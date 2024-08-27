@@ -207,6 +207,23 @@ class MapViewController: UIViewController {
         labelTwo.textAlignment = .left
         labelTwo.translatesAutoresizingMaskIntoConstraints = false
         
+        // UIButton 생성
+        let toastButton = UIButton()
+        toastButton.titleLabel?.font = .systemFont(ofSize: 13)
+        toastButton.setTitle("설정", for: .normal)
+        toastButton.setTitleColor(.white, for: .normal)
+        toastButton.backgroundColor = UIColor(.dominent)
+        toastButton.layer.cornerRadius = 4
+        toastButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        toastButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let buttonAction = UIAction { _ in
+            print("Button Action")
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+        }
+        
+        toastButton.addAction(buttonAction, for: .touchUpInside)
+        
         // StackView 생성 및 설정 (Vertical Stack)
         let labelStackView = UIStackView(arrangedSubviews: [labelOne, labelTwo])
         labelStackView.axis = .vertical
@@ -222,6 +239,7 @@ class MapViewController: UIViewController {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         toastView.addSubview(mainStackView)
+        toastView.addSubview(toastButton)
         self.view.addSubview(toastView)
         // Auto Layout 설정
         NSLayoutConstraint.activate([
@@ -234,6 +252,9 @@ class MapViewController: UIViewController {
             toastView.heightAnchor.constraint(equalToConstant: 80),
             toastView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             toastView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            
+            toastButton.widthAnchor.constraint(equalToConstant: 20),
+            toastButton.leadingAnchor.constraint(equalTo: mainStackView.trailingAnchor, constant: -10),
         ])
         
         DispatchQueue.main.async {

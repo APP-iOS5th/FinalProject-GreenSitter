@@ -229,8 +229,11 @@ class ChatListViewController: UIViewController {
     // MARK: - 로그인/채팅 목록 없음 Methods
     // goToHomeButton 눌렀을 때
     private func navigateToHome() {
-        let homeViewController = MainPostListViewController()
-        self.navigationController?.pushViewController(homeViewController, animated: true)
+        if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let window = windowScene.windows.first(where: \.isKeyWindow),
+           let tabBarController = window.rootViewController as? UITabBarController {
+            tabBarController.selectedIndex = 0 // 메인 뷰(홈) 탭으로 이동
+        }
     }
     
     // MARK: - 비로그인 Methods
