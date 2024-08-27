@@ -234,7 +234,7 @@ class ChatTableViewCell: UITableViewCell {
     func setupUI() {
         leftStackView.addSubview(userNicknameLabel)
         leftStackView.addSubview(lastMessageLabel)
-//        leftStackView.addSubview(userLocationLabel)
+        leftStackView.addSubview(userLocationLabel)
         leftStackView.addSubview(notificationImageView)
         
         circleView.addSubview(unreadCountLabel)
@@ -261,8 +261,8 @@ class ChatTableViewCell: UITableViewCell {
             userNicknameLabel.topAnchor.constraint(equalTo: leftStackView.topAnchor, constant: 20),
             userNicknameLabel.leadingAnchor.constraint(equalTo: leftStackView.leadingAnchor),
             
-            userLocationLabel.leadingAnchor.constraint(equalTo: userNicknameLabel.trailingAnchor, constant: 10),
-            userLocationLabel.centerYAnchor.constraint(equalTo: userNicknameLabel.centerYAnchor),
+//            userLocationLabel.leadingAnchor.constraint(equalTo: userNicknameLabel.trailingAnchor, constant: 10),
+//            userLocationLabel.centerYAnchor.constraint(equalTo: userNicknameLabel.centerYAnchor),
             
 //            notificationImageView.leadingAnchor.constraint(equalTo: userLocationLabel.trailingAnchor, constant: 10),
             notificationImageView.leadingAnchor.constraint(equalTo: userNicknameLabel.trailingAnchor, constant: 10),

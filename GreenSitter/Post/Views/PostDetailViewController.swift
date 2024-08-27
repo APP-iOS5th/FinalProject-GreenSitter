@@ -472,6 +472,12 @@ class PostDetailViewController: UIViewController {
         let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
         chatDetailViewController.chatViewModel = chatViewModel
         self.navigationController?.pushViewController(chatDetailViewController, animated: true)
+        
+        if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let window = windowScene.windows.first(where: \.isKeyWindow),
+           let tabBarController = window.rootViewController as? UITabBarController {
+            tabBarController.selectedIndex = 2 // 채팅 탭으로 이동
+        }
     }
     
     private func addTapGestureToImages() {

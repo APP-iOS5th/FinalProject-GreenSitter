@@ -163,14 +163,14 @@ class ChatListViewController: UIViewController {
     
     // MARK: - Setup ChatList UI
     func setupChatListUI() {
-//        self.view.backgroundColor = .bgSecondary
-        
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         //        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
         
         self.view.addSubview(tableView)
+        
+        tableView.backgroundColor = .bgSecondary
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
@@ -231,6 +231,12 @@ class ChatListViewController: UIViewController {
     private func navigateToHome() {
         let homeViewController = MainPostListViewController()
         self.navigationController?.pushViewController(homeViewController, animated: true)
+        
+        if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let window = windowScene.windows.first(where: \.isKeyWindow),
+           let tabBarController = window.rootViewController as? UITabBarController {
+            tabBarController.selectedIndex = 0 // 게시판(홈) 탭으로 이동
+        }
     }
     
     // MARK: - 비로그인 Methods
@@ -242,88 +248,7 @@ class ChatListViewController: UIViewController {
         let loginViewController = LoginViewController()
         loginViewController.modalPresentationStyle = .fullScreen
         self.present(loginViewController, animated: true)
-//        self.present(loginViewController, animated: true) {
-//            let image = UIImage(named: "profileIcon")
-//            let title = "로그인 권한이 필요한 기능입니다."
-//            let subtitle = "로그인 화면으로 이동합니다."
-//            if let image = image {
-//                self.showToast(image: image, title: title, subtitle: subtitle, on: loginViewController)
-//            }
-//        }
     }
-    
-    // 비로그인 시 토스트 메세지 창
-//    private func showToast(image: UIImage, title: String, subtitle: String, on viewController: UIViewController) {
-//        let toastView = UIView()
-//        toastView.backgroundColor = .white
-//        toastView.layer.borderColor = UIColor.systemGray4.cgColor
-//        toastView.layer.borderWidth = 2.0
-//        toastView.layer.cornerRadius = 23
-//        toastView.clipsToBounds = true
-//        toastView.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        let imageView = UIImageView()
-//        imageView.image = image
-//        imageView.contentMode = .scaleAspectFit
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        let labelView = UIStackView()
-//        labelView.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        let titleLabel = UILabel()
-//        titleLabel.text = title
-//        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-//        titleLabel.textColor = .black
-//        titleLabel.textAlignment = .left
-//        titleLabel.numberOfLines = 0
-//        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        let subtitleLabel = UILabel()
-//        subtitleLabel.text = subtitle
-//        subtitleLabel.font = UIFont.systemFont(ofSize: 14)
-//        subtitleLabel.textColor = .black
-//        subtitleLabel.textAlignment = .left
-//        subtitleLabel.numberOfLines = 0
-//        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        labelView.addSubview(titleLabel)
-//        labelView.addSubview(subtitleLabel)
-//        toastView.addSubview(imageView)
-//        toastView.addSubview(labelView)
-//        viewController.view.addSubview(toastView)
-//        
-//        NSLayoutConstraint.activate([
-//            toastView.topAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.topAnchor, constant: 20),
-//            toastView.centerXAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.centerXAnchor),
-//            toastView.widthAnchor.constraint(equalToConstant: 370),
-//            toastView.heightAnchor.constraint(equalToConstant: 88),
-//            
-//            imageView.leadingAnchor.constraint(equalTo: toastView.leadingAnchor, constant: 10),
-//            imageView.centerYAnchor.constraint(equalTo: toastView.centerYAnchor),
-//            imageView.widthAnchor.constraint(equalToConstant: 52),
-//            imageView.heightAnchor.constraint(equalToConstant: 52),
-//            
-//            labelView.centerYAnchor.constraint(equalTo: toastView.centerYAnchor),
-//            labelView.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
-//            labelView.trailingAnchor.constraint(equalTo: toastView.trailingAnchor, constant: -10),
-//            
-//            titleLabel.topAnchor.constraint(equalTo: labelView.topAnchor, constant: 10),
-//            titleLabel.leadingAnchor.constraint(equalTo: labelView.leadingAnchor),
-//            titleLabel.trailingAnchor.constraint(equalTo: labelView.trailingAnchor),
-//            
-//            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
-//            subtitleLabel.leadingAnchor.constraint(equalTo: labelView.leadingAnchor),
-//            subtitleLabel.trailingAnchor.constraint(equalTo: labelView.trailingAnchor),
-//            subtitleLabel.bottomAnchor.constraint(equalTo: labelView.bottomAnchor, constant: -10)
-//        ])
-//        
-//        // LoginView가 뜨고 0.8초 이후에 토스트 메세지가 4.0초 동안 떴다가 서서히 사라짐
-//        UIView.animate(withDuration: 4.0, delay: 0.8, options: .curveEaseOut, animations: {
-//            toastView.alpha = 0.0
-//        }) { _ in
-//            toastView.removeFromSuperview()
-//        }
-//    }
     
     // 비로그인이었다가 로그인했을 때
     @objc private func userDidLogin() {
@@ -352,7 +277,7 @@ extension ChatListViewController: UITableViewDataSource {
         chatRoom = chatViewModel.chatRooms[indexPath.row]
         cell.chatRoom = chatRoom!
         cell.chatViewModel = self.chatViewModel
-        cell.configure(userId: self.chatViewModel.userId!)
+        cell.configure(userId: self.chatViewModel.userId)
         cell.setupUI()
         
         return cell

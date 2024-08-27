@@ -26,7 +26,7 @@ class ChatMessageViewController: UIViewController {
     // 메세지 뷰
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .bgSecondary
+        tableView.backgroundColor = .clear
         // 셀 구분선 제거
         tableView.separatorStyle = .none
         // 셀 선택 불가능하게 설정
@@ -100,8 +100,6 @@ class ChatMessageViewController: UIViewController {
     
     // MARK: - Setup UI
     private func setupUI() {
-        self.view.backgroundColor = .bgSecondary
-        
         tableView.register(ChatMessageTableViewCell.self, forCellReuseIdentifier: "ChatMessageCell")
         tableView.register(ChatMessageTableViewImageCell.self, forCellReuseIdentifier: "ChatMessageImageCell")
         tableView.register(ChatMessageTableViewPlanCell.self, forCellReuseIdentifier: "ChatMessagePlanCell")
