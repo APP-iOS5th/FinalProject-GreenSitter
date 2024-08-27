@@ -244,6 +244,7 @@ class MapViewController: UIViewController {
         })
     }
     
+    
     // MARK: - Post 객체 배열을 사용하여 지도에 마커 및 오버레이 추가
     
     func setupMarkerAndOverlay(with posts: [Post]) {

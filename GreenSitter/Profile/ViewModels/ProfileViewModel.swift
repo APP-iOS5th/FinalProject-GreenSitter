@@ -145,47 +145,71 @@ extension ProfileViewController {
     // MARK: - gs:// URL을 https:// URL로 변환
     func convertToHttpsURL(gsURL: String) -> String? {
         let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
+        
+        // gs:// URL을 https:// URL로 변환하는 과정
         let encodedPath = gsURL
             .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
-            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 특수문자 인코딩
+
+        if encodedPath == nil {
+            print("Error: URL 인코딩 실패 - \(gsURL)")
+        } else {
+            print("Success: URL 인코딩 성공 - \(encodedPath!)")
+        }
+
         return baseURL + (encodedPath ?? "") + "?alt=media"
     }
+
+
     
     // MARK: - 이미지 파일 스토리지에서 이미지 파일 불러오기
     func loadProfileImage(from gsURL: String) {
+        // 1. gsURL을 httpsURL로 변환
         guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
               let url = URL(string: httpsURLString) else {
-            print("Invalid URL string after conversion: \(gsURL)")
+            print("Error: Invalid URL string after conversion: \(gsURL)")
             return
         }
         
         print("Fetching image from URL: \(url)")
+
+        // 2. URLSession을 사용해 이미지 데이터를 다운로드
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print("Image download error: \(error)")
+                print("Image download error: \(error.localizedDescription)")
                 return
             }
             
+            // 3. HTTP 응답 상태 코드 출력
             if let httpResponse = response as? HTTPURLResponse {
                 print("HTTP Response Status Code: \(httpResponse.statusCode)")
                 if httpResponse.statusCode != 200 {
-                    print("HTTP Error: \(httpResponse.statusCode)")
+                    print("HTTP Error: \(httpResponse.statusCode) - URL: \(url)")
+                    if let responseURL = httpResponse.url {
+                        print("Response URL: \(responseURL)")
+                    }
+                    if let fields = httpResponse.allHeaderFields as? [String: Any] {
+                        print("HTTP Response Headers: \(fields)")
+                    }
                     return
                 }
             }
             
+            // 4. 데이터 수신 확인
             guard let data = data, let image = UIImage(data: data) else {
-                print("No data received or failed to convert data to UIImage")
+                print("No data received or failed to convert data to UIImage - URL: \(url)")
                 return
             }
             
+            // 5. 이미지가 성공적으로 로드된 경우, UI 업데이트
             DispatchQueue.main.async {
                 self.imageButton.setImage(image, for: .normal)
-                print("Profile image successfully set to button.")
+                print("Profile image successfully set to button. URL: \(url)")
             }
         }
         task.resume()
     }
+
     
     
     

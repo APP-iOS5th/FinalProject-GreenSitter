@@ -123,14 +123,22 @@ class LoginViewModel: ObservableObject {
     }
 
 
-        func convertToHttpsURL(gsURL: String) -> String? {
-            let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
-            let encodedPath = gsURL
-                .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
-                .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
-            return baseURL + (encodedPath ?? "") + "?alt=media"
+    func convertToHttpsURL(gsURL: String) -> String? {
+        // 이미 HTTPS URL인지 확인
+        if gsURL.starts(with: "https://") {
+            print("이미 변환된 HTTPS URL: \(gsURL)")
+            return gsURL
         }
-    
+        
+        // gs:// URL을 https:// URL로 변환
+        let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
+        let encodedPath = gsURL
+            .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+        
+        return baseURL + (encodedPath ?? "") + "?alt=media"
+    }
+
 
     func updateUserLocation(with location: Location) {
         guard let userId = Auth.auth().currentUser?.uid else {
