@@ -29,6 +29,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
                 guard let self = self else { return }
                 if let imageURL = imageURL {
                     self.updatePostsImageURL(forUserId: userId, imageURL: imageURL)
+                    self.updateUserProfileImageURL(forUserId: userId, imageURL: imageURL)
                     self.imageButton.setImage(editedImage, for: .normal)
                 }
             }
@@ -37,8 +38,20 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
                 guard let self = self else { return }
                 if let imageURL = imageURL {
                     self.updatePostsImageURL(forUserId: userId, imageURL: imageURL)
+                    self.updateUserProfileImageURL(forUserId: userId, imageURL: imageURL)
                     self.imageButton.setImage(originalImage, for: .normal)
                 }
+            }
+        }
+    }
+    
+    func updateUserProfileImageURL(forUserId userId: String, imageURL: String) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        db.collection("users").document(userId).updateData(["profileImage": imageURL]) { error in
+            if let error = error {
+                print("Error updating profileImageURL in user document: \(error.localizedDescription)")
+            } else {
+                print("ProfileImageURL successfully updated in user document!")
             }
         }
     }
@@ -58,7 +71,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
             }
             
             for document in documents {
-                document.reference.updateData(["profileImageURL": imageURL]) { error in
+                document.reference.updateData(["profileImage": imageURL]) { error in
                     if let error = error {
                         print("Error updating profileImageURL in document \(document.documentID): \(error.localizedDescription)")
                     } else {
