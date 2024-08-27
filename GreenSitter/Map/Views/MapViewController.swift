@@ -12,6 +12,8 @@ import FirebaseAuth
 
 class MapViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private lazy var viewModel = MapViewModel()  // 위치 정보 관리 뷰모델
     private let postViewModel = MainPostListViewModel()
     private lazy var mapView: MKMapView = {
@@ -24,10 +26,14 @@ class MapViewController: UIViewController {
     
     // 커스텀 어노테이션, 오버레이 만들기 위한 Dictionary
     private var overlayPostMapping: [MKCircle: Post] = [:]
+    private var selectedAnnotation: CustomAnnotation?
+    private var annotationOverlayMapping: [CustomAnnotation: MKCircle] = [:]
     
     // 선택한 어노테이션 관리
     private var currentDetailViewController: AnnotationDetailViewController?
     private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - UI Elements
     
     // zoom control, user location buttons
     private lazy var zoomInButton: UIButton = {
@@ -60,6 +66,8 @@ class MapViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Life cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -77,6 +85,8 @@ class MapViewController: UIViewController {
         // 기존 코드
         //        postViewModel.fetchAllPosts()
     }
+    
+    // MARK: - Help methods
     
     private func setupUI() {
         view.addSubview(mapView)
@@ -273,6 +283,7 @@ class MapViewController: UIViewController {
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
         overlayPostMapping.removeAll()
+        annotationOverlayMapping.removeAll()
         
         for post in posts {
             guard let latitude = post.location?.latitude,
@@ -285,16 +296,19 @@ class MapViewController: UIViewController {
                 longitude: circleCenter.longitude + randomOffset.longitudeDelta
             )
             
+            // 오버레이를 미리 생성하고, 나중에 선택되었을 때 사용할 수 있도록 mapping에 저장
             let circle = MKCircle(center: randomCenter, radius: 500)
             
             // 맵 뷰에 오버레이 추가하기 전에, post 값을 circle 키에 넣기
             overlayPostMapping[circle] = post
-//            print("dict after add: \(overlayPostMapping)")
             
-            mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
+//            mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
             
             let annotation = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
             mapView.addAnnotation(annotation)  // MKAnnotationView
+            
+            // 어노테이션과 오버레이를 매핑 (오버레이는 아직 맵에 추가하지 않음)
+            annotationOverlayMapping[annotation] = circle
         }
     }
     
@@ -353,9 +367,24 @@ extension MapViewController: MKMapViewDelegate {
         return annotationView
     }
     
-    // MKAnnotationView 터치 이벤트 관리
+    // MARK: - MKAnnotationView 터치 이벤트 관리
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         guard let annotation = view.annotation as? CustomAnnotation else { return }
+        
+        // 기존 선택된 어노테이션의 오버레이는 전부 제거
+        if let previousAnnotation = selectedAnnotation,
+           let overlay = annotationOverlayMapping[previousAnnotation] {
+            mapView.removeOverlay(overlay)
+            annotationOverlayMapping.removeValue(forKey: previousAnnotation)
+        }
+        
+        // 새로운 어노테이션 선택 시 오버레이 추가
+        let circle = MKCircle(center: annotation.coordinate, radius: 500)
+        mapView.addOverlay(circle)
+        annotationOverlayMapping[annotation] = circle
+        
+        // 현재 선택된 어노테이션으로 업데이트
+        selectedAnnotation = annotation
         
         // 선택한 어노테이션 주변으로 MKCoordinateRegion 설정
         let region = MKCoordinateRegion(center: annotation.coordinate, latitudinalMeters: 1000, longitudinalMeters: 1000)
@@ -367,7 +396,22 @@ extension MapViewController: MKMapViewDelegate {
         }
     }
     
+    // MARK: - MKAnnotationView 선택 해제 이벤트 관리
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        guard let annotation = view.annotation as? CustomAnnotation else { return }
+        
+        // 선택 해제된 어노테이션에 연결된 오버레이는 제거
+        if let overlay = annotationOverlayMapping[annotation] {
+            mapView.removeOverlay(overlay)
+            annotationOverlayMapping.removeValue(forKey: annotation)
+        }
+        
+        // 상세 뷰 숨김
+        hideAnnotationDetail()
+    }
+    
     // MARK: - AnnotationDetailViewController를 맵 위에 커스텀 방식으로 추가
+    
     private func presentAnnotationDetail(for post: Post) {
         if let currentDetailViewController = currentDetailViewController {
             // 이미 창이 떠 있는 경우, Post 데이터만 업데이트
@@ -413,7 +457,6 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let circleOverlay = overlay as? MKCircle {
             let circleRenderer = MKCircleRenderer(circle: circleOverlay)
-//            print("rendererFor methods: dict: \(overlayPostMapping)")
             
             // 딕셔너리로부터 해당 circleOverlay에 저장된 Post 가져오기
             if let post = overlayPostMapping[circleOverlay] {
@@ -425,8 +468,7 @@ extension MapViewController: MKMapViewDelegate {
                     circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3)
                 }
             } else {
-                print("post is nil")
-                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3) // Default color
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3)
             }
 
             circleRenderer.strokeColor = .separatorsNonOpaque
