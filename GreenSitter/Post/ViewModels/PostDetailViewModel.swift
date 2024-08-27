@@ -21,15 +21,15 @@ class PostDetailViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private var firestoreManager = FirestoreManager()
 
-    @Published var selectedPost: Post
+    @Published var selectedPost: Post?
     
     var onChatButtonTapped: ((ChatRoom) -> Void)?
     
     var delegate: PostDetailViewModelDelegate?
     
-    init(selectedPost: Post) {
-        self.selectedPost = selectedPost
-    }
+//    init(selectedPost: Post) {
+//        self.selectedPost = selectedPost
+//    }
     
     // MARK: - Post 삭제
     func deletePost(postId: String, completion: @escaping (Bool) -> Void) {
@@ -127,11 +127,11 @@ class PostDetailViewModel: ObservableObject {
         }
         
         // 게시물 썸네일
-        guard let postThumbnail = self.selectedPost.postImages?.first else {
+        guard let postThumbnail = self.selectedPost?.postImages?.first else {
             return nil
         }
         
-        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost.userId, userNickname: user.nickname, postUserNickname: selectedPost.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost.userNotification, userLocation: user.location, postUserLocation: selectedPost.userLocation, messages: [], postId: selectedPost.id, postImage: postThumbnail, postTitle: selectedPost.postTitle, postStatus: selectedPost.postStatus)
+        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost!.userNotification, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus)
         
         return newChat
     }

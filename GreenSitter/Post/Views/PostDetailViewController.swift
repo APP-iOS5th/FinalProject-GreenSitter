@@ -14,7 +14,7 @@ import FirebaseStorage
 //TODO: Post -> PostId
 
 class PostDetailViewController: UIViewController {
-    private var postDetailViewModel: PostDetailViewModel
+    private var postDetailViewModel = PostDetailViewModel()
     private var imageUrls: [String] = []
     private let postId: String
     private var overlayPostMapping: [MKCircle: Post] = [:]
@@ -24,7 +24,6 @@ class PostDetailViewController: UIViewController {
     
     init(postId: String) {
         self.postId = postId
-        self.postDetailViewModel = PostDetailViewModel(selectedPost: post)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -282,7 +281,7 @@ class PostDetailViewController: UIViewController {
             },
             UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { [weak self] _ in
                 guard let self = self else { return }
-                self.postDetailViewModel.deletePost(postId: postId) { [weak self] success in
+                self.postDetailViewModel.deletePost(postId: post.id) { [weak self] success in
                     DispatchQueue.main.async {
                         if success {
                             let alert = UIAlertController(title: "성공", message: "삭제가 완료되었습니다.", preferredStyle: .alert)
