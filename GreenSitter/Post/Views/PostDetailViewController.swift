@@ -20,7 +20,9 @@ class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
     private var imageUrls: [String] = []
     private let postId: String
-    
+    private var overlayPostMapping: [MKCircle: Post] = [:]
+    private var postBodyTextViewHeightConstraint: NSLayoutConstraint?
+
     // MARK: - Initializer
     
     init(postId: String) {
@@ -80,7 +82,7 @@ class PostDetailViewController: UIViewController {
     
     private let postTimeLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 13)
+        label.font = .systemFont(ofSize: 12)
         label.textColor = .labelsSecondary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -121,7 +123,7 @@ class PostDetailViewController: UIViewController {
     
     private let postTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.font = .systemFont(ofSize: 23, weight: .semibold)
         label.textColor = .labelsPrimary
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -150,8 +152,8 @@ class PostDetailViewController: UIViewController {
         textView.textColor = .labelsPrimary
         textView.backgroundColor = .clear
         textView.isEditable = false
-        textView.isSelectable = false
-        textView.sizeToFit()
+        textView.isSelectable = true
+        textView.isScrollEnabled = false
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
@@ -168,9 +170,19 @@ class PostDetailViewController: UIViewController {
     
     private let mapLabel: UILabel = {
         let label = UILabel()
+        label.textColor = .labelsSecondary
+        label.font = .systemFont(ofSize: 15)
+        label.text = "거래 희망 장소"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let mapPlaceLabel: UILabel = {
+        let label = UILabel()
         label.textColor = .labelsPrimary
         label.font = .systemFont(ofSize: 17)
-        label.text = "거래 희망 장소"
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -198,6 +210,8 @@ class PostDetailViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
         mapView.delegate = self
+        postBodyTextView.delegate = self
+
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
         loadPost(with: postId)
     }
@@ -330,11 +344,26 @@ class PostDetailViewController: UIViewController {
         statusLabel.text = post.postStatus.rawValue
         userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
         
+        let address = post.location?.address
+        let placeName = post.location?.placeName
+        
+        if let address = address, !address.isEmpty, let placeName = placeName, !placeName.isEmpty {
+            mapPlaceLabel.text = "\(address) (\(placeName))" // 주소와 장소 이름을 함께 표시
+        } else if let address = address, !address.isEmpty {
+            mapPlaceLabel.text = address // 주소만 표시
+        } else if let placeName = placeName, !placeName.isEmpty {
+            mapPlaceLabel.text = placeName // 장소 이름만 표시
+        } else {
+            mapPlaceLabel.text = "주소 정보 없음" // 둘 다 없는 경우
+        }
+        
         profileImageView.image = UIImage(named: post.profileImage)
         
         imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         imageUrls.removeAll()
         
+        
+        // profile button
         userProfileButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             
@@ -342,6 +371,8 @@ class PostDetailViewController: UIViewController {
             self.navigationController?.pushViewController(aboutMeVC, animated: true)
         }, for: .touchUpInside)
         
+        
+        // image
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
             self.imageUrls = imageUrls
             for (index, imageUrl) in imageUrls.enumerated() {
@@ -388,6 +419,7 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(dividerLine3)
         contentView.addSubview(contactButton)
         contentView.addSubview(mapLabel)
+        contentView.addSubview(mapPlaceLabel)
         contentView.addSubview(mapView)
         contentView.addSubview(descriptionLabel)
         
@@ -399,14 +431,12 @@ class PostDetailViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.heightAnchor.constraint(equalTo: view.heightAnchor),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
             
             userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -471,7 +501,6 @@ class PostDetailViewController: UIViewController {
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-            postBodyTextView.heightAnchor.constraint(greaterThanOrEqualTo: self.view.heightAnchor, multiplier: 0.2),
             
             dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -482,7 +511,11 @@ class PostDetailViewController: UIViewController {
             mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8),
             mapLabel.heightAnchor.constraint(equalToConstant: mapLabel.font.pointSize),
             
-            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
+            mapPlaceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapPlaceLabel.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
+            mapPlaceLabel.heightAnchor.constraint(equalToConstant: mapPlaceLabel.font.pointSize),
+            
+            mapView.topAnchor.constraint(equalTo: mapPlaceLabel.bottomAnchor, constant: 12),
             mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             mapView.heightAnchor.constraint(equalToConstant: 200),
@@ -493,20 +526,7 @@ class PostDetailViewController: UIViewController {
         ])
     }
     
-    private func configurePostBodyTextView(with text: String) {
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 10
-        
-        let attributes: [NSAttributedString.Key: Any] = [
-            .paragraphStyle: paragraphStyle,
-            .font: UIFont.systemFont(ofSize: 14),
-            .foregroundColor: UIColor.labelsPrimary
-        ]
-        
-        let attributedString = NSAttributedString(string: text, attributes: attributes)
-        
-        postBodyTextView.attributedText = attributedString
-    }
+
     
     private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
         let storageRef = Storage.storage().reference(forURL: url)
@@ -571,10 +591,48 @@ class PostDetailViewController: UIViewController {
         present(fullScreenPageVC, animated: true, completion: nil)
     }
     
-    private var overlayPostMapping: [MKCircle: Post] = [:]
 
 }
 
+extension PostDetailViewController: UITextViewDelegate {
+    // 텍스트뷰 높이를 자동으로 조정하는 메서드
+    private func adjustTextViewHeight() {
+        let size = postBodyTextView.sizeThatFits(CGSize(width: postBodyTextView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        
+        // 텍스트뷰의 최소 높이를 200으로 설정
+        let newHeight = max(size.height, 200)
+        
+        if postBodyTextViewHeightConstraint == nil {
+            postBodyTextViewHeightConstraint = postBodyTextView.heightAnchor.constraint(equalToConstant: newHeight)
+            postBodyTextViewHeightConstraint?.isActive = true
+        } else {
+            postBodyTextViewHeightConstraint?.constant = newHeight
+        }
+        
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+    }
+    
+    // 텍스트가 변경될 때 호출되는 델리게이트 메서드
+    func textViewDidChange(_ textView: UITextView) {
+        adjustTextViewHeight()
+    }
+    
+    private func configurePostBodyTextView(with text: String) {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 10
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .paragraphStyle: paragraphStyle,
+            .font: UIFont.systemFont(ofSize: 17),
+            .foregroundColor: UIColor.labelsPrimary
+        ]
+        
+        let attributedString = NSAttributedString(string: text, attributes: attributes)
+        
+        postBodyTextView.attributedText = attributedString
+    }
+}
 
 extension PostDetailViewController: MKMapViewDelegate {
     
