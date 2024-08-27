@@ -277,7 +277,7 @@ extension ChatListViewController: UITableViewDataSource {
         chatRoom = chatViewModel.chatRooms[indexPath.row]
         cell.chatRoom = chatRoom!
         cell.chatViewModel = self.chatViewModel
-        cell.configure(userId: self.chatViewModel.userId)
+        cell.configure(userId: self.chatViewModel.userId!)
         cell.setupUI()
         
         return cell

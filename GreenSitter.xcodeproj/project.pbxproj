@@ -109,7 +109,6 @@
 		97D1BE9D2C6C93CD00F7A983 /* AboutMeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE992C6C93CD00F7A983 /* AboutMeViewController.swift */; };
 		97D1BE9E2C6C93CD00F7A983 /* NicknameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE9A2C6C93CD00F7A983 /* NicknameViewController.swift */; };
 		97D1BE9F2C6C93CD00F7A983 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE9B2C6C93CD00F7A983 /* ProfileViewController.swift */; };
-		97D1BEA52C6C93FA00F7A983 /* PostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */; };
 		97D1BEA82C6C954100F7A983 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEA62C6C954100F7A983 /* DataManager.swift */; };
 		97D1BEA92C6C954100F7A983 /* SampleChatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEA72C6C954100F7A983 /* SampleChatData.swift */; };
 		97D1BEAF2C6C9DB100F7A983 /* BundleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BEAE2C6C9DB100F7A983 /* BundleExtension.swift */; };
@@ -256,7 +255,6 @@
 		97D1BE992C6C93CD00F7A983 /* AboutMeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutMeViewController.swift; sourceTree = "<group>"; };
 		97D1BE9A2C6C93CD00F7A983 /* NicknameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicknameViewController.swift; sourceTree = "<group>"; };
 		97D1BE9B2C6C93CD00F7A983 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
-		97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostListViewController.swift; sourceTree = "<group>"; };
 		97D1BEA62C6C954100F7A983 /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		97D1BEA72C6C954100F7A983 /* SampleChatData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleChatData.swift; sourceTree = "<group>"; };
 		97D1BEAE2C6C9DB100F7A983 /* BundleExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BundleExtension.swift; sourceTree = "<group>"; };
@@ -678,7 +676,6 @@
 				4F822E812C79FC9D007402CB /* FullScreenImageViewController.swift */,
 				4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */,
 				97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */,
-				97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -864,7 +861,6 @@
 				97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */,
 				97D1BEBC2C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift in Sources */,
 				97BC0DFE2C75D26700F4D0B4 /* PostTableViewCell.swift in Sources */,
-				97D1BEA52C6C93FA00F7A983 /* PostListViewController.swift in Sources */,
 				3B57780D2C73356E000643C9 /* ReviewPostTableViewCell.swift in Sources */,
 				97D1BE9D2C6C93CD00F7A983 /* AboutMeViewController.swift in Sources */,
 				97934E2F2C62FE2500B38E0A /* ReviewListViewController.swift in Sources */,

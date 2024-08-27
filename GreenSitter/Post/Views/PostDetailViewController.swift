@@ -11,12 +11,13 @@ import FirebaseAuth
 import FirebaseStorage
 
 class PostDetailViewController: UIViewController {
-    private var postDetailViewModel = PostDetailViewModel()
+    private var postDetailViewModel: PostDetailViewModel
     private var imageUrls: [String] = []
     private let post: Post
     
     init(post: Post) {
         self.post = post
+        self.postDetailViewModel = PostDetailViewModel(selectedPost: post)
         print("PostDetailView - Post: \(post)")
         super.init(nibName: nil, bundle: nil)
     }
@@ -468,15 +469,19 @@ class PostDetailViewController: UIViewController {
     }
     
     private func navigateToChatDetail(chatRoom: ChatRoom) {
-        let chatViewModel = ChatViewModel()
-        let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
-        chatDetailViewController.chatViewModel = chatViewModel
-        self.navigationController?.pushViewController(chatDetailViewController, animated: true)
-        
-        if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-           let window = windowScene.windows.first(where: \.isKeyWindow),
-           let tabBarController = window.rootViewController as? UITabBarController {
-            tabBarController.selectedIndex = 2 // 채팅 탭으로 이동
+        if let tabBarController = self.tabBarController {
+            // 2번째 탭 선택
+            tabBarController.selectedIndex = 2
+            
+            // 2번째 탭의 UINavigationController 가져오기
+            if let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
+                let chatViewModel = ChatViewModel()
+                let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
+                chatDetailViewController.chatViewModel = chatViewModel
+                
+                // 2번째 탭의 UINavigationController에 ChatViewController를 푸시
+                navigationController.pushViewController(chatDetailViewController, animated: true)
+            }
         }
     }
     
@@ -502,6 +507,7 @@ class PostDetailViewController: UIViewController {
 extension PostDetailViewController: PostDetailViewModelDelegate {
     func navigateToLoginViewController() {
         let loginViewController = LoginViewController()
-        self.navigationController?.pushViewController(loginViewController, animated: true)
+        loginViewController.modalPresentationStyle = .fullScreen
+        self.present(loginViewController, animated: true)
     }
 }
