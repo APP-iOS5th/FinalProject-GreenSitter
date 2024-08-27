@@ -484,6 +484,8 @@ extension MapViewController: MKMapViewDelegate {
 // MARK: - AnnotationDetailViewControllerDelegate
 extension MapViewController: AnnotationDetailViewControllerDelegate {
     func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController) {
-        hideAnnotationDetail()
+        if let selectedAnnotation = selectedAnnotation {
+            mapView.deselectAnnotation(selectedAnnotation, animated: true)
+        }
     }
 }
