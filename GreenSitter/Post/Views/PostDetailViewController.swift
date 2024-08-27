@@ -139,10 +139,11 @@ class PostDetailViewController: UIViewController, UITextViewDelegate {
     private let postBodyTextView: UITextView = {
         let textView = UITextView()
         textView.font = .systemFont(ofSize: 14)
+        textView.textColor = .labelsPrimary
         textView.isEditable = false
         textView.isSelectable = true
         textView.isScrollEnabled = false
-//        textView.sizeToFit()
+        textView.backgroundColor = .systemBackground
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
@@ -202,7 +203,6 @@ class PostDetailViewController: UIViewController, UITextViewDelegate {
         }
     }
     
-    
     private func setupNavigationBarWithEdit() {
         let menu = UIMenu(title: "", children: [
             UIAction(title: "수정하기", image: UIImage(systemName: "pencil")) { [weak self] _ in
@@ -249,10 +249,8 @@ class PostDetailViewController: UIViewController, UITextViewDelegate {
     private func setupNavigationBarWithBlock() {
         let menu = UIMenu(title: "", children: [
             UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { _ in
-                
             },
             UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { _ in
-                
             }
         ])
         
@@ -300,16 +298,10 @@ class PostDetailViewController: UIViewController, UITextViewDelegate {
             scrollView.heightAnchor.constraint(equalTo: view.heightAnchor),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-                    contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-                    contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-                    contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-                    contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-//            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-//            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-//            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-//            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-//            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-//            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
             userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -353,12 +345,10 @@ class PostDetailViewController: UIViewController, UITextViewDelegate {
             dividerLine1.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine1.heightAnchor.constraint(equalToConstant: 1),
             
-            
             imagesScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
             imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             imagesScrollView.heightAnchor.constraint(equalToConstant: 250),
-            
             
             imagesStackView.topAnchor.constraint(equalTo: imagesScrollView.topAnchor),
             imagesStackView.bottomAnchor.constraint(equalTo: imagesScrollView.bottomAnchor),
@@ -375,9 +365,7 @@ class PostDetailViewController: UIViewController, UITextViewDelegate {
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-            
-            
-            
+                        
             dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             dividerLine3.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
@@ -425,7 +413,6 @@ class PostDetailViewController: UIViewController, UITextViewDelegate {
             self.adjustTextViewHeight()
             self.view.setNeedsLayout()
         }
-        //        adjustTextViewHeight()
         
         profileImageView.image = UIImage(named: post.profileImage)
         
@@ -522,7 +509,7 @@ class PostDetailViewController: UIViewController, UITextViewDelegate {
         view.setNeedsLayout()
         view.layoutIfNeeded()
     }
-
+    
     // 텍스트가 변경될 때 호출되는 델리게이트 메서드
     func textViewDidChange(_ textView: UITextView) {
         adjustTextViewHeight()
