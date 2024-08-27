@@ -118,6 +118,12 @@ class ChatPostViewController: UIViewController {
 //        let postDetailViewController = PostDetailViewController(post: chatRoom.postId)
 //        
 //        self.navigationController?.pushViewController(postDetailViewController, animated: true)
+        let postDetailViewController = PostDetailViewController(postId: Post.samplePosts.first!.id)
+        
+        // TODO: - 특정 게시물로 이동
+//        postDetailViewController.postId = postId
+        
+        self.navigationController?.pushViewController(postDetailViewController, animated: true)
     }
 
 }

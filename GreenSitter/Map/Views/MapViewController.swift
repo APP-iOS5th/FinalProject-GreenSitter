@@ -12,7 +12,7 @@ import FirebaseAuth
 
 class MapViewController: UIViewController {
     
-    private let viewModel = MapViewModel()  // 위치 정보 관리 뷰모델
+    private lazy var viewModel = MapViewModel()  // 위치 정보 관리 뷰모델
     private let postViewModel = MainPostListViewModel()
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
@@ -236,12 +236,14 @@ class MapViewController: UIViewController {
             toastView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
         ])
         
-        UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseIn, animations: {
-            toastView.isUserInteractionEnabled = false
-            toastView.alpha = 0.0
-        }, completion: { _ in
-            toastView.removeFromSuperview()
-        })
+        DispatchQueue.main.async {
+            UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseIn, animations: {
+                toastView.isUserInteractionEnabled = false
+                toastView.alpha = 0.0
+            }, completion: { _ in
+                toastView.removeFromSuperview()
+            })
+        }
     }
     
     // MARK: - Post 객체 배열을 사용하여 지도에 마커 및 오버레이 추가
