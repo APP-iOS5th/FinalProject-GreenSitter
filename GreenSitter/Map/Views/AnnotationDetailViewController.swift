@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 protocol AnnotationDetailViewControllerDelegate: AnyObject {
     func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController)
@@ -78,8 +79,8 @@ class AnnotationDetailViewController: UIViewController {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 8
         imageView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = 4
         return imageView
     }()
     
@@ -177,30 +178,35 @@ class AnnotationDetailViewController: UIViewController {
         postBodyLabel.text = post.postBody
         
         if let imageUrlString = post.postImages?.first, let imageUrl = URL(string: imageUrlString) {
-            print("Post Image is: \(imageUrlString)")
-            loadImage(from: imageUrl)
+            let processor = DownsamplingImageProcessor(size: CGSize(width: 80, height: 80))
+                           |> RoundCornerImageProcessor(cornerRadius: 4)
+
+            postImageView.kf.indicatorType = .activity
+            postImageView.kf.setImage(
+                with: imageUrl,
+                placeholder: UIImage(named: "PlaceholderAvatar"),
+                options: [
+                    .processor(processor),
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade(0.25)),
+                    .cacheOriginalImage
+                ],
+                completionHandler: { result in
+                    switch result {
+                    case .success(let value):
+                        print("Image loaded successfully: \(value.source.url?.absoluteString ?? "")")
+                    case .failure(let error):
+                        print("Failed to load image: \(error.localizedDescription)")
+                    }
+                }
+            )
         } else {
+            postImageView.image = nil // 이전 이미지 제거
+            postImageView.backgroundColor = .fillPrimary
             print("Post Image is nil")
-            postImageView.image = UIImage(systemName: "photo")
         }
         
         descriptionLabel.text = "이 위치는 500m 반경 이내의 지역이 표시됩니다."
-    }
-    
-    private func loadImage(from url: URL) {
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
-                DispatchQueue.main.async {
-                    self.postImageView.image = nil
-                }
-                return
-            }
-            let image = UIImage(data: data)
-            DispatchQueue.main.async {
-                self.postImageView.image = image
-            }
-        }
-        task.resume()
     }
 }
 
