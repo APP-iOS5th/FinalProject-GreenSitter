@@ -35,7 +35,6 @@ extension ProfileViewController {
                 }
             }
         }
-        
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -60,13 +59,17 @@ extension ProfileViewController {
     }
     
     func fetchUserLevelAndUpdateImage() {
+        
         guard let currentUserID = Auth.auth().currentUser?.uid else {
             print("로그인된 사용자가 없습니다.")
             return
         }
-        
+
+
         // Firestore에서 현재 사용자의 레벨을 가져옵니다.
-        db.collection("users").document(currentUserID).getDocument { [weak self] document, error in
+        db.collection("users").document(currentUserID).getDocument { [weak self] (document: DocumentSnapshot?, error: Error?) in
+            guard let self = self else { return }
+            
             if let error = error {
                 print("Firestore 읽기 오류: \(error)")
                 return
@@ -81,24 +84,37 @@ extension ProfileViewController {
             }
             
             // 레벨에 따른 이미지 URL을 가져옵니다.
-            guard let imageURLString = self?.imageURLForLevel(level),
-                  let httpsURLString = self?.convertToHttpsURL(gsURL: imageURLString),
-                  let imageURL = URL(string: httpsURLString) else {
+            guard let imageURLString = self.imageURLForLevel(level),
+                  let httpsURLString = self.convertToHttpsURL(gsURL: imageURLString) else {
                 print("레벨에 맞는 이미지 URL을 생성할 수 없습니다.")
                 return
             }
             
-            // URL에서 이미지를 다운로드합니다.
-            self?.downloadImage(from: httpsURLString) { image in
+            // 이미지를 다운로드하여 ProfileTableViewCell의 iconImageView에 설정합니다.
+            self.downloadImage(from: httpsURLString) { image in
+                guard let image = image else {
+                    print("이미지를 다운로드할 수 없습니다.")
+                    return
+                }
+                
                 DispatchQueue.main.async {
-                    if let image = image {
-                        self?.imageButton.setImage(image, for: .normal)
-                        print("Profile image successfully set to button.")
+                    if let profileTableView = self.profileTableView {
+                        if let visibleCells = profileTableView.visibleCells as? [ProfileTableViewCell] {
+                            for cell in visibleCells {
+                                cell.iconImageView.image = image
+                            }
+                        }
                     }
+                    else {
+                        print("profileTableView is nil")
+                    }
+                    print("레벨에 따른 프로필 이미지가 성공적으로 설정되었습니다.")
                 }
             }
         }
     }
+
+
     
     //MARK: - Level이미지 불러오기
     func downloadImage(from url: String, completion: @escaping (UIImage?) -> Void) {
@@ -108,8 +124,8 @@ extension ProfileViewController {
             if let error = error {
                 print("Image download error: \(error)")
                 completion(nil)
-            } else if let data = data, let image = UIImage(data: data) {
-                completion(image)
+            } else if let data = data, let images = UIImage(data: data) {
+                completion(images)
             }
         }
     }
@@ -373,7 +389,7 @@ extension ProfileViewController {
         }
     }
 
-    
+    //MARK: - 채팅 및 Post내용 삭제
     func deleteUserData(completion: @escaping(Bool) -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
 

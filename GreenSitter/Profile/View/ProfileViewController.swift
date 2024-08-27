@@ -30,7 +30,8 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
 
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
-    
+    var profileTableView: UITableView!
+
     // MARK: - UI Components
     lazy var circleView: UIView = {
         let view = UIView()

@@ -13,6 +13,19 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
     
     let db = Firestore.firestore()
     var post: [Post] = []
+//    var postId: String?
+//    
+//    init(postId: String) {
+//        self.postId = postId
+//        super.init(nibName: nil, bundle: nil)
+//
+//    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -40,7 +53,9 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedPost = post[indexPath.row]
+        let postId = selectedPost.id
         
+//        let postDetailViewController = PostDetailViewController(postId: postId)
         let postDetailViewController = PostDetailViewController(post: Post.samplePosts.first!)
         navigationController?.pushViewController(postDetailViewController, animated: true)
     }
