@@ -87,7 +87,7 @@ class AnnotationDetailViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.preferredFont(forTextStyle: .footnote)
-        label.textColor = .gray
+        label.textColor = .labelsSecondary
         label.numberOfLines = 0
         label.textAlignment = .center
         return label

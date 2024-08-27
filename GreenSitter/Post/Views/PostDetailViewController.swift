@@ -169,7 +169,7 @@ class PostDetailViewController: UIViewController {
     private let mapLabel: UILabel = {
         let label = UILabel()
         label.textColor = .labelsPrimary
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: 17)
         label.text = "거래 희망 장소"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -181,12 +181,23 @@ class PostDetailViewController: UIViewController {
         return mapView
     }()
     
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.preferredFont(forTextStyle: .footnote)
+        label.textColor = .labelsSecondary
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.text = "이 위치는 500m 반경 이내의 지역이 표시됩니다."
+        return label
+    }()
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
-        
+        mapView.delegate = self
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
         loadPost(with: postId)
     }
@@ -378,7 +389,7 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(contactButton)
         contentView.addSubview(mapLabel)
         contentView.addSubview(mapView)
-        
+        contentView.addSubview(descriptionLabel)
         
         // 기본값은 안보이게
         contactButton.isHidden = true
@@ -475,7 +486,10 @@ class PostDetailViewController: UIViewController {
             mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             mapView.heightAnchor.constraint(equalToConstant: 200),
-            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            
+            descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
+            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
     
@@ -584,8 +598,10 @@ extension PostDetailViewController: MKMapViewDelegate {
         let circle = MKCircle(center: randomCenter, radius: 500)
         
         // setRegion
-        let region = MKCoordinateRegion(center: randomCenter, latitudinalMeters: 500, longitudinalMeters: 500)
-        mapView.setRegion(region, animated: false)
+        DispatchQueue.main.async {
+            let region = MKCoordinateRegion(center: randomCenter, latitudinalMeters: 1500, longitudinalMeters: 1500)
+            self.mapView.setRegion(region, animated: false)
+        }
         
         // 맵 뷰에 오버레이 추가하기 전에, post 값을 circle 키에 넣기
         overlayPostMapping[circle] = post
@@ -657,13 +673,13 @@ extension PostDetailViewController: MKMapViewDelegate {
                 // 오버레이 색 적용
                 switch post.postType {
                 case .lookingForSitter:
-                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.3)
+                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.5)
                 case .offeringToSitter:
-                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3)
+                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.5)
                 }
             } else {
                 print("post is nil")
-                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3) // Default color
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.5) // Default color
             }
 
             circleRenderer.strokeColor = .separatorsNonOpaque
