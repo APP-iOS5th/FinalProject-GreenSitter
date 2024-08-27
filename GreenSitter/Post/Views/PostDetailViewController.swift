@@ -88,19 +88,19 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-    private let dividerLine1: UIView = {
-        let line = UIView()
-        line.backgroundColor = .separatorsNonOpaque
-        line.translatesAutoresizingMaskIntoConstraints = false
-        return line
-    }()
-    
-    private let dividerLine2: UIView = {
-        let line = UIView()
-        line.backgroundColor = .separatorsNonOpaque
-        line.translatesAutoresizingMaskIntoConstraints = false
-        return line
-    }()
+//    private let dividerLine1: UIView = {
+//        let line = UIView()
+//        line.backgroundColor = .separatorsNonOpaque
+//        line.translatesAutoresizingMaskIntoConstraints = false
+//        return line
+//    }()
+//    
+//    private let dividerLine2: UIView = {
+//        let line = UIView()
+//        line.backgroundColor = .separatorsNonOpaque
+//        line.translatesAutoresizingMaskIntoConstraints = false
+//        return line
+//    }()
     
     private let dividerLine3: UIView = {
         let line = UIView()
@@ -335,6 +335,7 @@ class PostDetailViewController: UIViewController {
         }
     }
     
+    // MARK: - CONFIGURE (WITH POST)
     private func configure(with post: Post) {
         userNameLabel.text = post.nickname
         postTitleLabel.text = post.postTitle
@@ -381,7 +382,7 @@ class PostDetailViewController: UIViewController {
                 imageView.clipsToBounds = true
                 imageView.translatesAutoresizingMaskIntoConstraints = false
                 imageView.widthAnchor.constraint(equalToConstant: 190).isActive = true
-                imageView.heightAnchor.constraint(equalToConstant: 250).isActive = true
+                imageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
                 imageView.tag = index  // 여기에 태그를 추가합니다
                 
                 loadImageFromStorage(url: imageUrl) { image in
@@ -414,8 +415,8 @@ class PostDetailViewController: UIViewController {
         imagesScrollView.addSubview(imagesStackView)
         
         contentView.addSubview(postBodyTextView)
-        contentView.addSubview(dividerLine1)
-        contentView.addSubview(dividerLine2)
+//        contentView.addSubview(dividerLine1)
+//        contentView.addSubview(dividerLine2)
         contentView.addSubview(dividerLine3)
         contentView.addSubview(contactButton)
         contentView.addSubview(mapLabel)
@@ -474,16 +475,16 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-            dividerLine1.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 10),
-            dividerLine1.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            dividerLine1.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-            dividerLine1.heightAnchor.constraint(equalToConstant: 1),
+//            dividerLine1.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 10),
+//            dividerLine1.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+//            dividerLine1.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+//            dividerLine1.heightAnchor.constraint(equalToConstant: 1),
             
             
-            imagesScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 20),
+            imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            imagesScrollView.heightAnchor.constraint(equalToConstant: 250),
+            imagesScrollView.heightAnchor.constraint(equalToConstant: 200),
             
             
             imagesStackView.topAnchor.constraint(equalTo: imagesScrollView.topAnchor),
@@ -492,12 +493,12 @@ class PostDetailViewController: UIViewController {
             imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
             imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
             
-            dividerLine2.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
-            dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            dividerLine2.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
+//            dividerLine2.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
+//            dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+//            dividerLine2.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+//            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
             
-            postBodyTextView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 10),
+            postBodyTextView.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
@@ -528,6 +529,7 @@ class PostDetailViewController: UIViewController {
     
 
     
+    // MARK: - Image Load
     private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
         let storageRef = Storage.storage().reference(forURL: url)
         
