@@ -43,6 +43,39 @@ class PostDetailViewModel: ObservableObject {
             }
         }
     }
+    // MARK: - Post 가져오기
+    func fetchPostById(postId: String, completion: @escaping (Result<Post, Error>) -> Void) {
+        db.collection("posts").document(postId).getDocument { [weak self] snapshot, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Error fetching document: \(error.localizedDescription)")
+                completion(.failure(error))
+                return
+            }
+            
+            guard let document = snapshot, document.exists else {
+                print("No document found for id: \(postId)")
+                completion(.failure(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "No document found"])))
+                return
+            }
+            
+            do {
+                let post = try document.data(as: Post.self)
+                DispatchQueue.main.async {
+                    self.selectedPost = post
+                    print("Successfully fetched post: \(String(describing: self.selectedPost))")
+                    completion(.success(post))
+                }
+            } catch {
+                print("Failed to decode post: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    // 임시 데이터
+    var user = LoginViewModel.shared.user
     
     // 채팅버튼 클릭 시 호출될 메서드
     func chatButtonTapped() async {

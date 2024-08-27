@@ -115,9 +115,12 @@ class ChatPostViewController: UIViewController {
     
     // MARK: - UITapGestureRecognizer action
     @objc private func handleTap() {
-//        let postDetailViewController = PostDetailViewController(post: chatRoom.postId)
-//        
-//        self.navigationController?.pushViewController(postDetailViewController, animated: true)
+        // 특정 게시물로 이동
+        let postDetailViewController = PostDetailViewController(postId: chatRoom.postId)
+        
+//        let postDetailViewController = PostDetailViewController(postId: Post.samplePosts.first!.id)
+        
+        self.navigationController?.pushViewController(postDetailViewController, animated: true)
     }
 
 }

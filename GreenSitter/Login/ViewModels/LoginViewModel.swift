@@ -159,7 +159,7 @@ class LoginViewModel: ObservableObject {
                 print("User location updated successfully with address: \(location)")
             }
         }
-        
+        self.user?.location = location
         print("Attempting to update user location with address: \(location)")
     }
 }
