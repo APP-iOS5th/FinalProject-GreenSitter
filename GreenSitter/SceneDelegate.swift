@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
 //        if let currentUser = Auth.auth().currentUser {
-//            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid)
+//            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid) {}
 //        }
         
         // UIWindow 및 루트 뷰 컨트롤러 설정
@@ -31,26 +31,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let secondViewController = MapViewController()
         let secondNavigationController = UINavigationController(rootViewController: secondViewController)
         secondNavigationController.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 1)
-        
-        // Chat
-        var chatListViewController: UIViewController?
-        if let currentUser = Auth.auth().currentUser {
-            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid) {
-                // 데이터 가져온 후 ChatListViewController 실행
-                chatListViewController = ChatListViewController()
-            }
-        } else {
-            chatListViewController = LoginViewController()
-        }
-        let thirdNavigationController = UINavigationController(rootViewController: chatListViewController!)
-        thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
-        
+                
         // Profile
         let fourthNavigationController = UINavigationController(rootViewController: ProfileViewController())
         fourthNavigationController.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.fill"), tag: 3)
         
+        // Chat을 비동기적으로 로드
+        if let currentUser = Auth.auth().currentUser {
+            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid) { [weak self] in
+                guard let self = self else { return }
+                let chatListViewController = ChatListViewController()
+                let thirdNavigationController = UINavigationController(rootViewController: chatListViewController)
+                thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
+                
+                self.setupTabBarController(with: [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController])
+            }
+        } else {
+            let chatListViewController = LoginViewController()
+            let thirdNavigationController = UINavigationController(rootViewController: chatListViewController)
+            thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
+
+            setupTabBarController(with: [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController])
+        }
+    }
+    
+    // TabBarController 설정 함수
+    private func setupTabBarController(with viewControllers: [UIViewController]) {
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController]
+        tabBarController.viewControllers = viewControllers
         
         tabBarController.tabBar.backgroundColor = .bgPrimary
         tabBarController.tabBar.isTranslucent = false
@@ -58,7 +66,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
-
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

@@ -24,7 +24,7 @@ extension ProfileViewController {
             return
         }
         
-        loginViewModel.firebaseFetch(docId: currentUserID)
+        loginViewModel.firebaseFetch(docId: currentUserID) {}
         
         if let profileImageURL = loginViewModel.user?.profileImage {
             loginViewModel.loadProfileImage(from: profileImageURL) { [weak self] image in
