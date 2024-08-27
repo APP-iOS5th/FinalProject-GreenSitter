@@ -27,11 +27,11 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     let storage = Storage.storage()
     let someIndexPath = IndexPath(row: 0, section: 0) // 적절한 인덱스 경로로 대체
     var currentReauthCompletion: ((Bool) -> Void)?
-
+    
     let mapViewModel = MapViewModel()
     var cancellables = Set<AnyCancellable>()
     var profileTableView: UITableView!
-
+    
     // MARK: - UI Components
     lazy var circleView: UIView = {
         let view = UIView()
@@ -74,17 +74,13 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBindings()
+        showLoginScreen()
+        // 로그인 상태가 아닐 때 로그인 화면 표시
         fetchUserLevelAndUpdateImage()
-
+        setupView()
+        fetchUserFirebase()
+        setupTextField()
         
-        if Auth.auth().currentUser != nil {
-            setupView()
-            fetchUserFirebase()
-            setupTextField()
-        } else {
-            // 로그인 상태가 아닐 때 로그인 화면 표시
-            showLoginScreen()
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -93,6 +89,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         
         // 로그인 상태 확인
         if Auth.auth().currentUser == nil {
+            view.removeAllSubviews()    
             let loginViewController = LoginViewController()
             loginViewController.delegate = self
             let navigationController = UINavigationController(rootViewController: loginViewController)
@@ -112,7 +109,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         view.addSubview(tableView)
         
         setupConstraints()
-
+        
         tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell")
         tableView.register(InformationTableCell.self, forCellReuseIdentifier: "informationTableCell")
@@ -255,7 +252,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
                 self?.updateUI(with: user)
             }
             .store(in: &cancellables)
-    }   
+    }
     private func updateUI(with user: User?) {
         tableView.reloadData()
     }
@@ -265,5 +262,12 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         let navigationController = UINavigationController(rootViewController: loginViewController)
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true, completion: nil)
+    }
+}
+extension UIView {
+    func removeAllSubviews() {
+        for subview in subviews {
+            subview.removeFromSuperview()
+        }
     }
 }
