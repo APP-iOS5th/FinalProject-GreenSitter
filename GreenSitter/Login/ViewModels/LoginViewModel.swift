@@ -88,7 +88,7 @@ class LoginViewModel: ObservableObject {
                     print("Fetched postId: \(postId)")
                     
                     // MARK: - 주석 처리된 부분입니다.
-//                    self.updatePostLocation(with: self.user?.location ?? Location.seoulLocation, postId)
+                    self.updatePostLocation(with: self.user?.location ?? Location.seoulLocation, postId)
                 } else {
                     print("Error: postId is empty or not available")
                 }
