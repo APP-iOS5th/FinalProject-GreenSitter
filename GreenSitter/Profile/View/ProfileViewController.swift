@@ -73,13 +73,16 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupBindings()
-        showLoginScreen()
+        setupBindings() //위치변경 되었을때 뷰에 로드해줌
+        
         // 로그인 상태가 아닐 때 로그인 화면 표시
-        fetchUserLevelAndUpdateImage()
-        setupView()
-        fetchUserFirebase()
-        setupTextField()
+        if Auth.auth().currentUser == nil {
+            showLoginScreen()
+        } else {
+            setupView()
+            fetchUserFirebase()
+            setupTextField()
+        }
         
     }
     
@@ -87,16 +90,12 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         super.viewWillAppear(animated)
         fetchUserFirebase()
         
-        // 로그인 상태 확인
         if Auth.auth().currentUser == nil {
-            view.removeAllSubviews()    
-            let loginViewController = LoginViewController()
-            loginViewController.delegate = self
-            let navigationController = UINavigationController(rootViewController: loginViewController)
-            navigationController.modalPresentationStyle = .fullScreen
-            present(navigationController, animated: true, completion: nil)
+            view.removeAllSubviews()
+            showLoginScreen()
+        } else {
+            fetchUserFirebase()
         }
-        
     }
     
     private func setupView() {
