@@ -35,10 +35,25 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     // MARK: - UI Components
     lazy var circleView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(named: "SeparatorsOpaque")
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 60
         view.layer.masksToBounds = true
+        
+        // Progress layer
+        let progressLayer = CAShapeLayer()
+        progressLayer.strokeColor = UIColor(named: "DominentColor")?.cgColor
+        progressLayer.fillColor = UIColor.clear.cgColor
+        progressLayer.lineWidth = 10
+        progressLayer.lineCap = .round
+        progressLayer.strokeEnd = 0.0
+        
+        let circularPath = UIBezierPath(arcCenter: CGPoint(x: 60, y: 60), radius: 60, startAngle: -CGFloat.pi / 2, endAngle: 1.5 * CGFloat.pi, clockwise: true)
+        progressLayer.path = circularPath.cgPath
+        view.layer.addSublayer(progressLayer)
+        
+        view.layer.addSublayer(progressLayer)
+        view.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        
         return view
     }()
     
@@ -74,6 +89,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBindings() //위치변경 되었을때 뷰에 로드해줌
+        fetchUserExperience()
         
         // 로그인 상태가 아닐 때 로그인 화면 표시
         if Auth.auth().currentUser == nil {
@@ -261,6 +277,35 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         let navigationController = UINavigationController(rootViewController: loginViewController)
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true, completion: nil)
+    }
+    
+    func fetchUserExperience() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("사용자 Id 불러오기 실패")
+            return
+        }
+        
+        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print("데이터 가져오는 중 오류 발생: \(error)")
+                return
+            }
+            
+            guard let document = document, document.exists, let data = document.data(), let exp = data["exp"] as? Int else {
+                print("경험치 정보를 가져오는 중 오류 발생")
+                return
+            }
+            self.updateCircleView(withExperience: exp)
+        }
+    }
+    
+    private func updateCircleView(withExperience exp: Int) {
+        let percentage = CGFloat(exp) / 100.0
+        
+        if let progressLayer = circleView.layer.sublayers?.first(where: { $0 is CAShapeLayer }) as? CAShapeLayer {
+            progressLayer.strokeEnd = percentage
+        }
     }
 }
 extension UIView {
