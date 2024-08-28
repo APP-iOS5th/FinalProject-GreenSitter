@@ -282,7 +282,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             imageStackView.trailingAnchor.constraint(equalTo: imageScrollView.trailingAnchor, constant: -16),
             imageStackView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
-            pickerImageView.widthAnchor.constraint(equalToConstant: 80),
+            pickerImageView.widthAnchor.constraint(equalToConstant: 100),
             pickerImageView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
             dividerLine2.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: 16),

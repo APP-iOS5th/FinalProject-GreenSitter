@@ -70,9 +70,8 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     private let pickerImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .lightGray
         imageView.tintColor = .gray
-        imageView.image = UIImage(systemName: "photo.on.rectangle.fill")
+        imageView.image = UIImage(systemName: "rectangle.stack.fill.badge.plus")
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -293,8 +292,8 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             imageStackView.bottomAnchor.constraint(equalTo: imageScrollView.bottomAnchor),
             imageStackView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
-            pickerImageView.widthAnchor.constraint(equalToConstant: 130),
-            pickerImageView.heightAnchor.constraint(equalToConstant: 130),
+            pickerImageView.widthAnchor.constraint(equalToConstant: 100),
+            pickerImageView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
             dividerLine2.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: 16),
             dividerLine2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
