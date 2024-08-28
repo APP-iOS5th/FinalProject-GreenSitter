@@ -252,8 +252,6 @@ class PostDetailViewController: UIViewController {
             }
         }
         
-        setupUI()
-        configure(with: post)
         addTapGestureToImages()
         
         postDetailViewModel.delegate = self
