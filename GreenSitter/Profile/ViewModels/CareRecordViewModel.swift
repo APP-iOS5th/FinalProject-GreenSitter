@@ -27,50 +27,45 @@ extension CareRecordViewController {
             }
             
             // 문서가 존재하는지 확인
-            if let document = document, document.exists {
-                // 'post' 필드를 딕셔너리로 변환
-                if let postData = document.data()?["post"] as? [String: Any] {
-                    let postTitle = postData["postTitle"] as? String ?? "제목 없음"
-                    let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
-                    let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
-                    let updateDate = updateDateTimestamp.dateValue()
-                    let postImages = postData["postImages"] as? [String] ?? []
-
-                    // 데이터가 올바르게 불러와졌는지 출력해보기
-                    print("Post Title: \(postTitle)")
-                    print("Post Body: \(postBody)")
-                    print("Update Date: \(updateDate)")
-                    print("Post Images: \(postImages)")
-
-                    // Post 객체 생성 및 배열에 추가
-                    let post = Post(
-                        id: document.documentID,
-                        enabled: true,
-                        createDate: Date(),
-                        updateDate: updateDate,
-                        userId: userId,
-                        profileImage: "",  // 필요시 추가
-                        nickname: "",      // 필요시 추가
-                        userLocation: Location.seoulLocation, // 예시 위치
-                        userNotification: false,
-                        userLevel: .flower,
-                        postType: .offeringToSitter,
-                        postTitle: postTitle,
-                        postBody: postBody,
-                        postImages: postImages,
-                        postStatus: .inTrade, // 기본값으로 설정
-                        location: nil
-                    )
-
-                    // Post 배열에 추가
-                    self.post.append(post)
-
-                    // 테이블 뷰 업데이트
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
-                } else {
-                    print("Post data not found in document.")
+            for document in documents {
+                let postData = document.data()
+                
+                let postStatus = PostStatus(rawValue: postData["postStatus"] as? String ?? "") ?? .completedTrade
+                let postTitle = postData["postTitle"] as? String ?? "제목 없음"
+                let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
+                let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
+                let updateDate = updateDateTimestamp.dateValue()
+                let postImages = postData["postImages"] as? [String] ?? []
+                
+                // 데이터가 올바르게 불러와졌는지 출력해보기
+                print("Post Title: \(postTitle)")
+                print("Post Body: \(postBody)")
+                
+                print("Update Date: \(updateDate)")
+                print("Post Images: \(postImages)")
+                
+                // Post 객체 생성 및 배열에 추가
+                let post = Post(
+                    id: document.documentID,
+                    enabled: true,
+                    createDate: Date(),
+                    updateDate: updateDate,
+                    userId: userId,
+                    profileImage: "",  // 필요시 추가
+                    nickname: "",      // 필요시 추가
+                    userLocation: Location.seoulLocation, // 예시 위치
+                    userNotification: false, userLevel: .fruit,
+                    postType: .lookingForSitter,
+                    postTitle: postTitle,
+                    postBody: postBody,
+                    postImages: postImages,
+                    postStatus: postStatus,
+                    location: nil
+                )
+                self.post.append(post)
+                // 테이블 뷰 업데이트
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
                 }
             }
         }

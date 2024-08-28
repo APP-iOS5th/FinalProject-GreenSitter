@@ -22,9 +22,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 현재 사용자가 로그인 되어 있는지 확인
         if let currentUser = Auth.auth().currentUser {
             // 이미 로그인된 상태라면, 메인 화면으로 이동
-            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid)
-            print("자동 로그인 완료")
-            setRootViewController(MainPostListViewController())
+            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid) {
+                print("자동 로그인 완료")
+                self.setRootViewController(MainPostListViewController())
+            }
         }
         else {
             // 로그인되지 않은 상태라면, 로그인 화면으로 이동
