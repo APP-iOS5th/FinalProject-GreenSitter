@@ -206,6 +206,7 @@ class EditPostViewModel: ObservableObject {
                             nickname: self.selectedPost.nickname,
                             userLocation: self.location ?? Location.seoulLocation,
                             userNotification: false,
+                            userLevel: self.selectedPost.userLevel,
                             postType: self.postType,
                             postTitle: self.postTitle,
                             postBody: self.postBody,

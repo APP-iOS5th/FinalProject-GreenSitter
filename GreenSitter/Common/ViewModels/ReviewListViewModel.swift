@@ -45,6 +45,7 @@ extension ReviewListViewController {
                             nickname: "",
                             userLocation: Location.seoulLocation,
                             userNotification: false,
+                            userLevel: .flower,
                             postType: .offeringToSitter,
                             postTitle: postTitle,
                             postBody: postBody,
