@@ -32,7 +32,7 @@ class MessageInputViewController: UIViewController {
     }()
     
     // 메세지 입력 필드
-    private lazy var messageInputField: UITextField = {
+    lazy var messageInputField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "메세지를 입력하세요."
         textField.translatesAutoresizingMaskIntoConstraints = false

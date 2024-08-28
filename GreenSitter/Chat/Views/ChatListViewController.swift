@@ -295,6 +295,14 @@ extension ChatListViewController: UITableViewDelegate {
         if editingStyle == .delete {
             Task {
                 do {
+                    // 상대방이 채팅방을 나갔다는 메시지 표시
+                    let chatMessageViewController = ChatMessageViewController(chatRoom: chatRoom!)
+                    chatMessageViewController.showExitMessage()
+                    
+                    // 메세지 입력 창 비활성화
+                    let messageInputViewController = MessageInputViewController(chatRoom: chatRoom!)
+                    messageInputViewController.messageInputField.isEnabled = false
+                    
                     try await chatViewModel.deleteChatRoom(at: indexPath.row)
                     // 채팅 목록이 비어 있는지 확인하여 UI 업데이트
                     if chatViewModel.chatRooms.isEmpty {
@@ -302,7 +310,7 @@ extension ChatListViewController: UITableViewDelegate {
                     } else {
                         self.tableView.reloadData()
                     }
-
+                    
                     print("delete")
                 } catch {
                     print("Error deleting chat room: \(error.localizedDescription)")

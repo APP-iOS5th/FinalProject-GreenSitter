@@ -37,6 +37,22 @@ class ChatMessageViewController: UIViewController {
         return tableView
     }()
     
+    private let exitMessageLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.text = "상대방이 채팅방을 나갔습니다."
+        label.textColor = .labelsPrimary
+        label.textAlignment = .center
+        label.backgroundColor = .separatorsOpaque
+        label.layer.cornerRadius = 10
+        label.layer.masksToBounds = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+//    private var exitMessageLabelConstraints: [NSLayoutConstraint] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -47,42 +63,41 @@ class ChatMessageViewController: UIViewController {
         super.viewWillAppear(true)
         
         Task {
-                let messageListener = Task {
-                    // 옵셔널 언래핑
-                    if let messagesStream = await chatViewModel?.loadMessages(chatRoomId: chatRoom.id) {
-                        for await messages in messagesStream {
-                            self.chatViewModel?.messages[chatRoom.id] = messages
-                            // await MainActor.run { self.tableView.reloadData() }
-                        }
-                    } else {
-                        print("Failed to load messages for chatRoomId: \(chatRoom.id)")
+            let messageListener = Task {
+                // 옵셔널 언래핑
+                if let messagesStream = await chatViewModel?.loadMessages(chatRoomId: chatRoom.id) {
+                    for await messages in messagesStream {
+                        self.chatViewModel?.messages[chatRoom.id] = messages
+                        // await MainActor.run { self.tableView.reloadData() }
                     }
+                } else {
+                    print("Failed to load messages for chatRoomId: \(chatRoom.id)")
                 }
-                messageListeners.append(messageListener)
-                
-                // UI 업데이트
-                await MainActor.run {
-                    chatViewModel?.updateUI = { [weak self] in
-                        self?.setupUI()
-                        // 테이블 뷰를 리로드하여 최신 메시지를 표시
-                        self?.tableView.reloadData()
-                        
-                        DispatchQueue.main.async {
-                            guard let numberOfSections = self?.tableView.numberOfSections,
-                                  let numberOfRows = self?.tableView.numberOfRows(inSection: numberOfSections - 1) else {
-                                return
-                            }
-                            
-                            if numberOfRows > 0 {
-                                let indexPath = IndexPath(row: numberOfRows - 1, section: numberOfSections - 1)
-                                self?.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-                            }
-                        }
-                    }
+            }
+            messageListeners.append(messageListener)
+            
+            // UI 업데이트
+            await MainActor.run {
+                chatViewModel?.updateUI = { [weak self] in
+                    self?.setupUI()
+                    // 테이블 뷰를 리로드하여 최신 메시지를 표시
+                    self?.tableView.reloadData()
                     
-                    chatViewModel?.updateUI?()
+                    DispatchQueue.main.async {
+                        guard let numberOfSections = self?.tableView.numberOfSections,
+                              let numberOfRows = self?.tableView.numberOfRows(inSection: numberOfSections - 1) else {
+                            return
+                        }
+                        
+                        if numberOfRows > 0 {
+                            let indexPath = IndexPath(row: numberOfRows - 1, section: numberOfSections - 1)
+                            self?.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                        }
+                    }
                 }
-
+                
+                chatViewModel?.updateUI?()
+            }
         }
     }
     
@@ -111,10 +126,26 @@ class ChatMessageViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            tableView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+            tableView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
         ])
     }
     
+    func showExitMessage() {
+        // .bottom 속성을 가진 제약조건을 찾아 비활성화
+        NSLayoutConstraint.deactivate(tableView.constraints.filter { $0.firstAttribute == .bottom })
+        
+        self.view.addSubview(exitMessageLabel)
+        // exitMessageLabel의 제약조건을 비활성화된 상태로 추가
+        let exitMessageLabelConstraints = [
+            exitMessageLabel.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 5),
+            exitMessageLabel.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -5),
+            exitMessageLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            exitMessageLabel.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            exitMessageLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        ]
+        
+        NSLayoutConstraint.activate(exitMessageLabelConstraints)
+    }
 }
 
 extension ChatMessageViewController: UITableViewDataSource {
