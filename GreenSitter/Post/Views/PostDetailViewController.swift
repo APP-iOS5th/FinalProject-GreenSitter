@@ -8,10 +8,7 @@
 import UIKit
 import MapKit
 import FirebaseAuth
-import FirebaseStorage
-
-
-//TODO: Post -> PostId
+import Kingfisher
 
 class PostDetailViewController: UIViewController {
     
@@ -22,6 +19,44 @@ class PostDetailViewController: UIViewController {
     private let postId: String
     private var overlayPostMapping: [MKCircle: Post] = [:]
     private var postBodyTextViewHeightConstraint: NSLayoutConstraint?
+    
+    /*
+     var hasImages: Bool = false
+
+     // 제약 조건 배열 선언
+     var constraintsWithoutImages: [NSLayoutConstraint] = []
+     var constraintsWithImages: [NSLayoutConstraint] = []
+     
+     
+     private func updateConstraintsForImagesPresence() {
+         let hasImages = !imagesStackView.arrangedSubviews.isEmpty // 예시로 이미지가 있는지 여부를 판단하는 방법입니다. 실제로는 다른 방법으로 판단할 수 있습니다.
+         
+         if hasImages {
+             NSLayoutConstraint.activate([
+                 imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
+                 postBodyTextView.topAnchor.constraint(equalTo: imagesScrollView.bottomAnchor, constant: 20),
+                 dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10)
+             ])
+             
+             // 기존 제약 조건 비활성화
+             NSLayoutConstraint.deactivate([
+                 postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20)
+             ])
+         } else {
+             NSLayoutConstraint.activate([
+                 postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
+                 dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10)
+             ])
+             
+             // 기존 제약 조건 비활성화
+             NSLayoutConstraint.deactivate([
+                 imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20)
+             ])
+         }
+     }
+
+
+     */
 
     // MARK: - Initializer
     
@@ -197,6 +232,7 @@ class PostDetailViewController: UIViewController {
         view.backgroundColor = .bgPrimary
         mapView.delegate = self
         postBodyTextView.delegate = self
+        postDetailViewModel.delegate = self
 
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
         loadPost(with: postId)
@@ -239,9 +275,6 @@ class PostDetailViewController: UIViewController {
                 configureChatButton(with: post)
             }
         }
-        addTapGestureToImages()
-        
-        postDetailViewModel.delegate = self
         
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -361,7 +394,6 @@ class PostDetailViewController: UIViewController {
         imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         imageUrls.removeAll()
         
-        
         // profile button
         userProfileButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -373,30 +405,45 @@ class PostDetailViewController: UIViewController {
         
         // image
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
-            self.imageUrls = imageUrls
             for (index, imageUrl) in imageUrls.enumerated() {
-                let imageView = UIImageView()
-                imageView.contentMode = .scaleAspectFill
-                imageView.clipsToBounds = true
-                imageView.translatesAutoresizingMaskIntoConstraints = false
-                imageView.widthAnchor.constraint(equalToConstant: 190).isActive = true
-                imageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
-                imageView.tag = index  // 여기에 태그를 추가합니다
+                print("ImageURL: \(index), \(imageUrl)")
                 
-                loadImageFromStorage(url: imageUrl) { image in
-                    DispatchQueue.main.async {
-                        imageView.image = image
+                // Create a new UIImageView for each image
+                let imageView = UIImageView()
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                imageView.contentMode = .scaleAspectFill
+                imageView.layer.masksToBounds = true
+                imageView.layer.cornerRadius = 4
+                imageView.tag = index
+                
+                let processor = DownsamplingImageProcessor(size: CGSize(width: 190, height: 200))
+                               |> RoundCornerImageProcessor(cornerRadius: 4)
+                imageView.kf.setImage(
+                    with: URL(string: imageUrl),
+                    placeholder: UIImage(named: "PlaceholderAvatar"),
+                    options: [
+                        .processor(processor),
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(0.25)),
+                        .cacheOriginalImage
+                    ],
+                    completionHandler: { result in
+                        switch result {
+                        case .success(let value):
+                            print("Image successfully loaded.")
+                        case .failure(let error):
+                            print("Failed to load image: \(error.localizedDescription)")
+                        }
                     }
-                }
-                imagesStackView.addArrangedSubview(imageView)
-            }
+                )
+                self.imagesStackView.addArrangedSubview(imageView)
+                print("IMAGESTACKVIEWSUBVIEWS: \(self.imagesStackView.arrangedSubviews)")
+            }   // for
+        } else {
+            // imageUrls is Empty
         }
-        
-        addTapGestureToImages()
     }
 
-    
-    
     private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -508,24 +555,7 @@ class PostDetailViewController: UIViewController {
             descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
-    
-    // MARK: - Image Load
-    private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
-        let storageRef = Storage.storage().reference(forURL: url)
-        
-        storageRef.getData(maxSize: 10 * 1024 * 1024) { data, error in
-            if let error = error {
-                print("Error downloading image: \(error.localizedDescription)")
-                completion(nil)
-                return
-            }
-            if let data = data, let image = UIImage(data: data) {
-                completion(image)
-            } else {
-                completion(nil)
-            }
-        }
-    }
+
     
     
     private func timeAgoSinceDate(_ date: Date) -> String {
