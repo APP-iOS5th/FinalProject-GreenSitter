@@ -134,10 +134,10 @@ extension ProfileViewController {
         let levelImageURLs: [Level: String] = [
             .rottenSeeds: "gs://greensitter-6dedd.appspot.com/level_image/썩은 씨앗2.png",
             .seeds: "gs://greensitter-6dedd.appspot.com/level_image/씨앗3.png",
-            .sprout: "gs://greensitter-6dedd.appspot.com/level_image/유묘1.jpg",
-            .seedling: "gs://greensitter-6dedd.appspot.com/level_image/꽃1.png",
-            .flower: "gs://greensitter-6dedd.appspot.com/level_image/열매2.png",
-            .fruit: "" // 필요한 URL 추가
+            .sprout: "gs://greensitter-6dedd.appspot.com/level_image/새싹.jpg",
+            .seedling: "gs://greensitter-6dedd.appspot.com/level_image/유묘1.jpg",
+            .flower: "gs://greensitter-6dedd.appspot.com/level_image/꽃1.png",
+            .fruit: "gs://greensitter-6dedd.appspot.com/level_image/열매2.png" // 필요한 URL 추가
         ]
         
         return levelImageURLs[level]
