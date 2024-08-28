@@ -68,8 +68,11 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
         
         let currentPost = post[indexPath.row]
-        
-        cell.statusView.backgroundColor = UIColor(named: "DominentColor")
+        if currentPost.postStatus.rawValue == "거래완료" {
+            cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        } else {
+            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
+        }
         cell.statusLabel.text = currentPost.postStatus.rawValue
         cell.titleLabel.text = currentPost.postTitle
         cell.bodyLabel.text = currentPost.postBody
