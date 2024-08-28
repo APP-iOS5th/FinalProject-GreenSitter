@@ -242,8 +242,10 @@ class PostDetailViewController: UIViewController {
         if Auth.auth().currentUser != nil {
             if LoginViewModel.shared.user?.id == post.userId {
                 setupNavigationBarWithEdit(post: post)
+                contactButton.isHidden = true
                 // TODO: 채팅도 표시하지 않아야함
             } else {
+                contactButton.isHidden = false
                 // 그게 아니면 차단 기능있는 네비게이션 바 표시
                 setupNavigationBarWithBlock(post: post)
                 
@@ -251,9 +253,6 @@ class PostDetailViewController: UIViewController {
                 configureChatButton(with: post)
             }
         }
-        
-        setupUI()
-        configure(with: post)
         addTapGestureToImages()
         
         postDetailViewModel.delegate = self
@@ -335,7 +334,6 @@ class PostDetailViewController: UIViewController {
     // MARK: - 채팅 버튼
     
     private func configureChatButton(with post: Post) {
-        contactButton.isHidden = false
         // post.id 로 접근하시면 됩니다
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -438,8 +436,6 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(mapView)
         contentView.addSubview(descriptionLabel)
         
-        // 기본값은 안보이게
-        contactButton.isHidden = true
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
