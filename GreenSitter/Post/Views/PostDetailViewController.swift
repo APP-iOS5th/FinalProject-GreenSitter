@@ -374,6 +374,7 @@ class PostDetailViewController: UIViewController {
         
         // image
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
+            self.imageUrls = imageUrls //이게원인
             for (index, imageUrl) in imageUrls.enumerated() {
                 print("ImageURL: \(index), \(imageUrl)")
                 
@@ -400,6 +401,7 @@ class PostDetailViewController: UIViewController {
                         switch result {
                         case .success(let value):
                             print("Image successfully loaded.")
+                            self.addTapGestureToImages()
                         case .failure(let error):
                             print("Failed to load image: \(error.localizedDescription)")
                         }
@@ -407,7 +409,8 @@ class PostDetailViewController: UIViewController {
                 )
                 self.imagesStackView.addArrangedSubview(imageView)
                 print("IMAGESTACKVIEWSUBVIEWS: \(self.imagesStackView.arrangedSubviews)")
-            }   // for
+            }  // for
+            
         } else {
             self.imagesScrollView.isHidden = true
         }
@@ -466,7 +469,7 @@ class PostDetailViewController: UIViewController {
             profileImageView.topAnchor.constraint(equalTo: userProfileButton.topAnchor),
             profileImageView.widthAnchor.constraint(equalToConstant: 50),
             profileImageView.heightAnchor.constraint(equalToConstant: 50),
-            
+
             userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
             userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor, constant: 5),
             userNameLabel.heightAnchor.constraint(equalToConstant: userNameLabel.font.pointSize),
@@ -579,7 +582,6 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
 
-            
             postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -654,10 +656,11 @@ class PostDetailViewController: UIViewController {
         guard !imageUrls.isEmpty,
               let tappedImageView = gesture.view as? UIImageView,
               let index = imagesStackView.arrangedSubviews.firstIndex(of: tappedImageView) else { return }
-        
+       
         let fullScreenPageVC = FullScreenPageViewController(imageUrls: imageUrls, initialIndex: index)
         fullScreenPageVC.modalPresentationStyle = .fullScreen
         present(fullScreenPageVC, animated: true, completion: nil)
+
     }
     
 
