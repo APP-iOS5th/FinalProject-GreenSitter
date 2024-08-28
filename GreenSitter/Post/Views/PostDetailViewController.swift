@@ -8,26 +8,18 @@
 import UIKit
 import MapKit
 import FirebaseAuth
-import FirebaseStorage
-
-
-//TODO: Post -> PostId
+import Kingfisher
 
 class PostDetailViewController: UIViewController {
     
     // MARK: - Properties
-    var hasImages: Bool = false
-
-    // 제약 조건 배열 선언
-    var constraintsWithoutImages: [NSLayoutConstraint] = []
-    var constraintsWithImages: [NSLayoutConstraint] = []
     
     private var postDetailViewModel = PostDetailViewModel()
     private var imageUrls: [String] = []
     private let postId: String
     private var overlayPostMapping: [MKCircle: Post] = [:]
     private var postBodyTextViewHeightConstraint: NSLayoutConstraint?
-    
+
     // MARK: - Initializer
     
     init(postId: String) {
@@ -92,20 +84,6 @@ class PostDetailViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    //    private let dividerLine1: UIView = {
-    //        let line = UIView()
-    //        line.backgroundColor = .separatorsNonOpaque
-    //        line.translatesAutoresizingMaskIntoConstraints = false
-    //        return line
-    //    }()
-    //
-    //    private let dividerLine2: UIView = {
-    //        let line = UIView()
-    //        line.backgroundColor = .separatorsNonOpaque
-    //        line.translatesAutoresizingMaskIntoConstraints = false
-    //        return line
-    //    }()
     
     private let dividerLine3: UIView = {
         let line = UIView()
@@ -216,7 +194,8 @@ class PostDetailViewController: UIViewController {
         view.backgroundColor = .bgPrimary
         mapView.delegate = self
         postBodyTextView.delegate = self
-        
+        postDetailViewModel.delegate = self
+
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
         loadPost(with: postId)
     }
@@ -238,17 +217,26 @@ class PostDetailViewController: UIViewController {
             }
         }
     }
-    
-    
+
+
     private func configureUI(with post: Post) {
         setupUI()
+        
+        if let imageUrls = post.postImages, !imageUrls.isEmpty {
+            setupConstraintsWithImages()
+        } else {
+            setupConstraints()
+        }
+
         configure(with: post)
         
         if Auth.auth().currentUser != nil {
             if LoginViewModel.shared.user?.id == post.userId {
                 setupNavigationBarWithEdit(post: post)
+                contactButton.isHidden = true
                 // TODO: 채팅도 표시하지 않아야함
             } else {
+                contactButton.isHidden = false
                 // 그게 아니면 차단 기능있는 네비게이션 바 표시
                 setupNavigationBarWithBlock(post: post)
                 
@@ -256,10 +244,6 @@ class PostDetailViewController: UIViewController {
                 configureChatButton(with: post)
             }
         }
-        
-        addTapGestureToImages()
-        
-        postDetailViewModel.delegate = self
         
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -338,7 +322,6 @@ class PostDetailViewController: UIViewController {
     // MARK: - 채팅 버튼
     
     private func configureChatButton(with post: Post) {
-        contactButton.isHidden = false
         // post.id 로 접근하시면 됩니다
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -358,9 +341,9 @@ class PostDetailViewController: UIViewController {
         postTitleLabel.text = post.postTitle
         postTimeLabel.text = timeAgoSinceDate(post.updateDate)
         configurePostBodyTextView(with: post.postBody)
-        
+
         statusLabel.text = post.postStatus.rawValue
-        userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
+        userLevelLabel.text = post.userLevel.rawValue
         
         let address = post.location?.address
         let placeName = post.location?.placeName
@@ -380,7 +363,6 @@ class PostDetailViewController: UIViewController {
         imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         imageUrls.removeAll()
         
-        
         // profile button
         userProfileButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -392,42 +374,60 @@ class PostDetailViewController: UIViewController {
         
         // image
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
-            self.imageUrls = imageUrls
             for (index, imageUrl) in imageUrls.enumerated() {
-                let imageView = UIImageView()
-                imageView.contentMode = .scaleAspectFill
-                imageView.clipsToBounds = true
-                imageView.translatesAutoresizingMaskIntoConstraints = false
-                imageView.widthAnchor.constraint(equalToConstant: 190).isActive = true
-                imageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
-                imageView.tag = index  // 여기에 태그를 추가합니다
+                print("ImageURL: \(index), \(imageUrl)")
                 
-                loadImageFromStorage(url: imageUrl) { image in
-                    DispatchQueue.main.async {
-                        imageView.image = image
+                // Create a new UIImageView for each image
+                let imageView = UIImageView()
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                imageView.contentMode = .scaleAspectFill
+                imageView.layer.masksToBounds = true
+                imageView.layer.cornerRadius = 4
+                imageView.tag = index
+                
+                let processor = DownsamplingImageProcessor(size: CGSize(width: 190, height: 200))
+                               |> RoundCornerImageProcessor(cornerRadius: 4)
+                imageView.kf.setImage(
+                    with: URL(string: imageUrl),
+                    placeholder: UIImage(named: "PlaceholderAvatar"),
+                    options: [
+                        .processor(processor),
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(0.25)),
+                        .cacheOriginalImage
+                    ],
+                    completionHandler: { result in
+                        switch result {
+                        case .success(let value):
+                            print("Image successfully loaded.")
+                        case .failure(let error):
+                            print("Failed to load image: \(error.localizedDescription)")
+                        }
                     }
-                }
-                imagesStackView.addArrangedSubview(imageView)
-            }
+                )
+                self.imagesStackView.addArrangedSubview(imageView)
+                print("IMAGESTACKVIEWSUBVIEWS: \(self.imagesStackView.arrangedSubviews)")
+            }   // for
+        } else {
+            self.imagesScrollView.isHidden = true
         }
-        
-        addTapGestureToImages()
     }
-    
-    
-    
+
     private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(userProfileButton)
+        
         contentView.addSubview(profileImageView)
         contentView.addSubview(userNameLabel)
         contentView.addSubview(userLevelLabel)
         contentView.addSubview(postTimeLabel)
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
+        
         contentView.addSubview(imagesScrollView)
         imagesScrollView.addSubview(imagesStackView)
+        
         contentView.addSubview(postBodyTextView)
         contentView.addSubview(dividerLine3)
         contentView.addSubview(contactButton)
@@ -435,18 +435,11 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(mapPlaceLabel)
         contentView.addSubview(mapView)
         contentView.addSubview(descriptionLabel)
-        
-        // 기본값은 안보이게
-        contactButton.isHidden = true
-        
-        // 기본 제약 조건 설정
-        setupInitialConstraints()
-        
-        // 이미지 유무에 따라 제약 조건 업데이트
-        updateConstraintsForImagesPresence()
     }
 
-    private func setupInitialConstraints() {
+    private func setupConstraintsWithImages() {
+        imagesScrollView.isHidden = false
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -495,6 +488,8 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
+
+            imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             imagesScrollView.heightAnchor.constraint(equalToConstant: 200),
@@ -505,10 +500,12 @@ class PostDetailViewController: UIViewController {
             imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
             imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
             
+            postBodyTextView.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             
+            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             dividerLine3.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
@@ -531,51 +528,85 @@ class PostDetailViewController: UIViewController {
             descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
-
-    private func updateConstraintsForImagesPresence() {
-        let hasImages = !imagesStackView.arrangedSubviews.isEmpty // 예시로 이미지가 있는지 여부를 판단하는 방법입니다. 실제로는 다른 방법으로 판단할 수 있습니다.
-        
-        if hasImages {
-            NSLayoutConstraint.activate([
-                imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
-                postBodyTextView.topAnchor.constraint(equalTo: imagesScrollView.bottomAnchor, constant: 20),
-                dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10)
-            ])
-            
-            // 기존 제약 조건 비활성화
-            NSLayoutConstraint.deactivate([
-                postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20)
-            ])
-        } else {
-            NSLayoutConstraint.activate([
-                postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
-                dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10)
-            ])
-            
-            // 기존 제약 조건 비활성화
-            NSLayoutConstraint.deactivate([
-                imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20)
-            ])
-        }
-    }
-
     
-    // MARK: - Image Load
-    private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
-        let storageRef = Storage.storage().reference(forURL: url)
-        
-        storageRef.getData(maxSize: 10 * 1024 * 1024) { data, error in
-            if let error = error {
-                print("Error downloading image: \(error.localizedDescription)")
-                completion(nil)
-                return
-            }
-            if let data = data, let image = UIImage(data: data) {
-                completion(image)
-            } else {
-                completion(nil)
-            }
-        }
+    private func setupConstraints() {
+        imagesScrollView.isHidden = false
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
+            userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            userProfileButton.trailingAnchor.constraint(equalTo: contactButton.leadingAnchor),
+            userProfileButton.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor),
+            
+            contactButton.centerYAnchor.constraint(equalTo: userProfileButton.centerYAnchor),
+            contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            contactButton.widthAnchor.constraint(equalToConstant: 100),
+            contactButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            profileImageView.leadingAnchor.constraint(equalTo: userProfileButton.leadingAnchor),
+            profileImageView.topAnchor.constraint(equalTo: userProfileButton.topAnchor),
+            profileImageView.widthAnchor.constraint(equalToConstant: 50),
+            profileImageView.heightAnchor.constraint(equalToConstant: 50),
+            
+            userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor, constant: 5),
+            userNameLabel.heightAnchor.constraint(equalToConstant: userNameLabel.font.pointSize),
+            
+            userLevelLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            userLevelLabel.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: -5),
+            userLevelLabel.heightAnchor.constraint(equalToConstant: userLevelLabel.font.pointSize),
+            
+            postTimeLabel.centerYAnchor.constraint(equalTo: statusLabel.centerYAnchor),
+            postTimeLabel.leadingAnchor.constraint(equalTo: statusLabel.trailingAnchor, constant: 10),
+            
+            statusLabel.topAnchor.constraint(equalTo: userProfileButton.bottomAnchor, constant: 20),
+            statusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            statusLabel.widthAnchor.constraint(equalToConstant: 50),
+            statusLabel.heightAnchor.constraint(equalToConstant: 20),
+            
+            postTitleLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 10),
+            postTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
+
+            
+            postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
+            postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            
+            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
+            dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            dividerLine3.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            dividerLine3.heightAnchor.constraint(equalToConstant: 1),
+            
+            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8),
+            mapLabel.heightAnchor.constraint(equalToConstant: mapLabel.font.pointSize),
+            
+            mapPlaceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapPlaceLabel.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
+            mapPlaceLabel.heightAnchor.constraint(equalToConstant: mapPlaceLabel.font.pointSize),
+            
+            mapView.topAnchor.constraint(equalTo: mapPlaceLabel.bottomAnchor, constant: 12),
+            mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            mapView.heightAnchor.constraint(equalToConstant: 200),
+            
+            descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
+            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+        ])
     }
     
     private func timeAgoSinceDate(_ date: Date) -> String {
@@ -629,7 +660,7 @@ class PostDetailViewController: UIViewController {
         present(fullScreenPageVC, animated: true, completion: nil)
     }
     
-    
+
 }
 
 extension PostDetailViewController: UITextViewDelegate {
@@ -676,14 +707,14 @@ extension PostDetailViewController: MKMapViewDelegate {
     
     private func configureMapView(with post: Post) {
         print("Post Detail Map with Post: \(post)")
-        //        mapView.removeAnnotations(mapView.annotations)
-        //        mapView.removeOverlays(mapView.overlays)
-        //        overlayPostMapping.removeAll()
+//        mapView.removeAnnotations(mapView.annotations)
+//        mapView.removeOverlays(mapView.overlays)
+//        overlayPostMapping.removeAll()
         guard let latitude = post.location?.latitude,
               let longitude = post.location?.longitude else { return }
         
         let circleCenter = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        
+
         // make random Center
         let randomOffset = generateRandomOffset(for: circleCenter, radius: 500)
         let randomCenter = CLLocationCoordinate2D (
@@ -705,9 +736,9 @@ extension PostDetailViewController: MKMapViewDelegate {
         
         let annotation = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
         mapView.addAnnotation(annotation)  // MKAnnotationView
-        
+
     }
-    
+
     // 실제 위치(center) 기준으로 반경 내의 무작위 좌표를 새로운 중심점으로 설정
     func generateRandomOffset(for center: CLLocationCoordinate2D, radius: Double) -> (latitudeDelta: Double, longitudeDelta: Double) {
         let earthRadius: Double = 6378137 // meters
@@ -725,7 +756,7 @@ extension PostDetailViewController: MKMapViewDelegate {
         guard let annotation = annotation as? CustomAnnotation else {
             return nil
         }
-        
+           
         var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: CustomAnnotationView.identifier)
         
         if annotationView == nil {
@@ -762,7 +793,7 @@ extension PostDetailViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let circleOverlay = overlay as? MKCircle {
             let circleRenderer = MKCircleRenderer(circle: circleOverlay)
-            //            print("rendererFor methods: dict: \(overlayPostMapping)")
+//            print("rendererFor methods: dict: \(overlayPostMapping)")
             
             // 딕셔너리로부터 해당 circleOverlay에 저장된 Post 가져오기
             if let post = overlayPostMapping[circleOverlay] {
@@ -777,7 +808,7 @@ extension PostDetailViewController: MKMapViewDelegate {
                 print("post is nil")
                 circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.5) // Default color
             }
-            
+
             circleRenderer.strokeColor = .separatorsNonOpaque
             circleRenderer.lineWidth = 2
             return circleRenderer
