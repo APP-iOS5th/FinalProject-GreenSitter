@@ -1166,6 +1166,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4F822E8E2C7D9D4C007402CB /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4F822E8D2C7D9D4C007402CB /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		58E98C322C781BD7001E4140 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3BEFEC732C63547D00E48D1E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;

@@ -9,10 +9,10 @@ import Foundation
 import UIKit
 import FirebaseFirestore
 import FirebaseStorage
+import Kingfisher
 
 class PostTableViewCell: UITableViewCell {
     
-    // Define custom labels
     private let postStatusLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -39,7 +39,7 @@ class PostTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = UIColor.labelsSecondary
-        label.numberOfLines = 2
+        label.numberOfLines = 1
         return label
     }()
     
@@ -57,6 +57,7 @@ class PostTableViewCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 8
         imageView.layer.masksToBounds = true
+        imageView.image = UIImage(named: "defaultImage") // 기본 이미지 설정
         return imageView
     }()
     
@@ -108,33 +109,42 @@ class PostTableViewCell: UITableViewCell {
         postTitleLabel.text = post.postTitle
         postBodyLabel.text = post.postBody
         postDateLabel.text = timeAgoSinceDate(post.updateDate)
-
+        
+        // 기본 이미지 설정
+        postImageView.image = UIImage(named: "defaultImage")
+        
         guard let postImages = post.postImages, !postImages.isEmpty else {
             postImageView.isHidden = true
             return
         }
         
+        postImageView.isHidden = false
         if let imageUrlString = postImages.first, let imageUrl = URL(string: imageUrlString) {
-            loadImage(from: imageUrl)
-        } else {
-            print("Post Image is nil")
-            postImageView.image = nil
-        }
-    }
-    private func loadImage(from url: URL) {
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
-                DispatchQueue.main.async {
-                    self.postImageView.image = nil
+            let processor = DownsamplingImageProcessor(size: postImageView.bounds.size)
+            
+            postImageView.kf.indicatorType = .activity
+            postImageView.kf.setImage(
+                with: imageUrl,
+                placeholder: nil,
+                options: [
+                    .processor(processor),
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade((0.25))),
+                    .cacheOriginalImage
+                ],
+                completionHandler: { result in
+                    switch result {
+                    case .success(let value):
+                        print("Image loaded successsfully: \(value.source.url?.absoluteString ?? "")")
+                    case .failure(let error):
+                        print("Failed to load Image: \(error.localizedDescription)")
+                    }
                 }
-                return
-            }
-            let image = UIImage(data: data)
-            DispatchQueue.main.async {
-                self.postImageView.image = image
-            }
+            )
+        } else {
+            // 이미지가 없을 때 기본 이미지
+            
         }
-        task.resume()
     }
     
     private func timeAgoSinceDate(_ date: Date) -> String {
@@ -157,4 +167,3 @@ class PostTableViewCell: UITableViewCell {
         }
     }
 }
-

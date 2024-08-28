@@ -33,6 +33,7 @@ class MainPostListViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
     private let locationLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -40,6 +41,7 @@ class MainPostListViewController: UIViewController {
         label.textColor = .labelsPrimary
         return label
     }()
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -50,21 +52,19 @@ class MainPostListViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .bgPrimary
         
+        
         setupCategoryButtons()
         setupNavigationBarButtons()
         setupLocationLabel()
-
-        fetchPostsByCategoryAndLocationWithViewModel()
-        
         setupTableView()
         bindViewModel()
+        fetchPostsByCategoryAndLocationWithViewModel()
     }
     
     private func fetchPostsByCategoryAndLocationWithViewModel() {
         guard let categoryText = selectedButton?.titleLabel?.text else {
             return
         }
-        
         // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
         if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
             print("MainPostView - userlocation: \(userLocation)")
@@ -83,8 +83,9 @@ class MainPostListViewController: UIViewController {
         }
         
         fetchPostsByCategoryAndLocationWithViewModel()
+        
         setupLocationLabel()
-
+        
         // 선택된 row 해제
         if let indexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: false)
@@ -276,5 +277,4 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
         postDetailViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(postDetailViewController, animated: true)
     }
-    
 }

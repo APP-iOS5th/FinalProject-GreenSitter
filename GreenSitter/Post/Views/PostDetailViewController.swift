@@ -240,7 +240,6 @@ class PostDetailViewController: UIViewController {
         configure(with: post)
         
         if Auth.auth().currentUser != nil {
-            // 해당 post 가 자신이 올린 Post 라면, 삭제/편집 기능 있는 네비게이션 바로 표시
             if LoginViewModel.shared.user?.id == post.userId {
                 setupNavigationBarWithEdit(post: post)
                 // TODO: 채팅도 표시하지 않아야함
@@ -284,7 +283,7 @@ class PostDetailViewController: UIViewController {
                 }
             }
         ])
-
+        
         
         let menuButton = UIButton(type: .system)
         menuButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
@@ -300,10 +299,8 @@ class PostDetailViewController: UIViewController {
     private func setupNavigationBarWithBlock(post: Post) {
         let menu = UIMenu(title: "", children: [
             UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { _ in
-                
             },
             UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { _ in
-                
             }
         ])
         
@@ -486,7 +483,6 @@ class PostDetailViewController: UIViewController {
             imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             imagesScrollView.heightAnchor.constraint(equalToConstant: 200),
             
-            
             imagesStackView.topAnchor.constraint(equalTo: imagesScrollView.topAnchor),
             imagesStackView.bottomAnchor.constraint(equalTo: imagesScrollView.bottomAnchor),
             imagesStackView.leadingAnchor.constraint(equalTo: imagesScrollView.leadingAnchor),
@@ -526,8 +522,6 @@ class PostDetailViewController: UIViewController {
             descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
-    
-
     
     // MARK: - Image Load
     private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {

@@ -35,9 +35,11 @@ class MainPostListViewModel {
             return
         }
         
+        
         db.collection("posts")
             .whereField("postType", isEqualTo: postType.rawValue)
             .getDocuments { [weak self] (querySnapshot, error) in
+                
                 if let error = error {
                     print("Error getting documents: \(error)")
                     self?.filteredPosts = []
@@ -71,8 +73,10 @@ class MainPostListViewModel {
     
     // 유저 위치 정보(옵셔널) 만 받기
     func fetchPostsWithin3Km(userLocation: Location?) {
+        
         db.collection("posts")
             .getDocuments { [weak self] (querySnapshot, error) in
+                
                 if let error = error {
                     print("Error getting documents: \(error)")
                     self?.filteredPosts = []
@@ -110,8 +114,10 @@ class MainPostListViewModel {
     
     // 기존 코드
     func fetchAllPosts() {
+        
         db.collection("posts")
             .getDocuments { [weak self] snapshot, error in
+                
                 if let error = error {
                     print("Error getting documents: \(error)")
                     self?.filteredPosts = []
