@@ -15,7 +15,7 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
     var selectedRatingButton: UIButton?
     var review: Post?
     var selectedTextButtons: Set<UIButton> = []
-    var post: Post?
+    var post: [Post] = []
     var postId: String?
     var reviews: Review?
     
@@ -70,22 +70,30 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
+            // post 배열이 비어있지 않은지 확인 후 접근
+            guard !post.isEmpty else { return UITableViewCell() }
+            let currentPost = post[0] // post는 하나의 요소만 포함하므로 인덱스는 항상 0
             let cell = tableView.dequeueReusableCell(withIdentifier: "reviewPostTableViewCell", for: indexPath) as! ReviewPostTableViewCell
-            if let post = post {
-                cell.titleLabel.text = post.postTitle
-                cell.bodyLabel.text = post.postBody
-                cell.timeLabel.text = DateFormatter.localizedString(from: post.updateDate, dateStyle: .short, timeStyle: .short)
-                cell.plantImage.image = UIImage(named: "logo7")
+
+            cell.titleLabel.text = currentPost.postTitle
+            cell.bodyLabel.text = currentPost.postBody
+            cell.timeLabel.text = DateFormatter.localizedString(from: currentPost.updateDate, dateStyle: .short, timeStyle: .short)
+            if let imageURL = currentPost.postImages?.first {
+                postLoadImage(from: imageURL) { image in
+                    DispatchQueue.main.async {
+                        cell.plantImage.image = image ?? UIImage(named: "logo7")
+                    }
+                }
             } else {
-                cell.titleLabel.text = "데이터 없음"
-                cell.bodyLabel.text = "데이터 없음"
-                cell.timeLabel.text = "데이터 없음"
-                cell.plantImage.image = nil
+                cell.plantImage.image = UIImage(named: "logo7")
             }
+
             cell.backgroundColor = UIColor.white
             return cell
-            
+
         case 1:
+            // 리뷰가 있는 경우에만 접근
+            guard reviews != nil else { return UITableViewCell() }
             let cell = tableView.dequeueReusableCell(withIdentifier: "receiveReviewTableViewCell", for: indexPath) as! ReceiveReviewTableViewCell
             cell.badButton.setImage(UIImage(named: "2"), for: .normal)
             cell.averageButton.setImage(UIImage(named: "3"), for: .normal)
@@ -135,11 +143,12 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
             cell.reviewTextField.placeholder = reviews?.reviewText ?? "리뷰 없음"
             cell.backgroundColor = UIColor(named: "BGSecondary")
             return cell
-            
+
         default:
             return UITableViewCell()
         }
     }
+
     
     
     //MARK: - 셀 높이 조정

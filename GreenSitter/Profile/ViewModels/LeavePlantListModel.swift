@@ -18,16 +18,21 @@ extension LeavePlantListViewController {
             print("User ID is not available")
             return
         }
-
+        
         // Firestore에서 특정 문서 가져오기
-        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+        db.collection("posts").whereField("userId", isEqualTo: userId).whereField("postType", isEqualTo: "새싹돌봄이 찾습니다").getDocuments { [weak self] (snapshot, error) in
             guard let self = self else { return }
-
+            
             if let error = error {
                 print("Error getting document: \(error)")
                 return
             }
-
+            
+            guard let documents = snapshot?.documents else {
+                print("No documents found")
+                return
+            }
+            
             // 문서가 존재하는지 확인
             if let document = document, document.exists {
                 // 'post' 필드를 딕셔너리로 변환
@@ -80,40 +85,51 @@ extension LeavePlantListViewController {
                 } else {
                     print("Post data not found in document.")
                 }
-            } else {
-                print("Document does not exist")
             }
         }
     }
-
-    func convertToHttpsURL(gsURL: String) -> String? {
-        let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
-        let encodedPath = gsURL
-            .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
-            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 한 번만 호출
-        return baseURL + (encodedPath ?? "") + "?alt=media"
-    }
-    
-    
     
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
-        guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
-              let url = URL(string: httpsURLString) else {
+        guard let url = URL(string: gsURL) else {
             print("Invalid URL string: \(gsURL)")
             completion(nil)
             return
         }
         
+        print("Fetching image from URL: \(url)") // URL 디버깅
+        
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print("이미지 다운로드 오류: \(error)")
+                print("Image download error: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
             
-            guard let data = data, let image = UIImage(data: data) else {
-                print("이미지 변환 실패 또는 데이터가 없음")
+            // 응답의 상태 코드 확인
+            if let httpResponse = response as? HTTPURLResponse {
+                print("HTTP Status Code: \(httpResponse.statusCode)")
+            }
+            
+            guard let data = data else {
+                print("No data received")
+                completion(nil)
+                return
+            }
+            
+            // 데이터 크기 및 내용 확인
+            print("Image data size: \(data.count) bytes")
+            
+            // 데이터의 일부를 문자열로 변환하여 출력 (디버깅 용도)
+            if let dataString = String(data: data, encoding: .utf8) {
+                print("Data received: \(dataString.prefix(1000))") // 첫 1000바이트만 출력
+            } else {
+                print("Data is not a valid UTF-8 string")
+            }
+            
+            // UIImage 객체 생성 시도
+            guard let image = UIImage(data: data) else {
+                print("Failed to create image from data")
                 completion(nil)
                 return
             }
@@ -122,4 +138,5 @@ extension LeavePlantListViewController {
         }
         task.resume()
     }
+
 }

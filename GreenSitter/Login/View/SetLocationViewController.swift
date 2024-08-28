@@ -120,7 +120,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate, SetProfi
     lazy var nextButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("다음", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(named: "BGPrimary"), for: .normal)
         button.backgroundColor = .dominent
         button.layer.cornerRadius = 10
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)

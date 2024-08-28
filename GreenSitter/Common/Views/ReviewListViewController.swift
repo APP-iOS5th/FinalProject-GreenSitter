@@ -27,7 +27,7 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "돌봄 기록"
+        navigationItem.title = "돌봄 후기"
         
         view.addSubview(tableView)
         
@@ -53,10 +53,10 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
         let postUpdateDate = selectedPost.updateDate
         let calendar = Calendar.current
         
-        //업데이트한 날짜로부터 3일이 지나면 리뷰를 쓸수 없음
+        //MARK: - 업데이트한 날짜로부터 3일이 지나면 리뷰를 쓸수 없음
         if let daysDifference = calendar.dateComponents([.day], from: postUpdateDate, to: currentDate).day, daysDifference <= 3 {
             let reviewViewController = ReviewViewController()
-            reviewViewController.post = selectedPost
+            reviewViewController.post = [selectedPost]
             reviewViewController.postId = selectedPost.id
             navigationController?.pushViewController(reviewViewController, animated: true)
         }
