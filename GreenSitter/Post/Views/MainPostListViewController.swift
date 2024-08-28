@@ -48,14 +48,6 @@ class MainPostListViewController: UIViewController {
         return tableView
     }()
     
-    private let spinner: UIActivityIndicatorView = {
-        let spinner = UIActivityIndicatorView(style: .large)
-        spinner.color = .red
-        spinner.backgroundColor = UIColor.red.withAlphaComponent(0.5)
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        return spinner
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .bgPrimary
@@ -65,21 +57,14 @@ class MainPostListViewController: UIViewController {
         setupNavigationBarButtons()
         setupLocationLabel()
         setupTableView()
-        setupSpinner()
         bindViewModel()
-        
-        fetchPostsByCategoryAndLocationWithViewModel() // Fetch posts with initial setup
+        fetchPostsByCategoryAndLocationWithViewModel()
     }
     
     private func fetchPostsByCategoryAndLocationWithViewModel() {
         guard let categoryText = selectedButton?.titleLabel?.text else {
             return
         }
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.showSpinner()
-        }
-        
         // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
         if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
             print("MainPostView - userlocation: \(userLocation)")
@@ -113,10 +98,6 @@ class MainPostListViewController: UIViewController {
             .sink { [weak self] posts in
                 print("MainView - bindViewModel posts: \(posts)")
                 self?.tableView.reloadData()
-                // Ensure spinner is hidden on the main thread
-                DispatchQueue.main.async {
-                    self?.hideSpinner()
-                }
             }
             .store(in: &cancellables)
     }
@@ -214,29 +195,6 @@ class MainPostListViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-    
-    private func setupSpinner() {
-        view.addSubview(spinner)
-        
-        NSLayoutConstraint.activate([
-            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-    }
-    
-    private func showSpinner() {
-        print("Showing spinner")
-        DispatchQueue.main.async {
-            self.spinner.startAnimating()
-        }
-    }
-
-    private func hideSpinner() {
-        print("Hiding spinner")
-        DispatchQueue.main.async {
-            self.spinner.stopAnimating()
-        }
     }
     
     @objc func categoryButtonTapped(_ sender: UIButton) {

@@ -120,11 +120,30 @@ class PostTableViewCell: UITableViewCell {
         
         postImageView.isHidden = false
         if let imageUrlString = postImages.first, let imageUrl = URL(string: imageUrlString) {
-            // Kingfisher를 사용하여 이미지를 로드
+            let processor = DownsamplingImageProcessor(size: postImageView.bounds.size)
+            
+            postImageView.kf.indicatorType = .activity
             postImageView.kf.setImage(
                 with: imageUrl,
-                placeholder: UIImage(named: "defaultImage") // 기본 이미지
+                placeholder: nil,
+                options: [
+                    .processor(processor),
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade((0.25))),
+                    .cacheOriginalImage
+                ],
+                completionHandler: { result in
+                    switch result {
+                    case .success(let value):
+                        print("Image loaded successsfully: \(value.source.url?.absoluteString ?? "")")
+                    case .failure(let error):
+                        print("Failed to load Image: \(error.localizedDescription)")
+                    }
+                }
             )
+        } else {
+            // 이미지가 없을 때 기본 이미지
+            
         }
     }
     
