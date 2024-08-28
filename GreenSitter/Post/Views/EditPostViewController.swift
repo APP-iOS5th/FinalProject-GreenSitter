@@ -304,7 +304,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             textView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 16),
             textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 100),
+            textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200),
             
             remainCountLabel.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 8),
             remainCountLabel.trailingAnchor.constraint(equalTo: textView.trailingAnchor),
@@ -415,7 +415,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     private func presentImagePickerController() {
         var config = PHPickerConfiguration()
-        config.selectionLimit = 4 - (imageStackView.arrangedSubviews.count - 1)
+        config.selectionLimit = 10 - (imageStackView.arrangedSubviews.count - 1)
         config.filter = .images
         let picker = PHPickerViewController(configuration: config)
         picker.delegate = self
