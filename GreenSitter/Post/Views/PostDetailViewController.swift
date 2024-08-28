@@ -88,20 +88,6 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-//    private let dividerLine1: UIView = {
-//        let line = UIView()
-//        line.backgroundColor = .separatorsNonOpaque
-//        line.translatesAutoresizingMaskIntoConstraints = false
-//        return line
-//    }()
-//    
-//    private let dividerLine2: UIView = {
-//        let line = UIView()
-//        line.backgroundColor = .separatorsNonOpaque
-//        line.translatesAutoresizingMaskIntoConstraints = false
-//        return line
-//    }()
-    
     private let dividerLine3: UIView = {
         let line = UIView()
         line.backgroundColor = .separatorsNonOpaque
@@ -355,7 +341,7 @@ class PostDetailViewController: UIViewController {
         configurePostBodyTextView(with: post.postBody)
 
         statusLabel.text = post.postStatus.rawValue
-        userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
+        userLevelLabel.text = post.userLevel.rawValue
         
         let address = post.location?.address
         let placeName = post.location?.placeName
@@ -427,8 +413,6 @@ class PostDetailViewController: UIViewController {
         imagesScrollView.addSubview(imagesStackView)
         
         contentView.addSubview(postBodyTextView)
-//        contentView.addSubview(dividerLine1)
-//        contentView.addSubview(dividerLine2)
         contentView.addSubview(dividerLine3)
         contentView.addSubview(contactButton)
         contentView.addSubview(mapLabel)
@@ -485,12 +469,6 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-//            dividerLine1.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 10),
-//            dividerLine1.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-//            dividerLine1.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-//            dividerLine1.heightAnchor.constraint(equalToConstant: 1),
-            
-            
             imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -501,11 +479,6 @@ class PostDetailViewController: UIViewController {
             imagesStackView.leadingAnchor.constraint(equalTo: imagesScrollView.leadingAnchor),
             imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
             imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
-            
-//            dividerLine2.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
-//            dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-//            dividerLine2.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-//            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
             
             postBodyTextView.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),

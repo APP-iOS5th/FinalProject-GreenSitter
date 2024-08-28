@@ -134,7 +134,7 @@ class AddPostViewModel: ObservableObject {
     }
     
     // MARK: - 게시물 저장 메서드
-    func savePost(userId: String, userProfileImage: String, userNickname: String, userLocation: Location?, postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
+    func savePost(userId: String, userProfileImage: String, userNickname: String, userLocation: Location?, userLevel: Level,postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
         uploadImages { [weak self] result in
             guard let self = self else { return }
             
@@ -151,7 +151,7 @@ class AddPostViewModel: ObservableObject {
                     nickname: userNickname,
                     userLocation: userLocation ?? Location.seoulLocation,
                     userNotification: false,
-                    
+                    userLevel: userLevel,
                     postType: self.postType,
                     postTitle: postTitle,
                     postBody: postBody,

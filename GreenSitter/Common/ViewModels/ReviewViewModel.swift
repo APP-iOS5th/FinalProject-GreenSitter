@@ -226,7 +226,7 @@ extension ReviewViewController {
                             profileImage: "",
                             nickname: "",
                             userLocation: Location.seoulLocation,
-                            userNotification: false,
+                            userNotification: false, userLevel: .flower,
                             postType: .offeringToSitter,
                             postTitle: postTitle,
                             postBody: postBody,
