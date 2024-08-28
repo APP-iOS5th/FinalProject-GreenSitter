@@ -189,7 +189,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             return
         }
         
-        viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, postTitle: titleTextField.text!, postBody: textView.text) { result in
+        viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, userLevel: currentUser.levelPoint, postTitle: titleTextField.text!, postBody: textView.text) { result in
             switch result {
             case .success(let newPost):
                 print("Add Post: \(newPost)")

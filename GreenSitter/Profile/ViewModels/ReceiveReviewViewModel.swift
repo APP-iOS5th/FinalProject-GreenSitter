@@ -53,6 +53,7 @@ extension ReceiveReviewViewController {
                                 nickname: "",
                                 userLocation: Location.seoulLocation,
                                 userNotification: false,
+                                userLevel: .rottenSeeds,
                                 postType: .offeringToSitter,
                                 postTitle: postTitle,
                                 postBody: postBody,

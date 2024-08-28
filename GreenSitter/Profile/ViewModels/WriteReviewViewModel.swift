@@ -61,6 +61,7 @@ extension WriteReviewViewController {
                             nickname: "",      // 필요시 추가
                             userLocation: Location.seoulLocation, // 예시 위치
                             userNotification: false,
+                            userLevel: .flower,
                             postType: .offeringToSitter,
                             postTitle: postTitle,
                             postBody: postBody,
