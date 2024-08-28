@@ -78,6 +78,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return imageView
     }()
     
+    
+    
     private let dividerLine2: UIView = {
         let line = UIView()
         line.backgroundColor = .lightGray
@@ -388,28 +390,57 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     }
     
     private func updateImageStackView() {
-        imageStackView.arrangedSubviews.forEach { view in
-            if view != pickerImageView {
-                view.removeFromSuperview()
+            imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+            
+            for (index, image) in viewModel.selectedImages.enumerated() {
+                let imageView = UIImageView(image: image)
+                imageView.contentMode = .scaleAspectFill
+                imageView.clipsToBounds = true
+                imageView.layer.cornerRadius = 10
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+                imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+                
+                // Delete button
+                let deleteButton = UIButton(type: .custom)
+                deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+                deleteButton.tintColor = .red
+                deleteButton.translatesAutoresizingMaskIntoConstraints = false
+                deleteButton.addTarget(self, action: #selector(deleteImage(_:)), for: .touchUpInside)
+                deleteButton.tag = index
+                
+                let containerView = UIView()
+                containerView.translatesAutoresizingMaskIntoConstraints = false
+                containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+                containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+                
+                containerView.addSubview(imageView)
+                containerView.addSubview(deleteButton)
+                
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                deleteButton.translatesAutoresizingMaskIntoConstraints = false
+                
+                NSLayoutConstraint.activate([
+                    imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                    imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                    imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                    imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+                    
+                    deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -5),
+                    deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 5)
+                ])
+                
+                imageStackView.addArrangedSubview(containerView)
             }
+            
+            imageStackView.addArrangedSubview(pickerImageView)
         }
         
-        // 선택된 이미지를 imageStackView에 추가
-        viewModel.selectedImages.forEach { image in
-            let imageView = UIImageView(image: image)
-            imageView.contentMode = .scaleAspectFill
-            imageView.clipsToBounds = true
-            imageView.widthAnchor.constraint(equalToConstant: 130).isActive = true
-            imageView.heightAnchor.constraint(equalToConstant: 130).isActive = true
-            imageStackView.addArrangedSubview(imageView) // 새 이미지를 뒤로 추가
+        @objc private func deleteImage(_ sender: UIButton) {
+            let index = sender.tag
+            viewModel.selectedImages.remove(at: index)
+            updateImageStackView()
         }
-        
-        // pickerImageView를 맨 앞에 고정
-        if imageStackView.arrangedSubviews.first != pickerImageView {
-            imageStackView.removeArrangedSubview(pickerImageView)
-            imageStackView.insertArrangedSubview(pickerImageView, at: 0)
-        }
-    }
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true, completion: nil)
