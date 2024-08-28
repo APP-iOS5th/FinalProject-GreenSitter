@@ -335,9 +335,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         ])
     }
     
-    // 1. 이미지 추가 및 삭제 버튼 추가
     private func addImageToStackView(_ image: UIImage) {
-        // 이미지 뷰 생성
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.widthAnchor.constraint(equalToConstant: 130).isActive = true
@@ -445,4 +443,5 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             textView.textColor = .lightGray
         }
     }
+    
 }
