@@ -131,16 +131,16 @@ extension ProfileViewController {
     }
     // 레벨에 따라 이미지 URL을 반환하는 함수
     func imageURLForLevel(_ level: Level) -> String? {
-        let levelImageURLs: [Level: String] = [
-            .rottenSeeds: "gs://greensitter-6dedd.appspot.com/level_image/썩은 씨앗2.png",
-            .seeds: "gs://greensitter-6dedd.appspot.com/level_image/씨앗3.png",
-            .sprout: "gs://greensitter-6dedd.appspot.com/level_image/새싹.jpg",
-            .seedling: "gs://greensitter-6dedd.appspot.com/level_image/유묘1.jpg",
-            .flower: "gs://greensitter-6dedd.appspot.com/level_image/꽃1.png",
-            .fruit: "gs://greensitter-6dedd.appspot.com/level_image/열매2.png" // 필요한 URL 추가
+        let levelImageURLs: [String: String] = [
+            "썩은 씨앗": "gs://greensitter-6dedd.appspot.com/level_image/썩은 씨앗2.png",
+            "씨앗": "gs://greensitter-6dedd.appspot.com/level_image/씨앗3.png",
+            "새싹": "gs://greensitter-6dedd.appspot.com/level_image/새싹.jpg",
+            "유묘": "gs://greensitter-6dedd.appspot.com/level_image/유묘1.jpg",
+            "꽃":"gs://greensitter-6dedd.appspot.com/level_image/꽃1.png",
+            "열매": "gs://greensitter-6dedd.appspot.com/level_image/열매2.png" // 필요한 URL 추가
         ]
         
-        return levelImageURLs[level]
+        return levelImageURLs[level.rawValue]
     }
     // MARK: - gs:// URL을 https:// URL로 변환
     func convertToHttpsURL(gsURL: String) -> String? {
