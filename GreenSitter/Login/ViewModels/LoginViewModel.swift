@@ -83,6 +83,13 @@ class LoginViewModel: ObservableObject {
                                  chatNotification: chatNotification)
                 self.user?.updateExp(by: exp) //경험치 업데이트
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
+                
+                if let postId = self.user?.id, !postId.isEmpty {
+                    print("Fetched postId: \(postId)")
+                    self.updatePostLocation(with: self.user?.location ?? Location.seoulLocation, postId)
+                } else {
+                    print("Error: postId is empty or not available")
+                }
             }
         }
     }
@@ -146,17 +153,55 @@ class LoginViewModel: ObservableObject {
             return
         }
         
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
+            return
+        }
+        
         let userLocationData: [String: Any] = [
             "location": location.toDictionary(),
         ]
         db.collection("users").document(userId).setData(userLocationData, merge: true) { error in
             if let error = error {
                 print("Failed to update user location: \(error.localizedDescription)")
-            } else {
+            }
+            else {
                 print("User location updated successfully with address: \(location)")
             }
         }
         
         print("Attempting to update user location with address: \(location)")
+    }
+    
+    func updatePostLocation(with location: Location, _ postId: String) {
+        print("Attempting to update location for postId: \(postId)")
+        
+        guard !postId.isEmpty else {
+            print("Error: postId is empty")
+            return
+        }
+        db.collection("posts").whereField("userId", isEqualTo: postId).getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Firestore Query Error in posts collection: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                print("No matching documents found in posts collection with postId: \(postId)") // 추가적인 정보 출력
+                return
+            }
+            print("Found \(documents.count) documents to update for postId: \(postId)")
+
+            
+            for document in documents {
+                document.reference.updateData(["location": location.toDictionary()]) { error in
+                    if let error = error {
+                        print("Error updating post location in document \(document.documentID): \(error.localizedDescription)")
+                    } else {
+                        print("Post location successfully updated in document \(document.documentID)!")
+                    }
+                }
+            }
+        }
     }
 }
