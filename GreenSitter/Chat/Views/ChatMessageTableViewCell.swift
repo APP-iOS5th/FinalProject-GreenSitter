@@ -8,6 +8,9 @@
 import UIKit
 
 class ChatMessageTableViewCell: UITableViewCell {
+    var chatViewModel: ChatViewModel?
+    var chatRoom: ChatRoom?
+    
     var isIncoming: Bool = false {
         didSet {
             bubbleView.backgroundColor = isIncoming ? .fillPrimary : .dominent
@@ -42,11 +45,12 @@ class ChatMessageTableViewCell: UITableViewCell {
     
     lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.frame = CGRect(x: 0, y: 4, width: 52, height: 52)
         imageView.layer.cornerRadius = imageView.frame.height/2
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "logo7")
+//        imageView.image = UIImage(named: "logo7")
         
         return imageView
     }()
@@ -133,7 +137,7 @@ class ChatMessageTableViewCell: UITableViewCell {
                 
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-                bubbleView.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 5),
+                bubbleView.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
@@ -170,10 +174,26 @@ class ChatMessageTableViewCell: UITableViewCell {
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
                 bubbleView.leadingAnchor.constraint(equalTo: timeLabel.trailingAnchor, constant: 5),
-                bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-
+                bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
             ])
         }
+    }
+    
+    // MARK: - Cell 구성
+    func configure() {
+        // 프로필 이미지 설정
+        let profileImage: String?
+        if chatRoom?.userId == chatViewModel?.userId {
+            profileImage = chatRoom?.postUserProfileImage
+        } else {
+            profileImage = chatRoom?.userProfileImage
+        }
+        
+        guard let profileImageUrl = URL(string: profileImage!) else {
+            return
+        }
+        
+        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
     }
 
 }

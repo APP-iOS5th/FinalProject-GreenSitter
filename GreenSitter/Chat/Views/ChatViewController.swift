@@ -161,6 +161,7 @@ class ChatViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
     }
     
+    // 키보드 숨기기 메서드
     @objc private func dismissKeyboard() {
         self.view.endEditing(true)
     }

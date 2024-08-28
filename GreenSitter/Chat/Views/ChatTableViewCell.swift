@@ -127,7 +127,11 @@ class ChatTableViewCell: UITableViewCell {
         guard let profileImage = chatRoom?.userId == userId ? chatRoom?.postUserProfileImage : chatRoom?.userProfileImage else {
             return
         }
-        self.fetchProfileImage(profileImageString: profileImage, userId: userId)
+        guard let profileImageUrl = URL(string: profileImage) else {
+            return
+        }
+        
+        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
         
         // 닉네임
         let nickname = chatRoom?.userId == userId ? chatRoom?.postUserNickname: chatRoom?.userNickname
@@ -180,30 +184,6 @@ class ChatTableViewCell: UITableViewCell {
             circleView.backgroundColor = .clear
             unreadCountLabel.text = ""
         }
-    }
-    
-    // MARK: - 프로필 이미지 가져오기
-    private func fetchProfileImage(profileImageString: String, userId: String) {
-        // Firestore에서 프로필 이미지 가져오기
-//        let db = Firestore.firestore()
-//        let userId = userId
-//
-//        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
-//            guard let self = self, let document = document, document.exists,
-//                  let data = document.data(),
-//                  let profileImageUrl = data["profileImage"] as? String,
-//                  let url = URL(string: profileImageString) else {
-//                return
-//            }
-//
-//            self.downloadImage(from: url)
-//        }
-        
-        // 임시 데이터
-        guard let profileImageUrl = URL(string: profileImageString) else {
-            return
-        }
-        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
     }
     
     // MARK: - 메세지 시간 포맷 설정

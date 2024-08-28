@@ -115,6 +115,7 @@ class ChatMessageViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
 extension ChatMessageViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let messages = chatViewModel?.messages[chatRoom.id] else {
@@ -143,6 +144,10 @@ extension ChatMessageViewController: UITableViewDataSource {
             }
             
             cell.isRead = messages[indexPath.row].isRead
+
+            cell.chatRoom = chatRoom
+            cell.chatViewModel = self.chatViewModel
+            cell.configure()
             
             return cell
             
@@ -294,6 +299,7 @@ extension ChatMessageViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - ChatMessageTableViewImageCellDelegate
 extension ChatMessageViewController: ChatMessageTableViewImageCellDelegate {
     func imageViewTapped(images: [UIImage], index: Int) {
         let imageDetailCollectionView = ImageDetailCollectionViewController(images: images, index: index)

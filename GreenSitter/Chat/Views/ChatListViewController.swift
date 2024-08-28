@@ -81,9 +81,6 @@ class ChatListViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .bgSecondary
-        
-        // 로그인 이벤트 수신
-        NotificationCenter.default.addObserver(self, selector: #selector(userDidLogin), name: NSNotification.Name("UserDidLoginNotification"), object: nil)
     }
     
     // MARK: - ViewWillAppear
@@ -253,20 +250,6 @@ class ChatListViewController: UIViewController {
         loginViewController.modalPresentationStyle = .fullScreen
         self.present(loginViewController, animated: true)
     }
-    
-    // 비로그인이었다가 로그인했을 때
-    @objc private func userDidLogin() {
-        chatViewModel.isLoggedIn = true
-        chatViewModel.hasChats = true
-        viewDidLoad()
-    }
-    
-    // MARK: - deinit
-    deinit {
-        // 옵저버 해제
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("UserDidLoginNotification"), object: nil)
-    }
-    
 }
 
 // MARK: - UITableViewDataSource
@@ -282,7 +265,7 @@ extension ChatListViewController: UITableViewDataSource {
         cell.chatRoom = chatRoom!
         cell.chatViewModel = self.chatViewModel
         cell.configure(userId: self.chatViewModel.userId)
-        cell.setupUI()
+//        cell.setupUI()
         
         return cell
     }
