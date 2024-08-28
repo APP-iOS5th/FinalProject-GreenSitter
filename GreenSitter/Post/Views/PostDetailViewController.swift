@@ -19,44 +19,6 @@ class PostDetailViewController: UIViewController {
     private let postId: String
     private var overlayPostMapping: [MKCircle: Post] = [:]
     private var postBodyTextViewHeightConstraint: NSLayoutConstraint?
-    
-    /*
-     var hasImages: Bool = false
-
-     // 제약 조건 배열 선언
-     var constraintsWithoutImages: [NSLayoutConstraint] = []
-     var constraintsWithImages: [NSLayoutConstraint] = []
-     
-     
-     private func updateConstraintsForImagesPresence() {
-         let hasImages = !imagesStackView.arrangedSubviews.isEmpty // 예시로 이미지가 있는지 여부를 판단하는 방법입니다. 실제로는 다른 방법으로 판단할 수 있습니다.
-         
-         if hasImages {
-             NSLayoutConstraint.activate([
-                 imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
-                 postBodyTextView.topAnchor.constraint(equalTo: imagesScrollView.bottomAnchor, constant: 20),
-                 dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10)
-             ])
-             
-             // 기존 제약 조건 비활성화
-             NSLayoutConstraint.deactivate([
-                 postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20)
-             ])
-         } else {
-             NSLayoutConstraint.activate([
-                 postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
-                 dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10)
-             ])
-             
-             // 기존 제약 조건 비활성화
-             NSLayoutConstraint.deactivate([
-                 imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20)
-             ])
-         }
-     }
-
-
-     */
 
     // MARK: - Initializer
     
@@ -259,6 +221,13 @@ class PostDetailViewController: UIViewController {
 
     private func configureUI(with post: Post) {
         setupUI()
+        
+        if let imageUrls = post.postImages, !imageUrls.isEmpty {
+            setupConstraintsWithImages()
+        } else {
+            setupConstraints()
+        }
+
         configure(with: post)
         
         if Auth.auth().currentUser != nil {
@@ -440,7 +409,7 @@ class PostDetailViewController: UIViewController {
                 print("IMAGESTACKVIEWSUBVIEWS: \(self.imagesStackView.arrangedSubviews)")
             }   // for
         } else {
-            // imageUrls is Empty
+            self.imagesScrollView.isHidden = true
         }
     }
 
@@ -466,7 +435,10 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(mapPlaceLabel)
         contentView.addSubview(mapView)
         contentView.addSubview(descriptionLabel)
-        
+    }
+
+    private func setupConstraintsWithImages() {
+        imagesScrollView.isHidden = false
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -516,6 +488,7 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
+
             imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -555,8 +528,86 @@ class PostDetailViewController: UIViewController {
             descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
-
     
+    private func setupConstraints() {
+        imagesScrollView.isHidden = false
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
+            userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            userProfileButton.trailingAnchor.constraint(equalTo: contactButton.leadingAnchor),
+            userProfileButton.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor),
+            
+            contactButton.centerYAnchor.constraint(equalTo: userProfileButton.centerYAnchor),
+            contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            contactButton.widthAnchor.constraint(equalToConstant: 100),
+            contactButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            profileImageView.leadingAnchor.constraint(equalTo: userProfileButton.leadingAnchor),
+            profileImageView.topAnchor.constraint(equalTo: userProfileButton.topAnchor),
+            profileImageView.widthAnchor.constraint(equalToConstant: 50),
+            profileImageView.heightAnchor.constraint(equalToConstant: 50),
+            
+            userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor, constant: 5),
+            userNameLabel.heightAnchor.constraint(equalToConstant: userNameLabel.font.pointSize),
+            
+            userLevelLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            userLevelLabel.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: -5),
+            userLevelLabel.heightAnchor.constraint(equalToConstant: userLevelLabel.font.pointSize),
+            
+            postTimeLabel.centerYAnchor.constraint(equalTo: statusLabel.centerYAnchor),
+            postTimeLabel.leadingAnchor.constraint(equalTo: statusLabel.trailingAnchor, constant: 10),
+            
+            statusLabel.topAnchor.constraint(equalTo: userProfileButton.bottomAnchor, constant: 20),
+            statusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            statusLabel.widthAnchor.constraint(equalToConstant: 50),
+            statusLabel.heightAnchor.constraint(equalToConstant: 20),
+            
+            postTitleLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 10),
+            postTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
+
+            
+            postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
+            postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            
+            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
+            dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            dividerLine3.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            dividerLine3.heightAnchor.constraint(equalToConstant: 1),
+            
+            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8),
+            mapLabel.heightAnchor.constraint(equalToConstant: mapLabel.font.pointSize),
+            
+            mapPlaceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapPlaceLabel.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
+            mapPlaceLabel.heightAnchor.constraint(equalToConstant: mapPlaceLabel.font.pointSize),
+            
+            mapView.topAnchor.constraint(equalTo: mapPlaceLabel.bottomAnchor, constant: 12),
+            mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            mapView.heightAnchor.constraint(equalToConstant: 200),
+            
+            descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
+            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+        ])
+    }
     
     private func timeAgoSinceDate(_ date: Date) -> String {
         let calendar = Calendar.current
