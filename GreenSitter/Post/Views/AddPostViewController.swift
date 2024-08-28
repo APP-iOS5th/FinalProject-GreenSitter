@@ -38,7 +38,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     private let titleTextField: UITextField = {
         let textField = UITextField()
-        textField.tintColor = .black
+        textField.tintColor = .labelsPrimary
         textField.font = .systemFont(ofSize: 18)
         textField.placeholder = "제목을 입력하세요."
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -377,7 +377,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == .lightGray {
             textView.text = nil
-            textView.textColor = .black
+            textView.textColor = .labelsPrimary
         }
     }
     
@@ -465,7 +465,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
                 case .denied, .restricted:
                     self?.showPhotoLibraryAccessDeniedAlert()
                 case .notDetermined:
-                    // 권한 요청 대화상자가 표시됩니다.
+                    // 권한 요청 대화상자가 표시
                     break
                 @unknown default:
                     break

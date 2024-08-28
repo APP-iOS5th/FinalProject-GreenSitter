@@ -88,6 +88,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     lazy var textView: UITextView = {
         let view = UITextView()
+        view.backgroundColor = .systemBackground
         view.layer.borderWidth = 1.0
         view.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.7).cgColor
         view.textContainerInset = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
@@ -438,7 +439,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             textView.text = ""
             textView.textColor = .black
         } else {
-            textView.textColor = .black
+            textView.textColor = .labelsPrimary
         }
     }
     
