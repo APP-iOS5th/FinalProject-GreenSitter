@@ -83,7 +83,13 @@ class MessageInputViewController: UIViewController {
             
             self.textFieldDidChange(self.messageInputField)
         }, for: .editingChanged)
-
+        
+        // 상대방이 채팅방 나갔을 때 메세지 입력 창 비활성화
+        if chatViewModel?.userId == chatRoom.userId && chatRoom.postUserEnabled == false {
+            messageInputField.isEnabled = false
+        } else if chatViewModel?.userId == chatRoom.postUserId && chatRoom.userEnabled == false {
+            messageInputField.isEnabled = false
+        }
     }
     
     // MARK: - Setup UI

@@ -37,22 +37,6 @@ class ChatMessageViewController: UIViewController {
         return tableView
     }()
     
-    private let exitMessageLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.text = "상대방이 채팅방을 나갔습니다."
-        label.textColor = .labelsPrimary
-        label.textAlignment = .center
-        label.backgroundColor = .separatorsOpaque
-        label.layer.cornerRadius = 10
-        label.layer.masksToBounds = true
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
-//    private var exitMessageLabelConstraints: [NSLayoutConstraint] = []
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -126,25 +110,8 @@ class ChatMessageViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            tableView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            tableView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         ])
-    }
-    
-    func showExitMessage() {
-        // .bottom 속성을 가진 제약조건을 찾아 비활성화
-        NSLayoutConstraint.deactivate(tableView.constraints.filter { $0.firstAttribute == .bottom })
-        
-        self.view.addSubview(exitMessageLabel)
-        // exitMessageLabel의 제약조건을 비활성화된 상태로 추가
-        let exitMessageLabelConstraints = [
-            exitMessageLabel.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 5),
-            exitMessageLabel.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -5),
-            exitMessageLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            exitMessageLabel.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            exitMessageLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-        ]
-        
-        NSLayoutConstraint.activate(exitMessageLabelConstraints)
     }
 }
 

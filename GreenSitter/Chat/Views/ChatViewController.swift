@@ -29,6 +29,10 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
+        
+        // 키보드 숨기기
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        self.view.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Setup UI
@@ -155,5 +159,9 @@ class ChatViewController: UIViewController {
         let menuItems = [notificationToggleAction, leaveChatRoomAction]
         let menu = UIMenu(children: menuItems)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
+    }
+    
+    @objc private func dismissKeyboard() {
+        self.view.endEditing(true)
     }
 }
