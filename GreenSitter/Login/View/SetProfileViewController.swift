@@ -347,7 +347,7 @@ class SetProfileViewController: UIViewController {
             if let error = error {
                 print("Firestore Writing Error: \(error)")
             } else {
-                LoginViewModel.shared.firebaseFetch(docId: user.uid)
+                LoginViewModel.shared.firebaseFetch(docId: user.uid){}
 
                 print("Nickname successfully saved!")
             }
@@ -380,7 +380,7 @@ class SetProfileViewController: UIViewController {
             if let error = error {
                 print("Firestore Writing Error: \(error)")
             } else {
-                LoginViewModel.shared.firebaseFetch(docId: user.uid)
+                LoginViewModel.shared.firebaseFetch(docId: user.uid) {}
                 
                 print("Nickname successfully saved!")
             }

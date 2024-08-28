@@ -10,6 +10,7 @@ import UIKit
 class ChatMessageViewController: UIViewController {
     var chatViewModel: ChatViewModel?
     var chatRoom: ChatRoom
+    private var messageListeners: [Task<Void, Never>] = []
     
     private let imageCache = NSCache<NSString, UIImage>()
     
@@ -22,15 +23,10 @@ class ChatMessageViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // 임시 데이터
-    //    var messages: [String] = ["Hello!", "How are you?", "I'm fine, thanks!", "What about you?", "I'm good too!", "어디까지 나오는지 테스트해보자아아아아아아아아아아아아아아아앙아아아아아", "읽었어?"]
-    //    var isIncoming: [Bool] = [false, true, false, false, true, true, false]
-    //    var isRead: [Bool] = [true, true, true, true, true, true, false]
-    
     // 메세지 뷰
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .bgSecondary
+        tableView.backgroundColor = .clear
         // 셀 구분선 제거
         tableView.separatorStyle = .none
         // 셀 선택 불가능하게 설정
@@ -44,47 +40,66 @@ class ChatMessageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Task {
-            try await self.chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
-        }
-//        self.chatViewModel?.updateUI = { [weak self] in
-//            self?.setupUI()
-//        }
+    }
+    
+    // MARK: - ViewWillAppear
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         
-        self.chatViewModel?.loadMessages(chatRoomId: chatRoom.id) { [weak self] in
-            guard let self = self else { return }
-            self.chatViewModel?.updateUI = { [weak self] in
-                self?.setupUI()
-                // 테이블 뷰를 리로드하여 최신 메시지를 표시
-                self?.tableView.reloadData()
-                
-                DispatchQueue.main.async {
-                    guard let numberOfSections = self?.tableView.numberOfSections,
-                          let numberOfRows = self?.tableView.numberOfRows(inSection: numberOfSections - 1) else {
-                        return
-                    }
-                    
-                    if numberOfRows > 0 {
-                        let indexPath = IndexPath(row: numberOfRows - 1, section: numberOfSections - 1)
-                        self?.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        Task {
+                let messageListener = Task {
+                    // 옵셔널 언래핑
+                    if let messagesStream = await chatViewModel?.loadMessages(chatRoomId: chatRoom.id) {
+                        for await messages in messagesStream {
+                            self.chatViewModel?.messages[chatRoom.id] = messages
+                            // await MainActor.run { self.tableView.reloadData() }
+                        }
+                    } else {
+                        print("Failed to load messages for chatRoomId: \(chatRoom.id)")
                     }
                 }
-            }
+                messageListeners.append(messageListener)
+                
+                // UI 업데이트
+                await MainActor.run {
+                    chatViewModel?.updateUI = { [weak self] in
+                        self?.setupUI()
+                        // 테이블 뷰를 리로드하여 최신 메시지를 표시
+                        self?.tableView.reloadData()
+                        
+                        DispatchQueue.main.async {
+                            guard let numberOfSections = self?.tableView.numberOfSections,
+                                  let numberOfRows = self?.tableView.numberOfRows(inSection: numberOfSections - 1) else {
+                                return
+                            }
+                            
+                            if numberOfRows > 0 {
+                                let indexPath = IndexPath(row: numberOfRows - 1, section: numberOfSections - 1)
+                                self?.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                            }
+                        }
+                    }
+                    
+                    chatViewModel?.updateUI?()
+                }
 
-//            self.chatViewModel?.updateUI?()
         }
     }
     
-    override func viewIsAppearing(_ animated: Bool) {
-        super.viewIsAppearing(true)
+    // MARK: - viewWillDisappear
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
         
+        // 메세지 리스너 해제
+        for listener in messageListeners {
+            listener.cancel()
+        }
 
+        messageListeners.removeAll()
     }
     
     // MARK: - Setup UI
     private func setupUI() {
-        self.view.backgroundColor = .bgSecondary
-        
         tableView.register(ChatMessageTableViewCell.self, forCellReuseIdentifier: "ChatMessageCell")
         tableView.register(ChatMessageTableViewImageCell.self, forCellReuseIdentifier: "ChatMessageImageCell")
         tableView.register(ChatMessageTableViewPlanCell.self, forCellReuseIdentifier: "ChatMessagePlanCell")

@@ -27,12 +27,11 @@ class MapViewModel: NSObject, ObservableObject {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        print("Location Auth: \(locationManager.authorizationStatus)")
     }
     
     func checkLocationAuthorization() {
-        DispatchQueue.main.async { [weak self] in
-            self?.locationManager.requestWhenInUseAuthorization()
-        }
+        self.locationManager.requestWhenInUseAuthorization()
     }
     
     func startUpdatingLocation() {

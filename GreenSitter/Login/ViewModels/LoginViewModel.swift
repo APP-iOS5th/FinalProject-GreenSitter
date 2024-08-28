@@ -29,7 +29,7 @@ class LoginViewModel: ObservableObject {
     //     }
     // }   
     
-    func firebaseFetch(docId: String) {
+    func firebaseFetch(docId: String, completion: @escaping () -> Void) {
         db.collection("users").document(docId).getDocument { (document, error) in
             if let error = error {
                 print("데이터 불러오기 실패: \(error.localizedDescription)")
@@ -91,7 +91,10 @@ class LoginViewModel: ObservableObject {
                                  chatNotification: chatNotification)
                 self.user?.updateExp(by: exp) //경험치 업데이트
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
+                
+                completion()
             }
+            
         }
     }
     
@@ -156,7 +159,7 @@ class LoginViewModel: ObservableObject {
                 print("User location updated successfully with address: \(location)")
             }
         }
-        
+        self.user?.location = location
         print("Attempting to update user location with address: \(location)")
     }
 }

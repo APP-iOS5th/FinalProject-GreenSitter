@@ -273,7 +273,7 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = viewModel.filteredPosts[indexPath.row]
-        let postDetailViewController = PostDetailViewController(post: post)
+        let postDetailViewController = PostDetailViewController(postId: post.id)
         postDetailViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(postDetailViewController, animated: true)
     }

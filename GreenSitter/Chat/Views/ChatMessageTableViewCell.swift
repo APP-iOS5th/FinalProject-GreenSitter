@@ -10,7 +10,7 @@ import UIKit
 class ChatMessageTableViewCell: UITableViewCell {
     var isIncoming: Bool = false {
         didSet {
-            bubbleView.backgroundColor = isIncoming ? .fillTertiary : .dominent
+            bubbleView.backgroundColor = isIncoming ? .fillPrimary : .dominent
             messageLabel.textColor = isIncoming ? .labelsPrimary : .white
             
             setupUI()
@@ -34,7 +34,6 @@ class ChatMessageTableViewCell: UITableViewCell {
     
     lazy var bubbleView: UIView = {
         let view = UIView()
-        view.backgroundColor = .fillTertiary
         view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
         

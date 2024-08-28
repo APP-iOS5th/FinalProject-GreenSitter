@@ -40,7 +40,7 @@ class ChatViewController: UIViewController {
             self.title = chatRoom.userNickname
         }
         
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .bgSecondary
         self.navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .never
         
@@ -71,20 +71,20 @@ class ChatViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             chatPostViewController.view.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-            chatPostViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
-            chatPostViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
+            chatPostViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            chatPostViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             chatPostViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             chatPostViewController.view.heightAnchor.constraint(equalToConstant: 100),
             
             chatMessageViewController.view.topAnchor.constraint(equalTo: chatPostViewController.view.bottomAnchor),
-            chatMessageViewController.view.bottomAnchor.constraint(equalTo: messageInputViewController.view.topAnchor, constant: -10),
+            chatMessageViewController.view.bottomAnchor.constraint(equalTo: messageInputViewController.view.topAnchor),
             chatMessageViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             chatMessageViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             chatMessageViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             
-            messageInputViewController.view.bottomAnchor.constraint(equalTo: self.view.keyboardLayoutGuide.topAnchor, constant: -10),
-            messageInputViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
-            messageInputViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
+            messageInputViewController.view.bottomAnchor.constraint(equalTo: self.view.keyboardLayoutGuide.topAnchor),
+            messageInputViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            messageInputViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             messageInputViewController.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         ])
     }

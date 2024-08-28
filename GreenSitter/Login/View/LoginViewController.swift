@@ -272,7 +272,7 @@ class LoginViewController: UIViewController, SetLocationViewControllerDelegate {
                     else if let document = document, document.exists {
                         // 재로그인 (유저 데이터가 있는 경우)
                         DispatchQueue.main.async {
-                            LoginViewModel.shared.firebaseFetch(docId: user.uid)
+                            LoginViewModel.shared.firebaseFetch(docId: user.uid) {}
                             self.navigationController?.popToRootViewController(animated: false) // 모든 푸시된 뷰를 pop
                             self.dismiss(animated: true, completion: {
                                 self.delegate?.didCompleteLogin()
@@ -367,7 +367,7 @@ extension LoginViewController:ASAuthorizationControllerDelegate, ASAuthorization
                         else if let document = document, document.exists {
                             // 재로그인 (유저 데이터가 있는 경우)
                             DispatchQueue.main.async {
-                                LoginViewModel.shared.firebaseFetch(docId: user.uid)
+                                LoginViewModel.shared.firebaseFetch(docId: user.uid) {}
                                 self.navigationController?.popToRootViewController(animated: false) // 모든 푸시된 뷰를 pop
                                 self.dismiss(animated: true, completion: {
                                     self.delegate?.didCompleteLogin()

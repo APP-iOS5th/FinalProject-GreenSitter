@@ -81,7 +81,7 @@ class ChatPostViewController: UIViewController {
         postTitleLabel.text = chatRoom.postTitle
         postStatusLabel.text = chatRoom.postStatus.rawValue
         
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .bgPrimary
         
         stackView.addSubview(postTitleLabel)
         stackView.addSubview(postStatusLabel)
@@ -90,7 +90,7 @@ class ChatPostViewController: UIViewController {
         self.view.addSubview(stackView)
         
         NSLayoutConstraint.activate([
-            postThumbnailView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            postThumbnailView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
             postThumbnailView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             postThumbnailView.widthAnchor.constraint(equalToConstant: 80),
             postThumbnailView.heightAnchor.constraint(equalToConstant: 80),
@@ -115,10 +115,10 @@ class ChatPostViewController: UIViewController {
     
     // MARK: - UITapGestureRecognizer action
     @objc private func handleTap() {
-        let postDetailViewController = PostDetailViewController(post: Post.samplePosts.first!)
+        // 특정 게시물로 이동
+        let postDetailViewController = PostDetailViewController(postId: chatRoom.postId)
         
-        // TODO: - 특정 게시물로 이동
-//        postDetailViewController.postId = postId
+//        let postDetailViewController = PostDetailViewController(postId: Post.samplePosts.first!.id)
         
         self.navigationController?.pushViewController(postDetailViewController, animated: true)
     }

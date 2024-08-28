@@ -23,7 +23,6 @@ class MessageInputViewController: UIViewController {
     // 메세지 패딩
     private lazy var messagePaddingView: UIView = {
         let paddingView = UIView()
-        paddingView.backgroundColor = .white
         paddingView.layer.cornerRadius = 15
         paddingView.layer.borderColor = UIColor.labelsSecondary.cgColor
         paddingView.layer.borderWidth = 1
@@ -47,7 +46,7 @@ class MessageInputViewController: UIViewController {
         let largeConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular, scale: .large)
         let largeSymbolImage = UIImage(systemName: "plus.circle.fill", withConfiguration: largeConfig)
         button.setImage(largeSymbolImage, for: .normal)
-        button.tintColor = .fillSecondary
+        button.tintColor = .labelsTertiary
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.addAction(UIAction { [weak self] _ in
@@ -63,6 +62,7 @@ class MessageInputViewController: UIViewController {
         button.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         
+        button.isEnabled = false
         button.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             self.chatViewModel?.sendButtonTapped(text: self.messageInputField.text, chatRoom: chatRoom)
@@ -76,11 +76,22 @@ class MessageInputViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
+        
+        // 메세지 입력하지 않았을 때 sendButton 비활성화
+        self.messageInputField.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.textFieldDidChange(self.messageInputField)
+        }, for: .editingChanged)
+
     }
     
     // MARK: - Setup UI
     private func setupUI() {
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .bgPrimary
+        plusButton.backgroundColor = .bgPrimary
+        messagePaddingView.backgroundColor = .bgPrimary
+        sendButton.backgroundColor = .bgPrimary
         
         messagePaddingView.addSubview(messageInputField)
         self.view.addSubview(plusButton)
@@ -88,7 +99,9 @@ class MessageInputViewController: UIViewController {
         self.view.addSubview(sendButton)
         
         NSLayoutConstraint.activate([
-            plusButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            plusButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 10),
+            plusButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -10),
+            plusButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
             plusButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             plusButton.widthAnchor.constraint(equalToConstant: 34),
             plusButton.heightAnchor.constraint(equalToConstant: 34),
@@ -100,16 +113,24 @@ class MessageInputViewController: UIViewController {
             messageInputField.centerXAnchor.constraint(equalTo: messagePaddingView.centerXAnchor),
             messageInputField.centerYAnchor.constraint(equalTo: messagePaddingView.centerYAnchor),
             
-            messagePaddingView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            messagePaddingView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 10),
+            messagePaddingView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -10),
             messagePaddingView.leadingAnchor.constraint(equalTo: plusButton.trailingAnchor, constant: 5),
             messagePaddingView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             
+            sendButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 10),
+            sendButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -10),
             sendButton.leadingAnchor.constraint(equalTo: messagePaddingView.trailingAnchor, constant: 5),
-            sendButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            sendButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10),
             sendButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             sendButton.widthAnchor.constraint(equalToConstant: 34),
             sendButton.heightAnchor.constraint(equalToConstant: 34)
         ])
+    }
+    
+    // MARK: - MessageInputField
+    func textFieldDidChange(_ textField: UITextField) {
+        sendButton.isEnabled = !(textField.text?.isEmpty ?? true)
     }
     
     // MARK: - plus button

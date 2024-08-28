@@ -11,12 +11,21 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
+
+protocol PostDetailViewModelDelegate: AnyObject {
+    func navigateToLoginViewController()
+}
 
 class PostDetailViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private var firestoreManager = FirestoreManager()
 
     @Published var selectedPost: Post?
+    
+    var onChatButtonTapped: ((ChatRoom) -> Void)?
+    
+    var delegate: PostDetailViewModelDelegate?
     
     // MARK: - Post 삭제
     func deletePost(postId: String, completion: @escaping (Bool) -> Void) {
@@ -30,13 +39,39 @@ class PostDetailViewModel: ObservableObject {
             }
         }
     }
-    
+    // MARK: - Post 가져오기
+    func fetchPostById(postId: String, completion: @escaping (Result<Post, Error>) -> Void) {
+        db.collection("posts").document(postId).getDocument { [weak self] snapshot, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Error fetching document: \(error.localizedDescription)")
+                completion(.failure(error))
+                return
+            }
+            
+            guard let document = snapshot, document.exists else {
+                print("No document found for id: \(postId)")
+                completion(.failure(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "No document found"])))
+                return
+            }
+            
+            do {
+                let post = try document.data(as: Post.self)
+                DispatchQueue.main.async {
+                    self.selectedPost = post
+                    print("Successfully fetched post: \(String(describing: self.selectedPost))")
+                    completion(.success(post))
+                }
+            } catch {
+                print("Failed to decode post: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
+        }
+    }
 
     // 임시 데이터
-    var user = SampleChatData.exampleUsers[2]
-    var post = SampleChatData.examplePosts[1]
-    
-    var onChatButtonTapped: ((ChatRoom) -> Void)?
+    var user = LoginViewModel.shared.user
     
     // 채팅버튼 클릭 시 호출될 메서드
     func chatButtonTapped() async {
@@ -79,15 +114,20 @@ class PostDetailViewModel: ObservableObject {
     }
     
     // ChatRoom 객체 생성
-    func makeChat() -> ChatRoom? {
+    private func makeChat() -> ChatRoom? {
         
-        // 게시물 썸네일
-        guard let postThumbnail = post.postImages?.first else {
+        guard let user = LoginViewModel.shared.user else {
+            delegate?.navigateToLoginViewController()
+            
             return nil
         }
         
-        // TODO: - messages는 하위 컬렉션으로 저장
-        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: post.userId, userNickname: user.nickname, postUserNickname: post.nickname, userProfileImage: user.profileImage, postUserProfileImage: post.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: post.userNotification, userLocation: user.location, postUserLocation: post.userLocation, messages: [], postId: post.id, postImage: postThumbnail, postTitle: post.postTitle, postStatus: post.postStatus)
+        // 게시물 썸네일
+        guard let postThumbnail = selectedPost?.postImages?.first else {
+            return nil
+        }
+        
+        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost!.userNotification, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus)
         
         return newChat
     }
