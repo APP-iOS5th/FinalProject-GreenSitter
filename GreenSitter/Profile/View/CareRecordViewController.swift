@@ -58,13 +58,10 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
         let currentPost = post[indexPath.row]
         
-        switch currentPost.postStatus {
-        case .beforeTrade:
-            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
-        case .inTrade:
-            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
-        case .completedTrade:
+        if currentPost.postStatus.rawValue == "거래완료" {
             cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        } else {
+            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
         }
         
         cell.statusLabel.text = currentPost.postStatus.rawValue
