@@ -70,9 +70,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     private let pickerImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .lightGray
         imageView.tintColor = .gray
-        imageView.image = UIImage(systemName: "photo.on.rectangle.fill")
+        imageView.image = UIImage(systemName: "rectangle.stack.fill.badge.plus")
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -283,7 +282,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             imageStackView.trailingAnchor.constraint(equalTo: imageScrollView.trailingAnchor, constant: -16),
             imageStackView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
-            pickerImageView.widthAnchor.constraint(equalToConstant: 100),
+            pickerImageView.widthAnchor.constraint(equalToConstant: 80),
             pickerImageView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
             dividerLine2.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: 16),
