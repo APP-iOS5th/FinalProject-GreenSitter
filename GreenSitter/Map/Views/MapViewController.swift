@@ -71,8 +71,8 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        bindViewModel()
         viewModel.checkLocationAuthorization()
+        bindViewModel()
 
         // 로그인 했을 경우 그리고 위치 정보 있을 경우.
         if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
