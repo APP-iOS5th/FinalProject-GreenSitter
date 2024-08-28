@@ -33,6 +33,7 @@ class MainPostListViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
     private let locationLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -40,29 +41,43 @@ class MainPostListViewController: UIViewController {
         label.textColor = .labelsPrimary
         return label
     }()
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
+    private let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.color = .red
+        spinner.backgroundColor = UIColor.red.withAlphaComponent(0.5)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        return spinner
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .bgPrimary
         
+        
         setupCategoryButtons()
         setupNavigationBarButtons()
         setupLocationLabel()
-
-        fetchPostsByCategoryAndLocationWithViewModel()
-        
         setupTableView()
+        setupSpinner()
         bindViewModel()
+        
+        fetchPostsByCategoryAndLocationWithViewModel() // Fetch posts with initial setup
     }
     
     private func fetchPostsByCategoryAndLocationWithViewModel() {
         guard let categoryText = selectedButton?.titleLabel?.text else {
             return
+        }
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.showSpinner()
         }
         
         // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
@@ -83,8 +98,9 @@ class MainPostListViewController: UIViewController {
         }
         
         fetchPostsByCategoryAndLocationWithViewModel()
+        
         setupLocationLabel()
-
+        
         // 선택된 row 해제
         if let indexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: false)
@@ -97,6 +113,10 @@ class MainPostListViewController: UIViewController {
             .sink { [weak self] posts in
                 print("MainView - bindViewModel posts: \(posts)")
                 self?.tableView.reloadData()
+                // Ensure spinner is hidden on the main thread
+                DispatchQueue.main.async {
+                    self?.hideSpinner()
+                }
             }
             .store(in: &cancellables)
     }
@@ -196,6 +216,29 @@ class MainPostListViewController: UIViewController {
         ])
     }
     
+    private func setupSpinner() {
+        view.addSubview(spinner)
+        
+        NSLayoutConstraint.activate([
+            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
+    private func showSpinner() {
+        print("Showing spinner")
+        DispatchQueue.main.async {
+            self.spinner.startAnimating()
+        }
+    }
+
+    private func hideSpinner() {
+        print("Hiding spinner")
+        DispatchQueue.main.async {
+            self.spinner.stopAnimating()
+        }
+    }
+    
     @objc func categoryButtonTapped(_ sender: UIButton) {
         // 이전에 선택된 버튼의 텍스트 스타일 초기화
         selectedButton?.setTitleColor(.labelsSecondary, for: .normal)
@@ -276,5 +319,4 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
         postDetailViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(postDetailViewController, animated: true)
     }
-    
 }

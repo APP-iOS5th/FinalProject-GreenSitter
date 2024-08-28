@@ -14,6 +14,7 @@ class MainPostListViewModel {
     private var cancellables = Set<AnyCancellable>()
     
     @Published var filteredPosts: [Post] = []
+    @Published var isUploadingImage: Bool = false // 이미지 업로드 상태
 
     // Haversine 공식을 사용하여 두 위치 간의 거리 계산 (단위: 미터)
     private func calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
@@ -35,9 +36,13 @@ class MainPostListViewModel {
             return
         }
         
+        isUploadingImage = true // 이미지 업로드 시작
+        
         db.collection("posts")
             .whereField("postType", isEqualTo: postType.rawValue)
             .getDocuments { [weak self] (querySnapshot, error) in
+                self?.isUploadingImage = false // 이미지 업로드 완료
+                
                 if let error = error {
                     print("Error getting documents: \(error)")
                     self?.filteredPosts = []
@@ -71,8 +76,12 @@ class MainPostListViewModel {
     
     // 유저 위치 정보(옵셔널) 만 받기
     func fetchPostsWithin3Km(userLocation: Location?) {
+        isUploadingImage = true // 이미지 업로드 시작
+        
         db.collection("posts")
             .getDocuments { [weak self] (querySnapshot, error) in
+                self?.isUploadingImage = false // 이미지 업로드 완료
+                
                 if let error = error {
                     print("Error getting documents: \(error)")
                     self?.filteredPosts = []
@@ -110,8 +119,12 @@ class MainPostListViewModel {
     
     // 기존 코드
     func fetchAllPosts() {
+        isUploadingImage = true // 이미지 업로드 시작
+        
         db.collection("posts")
             .getDocuments { [weak self] snapshot, error in
+                self?.isUploadingImage = false // 이미지 업로드 완료
+                
                 if let error = error {
                     print("Error getting documents: \(error)")
                     self?.filteredPosts = []
