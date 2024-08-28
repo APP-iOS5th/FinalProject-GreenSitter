@@ -13,7 +13,9 @@ class ServiceViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        navigationItem.title = "서비스 이용약관"
+        view.backgroundColor = UIColor(named: "BGPrimary")
+
         // WKWebView 초기화 및 설정
         webView = WKWebView(frame: self.view.frame)
         webView.translatesAutoresizingMaskIntoConstraints = false
@@ -31,6 +33,10 @@ class ServiceViewController: UIViewController {
 
         
         NSLayoutConstraint.activate([
+             webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            webView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+             webView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
         
     }
