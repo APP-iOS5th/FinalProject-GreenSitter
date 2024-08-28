@@ -16,13 +16,18 @@ import FirebaseStorage
 class PostDetailViewController: UIViewController {
     
     // MARK: - Properties
+    var hasImages: Bool = false
+
+    // 제약 조건 배열 선언
+    var constraintsWithoutImages: [NSLayoutConstraint] = []
+    var constraintsWithImages: [NSLayoutConstraint] = []
     
     private var postDetailViewModel = PostDetailViewModel()
     private var imageUrls: [String] = []
     private let postId: String
     private var overlayPostMapping: [MKCircle: Post] = [:]
     private var postBodyTextViewHeightConstraint: NSLayoutConstraint?
-
+    
     // MARK: - Initializer
     
     init(postId: String) {
@@ -88,19 +93,19 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-//    private let dividerLine1: UIView = {
-//        let line = UIView()
-//        line.backgroundColor = .separatorsNonOpaque
-//        line.translatesAutoresizingMaskIntoConstraints = false
-//        return line
-//    }()
-//    
-//    private let dividerLine2: UIView = {
-//        let line = UIView()
-//        line.backgroundColor = .separatorsNonOpaque
-//        line.translatesAutoresizingMaskIntoConstraints = false
-//        return line
-//    }()
+    //    private let dividerLine1: UIView = {
+    //        let line = UIView()
+    //        line.backgroundColor = .separatorsNonOpaque
+    //        line.translatesAutoresizingMaskIntoConstraints = false
+    //        return line
+    //    }()
+    //
+    //    private let dividerLine2: UIView = {
+    //        let line = UIView()
+    //        line.backgroundColor = .separatorsNonOpaque
+    //        line.translatesAutoresizingMaskIntoConstraints = false
+    //        return line
+    //    }()
     
     private let dividerLine3: UIView = {
         let line = UIView()
@@ -211,7 +216,7 @@ class PostDetailViewController: UIViewController {
         view.backgroundColor = .bgPrimary
         mapView.delegate = self
         postBodyTextView.delegate = self
-
+        
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
         loadPost(with: postId)
     }
@@ -233,8 +238,8 @@ class PostDetailViewController: UIViewController {
             }
         }
     }
-
-
+    
+    
     private func configureUI(with post: Post) {
         setupUI()
         configure(with: post)
@@ -353,7 +358,7 @@ class PostDetailViewController: UIViewController {
         postTitleLabel.text = post.postTitle
         postTimeLabel.text = timeAgoSinceDate(post.updateDate)
         configurePostBodyTextView(with: post.postBody)
-
+        
         statusLabel.text = post.postStatus.rawValue
         userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
         
@@ -408,27 +413,22 @@ class PostDetailViewController: UIViewController {
         
         addTapGestureToImages()
     }
-
+    
     
     
     private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(userProfileButton)
-        
         contentView.addSubview(profileImageView)
         contentView.addSubview(userNameLabel)
         contentView.addSubview(userLevelLabel)
         contentView.addSubview(postTimeLabel)
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
-        
         contentView.addSubview(imagesScrollView)
         imagesScrollView.addSubview(imagesStackView)
-        
         contentView.addSubview(postBodyTextView)
-//        contentView.addSubview(dividerLine1)
-//        contentView.addSubview(dividerLine2)
         contentView.addSubview(dividerLine3)
         contentView.addSubview(contactButton)
         contentView.addSubview(mapLabel)
@@ -439,6 +439,14 @@ class PostDetailViewController: UIViewController {
         // 기본값은 안보이게
         contactButton.isHidden = true
         
+        // 기본 제약 조건 설정
+        setupInitialConstraints()
+        
+        // 이미지 유무에 따라 제약 조건 업데이트
+        updateConstraintsForImagesPresence()
+    }
+
+    private func setupInitialConstraints() {
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -487,13 +495,6 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-//            dividerLine1.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 10),
-//            dividerLine1.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-//            dividerLine1.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-//            dividerLine1.heightAnchor.constraint(equalToConstant: 1),
-            
-            
-            imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             imagesScrollView.heightAnchor.constraint(equalToConstant: 200),
@@ -504,17 +505,10 @@ class PostDetailViewController: UIViewController {
             imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
             imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
             
-//            dividerLine2.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
-//            dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-//            dividerLine2.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-//            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
-            
-            postBodyTextView.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             
-            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
             dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             dividerLine3.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
@@ -537,6 +531,34 @@ class PostDetailViewController: UIViewController {
             descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
+
+    private func updateConstraintsForImagesPresence() {
+        let hasImages = !imagesStackView.arrangedSubviews.isEmpty // 예시로 이미지가 있는지 여부를 판단하는 방법입니다. 실제로는 다른 방법으로 판단할 수 있습니다.
+        
+        if hasImages {
+            NSLayoutConstraint.activate([
+                imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
+                postBodyTextView.topAnchor.constraint(equalTo: imagesScrollView.bottomAnchor, constant: 20),
+                dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10)
+            ])
+            
+            // 기존 제약 조건 비활성화
+            NSLayoutConstraint.deactivate([
+                postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
+                dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10)
+            ])
+            
+            // 기존 제약 조건 비활성화
+            NSLayoutConstraint.deactivate([
+                imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20)
+            ])
+        }
+    }
+
     
     // MARK: - Image Load
     private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {
@@ -555,7 +577,6 @@ class PostDetailViewController: UIViewController {
             }
         }
     }
-    
     
     private func timeAgoSinceDate(_ date: Date) -> String {
         let calendar = Calendar.current
@@ -608,7 +629,7 @@ class PostDetailViewController: UIViewController {
         present(fullScreenPageVC, animated: true, completion: nil)
     }
     
-
+    
 }
 
 extension PostDetailViewController: UITextViewDelegate {
@@ -655,14 +676,14 @@ extension PostDetailViewController: MKMapViewDelegate {
     
     private func configureMapView(with post: Post) {
         print("Post Detail Map with Post: \(post)")
-//        mapView.removeAnnotations(mapView.annotations)
-//        mapView.removeOverlays(mapView.overlays)
-//        overlayPostMapping.removeAll()
+        //        mapView.removeAnnotations(mapView.annotations)
+        //        mapView.removeOverlays(mapView.overlays)
+        //        overlayPostMapping.removeAll()
         guard let latitude = post.location?.latitude,
               let longitude = post.location?.longitude else { return }
         
         let circleCenter = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-
+        
         // make random Center
         let randomOffset = generateRandomOffset(for: circleCenter, radius: 500)
         let randomCenter = CLLocationCoordinate2D (
@@ -684,9 +705,9 @@ extension PostDetailViewController: MKMapViewDelegate {
         
         let annotation = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
         mapView.addAnnotation(annotation)  // MKAnnotationView
-
+        
     }
-
+    
     // 실제 위치(center) 기준으로 반경 내의 무작위 좌표를 새로운 중심점으로 설정
     func generateRandomOffset(for center: CLLocationCoordinate2D, radius: Double) -> (latitudeDelta: Double, longitudeDelta: Double) {
         let earthRadius: Double = 6378137 // meters
@@ -704,7 +725,7 @@ extension PostDetailViewController: MKMapViewDelegate {
         guard let annotation = annotation as? CustomAnnotation else {
             return nil
         }
-           
+        
         var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: CustomAnnotationView.identifier)
         
         if annotationView == nil {
@@ -741,7 +762,7 @@ extension PostDetailViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let circleOverlay = overlay as? MKCircle {
             let circleRenderer = MKCircleRenderer(circle: circleOverlay)
-//            print("rendererFor methods: dict: \(overlayPostMapping)")
+            //            print("rendererFor methods: dict: \(overlayPostMapping)")
             
             // 딕셔너리로부터 해당 circleOverlay에 저장된 Post 가져오기
             if let post = overlayPostMapping[circleOverlay] {
@@ -756,7 +777,7 @@ extension PostDetailViewController: MKMapViewDelegate {
                 print("post is nil")
                 circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.5) // Default color
             }
-
+            
             circleRenderer.strokeColor = .separatorsNonOpaque
             circleRenderer.lineWidth = 2
             return circleRenderer
