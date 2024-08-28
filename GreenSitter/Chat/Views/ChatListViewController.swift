@@ -192,9 +192,9 @@ class ChatListViewController: UIViewController {
         self.title = "나의 채팅"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
+//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
         // Edit 버튼 비활성화
-        self.navigationItem.rightBarButtonItem?.isEnabled = false
+//        self.navigationItem.rightBarButtonItem?.isEnabled = false
         
         container.addSubview(iconImageView)
         container.addSubview(goToHomeButton)
@@ -230,12 +230,15 @@ class ChatListViewController: UIViewController {
     // goToHomeButton 눌렀을 때
     private func navigateToHome() {
         let homeViewController = MainPostListViewController()
-        self.navigationController?.pushViewController(homeViewController, animated: true)
         
-        if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-           let window = windowScene.windows.first(where: \.isKeyWindow),
-           let tabBarController = window.rootViewController as? UITabBarController {
-            tabBarController.selectedIndex = 0 // 게시판(홈) 탭으로 이동
+        // 현재 탭 바 컨트롤러 가져오기
+        if let tabBarController = self.tabBarController,
+           let navigationController = tabBarController.viewControllers?[0] as? UINavigationController {
+
+            navigationController.pushViewController(homeViewController, animated: true)
+
+            // 홈 탭으로 전환
+            tabBarController.selectedIndex = 0
         }
     }
     
@@ -245,6 +248,7 @@ class ChatListViewController: UIViewController {
         if let tabBarController = self.tabBarController {
             tabBarController.selectedIndex = 3
         }
+        
         let loginViewController = LoginViewController()
         loginViewController.modalPresentationStyle = .fullScreen
         self.present(loginViewController, animated: true)
@@ -292,7 +296,13 @@ extension ChatListViewController: UITableViewDelegate {
             Task {
                 do {
                     try await chatViewModel.deleteChatRoom(at: indexPath.row)
-                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    // 채팅 목록이 비어 있는지 확인하여 UI 업데이트
+                    if chatViewModel.chatRooms.isEmpty {
+                        self.setupEmptyChatListUI()
+                    } else {
+                        self.tableView.reloadData()
+                    }
+
                     print("delete")
                 } catch {
                     print("Error deleting chat room: \(error.localizedDescription)")

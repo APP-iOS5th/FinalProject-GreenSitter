@@ -256,16 +256,17 @@ class PostDetailViewController: UIViewController {
         
         postDetailViewModel.delegate = self
         
-        contactButton.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
-            Task {
-                await self.postDetailViewModel.chatButtonTapped()
-            }
-        }, for: .touchUpInside)
-        
-        postDetailViewModel.onChatButtonTapped = { [weak self] chatRoom in
-            self?.navigateToChatDetail(chatRoom: chatRoom)
-        }
+        // 이 부분 때문에 채팅방이 중복으로 만들어짐
+//        contactButton.addAction(UIAction { [weak self] _ in
+//            guard let self = self else { return }
+//            Task {
+//                await self.postDetailViewModel.chatButtonTapped()
+//            }
+//        }, for: .touchUpInside)
+//        
+//        postDetailViewModel.onChatButtonTapped = { [weak self] chatRoom in
+//            self?.navigateToChatDetail(chatRoom: chatRoom)
+//        }
     }
     
     private func setupNavigationBarWithEdit(post: Post) {
@@ -439,7 +440,7 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(descriptionLabel)
         
         // 기본값은 안보이게
-        contactButton.isHidden = true
+        contactButton.isHidden = false /// true로 수정
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -583,19 +584,18 @@ class PostDetailViewController: UIViewController {
     }
     
     private func navigateToChatDetail(chatRoom: ChatRoom) {
-        if let tabBarController = self.tabBarController {
-            // 2번째 탭 선택
+        let chatViewModel = ChatViewModel()
+        let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
+        chatDetailViewController.chatViewModel = chatViewModel
+        
+        // 현재 탭 바 컨트롤러 가져오기
+        if let tabBarController = self.tabBarController,
+           let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
+
+            navigationController.pushViewController(chatDetailViewController, animated: true)
+
+            // 채팅 탭으로 전환
             tabBarController.selectedIndex = 2
-            
-            // 2번째 탭의 UINavigationController 가져오기
-            if let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
-                let chatViewModel = ChatViewModel()
-                let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
-                chatDetailViewController.chatViewModel = chatViewModel
-                
-                // 2번째 탭의 UINavigationController에 ChatViewController를 푸시
-                navigationController.pushViewController(chatDetailViewController, animated: true)
-            }
         }
     }
     

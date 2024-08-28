@@ -22,14 +22,11 @@ class PostDetailViewModel: ObservableObject {
     private var firestoreManager = FirestoreManager()
 
     @Published var selectedPost: Post?
+    var user = LoginViewModel.shared.user
     
     var onChatButtonTapped: ((ChatRoom) -> Void)?
     
     var delegate: PostDetailViewModelDelegate?
-    
-//    init(selectedPost: Post) {
-//        self.selectedPost = selectedPost
-//    }
     
     // MARK: - Post 삭제
     func deletePost(postId: String, completion: @escaping (Bool) -> Void) {
@@ -74,13 +71,14 @@ class PostDetailViewModel: ObservableObject {
         }
     }
 
-    // 임시 데이터
-    var user = LoginViewModel.shared.user
-    
     // 채팅버튼 클릭 시 호출될 메서드
     func chatButtonTapped() async {
         guard let newChat = makeChat() else {
             print("Failed to create new chat")
+            return
+        }
+        
+        guard let user = LoginViewModel.shared.user else {
             return
         }
         
@@ -96,9 +94,9 @@ class PostDetailViewModel: ObservableObject {
                 } else {
                     print("onChatButtonTapped is not set")
                 }
-                
                 return
             }
+
             
             // 채팅방 데이터 저장
             try await self.firestoreManager.saveChatRoom(newChat)
