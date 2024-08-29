@@ -152,6 +152,7 @@ class ChatTableViewCell: UITableViewCell {
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
+        // TODO: - lastMessage가 없을 때 return되면서 이전 값으로 적용되는 문제
         guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
             return
         }
@@ -173,12 +174,13 @@ class ChatTableViewCell: UITableViewCell {
         
         // 안 읽은 메세지 수
         /// read = false인 메세지 수
-        let unreadCount = chatViewModel?.unreadMessages.values.flatMap { $0 }.filter {
-            $0.receiverUserId == userId && !$0.isRead
-        }.count
-        if unreadCount! > 0 {
+        guard let unreadCount = chatViewModel?.unreadMessages[chatRoom!.id]?.count else {
+            return
+        }
+        
+        if unreadCount > 0 {
             circleView.backgroundColor = .dominent
-            unreadCountLabel.text = "\(unreadCount!)"
+            unreadCountLabel.text = "\(unreadCount)"
         // 안 읽은 메세지 수가 0일 때 초기화
         } else if unreadCount == 0 {
             circleView.backgroundColor = .clear

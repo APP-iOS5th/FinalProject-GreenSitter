@@ -11,10 +11,10 @@ class ChatMessageTableViewCell: UITableViewCell {
     var chatViewModel: ChatViewModel?
     var chatRoom: ChatRoom?
     
-    var isIncoming: Bool = false {
+    var isIncoming: Bool? {
         didSet {
-            bubbleView.backgroundColor = isIncoming ? .fillPrimary : .dominent
-            messageLabel.textColor = isIncoming ? .labelsPrimary : .white
+            bubbleView.backgroundColor = isIncoming! ? .fillPrimary : .dominent
+            messageLabel.textColor = isIncoming! ? .labelsPrimary : .white
             
             setupUI()
         }
@@ -93,6 +93,7 @@ class ChatMessageTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         setupUI()
+
     }
     
     required init?(coder: NSCoder) {
@@ -111,7 +112,7 @@ class ChatMessageTableViewCell: UITableViewCell {
         profileImageView.removeFromSuperview()
         isReadLabel.removeFromSuperview()
         
-        if isIncoming {
+        if isIncoming ?? true {
             contentView.addSubview(profileImageView)
             
             // timeLabel이 충분한 공간을 차지하도록 우선순위 설정

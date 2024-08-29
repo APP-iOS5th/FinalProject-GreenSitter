@@ -18,12 +18,15 @@ class ChatViewModel {
     var hasChats = false
     
     // 임시 유저 id
-    let userId = "250e8400-e29b-41d4-a716-446655440001"
-//    var userId: String? {
-//        didSet {
-//            isLoggedIn = userId != nil
-//        }
-//    }
+//    let userId = "250e8400-e29b-41d4-a716-446655440003"
+    var user: User? {
+        didSet {
+            isLoggedIn = user != nil
+        }
+    }
+    var userId: String {
+        return user!.id
+    }
     
     var chatRooms: [ChatRoom] = [] {
         didSet {
@@ -54,8 +57,8 @@ class ChatViewModel {
     
     init() {
         // 현재 사용자 ID 설정
-//        self.userId = LoginViewModel.shared.user?.id
-//        self.isLoggedIn = userId != nil
+        self.user = LoginViewModel.shared.user
+        self.isLoggedIn = user != nil
     }
     
 //    func loadUser(completion: @escaping () -> Void) {
@@ -134,7 +137,10 @@ class ChatViewModel {
     // 채팅방 읽음 처리 업데이트
     func updateUnread(chatRoomId: String) async throws {
         do {
-            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: self.userId, unreadMessages: self.unreadMessages[chatRoomId]!)
+            guard let unreadMessages = self.unreadMessages[chatRoomId] else {
+                return
+            }
+            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: self.userId, unreadMessages: unreadMessages)
             self.unreadMessages[chatRoomId] = []
         } catch {
             print("Error updating notification of chatRoom: \(error.localizedDescription)")

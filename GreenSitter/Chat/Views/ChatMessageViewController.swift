@@ -45,8 +45,10 @@ class ChatMessageViewController: UIViewController {
     // MARK: - ViewWillAppear
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        
         Task {
+            // 메세지 읽음 처리
+            try await chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
+            
             let messageListener = Task {
                 // 옵셔널 언래핑
                 if let messagesStream = await chatViewModel?.loadMessages(chatRoomId: chatRoom.id) {
@@ -142,7 +144,6 @@ extension ChatMessageViewController: UITableViewDataSource {
             } else {
                 cell.isIncoming = true
             }
-            
             cell.isRead = messages[indexPath.row].isRead
 
             cell.chatRoom = chatRoom
@@ -291,7 +292,6 @@ extension ChatMessageViewController: UITableViewDataSource {
             } else {
                 cell.isIncoming = true
             }
-            
             cell.isRead = messages[indexPath.row].isRead
             
             return cell
