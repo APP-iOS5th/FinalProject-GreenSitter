@@ -8,24 +8,31 @@
 import Foundation
 import Combine
 
-class SearchPostViewModel: ObservableObject {
-    @Published var filteredPosts: [Post] = []
+class SearchPostViewModel {
+    private let posts: [Post]
     
-    private var allPosts: [Post] = []
-    private var cancellables = Set<AnyCancellable>()
+    @Published var filteredPosts: [Post] = [] {
+        didSet {
+            onPostsChanged?(filteredPosts.isEmpty)
+        }
+    }
+    
+    var onPostsChanged: ((Bool) -> Void)?
     
     init(posts: [Post]) {
-        self.allPosts = posts
+        self.posts = posts
+        onPostsChanged?(filteredPosts.isEmpty)
     }
     
     func filterPosts(with searchText: String) {
         if searchText.isEmpty {
-            filteredPosts = allPosts
+            filteredPosts = [] // 검색어가 없을 경우 빈 배열
         } else {
-            filteredPosts = allPosts.filter { post in
-                post.postTitle.lowercased().contains(searchText.lowercased()) ||
-                post.postBody.lowercased().contains(searchText.lowercased())
+            filteredPosts = posts.filter {
+                $0.postTitle.contains(searchText) ||
+                $0.postBody.contains(searchText)
             }
         }
     }
 }
+

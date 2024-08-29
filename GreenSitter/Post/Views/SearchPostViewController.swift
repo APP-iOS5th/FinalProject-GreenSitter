@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-class SearchPostViewController: UIViewController {
+class SearchPostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     private let viewModel: SearchPostViewModel
     private var cancellables = Set<AnyCancellable>()
@@ -26,9 +26,22 @@ class SearchPostViewController: UIViewController {
         return tableView
     }()
     
+    private let emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "검색 결과가 없습니다."
+        label.textAlignment = .center
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     init(posts: [Post]) {
         self.viewModel = SearchPostViewModel(posts: posts)
         super.init(nibName: nil, bundle: nil)
+        viewModel.onPostsChanged = { [weak self] isEmpty in
+            self?.emptyLabel.isHidden = !isEmpty
+            self?.tableView.isHidden = isEmpty
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -52,6 +65,7 @@ class SearchPostViewController: UIViewController {
         view.backgroundColor = .systemBackground
         view.addSubview(searchBar)
         view.addSubview(tableView)
+        view.addSubview(emptyLabel)
         searchBar.delegate = self
     }
     
@@ -64,7 +78,10 @@ class SearchPostViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
@@ -77,8 +94,7 @@ class SearchPostViewController: UIViewController {
     private func bindViewModel() {
         viewModel.$filteredPosts
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] posts in
-                print("Received posts: \(posts.count)")
+            .sink { [weak self] _ in
                 self?.tableView.reloadData()
             }
             .store(in: &cancellables)
@@ -87,33 +103,9 @@ class SearchPostViewController: UIViewController {
     private func performSearch(with searchText: String) {
         viewModel.filterPosts(with: searchText)
     }
-}
-
-extension SearchPostViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.count >= 2 { // 검색어가 두 글자 이상인 경우 검색 실행
-            performSearch(with: searchText)
-        } else if searchText.isEmpty {
-            performSearch(with: "")
-        }
-    }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        // 검색 버튼이 클릭된 경우 키보드 숨김
-        searchBar.resignFirstResponder()
-    }
+    // MARK: - TableView DataSource Methods
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        // 취소 버튼이 클릭된 경우 검색어 비우기 및 키보드 숨김
-        searchBar.text = ""
-        searchBar.resignFirstResponder()
-        performSearch(with: "")
-    }
-}
-
-//MARK: - TableView
-
-extension SearchPostViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.filteredPosts.count
     }
@@ -127,6 +119,7 @@ extension SearchPostViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    // 선택된 셀 처리
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedPost = viewModel.filteredPosts[indexPath.row]
         let postDetailViewController = PostDetailViewController(postId: selectedPost.id)
@@ -134,3 +127,27 @@ extension SearchPostViewController: UITableViewDelegate, UITableViewDataSource {
         navigationController?.pushViewController(postDetailViewController, animated: true)
     }
 }
+
+//MARK: - UISearchBarDelegate
+
+extension SearchPostViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.count >= 2 {
+            performSearch(with: searchText)
+        } else if searchText.isEmpty {
+            performSearch(with: "")
+        }
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        performSearch(with: "")
+    }
+}
+
+
