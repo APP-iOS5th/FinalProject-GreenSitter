@@ -49,8 +49,9 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedPost = post[indexPath.row]
+        let postId = selectedPost.id
         
-        let postDetailViewController = PostDetailViewController(postId: selectedPost.id)
+        let postDetailViewController = PostDetailViewController(postId: postId)
         navigationController?.pushViewController(postDetailViewController, animated: true)
     }
     

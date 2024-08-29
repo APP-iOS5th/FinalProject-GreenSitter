@@ -22,7 +22,7 @@ class ServiceViewController: UIViewController {
         self.view.addSubview(webView)
         
         // URL 생성
-        if let url = URL(string: "https://likelion.notion.site/1b2f8fde711c4cb49627087bbc06ab90") {
+        if let url = URL(string: "https://enchanting-marmoset-e63.notion.site/926e4ab67f774402a7bd5a7c49f3eb67") {
             let request = URLRequest(url: url)
             
             // 웹 페이지 로드
