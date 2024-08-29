@@ -24,7 +24,6 @@ class EditPostViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private let postId: String
     private let postType: PostType
-    
     private let selectedPost: Post
     
     init(selectedPost: Post) {
@@ -35,7 +34,7 @@ class EditPostViewModel: ObservableObject {
         self.location = selectedPost.location
         self.postType = selectedPost.postType
         
-        // 옵셔널 바인딩을 사용하여 postImages 처리
+        // 초기화 시 기존 이미지를 로드
         if let postImageURLs = selectedPost.postImages {
             loadExistingImages(from: postImageURLs) {
                 print("All images loaded")
@@ -45,6 +44,7 @@ class EditPostViewModel: ObservableObject {
         print("selectedPost: \(self.selectedPost)")
     }
     
+    // 기존 이미지를 로드하는 함수
     func loadExistingImages(from urls: [String], completion: @escaping () -> Void) {
         let group = DispatchGroup()
         
@@ -76,6 +76,7 @@ class EditPostViewModel: ObservableObject {
         }
     }
     
+    // 새로 선택된 이미지를 추가하는 함수
     func addSelectedImages(results: [PHPickerResult], completion: @escaping () -> Void) {
         let dispatchGroup = DispatchGroup()
         
@@ -103,11 +104,13 @@ class EditPostViewModel: ObservableObject {
         }
     }
     
+    // 선택된 이미지를 삭제하는 함수
     func removeSelectedImage(_ index: Int) {
         guard index >= 0 && index < selectedImages.count else { return }
         selectedImages.remove(at: index)
     }
     
+    // 기존 이미지를 삭제하는 함수
     func removeExistingImage(_ urlString: String) {
         if let index = postImages.firstIndex(where: { $0.accessibilityIdentifier == urlString }) {
             postImages.remove(at: index)
@@ -115,6 +118,7 @@ class EditPostViewModel: ObservableObject {
         }
     }
     
+    // 새 이미지를 업로드하는 함수
     private func uploadNewImages(completion: @escaping (Result<[String], Error>) -> Void) {
         var imageURLs: [String] = []
         let group = DispatchGroup()
@@ -157,6 +161,7 @@ class EditPostViewModel: ObservableObject {
         }
     }
     
+    // 삭제할 이미지를 처리하는 함수
     private func deleteRemovedImages(completion: @escaping (Result<Void, Error>) -> Void) {
         let group = DispatchGroup()
         
@@ -178,6 +183,7 @@ class EditPostViewModel: ObservableObject {
         }
     }
     
+    // 포스트를 업데이트하는 함수
     func updatePost(completion: @escaping (Result<Post, Error>) -> Void) {
         deleteRemovedImages { [weak self] result in
             guard let self = self else { return }
@@ -187,20 +193,24 @@ class EditPostViewModel: ObservableObject {
                 self.uploadNewImages { result in
                     switch result {
                     case .success(let newImageURLs):
+                        var allImageURLs = self.selectedPost.postImages ?? []
+                        allImageURLs.append(contentsOf: newImageURLs)
+                        
                         let updatedPost = Post(
                             id: self.postId,
                             enabled: true,
-                            createDate: Date(),
+                            createDate: self.selectedPost.createDate,
                             updateDate: Date(),
-                            userId: "currentUserId",  // 실제 사용자 ID를 여기에 넣어야 합니다
-                            profileImage: "currentProfileImage",  // 프로필 이미지 URL
-                            nickname: "currentNickname",  // 사용자 닉네임
+                            userId: self.selectedPost.userId,
+                            profileImage: self.selectedPost.profileImage,
+                            nickname: self.selectedPost.nickname,
                             userLocation: self.location ?? Location.seoulLocation,
                             userNotification: false,
+                            userLevel: self.selectedPost.userLevel,
                             postType: self.postType,
                             postTitle: self.postTitle,
                             postBody: self.postBody,
-                            postImages: newImageURLs,
+                            postImages: allImageURLs,
                             postStatus: .beforeTrade,
                             location: self.location
                         )
@@ -227,5 +237,4 @@ class EditPostViewModel: ObservableObject {
             }
         }
     }
-
 }

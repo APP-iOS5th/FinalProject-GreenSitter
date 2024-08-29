@@ -78,6 +78,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return imageView
     }()
     
+    
+    
     private let dividerLine2: UIView = {
         let line = UIView()
         line.backgroundColor = .lightGray
@@ -131,10 +133,10 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     private let mapIconButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(systemName: "map.fill")
+        let image = UIImage(named: "lookingForSitterIcon")
         button.setImage(image, for: .normal)
-        button.tintColor = .gray
         button.contentMode = .scaleAspectFit
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -176,9 +178,9 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         }
     }
     
-    @objc private func pickerImageViewTapped() {
-        presentImagePickerController()
-    }
+//    @objc private func pickerImageViewTapped() {
+//        presentImagePickerController()
+//    }
     
     @objc private func saveButtonTapped() {
         guard validateInputs() else { return }
@@ -188,7 +190,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             return
         }
         
-        viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, postTitle: titleTextField.text!, postBody: textView.text) { result in
+        viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, userLevel: currentUser.levelPoint, postTitle: titleTextField.text!, postBody: textView.text) { result in
             switch result {
             case .success(let newPost):
                 print("Add Post: \(newPost)")
@@ -205,7 +207,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         
         if titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
             titleTextField.attributedPlaceholder = NSAttributedString(string: "제목을 입력하세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.red])
-            titleTextField.layer.borderColor = UIColor.red.cgColor
+            titleTextField.layer.borderColor = UIColor.clear.cgColor
             titleTextField.layer.borderWidth = 1.0
             isValid = false
         } else {
@@ -302,14 +304,14 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             dividerLine3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
-            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
+            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
+            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8), //
             
-            mapIconButton.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
-            mapIconButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            mapIconButton.heightAnchor.constraint(equalToConstant: 24),
+            mapIconButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
+            mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
+            mapIconButton.heightAnchor.constraint(equalToConstant: 50),
+            mapIconButton.widthAnchor.constraint(equalToConstant: 50),
             
             mapView.topAnchor.constraint(equalTo: mapIconButton.bottomAnchor, constant: 16),
             mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -349,6 +351,19 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             remainCountLabel.textColor = .lightGray
         }
         
+        
+        let size = CGSize(width: textView.frame.width, height: .infinity)
+        let estimatedSize = textView.sizeThatFits(size)
+        
+        let minHeight: CGFloat = 200 // 최소 높이
+        
+        textView.constraints.forEach { (constraint) in
+            if constraint.firstAttribute == .height {
+                constraint.constant = max(minHeight, estimatedSize.height)
+            }
+        }
+        
+        // 내용이 비어있을 때 처리
         if textView.text.isEmpty {
             textView.text = textViewPlaceHolder
             textView.textColor = .lightGray
@@ -358,6 +373,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             textView.textColor = .black
         }
     }
+    
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == .lightGray {
@@ -374,21 +390,57 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     }
     
     private func updateImageStackView() {
-        imageStackView.arrangedSubviews.forEach { view in
-            if view != pickerImageView {
-                view.removeFromSuperview()
+            imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+            
+            for (index, image) in viewModel.selectedImages.enumerated() {
+                let imageView = UIImageView(image: image)
+                imageView.contentMode = .scaleAspectFill
+                imageView.clipsToBounds = true
+                imageView.layer.cornerRadius = 10
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+                imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+                
+                // Delete button
+                let deleteButton = UIButton(type: .custom)
+                deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+                deleteButton.tintColor = .red
+                deleteButton.translatesAutoresizingMaskIntoConstraints = false
+                deleteButton.addTarget(self, action: #selector(deleteImage(_:)), for: .touchUpInside)
+                deleteButton.tag = index
+                
+                let containerView = UIView()
+                containerView.translatesAutoresizingMaskIntoConstraints = false
+                containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+                containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+                
+                containerView.addSubview(imageView)
+                containerView.addSubview(deleteButton)
+                
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                deleteButton.translatesAutoresizingMaskIntoConstraints = false
+                
+                NSLayoutConstraint.activate([
+                    imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                    imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                    imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                    imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+                    
+                    deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -5),
+                    deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 5)
+                ])
+                
+                imageStackView.addArrangedSubview(containerView)
             }
+            
+            imageStackView.addArrangedSubview(pickerImageView)
         }
         
-        viewModel.selectedImages.forEach { image in
-            let imageView = UIImageView(image: image)
-            imageView.contentMode = .scaleAspectFill
-            imageView.clipsToBounds = true
-            imageView.widthAnchor.constraint(equalToConstant: 130).isActive = true
-            imageView.heightAnchor.constraint(equalToConstant: 130).isActive = true
-            imageStackView.insertArrangedSubview(imageView, at: imageStackView.arrangedSubviews.count - 1)
+        @objc private func deleteImage(_ sender: UIButton) {
+            let index = sender.tag
+            viewModel.selectedImages.remove(at: index)
+            updateImageStackView()
         }
-    }
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true, completion: nil)
@@ -400,14 +452,50 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         }
     }
     
+    
+    @objc private func pickerImageViewTapped() {
+        checkPhotoLibraryPermission()
+    }
+    
+    private func checkPhotoLibraryPermission() {
+        PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] status in
+            DispatchQueue.main.async {
+                switch status {
+                case .authorized, .limited:
+                    self?.presentImagePickerController()
+                case .denied, .restricted:
+                    self?.showPhotoLibraryAccessDeniedAlert()
+                case .notDetermined:
+                    // 권한 요청 대화상자가 표시됩니다.
+                    break
+                @unknown default:
+                    break
+                }
+            }
+        }
+    }
+    
+    private func showPhotoLibraryAccessDeniedAlert() {
+        let alert = UIAlertController(
+            title: "사진 접근 권한이 없습니다",
+            message: "사진을 선택하려면 '설정'에서 사진 접근 권한을 허용해주세요.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
+        })
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(alert, animated: true)
+    }
+    
     private func presentImagePickerController() {
         var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 10 // 사진 최대 10개까지 추가가능
+        configuration.selectionLimit = 10
         configuration.filter = .images
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
         present(picker, animated: true, completion: nil)
     }
 }
-
-

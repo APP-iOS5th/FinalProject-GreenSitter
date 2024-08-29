@@ -16,6 +16,7 @@ class SelfIntroductionViewController: UIViewController {
     lazy var titleLabel: UILabel = {
         let label =  UILabel()
         label.text = "자기소개"
+        label.textColor = UIColor(named: "LabelsPrimary")
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -28,7 +29,7 @@ class SelfIntroductionViewController: UIViewController {
         textView.layer.borderWidth = 1.0
         textView.font = UIFont.systemFont(ofSize: 16)
         textView.text = user?.aboutMe ?? "자기소개를 입력하세요"
-        textView.textColor = .black
+        textView.textColor = UIColor(named: "LabelsPrimary")
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
@@ -54,7 +55,7 @@ class SelfIntroductionViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "SeparatorsOpaque")
         
         view.addSubview(titleLabel)
         view.addSubview(closeButton)

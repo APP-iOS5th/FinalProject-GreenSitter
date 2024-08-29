@@ -29,7 +29,7 @@ struct User: Codable {
             let extraExp = exp - 100
             exp = extraExp
             levelPoint = levelPoint.nextLevel()
-        }
+        } 
         
         while exp < 0 {
             levelPoint = levelPoint.previousLevel()

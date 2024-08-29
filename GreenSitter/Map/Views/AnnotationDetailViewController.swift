@@ -210,7 +210,7 @@ class AnnotationDetailViewController: UIViewController {
     }
 }
 
-
-#Preview {
-    AnnotationDetailViewController(post: Post.samplePosts.first!)
-}
+//
+//#Preview {
+//    AnnotationDetailViewController(post: Post.samplePosts.first!)
+//}

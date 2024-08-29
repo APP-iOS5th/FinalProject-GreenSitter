@@ -130,3 +130,5 @@ xcuserdata
 
 *.plist
 *.xcconfig
+
+.DS_Store

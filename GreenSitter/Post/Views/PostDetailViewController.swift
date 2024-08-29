@@ -88,20 +88,6 @@ class PostDetailViewController: UIViewController {
         return label
     }()
     
-//    private let dividerLine1: UIView = {
-//        let line = UIView()
-//        line.backgroundColor = .separatorsNonOpaque
-//        line.translatesAutoresizingMaskIntoConstraints = false
-//        return line
-//    }()
-//    
-//    private let dividerLine2: UIView = {
-//        let line = UIView()
-//        line.backgroundColor = .separatorsNonOpaque
-//        line.translatesAutoresizingMaskIntoConstraints = false
-//        return line
-//    }()
-    
     private let dividerLine3: UIView = {
         let line = UIView()
         line.backgroundColor = .separatorsNonOpaque
@@ -240,11 +226,12 @@ class PostDetailViewController: UIViewController {
         configure(with: post)
         
         if Auth.auth().currentUser != nil {
-            // 해당 post 가 자신이 올린 Post 라면, 삭제/편집 기능 있는 네비게이션 바로 표시
             if LoginViewModel.shared.user?.id == post.userId {
                 setupNavigationBarWithEdit(post: post)
+                contactButton.isHidden = true
                 // TODO: 채팅도 표시하지 않아야함
             } else {
+                contactButton.isHidden = false
                 // 그게 아니면 차단 기능있는 네비게이션 바 표시
                 setupNavigationBarWithBlock(post: post)
                 
@@ -252,9 +239,6 @@ class PostDetailViewController: UIViewController {
                 configureChatButton(with: post)
             }
         }
-        
-        setupUI()
-        configure(with: post)
         addTapGestureToImages()
         
         postDetailViewModel.delegate = self
@@ -301,7 +285,7 @@ class PostDetailViewController: UIViewController {
                 }
             }
         ])
-
+        
         
         let menuButton = UIButton(type: .system)
         menuButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
@@ -317,10 +301,8 @@ class PostDetailViewController: UIViewController {
     private func setupNavigationBarWithBlock(post: Post) {
         let menu = UIMenu(title: "", children: [
             UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { _ in
-                
             },
             UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { _ in
-                
             }
         ])
         
@@ -338,7 +320,6 @@ class PostDetailViewController: UIViewController {
     // MARK: - 채팅 버튼
     
     private func configureChatButton(with post: Post) {
-        contactButton.isHidden = false
         // post.id 로 접근하시면 됩니다
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -360,7 +341,7 @@ class PostDetailViewController: UIViewController {
         configurePostBodyTextView(with: post.postBody)
 
         statusLabel.text = post.postStatus.rawValue
-        userLevelLabel.text = LoginViewModel.shared.user?.levelPoint.rawValue
+        userLevelLabel.text = post.userLevel.rawValue
         
         let address = post.location?.address
         let placeName = post.location?.placeName
@@ -432,8 +413,6 @@ class PostDetailViewController: UIViewController {
         imagesScrollView.addSubview(imagesStackView)
         
         contentView.addSubview(postBodyTextView)
-//        contentView.addSubview(dividerLine1)
-//        contentView.addSubview(dividerLine2)
         contentView.addSubview(dividerLine3)
         contentView.addSubview(contactButton)
         contentView.addSubview(mapLabel)
@@ -441,8 +420,6 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(mapView)
         contentView.addSubview(descriptionLabel)
         
-        // 기본값은 안보이게
-        contactButton.isHidden = true
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -492,28 +469,16 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-//            dividerLine1.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 10),
-//            dividerLine1.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-//            dividerLine1.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-//            dividerLine1.heightAnchor.constraint(equalToConstant: 1),
-            
-            
             imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             imagesScrollView.heightAnchor.constraint(equalToConstant: 200),
-            
             
             imagesStackView.topAnchor.constraint(equalTo: imagesScrollView.topAnchor),
             imagesStackView.bottomAnchor.constraint(equalTo: imagesScrollView.bottomAnchor),
             imagesStackView.leadingAnchor.constraint(equalTo: imagesScrollView.leadingAnchor),
             imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
             imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
-            
-//            dividerLine2.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
-//            dividerLine2.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-//            dividerLine2.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-//            dividerLine2.heightAnchor.constraint(equalToConstant: 1),
             
             postBodyTextView.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -543,8 +508,6 @@ class PostDetailViewController: UIViewController {
             descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
-    
-
     
     // MARK: - Image Load
     private func loadImageFromStorage(url: String, completion: @escaping (UIImage?) -> Void) {

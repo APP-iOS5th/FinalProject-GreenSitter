@@ -42,19 +42,19 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
             let aboutMeText = user?.aboutMe ?? "자기소개를 입력해주세요"
             print("Cell for row at indexPath \(indexPath): aboutMeText = \(aboutMeText)")
             (cell as! IntroductionTableCell).bodyLabel.text = aboutMeText
-            (cell as! IntroductionTableCell).bodyLabel.textColor = .black
+            (cell as! IntroductionTableCell).bodyLabel.textColor = UIColor(named: "LabelsPrimary")
         case 1:
             cell = tableView.dequeueReusableCell(withIdentifier: "customTableCell", for: indexPath) as! CustomTableCell
             if indexPath.row == 0 {
                 (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "heart.fill")
                 (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
                 (cell as! CustomTableCell).textsLabel.text = "돌봄 후기"
-                (cell as! CustomTableCell).textsLabel.textColor = .black
+                (cell as! CustomTableCell).textsLabel.textColor = UIColor(named: "LabelsPrimary")
             } else {
                 (cell as! CustomTableCell).iconImage.image = UIImage(systemName: "list.bullet.clipboard.fill")
                 (cell as! CustomTableCell).iconImage.tintColor = UIColor(named: "DominentColor")
                 (cell as! CustomTableCell).textsLabel.text = "돌봄 기록"
-                (cell as! CustomTableCell).textsLabel.textColor = .black
+                (cell as! CustomTableCell).textsLabel.textColor = UIColor(named: "LabelsPrimary")
             }
 
         default:
@@ -63,7 +63,7 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
         
         // 셀의 모서리와 테두리 설정
         configureCellAppearance(cell, at: indexPath, in: tableView)
-        
+        cell.contentView.backgroundColor = UIColor(named: "BGPrimary")
         return cell
     }
 
@@ -115,6 +115,7 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
             titleLabel.text = sectionTitle[section]
             titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
+            titleLabel.textColor = UIColor(named: "SeparatorsNonOpaque")
             headerView.addSubview(titleLabel)
             
             guard let currentUserID = Auth.auth().currentUser?.uid else {
@@ -152,6 +153,7 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
         titleLabel.text = sectionTitle[section]
         titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.textColor = UIColor(named: "SeparatorsNonOpaque")
         defaultHeaderView.addSubview(titleLabel)
         
         NSLayoutConstraint.activate([

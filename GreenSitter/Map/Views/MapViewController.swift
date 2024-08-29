@@ -12,22 +12,27 @@ import FirebaseAuth
 
 class MapViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private lazy var viewModel = MapViewModel()  // 위치 정보 관리 뷰모델
     private let postViewModel = MainPostListViewModel()
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.delegate = self
         mapView.translatesAutoresizingMaskIntoConstraints = false
-        mapView.showsUserLocation = true
         return mapView
     }()
     
     // 커스텀 어노테이션, 오버레이 만들기 위한 Dictionary
     private var overlayPostMapping: [MKCircle: Post] = [:]
+    private var selectedAnnotation: CustomAnnotation?
+    private var annotationOverlayMapping: [CustomAnnotation: MKCircle] = [:]
     
     // 선택한 어노테이션 관리
     private var currentDetailViewController: AnnotationDetailViewController?
     private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - UI Elements
     
     // zoom control, user location buttons
     private lazy var zoomInButton: UIButton = {
@@ -60,11 +65,96 @@ class MapViewController: UIViewController {
         return button
     }()
     
+    private lazy var toastView: UIView = {
+        let toastView = UIView()
+        toastView.backgroundColor = .bgSecondary
+        toastView.layer.cornerRadius = 25
+        toastView.clipsToBounds = true
+        toastView.layer.borderColor = UIColor.separatorsNonOpaque.cgColor
+        toastView.layer.borderWidth = 1
+        toastView.layer.shadowColor = UIColor.separatorsNonOpaque.cgColor
+        toastView.layer.shadowOpacity = 0.5 // 투명도
+        toastView.layer.shadowOffset = CGSize(width: 4, height: 4) // 그림자 위치
+        toastView.layer.shadowRadius = 4
+        toastView.translatesAutoresizingMaskIntoConstraints = false
+        
+//        let image = UIImageView(image: UIImage(named: "logo7"))
+//        image.layer.cornerRadius = 25
+//        image.contentMode = .scaleAspectFit
+//        image.translatesAutoresizingMaskIntoConstraints = false
+        return toastView
+    }()
+    
+    private lazy var toastImage: UIImageView = {
+        let toastImage = UIImageView(image: UIImage(named: "offeringToSitterIcon"))
+        toastImage.contentMode = .scaleAspectFit
+        toastImage.translatesAutoresizingMaskIntoConstraints = false
+        
+        return toastImage
+    }()
+    
+    private lazy var toastMainStackView: UIStackView = {
+        let toastMainStackView = UIStackView()
+        toastMainStackView.axis = .horizontal
+        toastMainStackView.alignment = .center
+        toastMainStackView.spacing = 5
+        toastMainStackView.translatesAutoresizingMaskIntoConstraints = false
+        return toastMainStackView
+    }()
+    
+    private lazy var toastLabelStackView: UIStackView = {
+        let toastStackView = UIStackView()
+        toastStackView.axis = .vertical
+        toastStackView.alignment = .leading
+        toastStackView.spacing = 5
+        toastStackView.translatesAutoresizingMaskIntoConstraints = false
+        return toastStackView
+    }()
+    
+    private lazy var toastLabel: UILabel = {
+        let toastLabel = UILabel()
+        toastLabel.text = "위치 권한이 필요한 기능입니다."
+        toastLabel.textColor = .labelsPrimary
+        toastLabel.font = UIFont.boldSystemFont(ofSize: 15)
+        toastLabel.textAlignment = .left
+        toastLabel.translatesAutoresizingMaskIntoConstraints = false
+        return toastLabel
+    }()
+    
+    private lazy var toastSubLabel: UILabel = {
+        let toastSubLabel = UILabel()
+        toastSubLabel.text = "위치 권한 설정 화면으로 이동합니다."
+        toastSubLabel.textColor = .labelsSecondary
+        toastSubLabel.font = UIFont.systemFont(ofSize: 12)
+        toastSubLabel.textAlignment = .left
+        toastSubLabel.translatesAutoresizingMaskIntoConstraints = false
+        return toastSubLabel
+    }()
+    
+    private lazy var toastButton: UIButton = {
+        let toastButton = UIButton()
+        toastButton.titleLabel?.font = .systemFont(ofSize: 13)
+        toastButton.setTitle("설정", for: .normal)
+        toastButton.setTitleColor(.white, for: .normal)
+        toastButton.backgroundColor = UIColor(.dominent)
+        toastButton.layer.cornerRadius = 4
+        toastButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        toastButton.addAction(UIAction { _ in
+            print("Button Action")
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+        }, for: .touchUpInside)
+        
+        return toastButton
+    }()
+    
+    // MARK: - Life cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        bindViewModel()
         viewModel.checkLocationAuthorization()
+        bindViewModel()
 
         // 로그인 했을 경우 그리고 위치 정보 있을 경우.
         if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
@@ -74,9 +164,9 @@ class MapViewController: UIViewController {
             print("MapView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
             postViewModel.fetchPostsWithin3Km(userLocation: nil)
         }
-        // 기존 코드
-        //        postViewModel.fetchAllPosts()
     }
+    
+    // MARK: - Help methods
     
     private func setupUI() {
         view.addSubview(mapView)
@@ -84,6 +174,14 @@ class MapViewController: UIViewController {
         view.addSubview(zoomOutButton)
         view.addSubview(userLocationButton)
         
+        view.addSubview(toastView)
+        toastView.addSubview(toastMainStackView)
+        toastMainStackView.addArrangedSubview(toastImage)
+        toastMainStackView.addArrangedSubview(toastLabelStackView)
+        toastLabelStackView.addArrangedSubview(toastLabel)
+        toastLabelStackView.addArrangedSubview(toastSubLabel)
+        toastMainStackView.addArrangedSubview(toastButton)
+
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -104,6 +202,30 @@ class MapViewController: UIViewController {
             userLocationButton.leadingAnchor.constraint(equalTo: zoomOutButton.leadingAnchor),
             userLocationButton.widthAnchor.constraint(equalTo: zoomInButton.widthAnchor),
             userLocationButton.heightAnchor.constraint(equalTo: zoomInButton.heightAnchor),
+            
+            
+            // toastView
+            toastView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            toastView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -30),
+            toastView.heightAnchor.constraint(equalToConstant: 80),
+            toastView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            toastMainStackView.centerYAnchor.constraint(equalTo: toastView.centerYAnchor),
+            toastMainStackView.centerXAnchor.constraint(equalTo: toastView.centerXAnchor),
+            toastMainStackView.widthAnchor.constraint(equalTo: toastView.widthAnchor, constant: -20),
+            toastMainStackView.heightAnchor.constraint(equalTo: toastView.heightAnchor),
+            
+            toastImage.leadingAnchor.constraint(equalTo: toastMainStackView.leadingAnchor, constant: 10),
+            toastImage.centerYAnchor.constraint(equalTo: toastMainStackView.centerYAnchor),
+            toastImage.widthAnchor.constraint(equalTo: toastMainStackView.widthAnchor, multiplier: 0.1),
+            
+            toastLabelStackView.centerYAnchor.constraint(equalTo: toastMainStackView.centerYAnchor),
+            toastLabelStackView.leadingAnchor.constraint(equalTo: toastImage.trailingAnchor, constant: 20),
+            toastLabelStackView.trailingAnchor.constraint(equalTo: toastButton.leadingAnchor, constant: 5),
+            
+            toastButton.centerYAnchor.constraint(equalTo: toastMainStackView.centerYAnchor),
+            toastButton.trailingAnchor.constraint(equalTo: toastMainStackView.trailingAnchor, constant: -20),
+            toastButton.widthAnchor.constraint(equalToConstant: 50),
         ])
     }
     
@@ -146,10 +268,27 @@ class MapViewController: UIViewController {
             .sink { [weak self] status in
                 switch status {
                 case .denied:
-                    self?.showToast(withDuration: 1, delay: 2)
+                    print("Authorization Denied.")
+                    self?.toastView.isHidden = false
+                    self?.zoomInButton.isHidden = true
+                    self?.zoomOutButton.isHidden = true
+                    self?.userLocationButton.isHidden = true
+                    
                 case .restrictedOrNotDetermined:
                     print("Authorization Status: Restricted or NotDetermined, No Toast")
+                    self?.toastView.isHidden = true
+                    self?.zoomInButton.isHidden = true
+                    self?.zoomOutButton.isHidden = true
+                    self?.userLocationButton.isHidden = true
+
                 case .authorized:
+                    self?.mapView.showsUserLocation = true
+                    
+                    self?.toastView.isHidden = true
+                    self?.zoomInButton.isHidden = false
+                    self?.zoomOutButton.isHidden = false
+                    self?.userLocationButton.isHidden = false
+
                     print("Authorization Status: Authorized")
                 }
                 
@@ -164,94 +303,13 @@ class MapViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    
-    // MARK: - 위치 권한 거부 시 나오는 Toast message
-    
-    func showToast(withDuration: Double, delay: Double) {
-        // UIView 생성
-        let toastView = UIView()
-        toastView.backgroundColor = .bgSecondary
-        toastView.alpha = 1.0
-        toastView.layer.cornerRadius = 25
-        toastView.clipsToBounds = true
-        toastView.layer.borderColor = UIColor.separatorsNonOpaque.cgColor
-        toastView.layer.borderWidth = 1
-        
-        // 쉐도우 설정
-        toastView.layer.shadowColor = UIColor.separatorsNonOpaque.cgColor
-        toastView.layer.shadowOpacity = 0.5 // 투명도
-        toastView.layer.shadowOffset = CGSize(width: 4, height: 4) // 그림자 위치
-        toastView.layer.shadowRadius = 4
-        toastView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // UIImageView 생성 및 설정
-        let image = UIImageView(image: UIImage(named: "logo7"))
-        image.layer.cornerRadius = 25
-        image.contentMode = .scaleAspectFit
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.widthAnchor.constraint(equalToConstant: 50).isActive = true  // 이미지의 크기를 설정.
-        image.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        
-        // UILabel 생성 및 설정
-        let labelOne = UILabel()
-        labelOne.text = "위치 권한이 필요한 기능입니다."
-        labelOne.textColor = .labelsPrimary
-        labelOne.font = UIFont.boldSystemFont(ofSize: 15)
-        labelOne.textAlignment = .left
-        labelOne.translatesAutoresizingMaskIntoConstraints = false
-        
-        let labelTwo = UILabel()
-        labelTwo.text = "위치 권한 설정 화면으로 이동합니다."
-        labelTwo.textColor = .labelsSecondary
-        labelTwo.font = UIFont.systemFont(ofSize: 12)
-        labelTwo.textAlignment = .left
-        labelTwo.translatesAutoresizingMaskIntoConstraints = false
-        
-        // StackView 생성 및 설정 (Vertical Stack)
-        let labelStackView = UIStackView(arrangedSubviews: [labelOne, labelTwo])
-        labelStackView.axis = .vertical
-        labelStackView.alignment = .leading
-        labelStackView.spacing = 5
-        labelStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // StackView 생성 및 설정 (Horizontal Stack)
-        let mainStackView = UIStackView(arrangedSubviews: [image, labelStackView])
-        mainStackView.axis = .horizontal
-        mainStackView.alignment = .center
-        mainStackView.spacing = 10
-        mainStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        toastView.addSubview(mainStackView)
-        self.view.addSubview(toastView)
-        // Auto Layout 설정
-        NSLayoutConstraint.activate([
-            mainStackView.leadingAnchor.constraint(equalTo: toastView.leadingAnchor, constant: 10),
-            mainStackView.trailingAnchor.constraint(equalTo: toastView.trailingAnchor, constant: -10),
-            mainStackView.topAnchor.constraint(equalTo: toastView.topAnchor, constant: 10),
-            mainStackView.bottomAnchor.constraint(equalTo: toastView.bottomAnchor, constant: -10),
-            
-            toastView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
-            toastView.heightAnchor.constraint(equalToConstant: 80),
-            toastView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            toastView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-        ])
-        
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseIn, animations: {
-                toastView.isUserInteractionEnabled = false
-                toastView.alpha = 0.0
-            }, completion: { _ in
-                toastView.removeFromSuperview()
-            })
-        }
-    }
-    
     // MARK: - Post 객체 배열을 사용하여 지도에 마커 및 오버레이 추가
     
     func setupMarkerAndOverlay(with posts: [Post]) {
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
         overlayPostMapping.removeAll()
+        annotationOverlayMapping.removeAll()
         
         for post in posts {
             guard let latitude = post.location?.latitude,
@@ -264,16 +322,19 @@ class MapViewController: UIViewController {
                 longitude: circleCenter.longitude + randomOffset.longitudeDelta
             )
             
+            // 오버레이를 미리 생성하고, 나중에 선택되었을 때 사용할 수 있도록 mapping에 저장
             let circle = MKCircle(center: randomCenter, radius: 500)
             
             // 맵 뷰에 오버레이 추가하기 전에, post 값을 circle 키에 넣기
             overlayPostMapping[circle] = post
-//            print("dict after add: \(overlayPostMapping)")
             
-            mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
+//            mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
             
             let annotation = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
             mapView.addAnnotation(annotation)  // MKAnnotationView
+            
+            // 어노테이션과 오버레이를 매핑 (오버레이는 아직 맵에 추가하지 않음)
+            annotationOverlayMapping[annotation] = circle
         }
     }
     
@@ -332,9 +393,24 @@ extension MapViewController: MKMapViewDelegate {
         return annotationView
     }
     
-    // MKAnnotationView 터치 이벤트 관리
+    // MARK: - MKAnnotationView 터치 이벤트 관리
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         guard let annotation = view.annotation as? CustomAnnotation else { return }
+        
+        // 기존 선택된 어노테이션의 오버레이는 전부 제거
+        if let previousAnnotation = selectedAnnotation,
+           let overlay = annotationOverlayMapping[previousAnnotation] {
+            mapView.removeOverlay(overlay)
+            annotationOverlayMapping.removeValue(forKey: previousAnnotation)
+        }
+        
+        // 새로운 어노테이션 선택 시 오버레이 추가
+        let circle = MKCircle(center: annotation.coordinate, radius: 500)
+        mapView.addOverlay(circle)
+        annotationOverlayMapping[annotation] = circle
+        
+        // 현재 선택된 어노테이션으로 업데이트
+        selectedAnnotation = annotation
         
         // 선택한 어노테이션 주변으로 MKCoordinateRegion 설정
         let region = MKCoordinateRegion(center: annotation.coordinate, latitudinalMeters: 1000, longitudinalMeters: 1000)
@@ -346,7 +422,22 @@ extension MapViewController: MKMapViewDelegate {
         }
     }
     
+    // MARK: - MKAnnotationView 선택 해제 이벤트 관리
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        guard let annotation = view.annotation as? CustomAnnotation else { return }
+        
+        // 선택 해제된 어노테이션에 연결된 오버레이는 제거
+        if let overlay = annotationOverlayMapping[annotation] {
+            mapView.removeOverlay(overlay)
+            annotationOverlayMapping.removeValue(forKey: annotation)
+        }
+        
+        // 상세 뷰 숨김
+        hideAnnotationDetail()
+    }
+    
     // MARK: - AnnotationDetailViewController를 맵 위에 커스텀 방식으로 추가
+    
     private func presentAnnotationDetail(for post: Post) {
         if let currentDetailViewController = currentDetailViewController {
             // 이미 창이 떠 있는 경우, Post 데이터만 업데이트
@@ -392,7 +483,6 @@ extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let circleOverlay = overlay as? MKCircle {
             let circleRenderer = MKCircleRenderer(circle: circleOverlay)
-//            print("rendererFor methods: dict: \(overlayPostMapping)")
             
             // 딕셔너리로부터 해당 circleOverlay에 저장된 Post 가져오기
             if let post = overlayPostMapping[circleOverlay] {
@@ -404,8 +494,7 @@ extension MapViewController: MKMapViewDelegate {
                     circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.3)
                 }
             } else {
-                print("post is nil")
-                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3) // Default color
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.3)
             }
 
             circleRenderer.strokeColor = .separatorsNonOpaque
@@ -421,6 +510,8 @@ extension MapViewController: MKMapViewDelegate {
 // MARK: - AnnotationDetailViewControllerDelegate
 extension MapViewController: AnnotationDetailViewControllerDelegate {
     func annotationDetailViewControllerDidDismiss(_ controller: AnnotationDetailViewController) {
-        hideAnnotationDetail()
+        if let selectedAnnotation = selectedAnnotation {
+            mapView.deselectAnnotation(selectedAnnotation, animated: true)
+        }
     }
 }

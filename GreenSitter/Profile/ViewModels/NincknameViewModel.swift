@@ -54,17 +54,61 @@ extension NicknameViewController {
             print("Error: Firebase authResult is nil.")
             return
         }
-        
+
+        let userId = user.uid
         let userData: [String: Any] = ["nickname": nickname]
+        
+        // 유저 컬렉션에 닉네임 업데이트
         db.collection("users").document(user.uid).setData(userData, merge: true) { error in
             if let error = error {
                 print("Firestore Writing Error: \(error)")
             } else {
-                print("Nickname successfully saved!")
+                print("User Nickname successfully saved!")
+                
+                // 유저의 id를 통해 posts 컬렉션 조회
+                self.db.collection("users").document(user.uid).getDocument { [weak self] document, error in
+                    guard let self = self else { return }
+                    
+                    if let error = error {
+                        print("Error fetching user document: \(error)")
+                        return
+                    }
+                    
+                    if let document = document, document.exists {
+                        if let postId = document.data()?["id"] as? String {
+                            // 해당 id를 사용해 posts 컬렉션 업데이트
+                            self.updatePostsNickname(postId, nickname)
+                        }
+                    }
+                }
             }
         }
     }
     
+    func updatePostsNickname(_ postId: String, _ nickname: String) {
+        db.collection("posts").whereField("userId", isEqualTo: postId).getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Firestore Query Error in posts collection: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                print("No matching documents found in posts collection")
+                return
+            }
+            
+            for document in documents {
+                document.reference.updateData(["nickname": nickname]) { error in
+                    if let error = error {
+                        print("Error updating post nickname in document \(document.documentID): \(error.localizedDescription)")
+                    } else {
+                        print("Post Nickname successfully updated in document \(document.documentID)!")
+                    }
+                }
+            }
+        }
+    }
+
     //MARK: - 파이어베이스 데이터 불러오기
     func fetchUserFirebase() {
         guard let userId = Auth.auth().currentUser?.uid else {

@@ -19,15 +19,7 @@ class LoginViewModel: ObservableObject {
     
     private init() {}
 
-    // func userFetchFirebase(profileImage: String, nickname: String, location: Location, docId: String) {
-    //     self.user = User(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), profileImage: profileImage, nickname: nickname, location: location, platform: "", levelPoint: Level.seeds, exp: 0, aboutMe: "", chatNotification: false, docId: docId)
-        
-    //     loadProfileImage(from: profileImage) { [weak self] image in
-    //         self?.profileImage = image
-    //         // Perform additional UI updates here if needed
-    //         print("Profile image successfully loaded and updated.")
-    //     }
-    // }   
+
     
     func firebaseFetch(docId: String, completion: @escaping () -> Void) {
         db.collection("users").document(docId).getDocument { (document, error) in
@@ -92,6 +84,14 @@ class LoginViewModel: ObservableObject {
                 self.user?.updateExp(by: exp) //경험치 업데이트
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
                 
+                if let postId = self.user?.id, !postId.isEmpty {
+                    print("Fetched postId: \(postId)")
+                    
+                    // MARK: - 주석 처리된 부분입니다.
+//                    self.updatePostLocation(with: self.user?.location ?? Location.seoulLocation, postId)
+                } else {
+                    print("Error: postId is empty or not available")
+                }
                 completion()
             }
             
@@ -134,18 +134,31 @@ class LoginViewModel: ObservableObject {
     }
 
 
-        func convertToHttpsURL(gsURL: String) -> String? {
-            let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
-            let encodedPath = gsURL
-                .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
-                .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
-            return baseURL + (encodedPath ?? "") + "?alt=media"
+    func convertToHttpsURL(gsURL: String) -> String? {
+        // 이미 HTTPS URL인지 확인
+        if gsURL.starts(with: "https://") {
+            print("이미 변환된 HTTPS URL: \(gsURL)")
+            return gsURL
         }
-    
+        
+        // gs:// URL을 https:// URL로 변환
+        let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
+        let encodedPath = gsURL
+            .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+        
+        return baseURL + (encodedPath ?? "") + "?alt=media"
+    }
+
 
     func updateUserLocation(with location: Location) {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("No logged in user")
+            return
+        }
+        
+        guard let user = Auth.auth().currentUser else {
+            print("Error: Firebase authResult is nil.")
             return
         }
         
@@ -155,11 +168,44 @@ class LoginViewModel: ObservableObject {
         db.collection("users").document(userId).setData(userLocationData, merge: true) { error in
             if let error = error {
                 print("Failed to update user location: \(error.localizedDescription)")
-            } else {
+            }
+            else {
                 print("User location updated successfully with address: \(location)")
             }
         }
         self.user?.location = location
         print("Attempting to update user location with address: \(location)")
+    }
+    
+    func updatePostLocation(with location: Location, _ postId: String) {
+        print("Attempting to update location for postId: \(postId)")
+        
+        guard !postId.isEmpty else {
+            print("Error: postId is empty")
+            return
+        }
+        db.collection("posts").whereField("userId", isEqualTo: postId).getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Firestore Query Error in posts collection: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                print("No matching documents found in posts collection with postId: \(postId)") // 추가적인 정보 출력
+                return
+            }
+            print("Found \(documents.count) documents to update for postId: \(postId)")
+
+            
+            for document in documents {
+                document.reference.updateData(["location": location.toDictionary()]) { error in
+                    if let error = error {
+                        print("Error updating post location in document \(document.documentID): \(error.localizedDescription)")
+                    } else {
+                        print("Post location successfully updated in document \(document.documentID)!")
+                    }
+                }
+            }
+        }
     }
 }
