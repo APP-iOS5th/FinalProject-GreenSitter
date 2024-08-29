@@ -415,6 +415,7 @@
 				97934DF22C62F77F00B38E0A /* Resources */,
 				97934DDD2C62F3C800B38E0A /* Assets.xcassets */,
 				97934DDF2C62F3C800B38E0A /* LaunchScreen.storyboard */,
+				97D1BE502C6C847600F7A983 /* Chat */,
 				97934DE22C62F3C800B38E0A /* Info.plist */,
 			);
 			path = GreenSitter;
@@ -677,9 +678,7 @@
 				4F822E812C79FC9D007402CB /* FullScreenImageViewController.swift */,
 				4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */,
 				97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */,
-				97D1BEA22C6C93FA00F7A983 /* PostListViewController.swift */,
 				4F822E9C2C7F243A007402CB /* SearchPostViewController.swift */,
-				97D1BE502C6C847600F7A983 /* Chat */,
 			);
 			path = Views;
 			sourceTree = "<group>";
