@@ -351,7 +351,6 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         imageView.layer.cornerRadius = 10
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
-        // 삭제 버튼 생성
         let deleteButton = UIButton(type: .custom)
         deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
         deleteButton.tintColor = .red
@@ -378,14 +377,12 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         updateImageStackView()
     }
     
-    // 2. 사진 삭제 함수
     @objc private func deleteImage(_ sender: UIButton) {
         guard let containerView = sender.superview else { return }
         containerView.removeFromSuperview()
         updateImageStackView()
     }
     
-    // 3. 기존에 업로드된 사진 로드
     private func loadExistingImages() {
         for image in viewModel.postImages {
             addImageToStackView(image)
@@ -428,7 +425,6 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         let characterCount = textView.text.count
         remainCountLabel.text = "\(characterCount)/700"
         
-        // 글자 수 제한 설정
         if characterCount > 700 {
             textView.deleteBackward()
         }
@@ -449,5 +445,4 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             textView.textColor = .lightGray
         }
     }
-    
 }
