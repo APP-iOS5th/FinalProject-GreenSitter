@@ -58,21 +58,36 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 선택된 포스트 가져오기
         let selectedPost = post[indexPath.row]
-        
+
+        // 현재 로그인된 사용자의 ID 가져오기
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            print("현재 로그인된 사용자의 ID를 가져올 수 없습니다.")
+            return
+        }
+
         let currentDate = Date()
         let postUpdateDate = selectedPost.updateDate
         let calendar = Calendar.current
-        
-        //MARK: - 업데이트한 날짜로부터 3일이 지나면 리뷰를 쓸수 없음
+
+        // 사용자 ID가 다를 경우 ReceiveReviewViewController로 이동
+        if currentUserId != selectedPost.userId {
+            let receiveReviewViewController = ReceiveReviewViewController()
+            receiveReviewViewController.post = [selectedPost]
+            navigationController?.pushViewController(receiveReviewViewController, animated: true)
+            return
+        }
+
+        // 업데이트한 날짜로부터 3일이 지나면 리뷰를 쓸 수 없음
         if let daysDifference = calendar.dateComponents([.day], from: postUpdateDate, to: currentDate).day, daysDifference <= 3 {
             let reviewViewController = ReviewViewController()
             reviewViewController.post = [selectedPost]
             reviewViewController.postId = selectedPost.id
             navigationController?.pushViewController(reviewViewController, animated: true)
+        } else {
+            print("업데이트한 지 3일이 지나 리뷰를 쓸 수 없습니다.")
         }
-       
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
         let currentPost = post[indexPath.row]
