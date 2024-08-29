@@ -12,12 +12,10 @@ import FirebaseFirestore
 extension ReviewListViewController {
     //MARK: - Post데이터 가져오기
     func fetchPostFirebase() {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            print("User ID is not available")
-            return
-        }
+        let targetUserId = self.userId
 
-        db.collection("posts").whereField("userId", isEqualTo: userId).whereField("postType", isEqualTo: "새싹돌봄이 찾습니다").whereField("postStatus", isEqualTo: "거래완료").getDocuments { [weak self] (snapshot, error) in
+
+        db.collection("posts").whereField("userId", isEqualTo: targetUserId).whereField("postType", isEqualTo: "새싹돌봄이 찾습니다").whereField("postStatus", isEqualTo: "거래완료").getDocuments { [weak self] (snapshot, error) in
             guard let self = self else { return }
             
             if let error = error {
@@ -54,7 +52,7 @@ extension ReviewListViewController {
                     enabled: true,
                     createDate: Date(),
                     updateDate: updateDate,
-                    userId: userId,
+                    userId: targetUserId,
                     profileImage: "",  // 필요시 추가
                     nickname: "",      // 필요시 추가
                     userLocation: Location.seoulLocation, // 예시 위치

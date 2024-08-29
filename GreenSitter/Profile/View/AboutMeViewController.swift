@@ -14,7 +14,6 @@ class AboutMeViewController: UIViewController {
     
     let db = Firestore.firestore()
     var user: User?
-    
     var userId: String
     
     init(userId: String) {

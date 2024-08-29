@@ -167,12 +167,14 @@ extension AboutMeViewController: UITableViewDelegate, UITableViewDataSource {
 
     //MARK: - cell 클릭시 발생하는 이벤트
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let targetUserId = self.userId // 현재 프로필의 userId를 사용
+
         if indexPath.section == 1 && indexPath.row == 0 {
-           let reviewViewController = ReviewListViewController()
+           let reviewViewController = ReviewListViewController(userId: targetUserId)
            navigationController?.pushViewController(reviewViewController, animated: true)
        }
         else if indexPath.section == 1 && indexPath.row == 1 {
-            let careRecordViewController = CareRecordViewController()
+            let careRecordViewController = CareRecordViewController(userId: targetUserId)
             navigationController?.pushViewController(careRecordViewController, animated: true)
         }
 

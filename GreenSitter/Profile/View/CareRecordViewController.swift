@@ -12,8 +12,17 @@ import FirebaseAuth
 class CareRecordViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     let db = Firestore.firestore()
-    
     var post: [Post] = []
+    var userId: String
+
+    init(userId: String) {
+        self.userId = userId
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -28,6 +37,7 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         
+
         view.backgroundColor = UIColor(named: "SeparatorsOpaque")
         navigationItem.title = "돌봄 기록"
         
