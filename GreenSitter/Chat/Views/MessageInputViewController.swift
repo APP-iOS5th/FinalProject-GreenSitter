@@ -32,7 +32,7 @@ class MessageInputViewController: UIViewController {
     }()
     
     // 메세지 입력 필드
-    private lazy var messageInputField: UITextField = {
+    lazy var messageInputField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "메세지를 입력하세요."
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -64,9 +64,7 @@ class MessageInputViewController: UIViewController {
         
         button.isEnabled = false
         button.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
-            self.chatViewModel?.sendButtonTapped(text: self.messageInputField.text, chatRoom: chatRoom)
-            self.messageInputField.text = ""
+            self?.sendMessage()
         }, for: .touchUpInside)
         
         return button
@@ -77,13 +75,21 @@ class MessageInputViewController: UIViewController {
         
         setupUI()
         
+        messageInputField.delegate = self
+        
         // 메세지 입력하지 않았을 때 sendButton 비활성화
-        self.messageInputField.addAction(UIAction { [weak self] _ in
+        messageInputField.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             
             self.textFieldDidChange(self.messageInputField)
         }, for: .editingChanged)
-
+        
+        // 상대방이 채팅방 나갔을 때 메세지 입력 창 비활성화
+        if chatViewModel?.userId == chatRoom.userId && chatRoom.postUserEnabled == false {
+            messageInputField.isEnabled = false
+        } else if chatViewModel?.userId == chatRoom.postUserId && chatRoom.userEnabled == false {
+            messageInputField.isEnabled = false
+        }
     }
     
     // MARK: - Setup UI
@@ -128,11 +134,6 @@ class MessageInputViewController: UIViewController {
         ])
     }
     
-    // MARK: - MessageInputField
-    func textFieldDidChange(_ textField: UITextField) {
-        sendButton.isEnabled = !(textField.text?.isEmpty ?? true)
-    }
-    
     // MARK: - plus button
     func plusButtonTapped() {
         let chatAdditionalButtonsViewController = ChatAdditionalButtonsViewController(chatRoom: chatRoom)
@@ -140,5 +141,27 @@ class MessageInputViewController: UIViewController {
         chatAdditionalButtonsViewController.chatViewModel = self.chatViewModel
         present(chatAdditionalButtonsViewController, animated: true)
     }
+    
+    // MARK: - MessageInputField
+    func textFieldDidChange(_ textField: UITextField) {
+        sendButton.isEnabled = !(textField.text?.isEmpty ?? true)
+    }
+    
+    // MARK: - SendButton
+    private func sendMessage() {
+        guard let text = messageInputField.text, !text.isEmpty else { return }
+        
+        self.chatViewModel?.sendButtonTapped(text: text, chatRoom: chatRoom)
+        messageInputField.text = ""
+        sendButton.isEnabled = false
+    }
+}
 
+// MARK: - UITextFieldDelegate
+extension MessageInputViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        sendMessage()
+        
+        return true
+    }
 }

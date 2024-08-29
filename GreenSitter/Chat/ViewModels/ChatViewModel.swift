@@ -18,12 +18,15 @@ class ChatViewModel {
     var hasChats = false
     
     // 임시 유저 id
-    let userId = "250e8400-e29b-41d4-a716-446655440003"
-//    var userId: String? {
-//        didSet {
-//            isLoggedIn = userId != nil
-//        }
-//    }
+//    let userId = "250e8400-e29b-41d4-a716-446655440003"
+    var user: User? {
+        didSet {
+            isLoggedIn = user != nil
+        }
+    }
+    var userId: String {
+        return user!.id
+    }
     
     var chatRooms: [ChatRoom] = [] {
         didSet {
@@ -54,8 +57,8 @@ class ChatViewModel {
     
     init() {
         // 현재 사용자 ID 설정
-//        self.userId = LoginViewModel.shared.user?.id
-//        self.isLoggedIn = userId != nil
+        self.user = LoginViewModel.shared.user
+        self.isLoggedIn = user != nil
     }
     
 //    func loadUser(completion: @escaping () -> Void) {
@@ -97,9 +100,9 @@ class ChatViewModel {
         let chatRoom = self.chatRooms[index]
         
         do {
-            let idString = chatRoom.id
-            let updatedChatRoom = try await firestoreManager.deleteChatRoom(docId: idString, userId: userId, chatRoom: chatRoom)
+            let updatedChatRoom = try await firestoreManager.deleteChatRoom(userId: userId, chatRoom: chatRoom)
             self.chatRooms[index] = updatedChatRoom
+            self.chatRooms.remove(at: index)
         } catch {
             print("Error deleting chat room: \(error.localizedDescription)")
         }
@@ -134,7 +137,10 @@ class ChatViewModel {
     // 채팅방 읽음 처리 업데이트
     func updateUnread(chatRoomId: String) async throws {
         do {
-            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: self.userId, unreadMessages: self.unreadMessages[chatRoomId]!)
+            guard let unreadMessages = self.unreadMessages[chatRoomId] else {
+                return
+            }
+            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: self.userId, unreadMessages: unreadMessages)
             self.unreadMessages[chatRoomId] = []
         } catch {
             print("Error updating notification of chatRoom: \(error.localizedDescription)")
@@ -149,8 +155,7 @@ class ChatViewModel {
             print("Message is empty")
             return
         }
-        
-        // TODO: - userId 수정
+
         let receiverUserId: String?
         if userId == chatRoom.userId {
             receiverUserId = chatRoom.postUserId

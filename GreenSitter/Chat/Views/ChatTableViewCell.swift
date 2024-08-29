@@ -127,7 +127,11 @@ class ChatTableViewCell: UITableViewCell {
         guard let profileImage = chatRoom?.userId == userId ? chatRoom?.postUserProfileImage : chatRoom?.userProfileImage else {
             return
         }
-        self.fetchProfileImage(profileImageString: profileImage, userId: userId)
+        guard let profileImageUrl = URL(string: profileImage) else {
+            return
+        }
+        
+        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
         
         // 닉네임
         let nickname = chatRoom?.userId == userId ? chatRoom?.postUserNickname: chatRoom?.userNickname
@@ -142,12 +146,13 @@ class ChatTableViewCell: UITableViewCell {
 //        userLocationLabel.text = "상도동"
         
         // 알림 여부
-        guard let notification = chatRoom?.userId == userId ? chatRoom?.postUserNotification : chatRoom?.userNotification else {
+        guard let notification = chatRoom?.userId == userId ? chatRoom?.userNotification : chatRoom?.postUserNotification else {
             return
         }
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
+        // TODO: - lastMessage가 없을 때 return되면서 이전 값으로 적용되는 문제
         guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
             return
         }
@@ -169,41 +174,18 @@ class ChatTableViewCell: UITableViewCell {
         
         // 안 읽은 메세지 수
         /// read = false인 메세지 수
-        let unreadCount = chatViewModel?.unreadMessages.values.flatMap { $0 }.filter {
-            $0.receiverUserId == userId && !$0.isRead
-        }.count
-        if unreadCount! > 0 {
+        guard let unreadCount = chatViewModel?.unreadMessages[chatRoom!.id]?.count else {
+            return
+        }
+        
+        if unreadCount > 0 {
             circleView.backgroundColor = .dominent
-            unreadCountLabel.text = "\(unreadCount!)"
+            unreadCountLabel.text = "\(unreadCount)"
         // 안 읽은 메세지 수가 0일 때 초기화
         } else if unreadCount == 0 {
             circleView.backgroundColor = .clear
             unreadCountLabel.text = ""
         }
-    }
-    
-    // MARK: - 프로필 이미지 가져오기
-    private func fetchProfileImage(profileImageString: String, userId: String) {
-        // Firestore에서 프로필 이미지 가져오기
-//        let db = Firestore.firestore()
-//        let userId = userId
-//
-//        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
-//            guard let self = self, let document = document, document.exists,
-//                  let data = document.data(),
-//                  let profileImageUrl = data["profileImage"] as? String,
-//                  let url = URL(string: profileImageString) else {
-//                return
-//            }
-//
-//            self.downloadImage(from: url)
-//        }
-        
-        // 임시 데이터
-        guard let profileImageUrl = URL(string: profileImageString) else {
-            return
-        }
-        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
     }
     
     // MARK: - 메세지 시간 포맷 설정
