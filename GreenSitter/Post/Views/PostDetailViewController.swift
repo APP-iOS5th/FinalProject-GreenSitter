@@ -244,7 +244,7 @@ class PostDetailViewController: UIViewController {
                 configureChatButton(with: post)
             }
         }
-        
+                
         contactButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             Task {
@@ -374,6 +374,7 @@ class PostDetailViewController: UIViewController {
         
         // image
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
+            self.imageUrls = imageUrls
             for (index, imageUrl) in imageUrls.enumerated() {
                 print("ImageURL: \(index), \(imageUrl)")
                 
@@ -398,16 +399,23 @@ class PostDetailViewController: UIViewController {
                     ],
                     completionHandler: { result in
                         switch result {
-                        case .success(let value):
+                        case .success(_):
                             print("Image successfully loaded.")
+                            self.addTapGestureToImages()
                         case .failure(let error):
                             print("Failed to load image: \(error.localizedDescription)")
                         }
                     }
                 )
+                
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:)))
+                imageView.isUserInteractionEnabled = true
+                imageView.addGestureRecognizer(tapGesture)
+                
                 self.imagesStackView.addArrangedSubview(imageView)
-                print("IMAGESTACKVIEWSUBVIEWS: \(self.imagesStackView.arrangedSubviews)")
+
             }   // for
+            
         } else {
             self.imagesScrollView.isHidden = true
         }
@@ -649,17 +657,15 @@ class PostDetailViewController: UIViewController {
             imageView.addGestureRecognizer(tapGesture)
         }
     }
-    
+
     @objc private func imageTapped(_ gesture: UITapGestureRecognizer) {
         guard !imageUrls.isEmpty,
               let tappedImageView = gesture.view as? UIImageView,
               let index = imagesStackView.arrangedSubviews.firstIndex(of: tappedImageView) else { return }
-        
         let fullScreenPageVC = FullScreenPageViewController(imageUrls: imageUrls, initialIndex: index)
         fullScreenPageVC.modalPresentationStyle = .fullScreen
         present(fullScreenPageVC, animated: true, completion: nil)
     }
-    
 
 }
 
