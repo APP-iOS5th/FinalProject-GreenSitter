@@ -45,7 +45,7 @@ extension ReviewViewController {
         
         if isSelected {
             // 선택 해제시 기본 상태로 복구
-            sender.backgroundColor = UIColor.white
+            sender.backgroundColor = UIColor(named: "BGPrimary")
         } else {
             sender.backgroundColor = UIColor(named: "ComplementaryColor")
         }
@@ -214,7 +214,7 @@ extension ReviewViewController {
                         let updateDate = updateDateTimestamp.dateValue()
                         let postImages = postData["postImages"] as? [String] ?? []
                         let postId = postData["id"] as? String ?? ""
-                        let isReviewed = postData["isReviewed"] as? Bool
+
 
                         // Post 객체 생성 및 업데이트
                         self.review = Post(
@@ -226,8 +226,7 @@ extension ReviewViewController {
                             profileImage: "",
                             nickname: "",
                             userLocation: Location.seoulLocation,
-                            userNotification: false,
-                            userLevel: .flower,
+                            userNotification: false, userLevel: .flower,
                             postType: .offeringToSitter,
                             postTitle: postTitle,
                             postBody: postBody,
@@ -250,6 +249,56 @@ extension ReviewViewController {
                 print("Document does not exist")
             }
         }
+    }
+    
+    //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
+    func loadImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
+        guard let url = URL(string: gsURL) else {
+            print("Invalid URL string: \(gsURL)")
+            completion(nil)
+            return
+        }
+        
+        print("Fetching image from URL: \(url)") // URL 디버깅
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Image download error: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            // 응답의 상태 코드 확인
+            if let httpResponse = response as? HTTPURLResponse {
+                print("HTTP Status Code: \(httpResponse.statusCode)")
+            }
+            
+            guard let data = data else {
+                print("No data received")
+                completion(nil)
+                return
+            }
+            
+            // 데이터 크기 및 내용 확인
+            print("Image data size: \(data.count) bytes")
+            
+            // 데이터의 일부를 문자열로 변환하여 출력 (디버깅 용도)
+            if let dataString = String(data: data, encoding: .utf8) {
+                print("Data received: \(dataString.prefix(1000))") // 첫 1000바이트만 출력
+            } else {
+                print("Data is not a valid UTF-8 string")
+            }
+            
+            // UIImage 객체 생성 시도
+            guard let image = UIImage(data: data) else {
+                print("Failed to create image from data")
+                completion(nil)
+                return
+            }
+            
+            completion(image)
+        }
+        task.resume()
     }
 
 }

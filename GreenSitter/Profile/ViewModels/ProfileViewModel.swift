@@ -35,7 +35,6 @@ extension ProfileViewController {
                 }
             }
         }
-        
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -59,51 +58,158 @@ extension ProfileViewController {
         }
     }
     
+    func fetchUserLevelAndUpdateImage() {
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            print("로그인된 사용자가 없습니다.")
+            return
+        }
 
+
+        // Firestore에서 현재 사용자의 레벨을 가져옵니다.
+        db.collection("users").document(currentUserID).getDocument { [weak self] (document: DocumentSnapshot?, error: Error?) in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Firestore 읽기 오류: \(error)")
+                return
+            }
+            
+            guard let document = document, document.exists,
+                  let data = document.data(),
+                  let levelString = data["levelPoint"] as? String,
+                  let level = Level(rawValue: levelString) else {
+                print("레벨 정보를 가져오는 중 오류 발생")
+                return
+            }
+            
+            // 레벨에 따른 이미지 URL을 가져옵니다.
+            guard let imageURLString = self.imageURLForLevel(level),
+                  let httpsURLString = self.convertToHttpsURL(gsURL: imageURLString) else {
+                print("레벨에 맞는 이미지 URL을 생성할 수 없습니다.")
+                return
+            }
+            
+            // 이미지를 다운로드하여 ProfileTableViewCell의 iconImageView에 설정합니다.
+            self.downloadImage(from: httpsURLString) { image in
+                guard let image = image else {
+                    print("이미지를 다운로드할 수 없습니다.")
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    if let profileTableView = self.profileTableView {
+                        if let visibleCells = profileTableView.visibleCells as? [ProfileTableViewCell] {
+                            for cell in visibleCells {
+                                cell.iconImageView.image = image
+                            }
+                        }
+                    }
+                    else {
+                        print("profileTableView is nil")
+                    }
+                    print("레벨에 따른 프로필 이미지가 성공적으로 설정되었습니다.")
+                }
+            }
+        }
+    }
+
+
+    
+    //MARK: - Level이미지 불러오기
+    func downloadImage(from url: String, completion: @escaping (UIImage?) -> Void) {
+        let imageRef = storage.reference(forURL: url)
+        
+        imageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
+            if let error = error {
+                print("Image download error: \(error)")
+                completion(nil)
+            } else if let data = data, let images = UIImage(data: data) {
+                completion(images)
+            }
+        }
+    }
+    // 레벨에 따라 이미지 URL을 반환하는 함수
+    func imageURLForLevel(_ level: Level) -> String? {
+        let levelImageURLs: [String: String] = [
+            "썩은 씨앗": "gs://greensitter-6dedd.appspot.com/level_image/썩은 씨앗2.png",
+            "씨앗": "gs://greensitter-6dedd.appspot.com/level_image/씨앗3.png",
+            "새싹": "gs://greensitter-6dedd.appspot.com/level_image/새싹.jpg",
+            "유묘": "gs://greensitter-6dedd.appspot.com/level_image/유묘1.jpg",
+            "꽃":"gs://greensitter-6dedd.appspot.com/level_image/꽃1.png",
+            "열매": "gs://greensitter-6dedd.appspot.com/level_image/열매2.png" // 필요한 URL 추가
+        ]
+        
+        return levelImageURLs[level.rawValue]
+    }
     // MARK: - gs:// URL을 https:// URL로 변환
     func convertToHttpsURL(gsURL: String) -> String? {
         let baseURL = "https://firebasestorage.googleapis.com/v0/b/greensitter-6dedd.appspot.com/o/"
+        
+        // gs:// URL을 https:// URL로 변환하는 과정
         let encodedPath = gsURL
             .replacingOccurrences(of: "gs://greensitter-6dedd.appspot.com/", with: "")
-            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) // 특수문자 인코딩
+
+        if encodedPath == nil {
+            print("Error: URL 인코딩 실패 - \(gsURL)")
+        } else {
+            print("Success: URL 인코딩 성공 - \(encodedPath!)")
+        }
+
         return baseURL + (encodedPath ?? "") + "?alt=media"
     }
+
+
     
     // MARK: - 이미지 파일 스토리지에서 이미지 파일 불러오기
     func loadProfileImage(from gsURL: String) {
+        // 1. gsURL을 httpsURL로 변환
         guard let httpsURLString = convertToHttpsURL(gsURL: gsURL),
               let url = URL(string: httpsURLString) else {
-            print("Invalid URL string after conversion: \(gsURL)")
+            print("Error: Invalid URL string after conversion: \(gsURL)")
             return
         }
         
         print("Fetching image from URL: \(url)")
+
+        // 2. URLSession을 사용해 이미지 데이터를 다운로드
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print("Image download error: \(error)")
+                print("Image download error: \(error.localizedDescription)")
                 return
             }
             
+            // 3. HTTP 응답 상태 코드 출력
             if let httpResponse = response as? HTTPURLResponse {
                 print("HTTP Response Status Code: \(httpResponse.statusCode)")
                 if httpResponse.statusCode != 200 {
-                    print("HTTP Error: \(httpResponse.statusCode)")
+                    print("HTTP Error: \(httpResponse.statusCode) - URL: \(url)")
+                    if let responseURL = httpResponse.url {
+                        print("Response URL: \(responseURL)")
+                    }
+                    if let fields = httpResponse.allHeaderFields as? [String: Any] {
+                        print("HTTP Response Headers: \(fields)")
+                    }
                     return
                 }
             }
             
+            // 4. 데이터 수신 확인
             guard let data = data, let image = UIImage(data: data) else {
-                print("No data received or failed to convert data to UIImage")
+                print("No data received or failed to convert data to UIImage - URL: \(url)")
                 return
             }
             
+            // 5. 이미지가 성공적으로 로드된 경우, UI 업데이트
             DispatchQueue.main.async {
                 self.imageButton.setImage(image, for: .normal)
-                print("Profile image successfully set to button.")
+                print("Profile image successfully set to button. URL: \(url)")
             }
         }
         task.resume()
     }
+
     
     
     
@@ -136,6 +242,8 @@ extension ProfileViewController {
             }
         }
     }
+    
+
     
     
     //MARK: - 로그아웃
@@ -307,21 +415,69 @@ extension ProfileViewController {
         }
     }
 
-    
+    //MARK: - 채팅 및 Post내용 삭제
     func deleteUserData(completion: @escaping(Bool) -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        
-        db.collection("users").document(userId).delete() { error in
+
+        // Firestore 참조 생성
+        let db = Firestore.firestore()
+
+        // 여러 삭제 작업을 수행하기 위해 배치를 시작
+        let batch = db.batch()
+
+        // 'users' 컬렉션에서 사용자의 문서 삭제
+        let userDocRef = db.collection("users").document(userId)
+        batch.deleteDocument(userDocRef)
+
+        // 사용자가 작성한 모든 포스트 삭제
+        let postsRef = db.collection("posts").whereField("userId", isEqualTo: userId)
+        postsRef.getDocuments { querySnapshot, error in
             if let error = error {
-                print("Error deleting user data: \(error.localizedDescription)")
+                print("포스트를 가져오는 중 오류 발생: \(error.localizedDescription)")
                 completion(false)
+                return
             }
-            else {
-                print("User data deleted successfully from Firestore")
-                completion(true)
+            
+            guard let documents = querySnapshot?.documents else {
+                completion(true) // 문서가 없으면 완료 처리
+                return
+            }
+            
+            for document in documents {
+                batch.deleteDocument(document.reference)
+            }
+
+            // 사용자가 속한 모든 채팅방 삭제
+            let chatRoomsRef = db.collection("chatRooms").whereField("userId", isEqualTo: userId)
+            chatRoomsRef.getDocuments { querySnapshot, error in
+                if let error = error {
+                    print("채팅방을 가져오는 중 오류 발생: \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+
+                guard let documents = querySnapshot?.documents else {
+                    completion(true) // 문서가 없으면 완료 처리
+                    return
+                }
+
+                for document in documents {
+                    batch.deleteDocument(document.reference)
+                }
+
+                // Firestore에 배치 커밋
+                batch.commit { error in
+                    if let error = error {
+                        print("사용자 데이터 삭제 중 오류 발생: \(error.localizedDescription)")
+                        completion(false)
+                    } else {
+                        print("Firestore에서 사용자 데이터가 성공적으로 삭제되었습니다.")
+                        completion(true)
+                    }
+                }
             }
         }
     }
 
-}
 
+}

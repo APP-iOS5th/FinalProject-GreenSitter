@@ -27,7 +27,7 @@ class AboutMeViewController: UIViewController {
     }
     
     var sectionTitle = ["자기소개", "돌봄 정보"]
-
+    
     lazy var profileImage: UIImageView = {
         let image = UIImageView()
         image.image = UIImage(named: "로고7")
@@ -39,10 +39,25 @@ class AboutMeViewController: UIViewController {
     
     lazy var circleView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 70
         view.layer.masksToBounds = true
-        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Progress layer
+        let progressLayer = CAShapeLayer()
+        progressLayer.strokeColor = UIColor(named: "DominentColor")?.cgColor
+        progressLayer.fillColor = UIColor.clear.cgColor
+        progressLayer.lineWidth = 20
+        progressLayer.lineCap = .round
+        progressLayer.strokeEnd = 0.0
+        
+        let circularPath = UIBezierPath(arcCenter: CGPoint(x: 70, y: 70), radius: 70, startAngle: -CGFloat.pi / 2, endAngle: 1.5 * CGFloat.pi, clockwise: true)
+        progressLayer.path = circularPath.cgPath
+        view.layer.addSublayer(progressLayer)
+        
+        view.layer.addSublayer(progressLayer)
+        view.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        
         return view
     }()
     
@@ -171,14 +186,45 @@ class AboutMeViewController: UIViewController {
         ])
         fetchUserFirebase(userId: userId)
         NotificationCenter.default.addObserver(self, selector: #selector(self.userAboutMeUpdated), name: NSNotification.Name("UserAboutMeUpdated"), object: nil)
-
+        fetchUserExperience()
+        
     }
     @objc func userAboutMeUpdated() {
         // 유저 데이터를 다시 불러오기
         fetchUserFirebase(userId: userId)
     }
-
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    //MARK: - exp테두리설정
+    func fetchUserExperience() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("사용자 Id 불러오기 실패")
+            return
+        }
+        
+        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+            guard let self = self else { return }
+            if let error = error {
+                print("데이터 가져오는 중 오류 발생: \(error)")
+                return
+            }
+            
+            guard let document = document, document.exists, let data = document.data(), let exp = data["exp"] as? Int else {
+                print("경험치 정보를 가져오는 중 오류 발생")
+                return
+            }
+            self.updateCircleView(withExperience: exp)
+        }
+    }
+    
+    private func updateCircleView(withExperience exp: Int) {
+        let percentage = CGFloat(exp) / 100.0
+        
+        if let progressLayer = circleView.layer.sublayers?.first(where: { $0 is CAShapeLayer }) as? CAShapeLayer {
+            progressLayer.strokeEnd = percentage
+        }
     }
 }

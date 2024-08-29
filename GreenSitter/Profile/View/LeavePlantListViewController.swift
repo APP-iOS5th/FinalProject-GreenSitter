@@ -13,6 +13,19 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
     
     let db = Firestore.firestore()
     var post: [Post] = []
+//    var postId: String?
+//    
+//    init(postId: String) {
+//        self.postId = postId
+//        super.init(nibName: nil, bundle: nil)
+//
+//    }
+    
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+    
+    
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -40,6 +53,7 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedPost = post[indexPath.row]
+        let postId = selectedPost.id
         
         let postDetailViewController = PostDetailViewController(postId: Post.samplePosts.first!.id)
         navigationController?.pushViewController(postDetailViewController, animated: true)
@@ -53,8 +67,11 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
         
         let currentPost = post[indexPath.row]
-        
-        cell.statusView.backgroundColor = UIColor(named: "DominentColor")
+        if currentPost.postStatus.rawValue == "거래완료" {
+            cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        } else {
+            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
+        }
         cell.statusLabel.text = currentPost.postStatus.rawValue
         cell.titleLabel.text = currentPost.postTitle
         cell.bodyLabel.text = currentPost.postBody
@@ -68,8 +85,6 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
         } else {
             cell.plantImage.image = UIImage(named: "logo7")
         }
-        
         return cell
-        
     }
 }

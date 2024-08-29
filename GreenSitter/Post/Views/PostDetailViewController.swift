@@ -11,9 +11,6 @@ import FirebaseAuth
 import Kingfisher
 
 class PostDetailViewController: UIViewController {
-    
-    // MARK: - Properties
-    
     private var postDetailViewModel = PostDetailViewModel()
     private var imageUrls: [String] = []
     private let postId: String
@@ -270,7 +267,7 @@ class PostDetailViewController: UIViewController {
             },
             UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { [weak self] _ in
                 guard let self = self else { return }
-                self.postDetailViewModel.deletePost(postId: postId) { [weak self] success in
+                self.postDetailViewModel.deletePost(postId: post.id) { [weak self] success in
                     DispatchQueue.main.async {
                         if success {
                             let alert = UIAlertController(title: "성공", message: "삭제가 완료되었습니다.", preferredStyle: .alert)
@@ -442,6 +439,9 @@ class PostDetailViewController: UIViewController {
 
     private func setupConstraintsWithImages() {
         imagesScrollView.isHidden = false
+        
+        // 기본값은 안보이게
+        contactButton.isHidden = false /// true로 수정
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -635,12 +635,15 @@ class PostDetailViewController: UIViewController {
         let chatViewModel = ChatViewModel()
         let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
         chatDetailViewController.chatViewModel = chatViewModel
-        self.navigationController?.pushViewController(chatDetailViewController, animated: true)
         
-        if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-           let window = windowScene.windows.first(where: \.isKeyWindow),
-           let tabBarController = window.rootViewController as? UITabBarController {
-            tabBarController.selectedIndex = 2 // 채팅 탭으로 이동
+        // 현재 탭 바 컨트롤러 가져오기
+        if let tabBarController = self.tabBarController,
+           let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
+
+            navigationController.pushViewController(chatDetailViewController, animated: true)
+
+            // 채팅 탭으로 전환
+            tabBarController.selectedIndex = 2
         }
     }
     
@@ -823,6 +826,7 @@ extension PostDetailViewController: MKMapViewDelegate {
 extension PostDetailViewController: PostDetailViewModelDelegate {
     func navigateToLoginViewController() {
         let loginViewController = LoginViewController()
-        self.navigationController?.pushViewController(loginViewController, animated: true)
+        loginViewController.modalPresentationStyle = .fullScreen
+        self.present(loginViewController, animated: true)
     }
 }
