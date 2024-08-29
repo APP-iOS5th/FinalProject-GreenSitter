@@ -145,13 +145,6 @@ class AddPostViewController: UIViewController {
         return button
     }()
     
-    private let mapView: MKMapView = {
-        let mapView = MKMapView()
-        mapView.isHidden = true
-        mapView.translatesAutoresizingMaskIntoConstraints = false
-        return mapView
-    }()
-    
     private let saveButton: UIButton = {
         let button = UIButton()
         button.setTitle("작성완료", for: .normal)
@@ -246,15 +239,15 @@ class AddPostViewController: UIViewController {
         contentView.addSubview(dividerLine3)
         contentView.addSubview(mapLabel)
         contentView.addSubview(mapIconButton)
-        contentView.addSubview(mapView)
-        contentView.addSubview(saveButton)
         
+        view.addSubview(saveButton)
+
         mapIconButton.addTarget(self, action: #selector(mapIconButtonTapped), for: .touchUpInside)
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
 
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
@@ -263,7 +256,8 @@ class AddPostViewController: UIViewController {
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            
+            contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor),
+
             titleTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
             titleTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             titleTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -276,6 +270,7 @@ class AddPostViewController: UIViewController {
             imageScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 16),
             imageScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            //
             imageScrollView.heightAnchor.constraint(equalToConstant: 104),
             
             imageStackView.topAnchor.constraint(equalTo: imageScrollView.topAnchor),
@@ -305,24 +300,19 @@ class AddPostViewController: UIViewController {
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
             mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
+            // map Label 간 하단 간격 필요
             mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
-            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8), //
+            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8),
             
-            mapIconButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
+            mapIconButton.centerYAnchor.constraint(equalTo: mapLabel.centerYAnchor),
             mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
             mapIconButton.heightAnchor.constraint(equalToConstant: 50),
             mapIconButton.widthAnchor.constraint(equalToConstant: 50),
             
-            mapView.topAnchor.constraint(equalTo: mapIconButton.bottomAnchor, constant: 16),
-            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            mapView.heightAnchor.constraint(equalToConstant: 200),
-            
-            saveButton.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 20),
-            saveButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            saveButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30),
-            saveButton.heightAnchor.constraint(equalToConstant: 52)
+            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            saveButton.heightAnchor.constraint(equalToConstant: 45)
         ])
     }
     
