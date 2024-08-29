@@ -38,7 +38,7 @@ class AddPostViewController: UIViewController {
     
     private let titleTextField: UITextField = {
         let textField = UITextField()
-        textField.tintColor = .black
+        textField.textColor = .labelsPrimary
         textField.font = .systemFont(ofSize: 18)
         textField.placeholder = "제목을 입력하세요."
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -47,7 +47,7 @@ class AddPostViewController: UIViewController {
     
     private let dividerLine1: UIView = {
         let line = UIView()
-        line.backgroundColor = .lightGray
+        line.backgroundColor = .separatorsNonOpaque
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
@@ -78,25 +78,23 @@ class AddPostViewController: UIViewController {
         return imageView
     }()
     
-    
-    
     private let dividerLine2: UIView = {
         let line = UIView()
-        line.backgroundColor = .lightGray
+        line.backgroundColor = .separatorsNonOpaque
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
     private let textViewPlaceHolder = "텍스트를 입력하세요."
     
-    lazy var textView: UITextView = {
+    private lazy var textView: UITextView = {
         let view = UITextView()
         view.layer.borderWidth = 1.0
         view.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.7).cgColor
         view.textContainerInset = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
         view.font = .systemFont(ofSize: 18)
         view.text = textViewPlaceHolder
-        view.textColor = .lightGray
+        view.textColor = .labelsPrimary
         view.delegate = self
         view.sizeToFit()
         view.isScrollEnabled = false
@@ -104,12 +102,12 @@ class AddPostViewController: UIViewController {
         return view
     }()
     
-    lazy var remainCountLabel: UILabel = {
+    private lazy var remainCountLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.text = "0/700"
         label.font = .systemFont(ofSize: 14)
-        label.textColor = .lightGray
+        label.textColor = .labelsSecondary
         label.textAlignment = .right
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -117,14 +115,14 @@ class AddPostViewController: UIViewController {
     
     private let dividerLine3: UIView = {
         let line = UIView()
-        line.backgroundColor = .lightGray
+        line.backgroundColor = .separatorsNonOpaque
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
     private let mapLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .secondaryLabel
+        label.textColor = .labelsSecondary
         label.font = .systemFont(ofSize: 16)
         label.text = "거래 희망 장소를 선택할 수 있어요."
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -136,7 +134,6 @@ class AddPostViewController: UIViewController {
         let image = UIImage(named: "lookingForSitterIcon")
         button.setImage(image, for: .normal)
         button.contentMode = .scaleAspectFit
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -154,7 +151,6 @@ class AddPostViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .dominent
         button.layer.cornerRadius = 20
-        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -247,7 +243,8 @@ class AddPostViewController: UIViewController {
         contentView.addSubview(saveButton)
         
         mapIconButton.addTarget(self, action: #selector(mapIconButtonTapped), for: .touchUpInside)
-        
+        saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
