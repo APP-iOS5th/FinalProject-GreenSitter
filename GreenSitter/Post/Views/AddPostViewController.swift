@@ -293,7 +293,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             textView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 16),
             textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            textView.heightAnchor.constraint(equalToConstant: 200),
+            textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200),
             
             remainCountLabel.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 8),
             remainCountLabel.trailingAnchor.constraint(equalTo: textView.trailingAnchor),

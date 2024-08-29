@@ -38,8 +38,9 @@
 		3BAD24682C773E2A004C2DBA /* PersonalinfomationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD24672C773E2A004C2DBA /* PersonalinfomationViewController.swift */; };
 		4F822E822C79FC9D007402CB /* FullScreenImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E812C79FC9D007402CB /* FullScreenImageViewController.swift */; };
 		4F822E842C79FE6F007402CB /* FullScreenPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */; };
+		4F822EA32C800B39007402CB /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4F822EA22C800B39007402CB /* APPKey.plist */; };
+		4F822EA52C800B62007402CB /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4F822EA42C800B62007402CB /* APPKey.plist */; };
 		580820592C79BEFF00904201 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 580820572C79BEFF00904201 /* GoogleService-Info.plist */; };
-		5808205A2C79BEFF00904201 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 580820582C79BEFF00904201 /* APPKey.plist */; };
 		58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */; };
 		58F68FEB2C72273700A7F564 /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */; };
 		9731BD242C78544C001B6A44 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 58E98C322C781BD7001E4140 /* GoogleSignIn */; };
@@ -174,13 +175,14 @@
 		3BAD24672C773E2A004C2DBA /* PersonalinfomationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalinfomationViewController.swift; sourceTree = "<group>"; };
 		4F822E812C79FC9D007402CB /* FullScreenImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageViewController.swift; sourceTree = "<group>"; };
 		4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenPageViewController.swift; sourceTree = "<group>"; };
+		4F822EA22C800B39007402CB /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
+		4F822EA42C800B62007402CB /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
 		4FCE70052C76098500279774 /* MainPostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPostListViewController.swift; sourceTree = "<group>"; };
 		4FCE70062C76098500279774 /* EditCareSeekerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewController.swift; sourceTree = "<group>"; };
 		4FCE70092C76098500279774 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
 		4FCE700A2C76098500279774 /* EditCareProviderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewController.swift; sourceTree = "<group>"; };
 		4FCE700B2C76098500279774 /* PostDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		580820572C79BEFF00904201 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		580820582C79BEFF00904201 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
 		582F5D042C64856F00141938 /* SampleChatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleChatData.swift; sourceTree = "<group>"; };
 		582F5D062C64935500141938 /* ChatTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableViewCell.swift; sourceTree = "<group>"; };
 		582F5D0D2C68C3D800141938 /* ChatListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewModel.swift; sourceTree = "<group>"; };
@@ -394,8 +396,9 @@
 		97934DD32C62F3C600B38E0A /* GreenSitter */ = {
 			isa = PBXGroup;
 			children = (
+				4F822EA42C800B62007402CB /* APPKey.plist */,
 				97D1BEB02C6C9DDD00F7A983 /* GreenSitter.entitlements */,
-				580820582C79BEFF00904201 /* APPKey.plist */,
+				4F822EA22C800B39007402CB /* APPKey.plist */,
 				580820572C79BEFF00904201 /* GoogleService-Info.plist */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
@@ -779,10 +782,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5808205A2C79BEFF00904201 /* APPKey.plist in Resources */,
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				580820592C79BEFF00904201 /* GoogleService-Info.plist in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
+				4F822EA32C800B39007402CB /* APPKey.plist in Resources */,
+				4F822EA52C800B62007402CB /* APPKey.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1166,11 +1170,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4F822E8E2C7D9D4C007402CB /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4F822E8D2C7D9D4C007402CB /* XCRemoteSwiftPackageReference "Kingfisher" */;
-			productName = Kingfisher;
-		};
 		58E98C322C781BD7001E4140 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3BEFEC732C63547D00E48D1E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
