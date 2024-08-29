@@ -40,10 +40,17 @@ class AddPostViewController: UIViewController {
         let textField = UITextField()
         textField.textColor = .labelsPrimary
         textField.font = .systemFont(ofSize: 18)
-        textField.placeholder = "제목을 입력하세요."
+
+        // placeholder 텍스트의 색상을 변경
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "제목을 입력하세요.",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.labelsSecondary]
+        )
+        
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
+
     
     private let dividerLine1: UIView = {
         let line = UIView()
@@ -94,7 +101,7 @@ class AddPostViewController: UIViewController {
         view.textContainerInset = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
         view.font = .systemFont(ofSize: 18)
         view.text = textViewPlaceHolder
-        view.textColor = .labelsPrimary
+        view.textColor = .labelsSecondary
         view.delegate = self
         view.sizeToFit()
         view.isScrollEnabled = false
@@ -346,7 +353,7 @@ extension AddPostViewController: UITextViewDelegate {
         if textView.text.count == maxLength {
             remainCountLabel.textColor = .red
         } else {
-            remainCountLabel.textColor = .lightGray
+            remainCountLabel.textColor = .labelsSecondary
         }
         
         
@@ -364,19 +371,19 @@ extension AddPostViewController: UITextViewDelegate {
         // 내용이 비어있을 때 처리
         if textView.text.isEmpty {
             textView.text = textViewPlaceHolder
-            textView.textColor = .lightGray
+            textView.textColor = .labelsSecondary
             textView.selectedTextRange = nil
             textView.resignFirstResponder()
-        } else if textView.textColor == .lightGray && textView.text != textViewPlaceHolder {
-            textView.textColor = .black
+        } else if textView.textColor == .labelsSecondary && textView.text != textViewPlaceHolder {
+            textView.textColor = .labelsPrimary
         }
     }
     
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == .lightGray {
+        if textView.textColor == .labelsSecondary {
             textView.text = nil
-            textView.textColor = .black
+            textView.textColor = .labelsPrimary
         }
     }
     
