@@ -71,10 +71,10 @@ class FirestoreManager {
         let postId = chatRoom.postId
         
         // 중복 검사
-        if await chatRoomExists(userId: userId, postUserId: postUserId, postId: postId) != nil {
-            print("Chat room with userId \(userId), postUserId \(postUserId), and postId \(postId) already exists")
-            return
-        }
+//        if await chatRoomExists(userId: userId, postUserId: postUserId, postId: postId) != nil {
+//            print("Chat room with userId \(userId), postUserId \(postUserId), and postId \(postId) already exists")
+//            return
+//        }
         
         let documentRef = db.collection("chatRooms").document(chatRoom.id)
         
@@ -92,6 +92,7 @@ class FirestoreManager {
             .whereField("userId", isEqualTo: userId)
             .whereField("postUserId", isEqualTo: postUserId)
             .whereField("postId", isEqualTo: postId)
+            .whereField("userEnabled", isEqualTo: true)
         
         do {
             let snapshot = try await query.getDocuments()
@@ -139,8 +140,8 @@ class FirestoreManager {
     }
     
     // 채팅방 데이터 삭제
-    func deleteChatRoom(docId: String, userId: String, chatRoom: ChatRoom) async throws -> ChatRoom {
-        let docRef = db.collection("chatRooms").document(docId)
+    func deleteChatRoom(userId: String, chatRoom: ChatRoom) async throws -> ChatRoom {
+        let docRef = db.collection("chatRooms").document(chatRoom.id)
         var updatedChatRoom = chatRoom
         
         if userId == updatedChatRoom.userId {

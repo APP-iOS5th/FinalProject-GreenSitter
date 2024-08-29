@@ -12,10 +12,6 @@ class ChatViewController: UIViewController {
     var chatRoom: ChatRoom
     var index: Int?
     
-    private var currentNotification: Bool {
-        chatViewModel?.userId == chatRoom.userId ? chatRoom.userNotification : chatRoom.postUserNotification
-    }
-    
     init(chatRoom: ChatRoom) {
         self.chatRoom = chatRoom
         super.init(nibName: nil, bundle: nil)
@@ -29,6 +25,10 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
+        
+        // 키보드 숨기기
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        self.view.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Setup UI
@@ -90,8 +90,8 @@ class ChatViewController: UIViewController {
     }
     
     // MARK: - UIMenu Action Methods
-    private func createNotificationToggleAction() -> UIAction {
-        let notificationStatus = currentNotification
+    private func notificationToggleAction() -> UIAction {
+        let notificationStatus = chatViewModel?.userId == chatRoom.userId ? chatRoom.userNotification : chatRoom.postUserNotification
         return UIAction(
             title: notificationStatus ? "알림 끄기" : "알림 켜기",
             image: notificationStatus ? UIImage(systemName: "bell.slash.fill") : UIImage(systemName: "bell.fill")) { [weak self] _ in
@@ -132,7 +132,7 @@ class ChatViewController: UIViewController {
 
     // 메뉴를 업데이트하는 메서드
     private func updateMenu() {
-        let notificationToggleAction = createNotificationToggleAction()
+        let notificationToggleAction = notificationToggleAction()
         
         let leaveChatRoomAction = UIAction(
             title: "채팅방 나가기",
@@ -155,5 +155,10 @@ class ChatViewController: UIViewController {
         let menuItems = [notificationToggleAction, leaveChatRoomAction]
         let menu = UIMenu(children: menuItems)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
+    }
+    
+    // 키보드 숨기기 메서드
+    @objc private func dismissKeyboard() {
+        self.view.endEditing(true)
     }
 }
