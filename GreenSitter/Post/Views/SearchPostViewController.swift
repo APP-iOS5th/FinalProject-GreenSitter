@@ -10,7 +10,7 @@ import Combine
 
 class SearchPostViewController: UIViewController {
     
-    private let viewModel = SearchPostViewModel()
+    private let viewModel: SearchPostViewModel
     private var cancellables = Set<AnyCancellable>()
     
     private let searchBar: UISearchBar = {
@@ -26,13 +26,21 @@ class SearchPostViewController: UIViewController {
         return tableView
     }()
     
+    init(posts: [Post]) {
+        self.viewModel = SearchPostViewModel(posts: posts)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupLayout()
         setupTableView()
         bindViewModel()
-        loadPosts()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -76,54 +84,42 @@ class SearchPostViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    private func loadPosts() {
-        let allCategories = "all"
-        if let userLocation = LoginViewModel.shared.user?.location {
-            print("Loading posts with user location")
-            viewModel.fetchPostsByCategoryAndLocation(for: allCategories, userLocation: String())
-        } else {
-            print("Loading posts without user location")
-            viewModel.fetchPostsByCategoryAndLocation(for: allCategories, userLocation: nil)
-        }
-    }
-    
     private func performSearch(with searchText: String) {
-        print("Performing search with: \(searchText)")
         viewModel.filterPosts(with: searchText)
     }
 }
 
 extension SearchPostViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        performSearch(with: searchText)
+        if searchText.count >= 2 { // 검색어가 두 글자 이상인 경우 검색 실행
+            performSearch(with: searchText)
+        } else if searchText.isEmpty {
+            performSearch(with: "")
+        }
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // 검색 버튼이 클릭된 경우 키보드 숨김
         searchBar.resignFirstResponder()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        // 취소 버튼이 클릭된 경우 검색어 비우기 및 키보드 숨김
         searchBar.text = ""
         searchBar.resignFirstResponder()
         performSearch(with: "")
     }
-    
-    private func fetchPostsByCategoryAndLocation(for category: String, userLocation: String?) -> [Post] {
-        // 실제 네트워크 요청이나 데이터베이스 쿼리 등을 통해 게시글을 가져오는 로직
-        // 예시 데이터 반환
-        return []
-    }
 }
+
+//MARK: - TableView
 
 extension SearchPostViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("Number of rows in table view: \(viewModel.filteredPosts.count)")
         return viewModel.filteredPosts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as? PostTableViewCell else {
-            print("Failed to dequeue PostTableViewCell")
             return UITableViewCell()
         }
         let post = viewModel.filteredPosts[indexPath.row]

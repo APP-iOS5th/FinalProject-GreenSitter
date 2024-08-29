@@ -11,6 +11,8 @@ import FirebaseAuth
 
 class MainPostListViewController: UIViewController {
     
+    var postType: [PostType] = []
+    
     private let categoryStackView = UIStackView()
     private var selectedButton: UIButton?
     private let viewModel = MainPostListViewModel()
@@ -127,11 +129,10 @@ class MainPostListViewController: UIViewController {
     }
     
     @objc private func searchPostButtonTapped() {
-        DispatchQueue.main.async { [weak self] in
-            let searchPostVC = SearchPostViewController()
-            self?.navigationController?.pushViewController(searchPostVC, animated: true)
+        let searchPostVC = SearchPostViewController(posts: viewModel.filteredPosts)
+        navigationController?.pushViewController(searchPostVC, animated: true)
         }
-    }
+    
     
     private func handleAddPostButtonTapped(postType: PostType) {
         if Auth.auth().currentUser != nil {
