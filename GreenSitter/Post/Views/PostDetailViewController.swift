@@ -226,12 +226,12 @@ class PostDetailViewController: UIViewController {
         }
 
         configure(with: post)
-        
+        contactButton.isHidden = true
+
         if Auth.auth().currentUser != nil {
             if LoginViewModel.shared.user?.id == post.userId {
                 setupNavigationBarWithEdit(post: post)
                 contactButton.isHidden = true
-                // TODO: 채팅도 표시하지 않아야함
             } else {
                 contactButton.isHidden = false
                 // 그게 아니면 차단 기능있는 네비게이션 바 표시
@@ -241,7 +241,6 @@ class PostDetailViewController: UIViewController {
                 configureChatButton(with: post)
             }
         }
-        contactButton.isHidden = true
     }
     
     private func setupNavigationBarWithEdit(post: Post) {
