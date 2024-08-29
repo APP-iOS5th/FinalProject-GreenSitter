@@ -9,7 +9,7 @@ import UIKit
 import PhotosUI
 import MapKit
 
-class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewControllerDelegate {
+class AddPostViewController: UIViewController {
     
     private var postType: PostType
     private var viewModel: AddPostViewModel
@@ -178,10 +178,6 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         }
     }
     
-//    @objc private func pickerImageViewTapped() {
-//        presentImagePickerController()
-//    }
-    
     @objc private func saveButtonTapped() {
         guard validateInputs() else { return }
         
@@ -334,6 +330,11 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         present(navigationController, animated: true, completion: nil)
     }
     
+    
+}
+
+extension AddPostViewController: UITextViewDelegate {
+    
     func textViewDidChange(_ textView: UITextView) {
         let textCount = textView.text.count
         let maxLength = 700
@@ -388,6 +389,9 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             textView.textColor = .red
         }
     }
+}
+
+extension AddPostViewController: PHPickerViewControllerDelegate {
     
     private func updateImageStackView() {
             imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
