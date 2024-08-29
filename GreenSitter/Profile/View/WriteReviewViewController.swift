@@ -53,7 +53,7 @@ class WriteReviewViewController: UIViewController,UITableViewDelegate, UITableVi
         
         let currentPost = post[indexPath.row]
         
-        cell.statusView.backgroundColor = UIColor(named: "DominentColor")
+        cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
         cell.statusLabel.text = currentPost.postStatus.rawValue
         cell.titleLabel.text = currentPost.postTitle
         cell.bodyLabel.text = currentPost.postBody

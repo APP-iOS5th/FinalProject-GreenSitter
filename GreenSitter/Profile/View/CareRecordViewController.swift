@@ -12,8 +12,17 @@ import FirebaseAuth
 class CareRecordViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     let db = Firestore.firestore()
-    
     var post: [Post] = []
+    var userId: String
+
+    init(userId: String) {
+        self.userId = userId
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -21,13 +30,15 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(CareRecordTableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.backgroundColor = UIColor(named: "BGSecondary")
         return tableView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(named: "BGSecondary")
+
+        view.backgroundColor = UIColor(named: "SeparatorsOpaque")
         navigationItem.title = "돌봄 기록"
         
         view.addSubview(tableView)
@@ -46,17 +57,22 @@ class CareRecordViewController: UIViewController, UITableViewDelegate, UITableVi
         return post.count
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedPost = post[indexPath.row]
+        let postId = selectedPost.id
+        
+        let postDetailViewController = PostDetailViewController(postId: postId)
+        navigationController?.pushViewController(postDetailViewController, animated: true)
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CareRecordTableViewCell
         let currentPost = post[indexPath.row]
         
-        switch currentPost.postStatus {
-        case .beforeTrade:
-            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
-        case .inTrade:
-            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
-        case .completedTrade:
+        if currentPost.postStatus.rawValue == "거래완료" {
             cell.statusView.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        } else {
+            cell.statusView.backgroundColor = UIColor(named: "DominentColor")
         }
         
         cell.statusLabel.text = currentPost.postStatus.rawValue

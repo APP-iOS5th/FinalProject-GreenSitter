@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>&quot;게시글에 사진을 추가하기 위해 사진 라이브러리 접근 권한이 필요합니다.&quot;</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

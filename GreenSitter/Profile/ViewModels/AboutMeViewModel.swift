@@ -23,7 +23,7 @@ extension AboutMeViewController {
                     return 400
                 }
             ]
-            presentationController.preferredCornerRadius = 20 // 모서리 둥글기 설정 (선택 사항)
+            presentationController.preferredCornerRadius = 20 // 모서리 둥글기 설정 
         }
     }
     

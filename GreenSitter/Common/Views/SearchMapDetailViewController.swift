@@ -14,9 +14,9 @@ class SearchMapDetailViewController: UIViewController {
     
     private var makePlanViewModel: MakePlanViewModel?
     private var addPostViewModel: AddPostViewModel?
-    private var location: Location
-    private var isInitialLoad = true  // 초기 로드를 체크하기 위한 플래그
     
+    private var location: Location
+    private var isInitialLoad = true  // 초기 로드를 체크하기 위한 플래그    
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.delegate = self
@@ -237,7 +237,8 @@ class SearchMapDetailViewController: UIViewController {
                 parentViewController.dismiss(animated: true)
             }
             // login 에서 필요한 기능
-        } else {
+        }
+        else {
             LoginViewModel.shared.updateUserLocation(with: location)
             guard let parentViewController = self.presentingViewController else { return }
             self.dismiss(animated: true) {
