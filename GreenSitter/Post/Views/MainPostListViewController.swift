@@ -103,7 +103,6 @@ class MainPostListViewController: UIViewController {
     }
     
     func setupNavigationBarButtons() {
-        // Create a menu with actions for each PostType
         let menu = UIMenu(title: "", children: [
             UIAction(title: PostType.offeringToSitter.rawValue, image: UIImage(systemName: "hand.raised.fill")) { [weak self] _ in
                 self?.handleAddPostButtonTapped(postType: .offeringToSitter)
@@ -113,25 +112,25 @@ class MainPostListViewController: UIViewController {
             },
         ])
         
-        // Attach the menu to the addPostButton
         addPostButton.menu = menu
         addPostButton.showsMenuAsPrimaryAction = true
         
-        // Add the search button as a UIBarButtonItem
+        searchPostButton.addTarget(self, action: #selector(searchPostButtonTapped), for: .touchUpInside)
+        
+
         let searchBarButton = UIBarButtonItem(customView: searchPostButton)
         let addBarButton = UIBarButtonItem(customView: addPostButton)
-        
         let locationBarButton = UIBarButtonItem(customView: locationLabel)
         
         navigationItem.rightBarButtonItems = [addBarButton, searchBarButton]
         navigationItem.leftBarButtonItem = locationBarButton
-        
-        // TODO: post 검색 기능
-        let searchPostButtonAction = UIAction { [weak self] _ in
-            // TODO: Add search functionality
-            print("Search button tapped")
+    }
+    
+    @objc private func searchPostButtonTapped() {
+        DispatchQueue.main.async { [weak self] in
+            let searchPostVC = SearchPostViewController()
+            self?.navigationController?.pushViewController(searchPostVC, animated: true)
         }
-        searchPostButton.addAction(searchPostButtonAction, for: .touchUpInside)
     }
     
     private func handleAddPostButtonTapped(postType: PostType) {
@@ -198,16 +197,14 @@ class MainPostListViewController: UIViewController {
     }
     
     @objc func categoryButtonTapped(_ sender: UIButton) {
-        // 이전에 선택된 버튼의 텍스트 스타일 초기화
         selectedButton?.setTitleColor(.labelsSecondary, for: .normal)
         selectedButton?.titleLabel?.font = UIFont.systemFont(ofSize: 17)
         
-        // 이전에 선택된 버튼에서 이미지 제거
+      
         if let previousButton = selectedButton, let previousImageView = previousButton.viewWithTag(100) as? UIImageView {
             previousImageView.removeFromSuperview()
         }
-        
-        // 현재 선택된 버튼 텍스트 스타일 적용
+    
         sender.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
         sender.setTitleColor(.complementary, for: .normal)
         selectedButton = sender
