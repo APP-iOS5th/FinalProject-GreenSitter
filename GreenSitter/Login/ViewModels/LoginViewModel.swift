@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
+import Combine
 
 class LoginViewModel: ObservableObject {
     static let shared = LoginViewModel()
@@ -83,15 +84,6 @@ class LoginViewModel: ObservableObject {
                                  chatNotification: chatNotification)
                 self.user?.updateExp(by: exp) //경험치 업데이트
                 print("사용자 데이터 불러오기: \(String(describing: self.user))")
-                
-                if let postId = self.user?.id, !postId.isEmpty {
-                    print("Fetched postId: \(postId)")
-                    
-                    // MARK: - 주석 처리된 부분입니다.
-//                    self.updatePostLocation(with: self.user?.location ?? Location.seoulLocation, postId)
-                } else {
-                    print("Error: postId is empty or not available")
-                }
                 completion()
             }
             
@@ -177,35 +169,5 @@ class LoginViewModel: ObservableObject {
         print("Attempting to update user location with address: \(location)")
     }
     
-    func updatePostLocation(with location: Location, _ postId: String) {
-        print("Attempting to update location for postId: \(postId)")
-        
-        guard !postId.isEmpty else {
-            print("Error: postId is empty")
-            return
-        }
-        db.collection("posts").whereField("userId", isEqualTo: postId).getDocuments { querySnapshot, error in
-            if let error = error {
-                print("Firestore Query Error in posts collection: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let documents = querySnapshot?.documents, !documents.isEmpty else {
-                print("No matching documents found in posts collection with postId: \(postId)") // 추가적인 정보 출력
-                return
-            }
-            print("Found \(documents.count) documents to update for postId: \(postId)")
-
-            
-            for document in documents {
-                document.reference.updateData(["location": location.toDictionary()]) { error in
-                    if let error = error {
-                        print("Error updating post location in document \(document.documentID): \(error.localizedDescription)")
-                    } else {
-                        print("Post location successfully updated in document \(document.documentID)!")
-                    }
-                }
-            }
-        }
-    }
 }
+

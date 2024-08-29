@@ -226,12 +226,12 @@ class PostDetailViewController: UIViewController {
         }
 
         configure(with: post)
-        
+        contactButton.isHidden = true
+
         if Auth.auth().currentUser != nil {
             if LoginViewModel.shared.user?.id == post.userId {
                 setupNavigationBarWithEdit(post: post)
                 contactButton.isHidden = true
-                // TODO: 채팅도 표시하지 않아야함
             } else {
                 contactButton.isHidden = false
                 // 그게 아니면 차단 기능있는 네비게이션 바 표시
@@ -240,17 +240,6 @@ class PostDetailViewController: UIViewController {
                 // 로그인을 한 유저 중, 다른 사람의 게시물을 보고 있는 경우에만 chat button 보이게
                 configureChatButton(with: post)
             }
-        }
-        
-        contactButton.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
-            Task {
-                await self.postDetailViewModel.chatButtonTapped()
-            }
-        }, for: .touchUpInside)
-        
-        postDetailViewModel.onChatButtonTapped = { [weak self] chatRoom in
-            self?.navigateToChatDetail(chatRoom: chatRoom)
         }
     }
     
@@ -396,7 +385,7 @@ class PostDetailViewController: UIViewController {
                     ],
                     completionHandler: { result in
                         switch result {
-                        case .success(let value):
+                        case .success(_):
                             print("Image successfully loaded.")
                             self.addTapGestureToImages()
                         case .failure(let error):
@@ -404,9 +393,14 @@ class PostDetailViewController: UIViewController {
                         }
                     }
                 )
+                
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:)))
+                imageView.isUserInteractionEnabled = true
+                imageView.addGestureRecognizer(tapGesture)
+                
                 self.imagesStackView.addArrangedSubview(imageView)
-                print("IMAGESTACKVIEWSUBVIEWS: \(self.imagesStackView.arrangedSubviews)")
-            }  // for
+
+            }   // for
             
         } else {
             self.imagesScrollView.isHidden = true
@@ -439,9 +433,6 @@ class PostDetailViewController: UIViewController {
 
     private func setupConstraintsWithImages() {
         imagesScrollView.isHidden = false
-        
-        // 기본값은 안보이게
-        contactButton.isHidden = false /// true로 수정
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -581,7 +572,99 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
+            
 
+            imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
+            imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            imagesScrollView.heightAnchor.constraint(equalToConstant: 200),
+            
+            imagesStackView.topAnchor.constraint(equalTo: imagesScrollView.topAnchor),
+            imagesStackView.bottomAnchor.constraint(equalTo: imagesScrollView.bottomAnchor),
+            imagesStackView.leadingAnchor.constraint(equalTo: imagesScrollView.leadingAnchor),
+            imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
+            imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
+            
+            postBodyTextView.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
+            postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            
+            dividerLine3.topAnchor.constraint(equalTo: postBodyTextView.bottomAnchor, constant: 10),
+            dividerLine3.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            dividerLine3.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            dividerLine3.heightAnchor.constraint(equalToConstant: 1),
+            
+            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 8),
+            mapLabel.heightAnchor.constraint(equalToConstant: mapLabel.font.pointSize),
+            
+            mapPlaceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapPlaceLabel.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 8),
+            mapPlaceLabel.heightAnchor.constraint(equalToConstant: mapPlaceLabel.font.pointSize),
+            
+            mapView.topAnchor.constraint(equalTo: mapPlaceLabel.bottomAnchor, constant: 12),
+            mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            mapView.heightAnchor.constraint(equalToConstant: 200),
+            
+            descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
+            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+        ])
+    }
+    
+    private func setupConstraints() {
+        imagesScrollView.isHidden = false
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
+            userProfileButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            userProfileButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            userProfileButton.trailingAnchor.constraint(equalTo: contactButton.leadingAnchor),
+            userProfileButton.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor),
+            
+            contactButton.centerYAnchor.constraint(equalTo: userProfileButton.centerYAnchor),
+            contactButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            contactButton.widthAnchor.constraint(equalToConstant: 100),
+            contactButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            profileImageView.leadingAnchor.constraint(equalTo: userProfileButton.leadingAnchor),
+            profileImageView.topAnchor.constraint(equalTo: userProfileButton.topAnchor),
+            profileImageView.widthAnchor.constraint(equalToConstant: 50),
+            profileImageView.heightAnchor.constraint(equalToConstant: 50),
+            
+            userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor, constant: 5),
+            userNameLabel.heightAnchor.constraint(equalToConstant: userNameLabel.font.pointSize),
+            
+            userLevelLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            userLevelLabel.bottomAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: -5),
+            userLevelLabel.heightAnchor.constraint(equalToConstant: userLevelLabel.font.pointSize),
+            
+            postTimeLabel.centerYAnchor.constraint(equalTo: statusLabel.centerYAnchor),
+            postTimeLabel.leadingAnchor.constraint(equalTo: statusLabel.trailingAnchor, constant: 10),
+            
+            statusLabel.topAnchor.constraint(equalTo: userProfileButton.bottomAnchor, constant: 20),
+            statusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            statusLabel.widthAnchor.constraint(equalToConstant: 50),
+            statusLabel.heightAnchor.constraint(equalToConstant: 20),
+            
+            postTitleLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 10),
+            postTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
+
+            
             postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -654,18 +737,16 @@ class PostDetailViewController: UIViewController {
             imageView.addGestureRecognizer(tapGesture)
         }
     }
-    
+
     @objc private func imageTapped(_ gesture: UITapGestureRecognizer) {
         guard !imageUrls.isEmpty,
               let tappedImageView = gesture.view as? UIImageView,
               let index = imagesStackView.arrangedSubviews.firstIndex(of: tappedImageView) else { return }
-       
         let fullScreenPageVC = FullScreenPageViewController(imageUrls: imageUrls, initialIndex: index)
         fullScreenPageVC.modalPresentationStyle = .fullScreen
         present(fullScreenPageVC, animated: true, completion: nil)
 
     }
-    
 
 }
 

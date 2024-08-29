@@ -21,7 +21,7 @@ class PersonalinfomationViewController: UIViewController {
         self.view.addSubview(webView)
         
         // URL 생성
-        if let url = URL(string: "https://likelion.notion.site/a077c16466e1406ea9bb26075130f260") {
+        if let url = URL(string: "https://enchanting-marmoset-e63.notion.site/0f3ca95d11b7438e871f4190fb49cd9b") {
             let request = URLRequest(url: url)
             
             // 웹 페이지 로드

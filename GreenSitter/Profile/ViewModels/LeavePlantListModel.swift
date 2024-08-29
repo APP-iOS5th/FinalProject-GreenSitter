@@ -37,6 +37,8 @@ extension LeavePlantListViewController {
             for document in documents {
                 let postData = document.data()
                 
+                print("Raw postData: \(postData)")
+                let postId = postData["id"] as? String ?? "id없음"
                 let postStatus = PostStatus(rawValue: postData["postStatus"] as? String ?? "") ?? .completedTrade
                 let postTitle = postData["postTitle"] as? String ?? "제목 없음"
                 let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
@@ -45,11 +47,8 @@ extension LeavePlantListViewController {
                 let postImages = postData["postImages"] as? [String] ?? []
                 
                 // 데이터가 올바르게 불러와졌는지 출력해보기
-                print("Post Title: \(postTitle)")
-                print("Post Body: \(postBody)")
-                
-                print("Update Date: \(updateDate)")
-                print("Post Images: \(postImages)")
+                print("Post Id: \(postId), Post Title: \(postTitle), Post Body: \(postBody), Update Date: \(updateDate), Post Images: \(postImages)")
+
                 
                 // Post 객체 생성 및 배열에 추가
                 let post = Post(

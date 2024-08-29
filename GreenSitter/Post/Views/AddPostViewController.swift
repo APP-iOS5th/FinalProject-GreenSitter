@@ -9,7 +9,7 @@ import UIKit
 import PhotosUI
 import MapKit
 
-class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewControllerDelegate {
+class AddPostViewController: UIViewController {
     
     private var postType: PostType
     private var viewModel: AddPostViewModel
@@ -38,16 +38,23 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     private let titleTextField: UITextField = {
         let textField = UITextField()
-        textField.tintColor = .labelsPrimary
+        textField.textColor = .labelsPrimary
         textField.font = .systemFont(ofSize: 18)
-        textField.placeholder = "제목을 입력하세요."
+
+        // placeholder 텍스트의 색상을 변경
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "제목을 입력하세요.",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.labelsSecondary]
+        )
+        
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
+
     
     private let dividerLine1: UIView = {
         let line = UIView()
-        line.backgroundColor = .lightGray
+        line.backgroundColor = .separatorsNonOpaque
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
@@ -77,25 +84,23 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return imageView
     }()
     
-    
-    
     private let dividerLine2: UIView = {
         let line = UIView()
-        line.backgroundColor = .lightGray
+        line.backgroundColor = .separatorsNonOpaque
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
     private let textViewPlaceHolder = "텍스트를 입력하세요."
     
-    lazy var textView: UITextView = {
+    private lazy var textView: UITextView = {
         let view = UITextView()
         view.layer.borderWidth = 1.0
         view.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.7).cgColor
         view.textContainerInset = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
         view.font = .systemFont(ofSize: 18)
         view.text = textViewPlaceHolder
-        view.textColor = .lightGray
+        view.textColor = .labelsSecondary
         view.delegate = self
         view.sizeToFit()
         view.isScrollEnabled = false
@@ -103,12 +108,12 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         return view
     }()
     
-    lazy var remainCountLabel: UILabel = {
+    private lazy var remainCountLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.text = "0/700"
         label.font = .systemFont(ofSize: 14)
-        label.textColor = .lightGray
+        label.textColor = .labelsSecondary
         label.textAlignment = .right
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -116,14 +121,14 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
     
     private let dividerLine3: UIView = {
         let line = UIView()
-        line.backgroundColor = .lightGray
+        line.backgroundColor = .separatorsNonOpaque
         line.translatesAutoresizingMaskIntoConstraints = false
         return line
     }()
     
     private let mapLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .secondaryLabel
+        label.textColor = .labelsSecondary
         label.font = .systemFont(ofSize: 16)
         label.text = "거래 희망 장소를 선택할 수 있어요."
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -135,16 +140,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         let image = UIImage(named: "lookingForSitterIcon")
         button.setImage(image, for: .normal)
         button.contentMode = .scaleAspectFit
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-    }()
-    
-    private let mapView: MKMapView = {
-        let mapView = MKMapView()
-        mapView.isHidden = true
-        mapView.translatesAutoresizingMaskIntoConstraints = false
-        return mapView
     }()
     
     private let saveButton: UIButton = {
@@ -153,7 +150,6 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .dominent
         button.layer.cornerRadius = 20
-        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -176,10 +172,6 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             mapLabel.text = address
         }
     }
-    
-//    @objc private func pickerImageViewTapped() {
-//        presentImagePickerController()
-//    }
     
     @objc private func saveButtonTapped() {
         guard validateInputs() else { return }
@@ -246,14 +238,15 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         contentView.addSubview(dividerLine3)
         contentView.addSubview(mapLabel)
         contentView.addSubview(mapIconButton)
-        contentView.addSubview(mapView)
-        contentView.addSubview(saveButton)
         
+        view.addSubview(saveButton)
+
         mapIconButton.addTarget(self, action: #selector(mapIconButtonTapped), for: .touchUpInside)
-        
+        saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
@@ -262,7 +255,8 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            
+            contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor),
+
             titleTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
             titleTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             titleTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -275,6 +269,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             imageScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 16),
             imageScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            //
             imageScrollView.heightAnchor.constraint(equalToConstant: 104),
             
             imageStackView.topAnchor.constraint(equalTo: imageScrollView.topAnchor),
@@ -304,24 +299,19 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
             mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
+            // map Label 간 하단 간격 필요
             mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
-            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8), //
+            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8),
             
-            mapIconButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
+            mapIconButton.centerYAnchor.constraint(equalTo: mapLabel.centerYAnchor),
             mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
             mapIconButton.heightAnchor.constraint(equalToConstant: 50),
             mapIconButton.widthAnchor.constraint(equalToConstant: 50),
             
-            mapView.topAnchor.constraint(equalTo: mapIconButton.bottomAnchor, constant: 16),
-            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            mapView.heightAnchor.constraint(equalToConstant: 200),
-            
-            saveButton.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 20),
-            saveButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            saveButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30),
-            saveButton.heightAnchor.constraint(equalToConstant: 52)
+            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            saveButton.heightAnchor.constraint(equalToConstant: 45)
         ])
     }
     
@@ -332,6 +322,11 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true, completion: nil)
     }
+    
+    
+}
+
+extension AddPostViewController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         let textCount = textView.text.count
@@ -347,7 +342,7 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         if textView.text.count == maxLength {
             remainCountLabel.textColor = .red
         } else {
-            remainCountLabel.textColor = .lightGray
+            remainCountLabel.textColor = .labelsSecondary
         }
         
         
@@ -365,17 +360,17 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
         // 내용이 비어있을 때 처리
         if textView.text.isEmpty {
             textView.text = textViewPlaceHolder
-            textView.textColor = .lightGray
+            textView.textColor = .labelsSecondary
             textView.selectedTextRange = nil
             textView.resignFirstResponder()
-        } else if textView.textColor == .lightGray && textView.text != textViewPlaceHolder {
-            textView.textColor = .black
+        } else if textView.textColor == .labelsSecondary && textView.text != textViewPlaceHolder {
+            textView.textColor = .labelsPrimary
         }
     }
     
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == .lightGray {
+        if textView.textColor == .labelsSecondary {
             textView.text = nil
             textView.textColor = .labelsPrimary
         }
@@ -387,6 +382,9 @@ class AddPostViewController: UIViewController, UITextViewDelegate, PHPickerViewC
             textView.textColor = .red
         }
     }
+}
+
+extension AddPostViewController: PHPickerViewControllerDelegate {
     
     private func updateImageStackView() {
             imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }

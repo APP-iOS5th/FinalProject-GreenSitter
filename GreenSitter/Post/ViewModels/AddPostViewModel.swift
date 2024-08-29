@@ -12,8 +12,6 @@ import UIKit
 import PhotosUI // PHPickerResult를 사용하기 위해 추가
 
 class AddPostViewModel: ObservableObject {
-    @Published var postTitle: String = ""
-    @Published var postBody: String = ""
     @Published var postImages: [UIImage] = []
     @Published var selectedImages: [UIImage] = []
     @Published var postLocation: Location?

@@ -54,9 +54,10 @@ class LeavePlantListViewController: UIViewController, UITableViewDelegate, UITab
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedPost = post[indexPath.row]
         let postId = selectedPost.id
-        
-        let postDetailViewController = PostDetailViewController(postId: Post.samplePosts.first!.id)
+        print("전달된 postId: \(postId)")
+        let postDetailViewController = PostDetailViewController(postId: postId)
         navigationController?.pushViewController(postDetailViewController, animated: true)
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

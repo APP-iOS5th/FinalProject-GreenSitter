@@ -23,7 +23,7 @@ class LocationServiceViewController: UIViewController {
         self.view.addSubview(webView)
         
         // URL 생성
-        if let url = URL(string: "https://likelion.notion.site/3fa21fceaa4a4144a2ce16df040a7c88") {
+        if let url = URL(string: "https://enchanting-marmoset-e63.notion.site/d44d7fe5088d46479a7d84573b100836") {
             let request = URLRequest(url: url)
             
             // 웹 페이지 로드

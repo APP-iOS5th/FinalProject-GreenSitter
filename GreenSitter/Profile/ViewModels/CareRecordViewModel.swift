@@ -6,69 +6,62 @@ import FirebaseStorage
 extension CareRecordViewController {
     //MARK: - Post데이터 가져오기
     func fetchPostFirebase() {
-        // 현재 로그인된 사용자의 userId 가져오기
-        guard let userId = Auth.auth().currentUser?.uid else {
-            print("User ID is not available")
-            return
-        }
+           // 현재 프로필의 userId 사용
+           let targetUserId = self.userId
 
-        // Firestore에서 특정 문서 가져오기
-        db.collection("posts").whereField("userId", isEqualTo: userId).whereField("postType", isEqualTo: "새싹 돌봐드립니다").getDocuments { [weak self] (snapshot, error) in
-            guard let self = self else { return }
-            
-            if let error = error {
-                print("Error getting document: \(error)")
-                return
-            }
-            
-            guard let documents = snapshot?.documents else {
-                print("No documents found")
-                return
-            }
-            
-            // 문서가 존재하는지 확인
-            for document in documents {
-                let postData = document.data()
-                
-                let postStatus = PostStatus(rawValue: postData["postStatus"] as? String ?? "") ?? .completedTrade
-                let postTitle = postData["postTitle"] as? String ?? "제목 없음"
-                let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
-                let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
-                let updateDate = updateDateTimestamp.dateValue()
-                let postImages = postData["postImages"] as? [String] ?? []
-                
-                // 데이터가 올바르게 불러와졌는지 출력해보기
-                print("Post Title: \(postTitle)")
-                print("Post Body: \(postBody)")
-                
-                print("Update Date: \(updateDate)")
-                print("Post Images: \(postImages)")
-                
-                // Post 객체 생성 및 배열에 추가
-                let post = Post(
-                    id: document.documentID,
-                    enabled: true,
-                    createDate: Date(),
-                    updateDate: updateDate,
-                    userId: userId,
-                    profileImage: "",  // 필요시 추가
-                    nickname: "",      // 필요시 추가
-                    userLocation: Location.seoulLocation, // 예시 위치
-                    userNotification: false, userLevel: .fruit,
-                    postType: .lookingForSitter,
-                    postTitle: postTitle,
-                    postBody: postBody,
-                    postImages: postImages,
-                    postStatus: postStatus,
-                    location: nil
-                )
-                self.post.append(post)
-                // 테이블 뷰 업데이트
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
-        }
+           // Firestore에서 특정 문서 가져오기
+           db.collection("posts")
+               .whereField("userId", isEqualTo: targetUserId)
+               .whereField("postType", isEqualTo: "새싹 돌봐드립니다")
+               .getDocuments { [weak self] (snapshot, error) in
+                   guard let self = self else { return }
+                   
+                   if let error = error {
+                       print("Error getting document: \(error)")
+                       return
+                   }
+                   
+                   guard let documents = snapshot?.documents else {
+                       print("No documents found")
+                       return
+                   }
+                   
+                   // 문서가 존재하는지 확인
+                   for document in documents {
+                       let postData = document.data()
+                       
+                       let postStatus = PostStatus(rawValue: postData["postStatus"] as? String ?? "") ?? .completedTrade
+                       let postTitle = postData["postTitle"] as? String ?? "제목 없음"
+                       let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
+                       let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
+                       let updateDate = updateDateTimestamp.dateValue()
+                       let postImages = postData["postImages"] as? [String] ?? []
+                       
+                       // Post 객체 생성 및 배열에 추가
+                       let post = Post(
+                           id: document.documentID,
+                           enabled: true,
+                           createDate: Date(),
+                           updateDate: updateDate,
+                           userId: targetUserId, // 초기화 시 전달받은 userId 사용
+                           profileImage: "",  // 필요시 추가
+                           nickname: "",      // 필요시 추가
+                           userLocation: Location.seoulLocation, // 예시 위치
+                           userNotification: false, userLevel: .fruit,
+                           postType: .lookingForSitter,
+                           postTitle: postTitle,
+                           postBody: postBody,
+                           postImages: postImages,
+                           postStatus: postStatus,
+                           location: nil
+                       )
+                       self.post.append(post)
+                   }
+                   // 테이블 뷰 업데이트
+                   DispatchQueue.main.async {
+                       self.tableView.reloadData()
+                   }
+               }
     }
     
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
@@ -121,3 +114,4 @@ extension CareRecordViewController {
         task.resume()
     }
 }
+
