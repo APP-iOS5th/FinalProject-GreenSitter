@@ -20,6 +20,7 @@ struct User: Codable {
     var exp: Int
     var aboutMe: String
     let chatNotification: Bool
+//    var isChatRoom: Bool
     
     mutating func updateExp(by expChange: Int) {
         //경험치 업데이트
