@@ -146,7 +146,7 @@ class ChatTableViewCell: UITableViewCell {
 //        userLocationLabel.text = "상도동"
         
         // 알림 여부
-        guard let notification = chatRoom?.userId == userId ? chatRoom?.postUserNotification : chatRoom?.userNotification else {
+        guard let notification = chatRoom?.userId == userId ? chatRoom?.userNotification : chatRoom?.postUserNotification else {
             return
         }
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")

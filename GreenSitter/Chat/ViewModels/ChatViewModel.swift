@@ -149,8 +149,7 @@ class ChatViewModel {
             print("Message is empty")
             return
         }
-        
-        // TODO: - userId 수정
+
         let receiverUserId: String?
         if userId == chatRoom.userId {
             receiverUserId = chatRoom.postUserId
