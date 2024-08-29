@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
+import Combine
 
 class LoginViewModel: ObservableObject {
     static let shared = LoginViewModel()
@@ -88,7 +89,7 @@ class LoginViewModel: ObservableObject {
                     print("Fetched postId: \(postId)")
                     
                     // MARK: - 주석 처리된 부분입니다.
-                    self.updatePostLocation(with: self.user?.location ?? Location.seoulLocation, postId)
+//                    self.updatePostLocation(with: self.user?.location ?? Location.seoulLocation, postId)
                 } else {
                     print("Error: postId is empty or not available")
                 }
@@ -171,6 +172,13 @@ class LoginViewModel: ObservableObject {
             }
             else {
                 print("User location updated successfully with address: \(location)")
+                
+                if let postId = self.user?.id, !postId.isEmpty {
+                    self.updatePostLocation(with: location, postId)
+                }
+                else {
+                    print("Error: postId is empty or not available")
+                }
             }
         }
         self.user?.location = location
@@ -198,7 +206,7 @@ class LoginViewModel: ObservableObject {
 
             
             for document in documents {
-                document.reference.updateData(["location": location.toDictionary()]) { error in
+                document.reference.updateData(["userLocation": location.toDictionary()]) { error in
                     if let error = error {
                         print("Error updating post location in document \(document.documentID): \(error.localizedDescription)")
                     } else {
@@ -209,3 +217,4 @@ class LoginViewModel: ObservableObject {
         }
     }
 }
+

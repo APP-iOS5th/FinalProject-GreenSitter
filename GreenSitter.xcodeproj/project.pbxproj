@@ -31,8 +31,8 @@
 		3B7D8F492C75890A00008F22 /* ReceiveReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F482C75890A00008F22 /* ReceiveReviewViewController.swift */; };
 		3B7D8F4B2C75898B00008F22 /* ReceiveReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F4A2C75898B00008F22 /* ReceiveReviewViewModel.swift */; };
 		3B7D8F4D2C7589A200008F22 /* ReceiveReviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F4C2C7589A200008F22 /* ReceiveReviewTableViewCell.swift */; };
-		3B809A542C7F05D200BEAF7D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B809A532C7F05D200BEAF7D /* GoogleService-Info.plist */; };
 		3B809A562C7F05DC00BEAF7D /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B809A552C7F05DC00BEAF7D /* APPKey.plist */; };
+		3B809A582C7F18F500BEAF7D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B809A572C7F18F300BEAF7D /* GoogleService-Info.plist */; };
 		3B8348122C74BF6600359E85 /* LeavePlantListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348112C74BF6600359E85 /* LeavePlantListViewController.swift */; };
 		3B8348142C74C0F800359E85 /* LeavePlantListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8348132C74C0F800359E85 /* LeavePlantListModel.swift */; };
 		3BAD24632C77340E004C2DBA /* ServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD24622C77340E004C2DBA /* ServiceViewController.swift */; };
@@ -162,8 +162,8 @@
 		3B7D8F482C75890A00008F22 /* ReceiveReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveReviewViewController.swift; sourceTree = "<group>"; };
 		3B7D8F4A2C75898B00008F22 /* ReceiveReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveReviewViewModel.swift; sourceTree = "<group>"; };
 		3B7D8F4C2C7589A200008F22 /* ReceiveReviewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveReviewTableViewCell.swift; sourceTree = "<group>"; };
-		3B809A532C7F05D200BEAF7D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B809A552C7F05DC00BEAF7D /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
+		3B809A572C7F18F300BEAF7D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B8348052C748CD300359E85 /* EditCareProviderViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareProviderViewModel.swift; sourceTree = "<group>"; };
 		3B8348062C748CD300359E85 /* EditCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCareSeekerViewModel.swift; sourceTree = "<group>"; };
 		3B8348072C748CD300359E85 /* AddCareSeekerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCareSeekerViewModel.swift; sourceTree = "<group>"; };
@@ -395,8 +395,8 @@
 			isa = PBXGroup;
 			children = (
 				97D1BEB02C6C9DDD00F7A983 /* GreenSitter.entitlements */,
-				3B809A532C7F05D200BEAF7D /* GoogleService-Info.plist */,
 				3B809A552C7F05DC00BEAF7D /* APPKey.plist */,
+				3B809A572C7F18F300BEAF7D /* GoogleService-Info.plist */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
 				97934DD82C62F3C600B38E0A /* ViewController.swift */,
@@ -780,9 +780,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B809A562C7F05DC00BEAF7D /* APPKey.plist in Resources */,
+				3B809A582C7F18F500BEAF7D /* GoogleService-Info.plist in Resources */,
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
-				3B809A542C7F05D200BEAF7D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1055,7 +1055,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용 권한이 필요합니다.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진접근을 허용하시겠습니까?";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"게시글에 사진을 추가하기 위해 사진 라이브러리 접근 권한이 필요합니다.\"";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -1094,7 +1094,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용 권한이 필요합니다.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진접근을 허용하시겠습니까?";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"게시글에 사진을 추가하기 위해 사진 라이브러리 접근 권한이 필요합니다.\"";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
