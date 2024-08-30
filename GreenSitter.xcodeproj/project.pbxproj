@@ -670,7 +670,6 @@
 			children = (
 				97D1BE932C6C93A100F7A983 /* FirestoreManager.swift */,
 				15F221A32C758AA300DF285A /* FirestorageManager.swift */,
-				97D1BEB52C6C9DF400F7A983 /* ChatTableViewCell.swift */,
 				97D1BE942C6C93A100F7A983 /* ChatViewModel.swift */,
 				97D1BE722C6C8BB900F7A983 /* ChatAdditionalButtonsViewModel.swift */,
 			);
@@ -721,6 +720,7 @@
 			children = (
 				97D1BEB22C6C9DF400F7A983 /* ChatListViewController.swift */,
 				97D1BEB62C6C9DF400F7A983 /* ChatViewController.swift */,
+				97D1BEB52C6C9DF400F7A983 /* ChatTableViewCell.swift */,
 				97D1BEB42C6C9DF400F7A983 /* ChatPostViewController.swift */,
 				97D1BEB32C6C9DF400F7A983 /* ChatMessageViewController.swift */,
 				58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */,

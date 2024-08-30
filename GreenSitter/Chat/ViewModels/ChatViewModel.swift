@@ -14,19 +14,16 @@ class ChatViewModel {
     private let firestorageManager = FirestorageManager()
     
     // 로그인 여부를 나타내는 변수
-    var isLoggedIn = false /// 임시로 true, false로 바꾸기
+    var isLoggedIn = false
     var hasChats = false
     
     // 임시 유저 id
 //    let userId = "250e8400-e29b-41d4-a716-446655440003"
+    
     var user: User? {
         didSet {
             isLoggedIn = user != nil
         }
-    }
-    
-    private var currentUserId: String? {
-        return Auth.auth().currentUser?.uid
     }
     
     var userId: String {
