@@ -410,10 +410,10 @@
 				97934DF12C62F77500B38E0A /* Map */,
 				15F316332C71FB4B00F30B72 /* Extensions */,
 				97934DF22C62F77F00B38E0A /* Resources */,
-				97934DDD2C62F3C800B38E0A /* Assets.xcassets */,
-				97934DDF2C62F3C800B38E0A /* LaunchScreen.storyboard */,
 				97D1BE502C6C847600F7A983 /* Chat */,
 				97934DE22C62F3C800B38E0A /* Info.plist */,
+				97934DDF2C62F3C800B38E0A /* LaunchScreen.storyboard */,
+				97934DDD2C62F3C800B38E0A /* Assets.xcassets */,
 			);
 			path = GreenSitter;
 			sourceTree = "<group>";
