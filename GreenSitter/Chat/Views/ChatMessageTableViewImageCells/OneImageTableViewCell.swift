@@ -14,6 +14,8 @@ protocol ChatMessageTableViewImageCellDelegate: AnyObject {
 class OneImageTableViewCell: UITableViewCell {
     weak var delegate: ChatMessageTableViewImageCellDelegate?
     
+    private let firestorageManager = FirestorageManager()
+    
     var isIncoming: Bool = false {
         didSet {
             setupUI()
@@ -27,14 +29,8 @@ class OneImageTableViewCell: UITableViewCell {
     }
     
     var imageSize: CGFloat?
-    
-    var images: [UIImage] = [] {
-        didSet {
-            DispatchQueue.main.async {
-                self.updateBubbleView()
-            }
-        }
-    }
+        
+    var imageURLs = [URL]()
     
     private lazy var firstImageView: UIImageView = {
        let firstImageView = UIImageView()
@@ -129,6 +125,10 @@ class OneImageTableViewCell: UITableViewCell {
             firstImageView.heightAnchor.constraint(equalToConstant: imageSize),
             firstImageView.widthAnchor.constraint(equalToConstant: imageSize),
         ])
+        
+        for imageURL in imageURLs {
+            firestorageManager.loadImage(imageURL: imageURL, imageSize: imageSize, imageView: &firstImageView)
+        }
     }
     
     // MARK: - Setup UI
@@ -160,6 +160,7 @@ class OneImageTableViewCell: UITableViewCell {
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
                 timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100),
+                timeLabel.widthAnchor.constraint(equalToConstant: 45),
                 
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
@@ -173,9 +174,11 @@ class OneImageTableViewCell: UITableViewCell {
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 isReadLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100),
-                
+                isReadLabel.widthAnchor.constraint(equalToConstant: 41.333333333333336),
+
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: isReadLabel.trailingAnchor, constant: 5),
+                timeLabel.widthAnchor.constraint(equalToConstant: 45),
                 
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
@@ -192,17 +195,18 @@ class OneImageTableViewCell: UITableViewCell {
         }
     }
     
-    private func updateBubbleView() {
-        firstImageView.image = images[0]
-    }
-    
     @objc
     private func handleImageTap(_ sender: UITapGestureRecognizer) {
         guard let imageView = sender.view as? UIImageView, let image = imageView.image else { return }
         
-        guard let index = images.firstIndex(of: image) else { return }
+        var images = [UIImage]()
+        guard let image = imageView.image else {
+            print("image is nil")
+            return
+        }
+        images.append(image)
         
-        delegate?.imageViewTapped(images: images, index: index)
+        delegate?.imageViewTapped(images: images, index: 0)
     }
 }
 

@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseStorage
+import Kingfisher
 
 class FirestorageManager {
     private let storage = Storage.storage()
@@ -48,13 +49,36 @@ class FirestorageManager {
 
     
     // 파이어베이스 스토리지에서 이미지 가져오기
-    func loadImage(imagePath: String) async throws -> UIImage {
-        let storageRef = storage.reference()
-        let imageRef = storageRef.child(imagePath)
+//    func loadImage(imagePath: String) async throws -> UIImage {
+//        let storageRef = storage.reference()
+//        let imageRef = storageRef.child(imagePath)
+//        
+//        let data = try await imageRef.data(maxSize: 4 * 1024 * 1024)
+//        let photoImage = UIImage(systemName: "photo")!
+//        return UIImage(data: data) ?? photoImage
+//    }
+    func loadImage(imageURL: URL, imageSize: CGFloat, imageView: inout UIImageView ) {
+        let processor = DownsamplingImageProcessor(size: CGSize(width: imageSize, height: imageSize))
         
-        let data = try await imageRef.data(maxSize: 4 * 1024 * 1024)
-        let photoImage = UIImage(systemName: "photo")!
-        return UIImage(data: data) ?? photoImage
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(
+            with: imageURL,
+            placeholder: nil,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(0.25)),
+                .cacheOriginalImage
+            ],
+            completionHandler: { result in
+                switch result {
+                case .success(_):
+                    break
+                case .failure(let error):
+                    print("Failed to load Image: \(error.localizedDescription)")
+                }
+            }
+        )
     }
 
 }
