@@ -134,8 +134,7 @@ class PostTableViewCell: UITableViewCell {
                 ],
                 completionHandler: { result in
                     switch result {
-                    case .success(let value):
-                        print("Image loaded successsfully: \(value.source.url?.absoluteString ?? "")")
+                    case .success(_): break
                     case .failure(let error):
                         print("Failed to load Image: \(error.localizedDescription)")
                     }

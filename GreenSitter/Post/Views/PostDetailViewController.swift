@@ -448,8 +448,7 @@ class PostDetailViewController: UIViewController {
                 ],
                 completionHandler: { result in
                     switch result {
-                    case .success(let value):
-                        print("Image loaded successfully: \(value.source.url?.absoluteString ?? "")")
+                    case .success(_): break
                     case .failure(let error):
                         print("Failed to load image: \(error.localizedDescription)")
                     }
@@ -468,7 +467,6 @@ class PostDetailViewController: UIViewController {
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
             self.imageUrls = imageUrls //이게원인
             for (index, imageUrl) in imageUrls.enumerated() {
-                print("ImageURL: \(index), \(imageUrl)")
                 
                 // Create a new UIImageView for each image
                 let imageView = UIImageView()
@@ -492,7 +490,6 @@ class PostDetailViewController: UIViewController {
                     completionHandler: { result in
                         switch result {
                         case .success(_):
-                            print("Image successfully loaded.")
                             self.addTapGestureToImages()
                         case .failure(let error):
                             print("Failed to load image: \(error.localizedDescription)")
@@ -820,7 +817,6 @@ extension PostDetailViewController: UITextViewDelegate {
 extension PostDetailViewController: MKMapViewDelegate {
     
     private func configureMapView(with post: Post) {
-        print("Post Detail Map with Post: \(post)")
 //        mapView.removeAnnotations(mapView.annotations)
 //        mapView.removeOverlays(mapView.overlays)
 //        overlayPostMapping.removeAll()

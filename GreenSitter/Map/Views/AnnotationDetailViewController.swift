@@ -193,8 +193,7 @@ class AnnotationDetailViewController: UIViewController {
                 ],
                 completionHandler: { result in
                     switch result {
-                    case .success(let value):
-                        print("Image loaded successfully: \(value.source.url?.absoluteString ?? "")")
+                    case .success(_): break
                     case .failure(let error):
                         print("Failed to load image: \(error.localizedDescription)")
                     }
