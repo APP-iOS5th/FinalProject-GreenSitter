@@ -44,8 +44,8 @@
 		4F822E842C79FE6F007402CB /* FullScreenPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */; };
 		4F822E9D2C7F243A007402CB /* SearchPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E9C2C7F243A007402CB /* SearchPostViewController.swift */; };
 		4F822E9F2C7F2472007402CB /* SearchPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E9E2C7F2472007402CB /* SearchPostViewModel.swift */; };
-		588E73122C81821100ABF72C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588E73102C81821100ABF72C /* GoogleService-Info.plist */; };
-		588E73132C81821100ABF72C /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588E73112C81821100ABF72C /* APPKey.plist */; };
+		588E73172C81D77200ABF72C /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588E73152C81D77200ABF72C /* APPKey.plist */; };
+		588E731F2C81D8D600ABF72C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588E731E2C81D8D600ABF72C /* GoogleService-Info.plist */; };
 		58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */; };
 		58F68FEB2C72273700A7F564 /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */; };
 		9731BD242C78544C001B6A44 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 58E98C322C781BD7001E4140 /* GoogleSignIn */; };
@@ -54,8 +54,6 @@
 		9731BD272C78544C001B6A44 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 58E98C382C781C00001E4140 /* FirebaseFirestore */; };
 		9731BD282C78544C001B6A44 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 58E98C3A2C781C00001E4140 /* FirebaseMessaging */; };
 		9731BD292C78544C001B6A44 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 58E98C3C2C781C00001E4140 /* FirebaseStorage */; };
-		973C83472C81A94600AAB090 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 973C83462C81A94500AAB090 /* GoogleService-Info.plist */; };
-		973C83492C81A9B000AAB090 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 973C83482C81A9AF00AAB090 /* APPKey.plist */; };
 		974FF2522C6C5BA5009277B9 /* SearchMapDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */; };
 		977A52B32C69A84500E375F1 /* AnnotationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977A52B22C69A84500E375F1 /* AnnotationDetailViewController.swift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
@@ -206,14 +204,13 @@
 		582F5D1A2C69EA9A00141938 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		582F5D1C2C69EAA700141938 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		588E73102C81821100ABF72C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		588E73112C81821100ABF72C /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
+		588E73152C81D77200ABF72C /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
+		588E731E2C81D8D600ABF72C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		58E7821F2C6C2F4B00572554 /* ChatPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPostViewController.swift; sourceTree = "<group>"; };
 		58E782212C6C36FB00572554 /* PostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		58E782232C6C4F5300572554 /* ChatMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageViewController.swift; sourceTree = "<group>"; };
 		58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputViewController.swift; sourceTree = "<group>"; };
 		58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewCell.swift; sourceTree = "<group>"; };
-		973C83462C81A94500AAB090 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		973C83482C81A9AF00AAB090 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
 		974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMapDetailViewController.swift; sourceTree = "<group>"; };
 		977A52B22C69A84500E375F1 /* AnnotationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationDetailViewController.swift; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -430,8 +427,8 @@
 		97934DD32C62F3C600B38E0A /* GreenSitter */ = {
 			isa = PBXGroup;
 			children = (
-				973C83462C81A94500AAB090 /* GoogleService-Info.plist */,
-				973C83482C81A9AF00AAB090 /* APPKey.plist */,
+				588E731E2C81D8D600ABF72C /* GoogleService-Info.plist */,
+				588E73152C81D77200ABF72C /* APPKey.plist */,
 				97D1BEB02C6C9DDD00F7A983 /* GreenSitter.entitlements */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
@@ -637,6 +634,7 @@
 				4FCE70092C76098500279774 /* AddPostViewController.swift */,
 				4FCE70062C76098500279774 /* EditCareSeekerViewController.swift */,
 				15F618B12C7A2DFD00A936D8 /* APPKey.plist */,
+				588E73102C81821100ABF72C /* GoogleService-Info.plist */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -820,9 +818,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				973C83492C81A9B000AAB090 /* APPKey.plist in Resources */,
+				588E73172C81D77200ABF72C /* APPKey.plist in Resources */,
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
-				588E73122C81821100ABF72C /* GoogleService-Info.plist in Resources */,
+				588E731F2C81D8D600ABF72C /* GoogleService-Info.plist in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
