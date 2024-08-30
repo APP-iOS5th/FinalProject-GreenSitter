@@ -83,7 +83,7 @@ class PostTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             postStatusLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             postStatusLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            postStatusLabel.widthAnchor.constraint(equalToConstant: 40),
+            postStatusLabel.widthAnchor.constraint(equalToConstant: 50),
             postStatusLabel.heightAnchor.constraint(equalToConstant: 20),
             
             verticalStackView.topAnchor.constraint(equalTo: postStatusLabel.bottomAnchor, constant: 8),
