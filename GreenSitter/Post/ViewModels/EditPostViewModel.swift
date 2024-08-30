@@ -34,6 +34,7 @@ class EditPostViewModel: ObservableObject {
         self.location = selectedPost.location
         self.postType = selectedPost.postType
         
+        
         // 초기화 시 기존 이미지를 로드
         if let postImageURLs = selectedPost.postImages {
             loadExistingImages(from: postImageURLs) {

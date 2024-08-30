@@ -77,9 +77,8 @@ class AddPostViewController: UIViewController {
     
     private let pickerImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .lightGray
         imageView.tintColor = .gray
-        imageView.image = UIImage(systemName: "photo.on.rectangle.fill")
+        imageView.image = UIImage(systemName: "rectangle.stack.fill.badge.plus")
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -289,7 +288,7 @@ class AddPostViewController: UIViewController {
             textView.topAnchor.constraint(equalTo: dividerLine2.bottomAnchor, constant: 16),
             textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            textView.heightAnchor.constraint(equalToConstant: 200),
+            textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200),
             
             remainCountLabel.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 8),
             remainCountLabel.trailingAnchor.constraint(equalTo: textView.trailingAnchor),
@@ -464,7 +463,7 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
                 case .denied, .restricted:
                     self?.showPhotoLibraryAccessDeniedAlert()
                 case .notDetermined:
-                    // 권한 요청 대화상자가 표시됩니다.
+                    // 권한 요청 대화상자가 표시
                     break
                 @unknown default:
                     break

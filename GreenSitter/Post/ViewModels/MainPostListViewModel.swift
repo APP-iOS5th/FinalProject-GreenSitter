@@ -9,11 +9,12 @@ import Foundation
 import FirebaseFirestore
 import Combine
 
-class MainPostListViewModel {
+class MainPostListViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private var cancellables = Set<AnyCancellable>()
     
     @Published var filteredPosts: [Post] = []
+    private var allPosts: [Post] = []
 
     // Haversine 공식을 사용하여 두 위치 간의 거리 계산 (단위: 미터)
     private func calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {

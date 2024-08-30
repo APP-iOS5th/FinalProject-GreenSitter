@@ -70,9 +70,8 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     private let pickerImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .lightGray
         imageView.tintColor = .gray
-        imageView.image = UIImage(systemName: "photo.on.rectangle.fill")
+        imageView.image = UIImage(systemName: "rectangle.stack.fill.badge.plus")
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -89,6 +88,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     lazy var textView: UITextView = {
         let view = UITextView()
+        view.backgroundColor = .systemBackground
         view.layer.borderWidth = 1.0
         view.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.7).cgColor
         view.textContainerInset = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
@@ -129,13 +129,14 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         return label
     }()
     
-    private let mapIconView: UIImageView = {
-        let imageView = UIImageView()
+    private let mapIconButton: UIButton = {
+        let button = UIButton()
         let image = UIImage(named: "lookingForSitterIcon")
-        imageView.image = image
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+        button.setImage(image, for: .normal)
+        button.contentMode = .scaleAspectFit
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     private let mapView: MKMapView = {
@@ -190,6 +191,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             return
         }
         
+        
         // ViewModel의 updatePost 메서드 호출
         viewModel.updatePost { result in
             switch result {
@@ -202,6 +204,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             }
         }
     }
+    
     
     @objc private func closeButtonTapped() {
         dismiss(animated: true)
@@ -254,7 +257,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         contentView.addSubview(remainCountLabel)
         contentView.addSubview(dividerLine3)
         contentView.addSubview(mapLabel)
-        contentView.addSubview(mapIconView)
+        contentView.addSubview(mapIconButton)
         contentView.addSubview(mapView)
         contentView.addSubview(saveButton)
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
@@ -293,8 +296,8 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             imageStackView.bottomAnchor.constraint(equalTo: imageScrollView.bottomAnchor),
             imageStackView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
-            pickerImageView.widthAnchor.constraint(equalToConstant: 130),
-            pickerImageView.heightAnchor.constraint(equalToConstant: 130),
+            pickerImageView.widthAnchor.constraint(equalToConstant: 100),
+            pickerImageView.heightAnchor.constraint(equalTo: imageScrollView.heightAnchor),
             
             dividerLine2.topAnchor.constraint(equalTo: imageScrollView.bottomAnchor, constant: 16),
             dividerLine2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -314,15 +317,16 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             dividerLine3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
-            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
+            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
+            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8), //
             
-            mapIconView.leadingAnchor.constraint(equalTo: mapLabel.trailingAnchor, constant: 8),
-            mapIconView.centerYAnchor.constraint(equalTo: mapLabel.centerYAnchor),
-            mapIconView.heightAnchor.constraint(equalToConstant: 20),
-            mapIconView.widthAnchor.constraint(equalToConstant: 20),
+            mapIconButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
+            mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
+            mapIconButton.heightAnchor.constraint(equalToConstant: 50),
+            mapIconButton.widthAnchor.constraint(equalToConstant: 50),
             
-            mapView.topAnchor.constraint(equalTo: mapLabel.bottomAnchor, constant: 16),
+            mapView.topAnchor.constraint(equalTo: mapIconButton.bottomAnchor, constant: 16),
             mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapView.heightAnchor.constraint(equalToConstant: 200),
@@ -335,21 +339,18 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         ])
     }
     
-    // 1. 이미지 추가 및 삭제 버튼 추가
     private func addImageToStackView(_ image: UIImage) {
-        // 이미지 뷰 생성
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.widthAnchor.constraint(equalToConstant: 130).isActive = true
         containerView.heightAnchor.constraint(equalToConstant: 130).isActive = true
-
+        
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 10
         imageView.translatesAutoresizingMaskIntoConstraints = false
-
-        // 삭제 버튼 생성
+        
         let deleteButton = UIButton(type: .custom)
         deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
         deleteButton.tintColor = .red
@@ -358,38 +359,36 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         
         containerView.addSubview(imageView)
         containerView.addSubview(deleteButton)
-
+        
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-
+            
             deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 5),
             deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -5),
             deleteButton.widthAnchor.constraint(equalToConstant: 24),
             deleteButton.heightAnchor.constraint(equalToConstant: 24),
         ])
-
+        
         imageStackView.insertArrangedSubview(containerView, at: imageStackView.arrangedSubviews.count - 1)
         
         updateImageStackView()
     }
-
-    // 2. 사진 삭제 함수
+    
     @objc private func deleteImage(_ sender: UIButton) {
         guard let containerView = sender.superview else { return }
         containerView.removeFromSuperview()
         updateImageStackView()
     }
-
-    // 3. 기존에 업로드된 사진 로드
+    
     private func loadExistingImages() {
         for image in viewModel.postImages {
             addImageToStackView(image)
         }
     }
-
+    
     private func updateImageStackView() {
         pickerImageView.isHidden = imageStackView.arrangedSubviews.count > 4
     }
@@ -426,7 +425,6 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         let characterCount = textView.text.count
         remainCountLabel.text = "\(characterCount)/700"
         
-        // 글자 수 제한 설정
         if characterCount > 700 {
             textView.deleteBackward()
         }
@@ -436,6 +434,8 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         if textView.text == textViewPlaceHolder {
             textView.text = ""
             textView.textColor = .black
+        } else {
+            textView.textColor = .labelsPrimary
         }
     }
     
