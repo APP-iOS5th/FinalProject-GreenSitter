@@ -287,7 +287,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             
             imageScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 16),
             imageScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            imageScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            imageScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16), // 오른쪽 여백 추가
             imageScrollView.heightAnchor.constraint(equalToConstant: 130),
             
             imageStackView.topAnchor.constraint(equalTo: imageScrollView.topAnchor),
@@ -339,7 +339,35 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         ])
     }
     
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true, completion: nil)
+        
+        let itemProviders = results.map(\.itemProvider)
+        
+        for item in itemProviders {
+            if item.canLoadObject(ofClass: UIImage.self) {
+                item.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                    if let error = error {
+                        print("Error loading image: \(error)")
+                        return
+                    }
+                    
+                    guard let image = image as? UIImage else { return }
+                    
+                    DispatchQueue.main.async {
+                        self?.addImageToStackView(image)
+                    }
+                }
+            }
+        }
+    }
+    
     private func addImageToStackView(_ image: UIImage) {
+        let existingImages = imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
+            if existingImages.contains(image) {
+                return
+            }
+        
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.widthAnchor.constraint(equalToConstant: 130).isActive = true
@@ -384,32 +412,22 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     }
     
     private func loadExistingImages() {
+        viewModel.loadExistingImages(from: viewModel.selectedPost.postImages ?? []) { [weak self] in
+            DispatchQueue.main.async {
+                self?.updateUIWithLoadedImages()
+            }
+        }
+    }
+    
+    private func updateUIWithLoadedImages() {
         for image in viewModel.postImages {
             addImageToStackView(image)
         }
+//        updateImageStackView()
     }
     
     private func updateImageStackView() {
         pickerImageView.isHidden = imageStackView.arrangedSubviews.count > 4
-    }
-    
-    // PHPickerViewControllerDelegate methods
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true, completion: nil)
-        
-        let itemProviders = results.map(\.itemProvider)
-        
-        for item in itemProviders {
-            if item.canLoadObject(ofClass: UIImage.self) {
-                item.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-                    DispatchQueue.main.async {
-                        if let image = image as? UIImage {
-                            self?.addImageToStackView(image)
-                        }
-                    }
-                }
-            }
-        }
     }
     
     private func presentImagePickerController() {

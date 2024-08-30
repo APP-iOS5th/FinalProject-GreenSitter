@@ -18,13 +18,13 @@ class EditPostViewModel: ObservableObject {
     @Published var selectedImages: [UIImage] = []
     @Published var location: Location?
     @Published var imageURLsToDelete: [String] = []
+    @Published var selectedPost: Post
     
     private var firestoreManager = FirestoreManager()
     private let storage = Storage.storage()
     private let db = Firestore.firestore()
     private let postId: String
     private let postType: PostType
-    private let selectedPost: Post
     
     init(selectedPost: Post) {
         self.selectedPost = selectedPost
