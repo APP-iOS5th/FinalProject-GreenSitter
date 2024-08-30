@@ -245,10 +245,6 @@ class ChatListViewController: UIViewController {
         if let tabBarController = self.tabBarController {
             tabBarController.selectedIndex = 3
         }
-        
-        let loginViewController = LoginViewController()
-        loginViewController.modalPresentationStyle = .fullScreen
-        self.present(loginViewController, animated: true)
     }
 }
 

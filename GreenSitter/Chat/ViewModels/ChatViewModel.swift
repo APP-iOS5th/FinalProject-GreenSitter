@@ -18,15 +18,20 @@ class ChatViewModel {
     var hasChats = false
     
     // 임시 유저 id
-    let userId = "250e8400-e29b-41d4-a716-446655440003"
+//    let userId = "250e8400-e29b-41d4-a716-446655440003"
     var user: User? {
         didSet {
             isLoggedIn = user != nil
         }
     }
-//    var userId: String {
-//        return user!.id
-//    }
+    
+    private var currentUserId: String? {
+        return Auth.auth().currentUser?.uid
+    }
+    
+    var userId: String {
+        return user!.id
+    }
     
     var chatRooms: [ChatRoom] = [] {
         didSet {
