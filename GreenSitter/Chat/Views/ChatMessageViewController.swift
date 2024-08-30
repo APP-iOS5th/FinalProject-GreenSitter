@@ -55,15 +55,6 @@ class ChatMessageViewController: UIViewController {
                 if let messagesStream = await chatViewModel?.loadMessages(chatRoomId: chatRoom.id) {
                     for await messages in messagesStream {
                         self.chatViewModel?.messages[chatRoom.id] = messages
-                        
-                        // 메세지가 올 때마다 읽음 처리
-//                        do {
-//                            await chatViewModel?.loadUnreadMessages(chatRoomId: chatRoom.id)
-//                            try await chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
-//                        } catch {
-//                            // 에러 발생 시 처리 (로깅 등)
-//                            print("Failed to update unread status: \(error)")
-//                        }
                     }
                 } else {
                     print("Failed to load messages for chatRoomId: \(chatRoom.id)")
@@ -122,6 +113,7 @@ class ChatMessageViewController: UIViewController {
         for listener in messageListeners {
             listener.cancel()
         }
+        
         for listener in unreadMessageListeners {
             listener.cancel()
         }
