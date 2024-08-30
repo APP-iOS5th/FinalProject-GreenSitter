@@ -54,7 +54,8 @@ class PostDetailViewController: UIViewController {
         imageView.layer.cornerRadius = 25
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .lightGray
+        imageView.layer.borderColor = UIColor.separatorsNonOpaque.cgColor
+        imageView.layer.borderWidth = 1
         return imageView
     }()
     
@@ -344,10 +345,8 @@ class PostDetailViewController: UIViewController {
             mapPlaceLabel.text = "주소 정보 없음" // 둘 다 없는 경우
         }
         
-        profileImageView.image = UIImage(named: post.profileImage)
-        
-        imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        imageUrls.removeAll()
+        loadProfileImage(from: post)
+        loadPostImages(from: post)
         
         // profile button
         userProfileButton.addAction(UIAction { [weak self] _ in
@@ -356,8 +355,41 @@ class PostDetailViewController: UIViewController {
             let aboutMeVC = AboutMeViewController(userId: post.userId)
             self.navigationController?.pushViewController(aboutMeVC, animated: true)
         }, for: .touchUpInside)
-        
-        
+    }
+    
+    private func loadProfileImage(from post: Post) {
+        if let imageUrl = URL(string: post.profileImage) {
+            let processor = DownsamplingImageProcessor(size: CGSize(width: 80, height: 80))
+                           |> RoundCornerImageProcessor(cornerRadius: 4)
+            
+            profileImageView.kf.indicatorType = .activity
+            profileImageView.kf.setImage(
+                with: imageUrl,
+                placeholder: UIImage(named: "PlaceholderAvatar"),
+                options: [
+                    .processor(processor),
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade(0.25)),
+                    .cacheOriginalImage
+                ],
+                completionHandler: { result in
+                    switch result {
+                    case .success(let value):
+                        print("Image loaded successfully: \(value.source.url?.absoluteString ?? "")")
+                    case .failure(let error):
+                        print("Failed to load image: \(error.localizedDescription)")
+                    }
+                }
+            )
+
+        } else {
+            profileImageView.backgroundColor = .lightGray
+            print("Profile Image is empty.")
+        }
+    }
+    private func loadPostImages(from post: Post) {
+        imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        imageUrls.removeAll()
         // image
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
             self.imageUrls = imageUrls //이게원인
