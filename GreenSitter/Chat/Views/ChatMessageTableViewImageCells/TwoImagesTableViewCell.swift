@@ -226,7 +226,7 @@ class TwoImagesTableViewCell: UITableViewCell {
     
     @objc
     private func handleImageTap(_ sender: UITapGestureRecognizer) {
-        guard let imageView = sender.view as? UIImageView, let image = imageView.image else { return }
+        guard let imageView = sender.view as? UIImageView, let _ = imageView.image else { return }
         
         var images = [UIImage]()
         
