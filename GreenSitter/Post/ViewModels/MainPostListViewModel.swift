@@ -28,7 +28,7 @@ class MainPostListViewModel: ObservableObject {
         return earthRadiusKm * c * 1000 // 결과를 미터로 반환
     }
     
-    // TODO: Date 에 따라 정렬해서 가져오기
+    // MARK: - 카테고리, 위치 정보로 Post 필터링
     func fetchPostsByCategoryAndLocation(for category: String, userLocation: Location?) {
         guard let postType = PostType(rawValue: category) else {
             filteredPosts = []
@@ -69,7 +69,7 @@ class MainPostListViewModel: ObservableObject {
             }
     }
     
-    // 유저 위치 정보(옵셔널) 만 받기
+    // MARK: - 위치 정보로 Post 필터링
     func fetchPostsWithin3Km(userLocation: Location?) {
         
         db.collection("posts")
@@ -106,24 +106,6 @@ class MainPostListViewModel: ObservableObject {
 
                     return distance <= 30000 // 30km 이내의 게시물만 포함
                 }.sorted(by: { $0.updateDate > $1.updateDate }) // 최신 업데이트 순으로 정렬
-            }
-    }
-    
-    // 기존 코드
-    func fetchAllPosts() {
-        
-        db.collection("posts")
-            .getDocuments { [weak self] snapshot, error in
-                
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                    self?.filteredPosts = []
-                    return
-                }
-                
-                self?.filteredPosts = snapshot?.documents.compactMap { document in
-                    try? document.data(as: Post.self)
-                } ?? []
             }
     }
 }
