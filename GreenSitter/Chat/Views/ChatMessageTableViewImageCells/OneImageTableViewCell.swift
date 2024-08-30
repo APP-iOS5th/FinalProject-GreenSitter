@@ -126,8 +126,12 @@ class OneImageTableViewCell: UITableViewCell {
             firstImageView.widthAnchor.constraint(equalToConstant: imageSize),
         ])
         
-        for imageURL in imageURLs {
-            firestorageManager.loadImage(imageURL: imageURL, imageSize: imageSize, imageView: &firstImageView)
+        var imageViews = [firstImageView]
+
+        for (index, imageURL) in imageURLs.enumerated() {
+            if index < imageViews.count {
+                firestorageManager.loadImage(imageURL: imageURL, imageSize: imageSize, imageView: &imageViews[index])
+            }
         }
     }
     
@@ -200,13 +204,17 @@ class OneImageTableViewCell: UITableViewCell {
         guard let imageView = sender.view as? UIImageView, let image = imageView.image else { return }
         
         var images = [UIImage]()
-        guard let image = imageView.image else {
-            print("image is nil")
-            return
-        }
-        images.append(image)
         
-        delegate?.imageViewTapped(images: images, index: 0)
+        let imageViews = [firstImageView]
+        for imageView in imageViews {
+            if let image = imageView.image {
+                images.append(image)
+            }
+        }
+        
+        if let index = imageViews.firstIndex(of: imageView) {
+            delegate?.imageViewTapped(images: images, index: index)
+        }
     }
 }
 
