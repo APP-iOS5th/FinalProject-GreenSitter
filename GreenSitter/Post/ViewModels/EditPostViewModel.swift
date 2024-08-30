@@ -18,13 +18,13 @@ class EditPostViewModel: ObservableObject {
     @Published var selectedImages: [UIImage] = []
     @Published var location: Location?
     @Published var imageURLsToDelete: [String] = []
+    @Published var selectedPost: Post
     
     private var firestoreManager = FirestoreManager()
     private let storage = Storage.storage()
     private let db = Firestore.firestore()
     private let postId: String
     private let postType: PostType
-    private let selectedPost: Post
     
     init(selectedPost: Post) {
         self.selectedPost = selectedPost
@@ -49,8 +49,18 @@ class EditPostViewModel: ObservableObject {
     func loadExistingImages(from urls: [String], completion: @escaping () -> Void) {
         let group = DispatchGroup()
         
+        // 이미 처리된 URL들을 추적하기 위한 Set
+        var processedURLs = Set<String>()
+        
         for urlString in urls {
             group.enter()
+            
+            // 이미 처리된 URL인지 확인
+            if processedURLs.contains(urlString) {
+                group.leave()
+                continue
+            }
+            
             guard let url = URL(string: urlString) else {
                 group.leave()
                 continue
@@ -65,9 +75,13 @@ class EditPostViewModel: ObservableObject {
                     return
                 }
                 
+                // 이미지 추가 전에 중복 확인
                 DispatchQueue.main.async {
                     image.accessibilityIdentifier = urlString
-                    self.postImages.append(image)
+                    if !self.postImages.contains(where: { $0.accessibilityIdentifier == urlString }) {
+                        self.postImages.append(image)
+                        processedURLs.insert(urlString) // URL을 처리된 것으로 기록
+                    }
                 }
             }.resume()
         }

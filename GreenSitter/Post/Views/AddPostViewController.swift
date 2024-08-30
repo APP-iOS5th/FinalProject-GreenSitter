@@ -40,7 +40,7 @@ class AddPostViewController: UIViewController {
         let textField = UITextField()
         textField.textColor = .labelsPrimary
         textField.font = .systemFont(ofSize: 18)
-
+        
         // placeholder 텍스트의 색상을 변경
         textField.attributedPlaceholder = NSAttributedString(
             string: "제목을 입력하세요.",
@@ -50,7 +50,7 @@ class AddPostViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
-
+    
     
     private let dividerLine1: UIView = {
         let line = UIView()
@@ -165,13 +165,19 @@ class AddPostViewController: UIViewController {
         updateImageStackView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // TODO: 단순히 address으로 표시 -> Map 으로 표시
-        if let address = viewModel.postLocation?.address {
-            mapLabel.text = address
-        }
+    let address = post.location?.address
+    let placeName = post.location?.placeName
+    
+    if let address = address, !address.isEmpty, let placeName = placeName, !placeName.isEmpty {
+        mapPlaceLabel.text = "\(address) (\(placeName))" // 주소와 장소 이름을 함께 표시
+    } else if let address = address, !address.isEmpty {
+        mapPlaceLabel.text = address // 주소만 표시
+    } else if let placeName = placeName, !placeName.isEmpty {
+        mapPlaceLabel.text = placeName // 장소 이름만 표시
+    } else {
+        mapPlaceLabel.text = "주소 정보 없음" // 둘 다 없는 경우
     }
+    
     
     @objc private func saveButtonTapped() {
         saveButton.isEnabled = false
@@ -254,10 +260,10 @@ class AddPostViewController: UIViewController {
         contentView.addSubview(mapIconButton)
         
         view.addSubview(saveButton)
-
+        
         mapIconButton.addTarget(self, action: #selector(mapIconButtonTapped), for: .touchUpInside)
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
-
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),
@@ -270,7 +276,7 @@ class AddPostViewController: UIViewController {
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor),
-
+            
             titleTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
             titleTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             titleTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -384,74 +390,77 @@ extension AddPostViewController: UITextViewDelegate {
     
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == .labelsSecondary {
+        if textView.textColor == .labelsSecondary || textView.textColor == .red {
+            // 플레이스홀더 텍스트가 있다면 지우고 검정색으로 변경
             textView.text = nil
-            textView.textColor = .labelsPrimary
+            textView.textColor = .labelsPrimary // 검정색 텍스트로 변경
         }
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            // 텍스트가 비어 있으면 다시 플레이스홀더를 설정하고 빨간색으로 표시
             textView.text = textViewPlaceHolder
             textView.textColor = .red
         }
     }
+    
 }
 
 extension AddPostViewController: PHPickerViewControllerDelegate {
     
     private func updateImageStackView() {
-            imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        for (index, image) in viewModel.selectedImages.enumerated() {
+            let imageView = UIImageView(image: image)
+            imageView.contentMode = .scaleAspectFill
+            imageView.clipsToBounds = true
+            imageView.layer.cornerRadius = 10
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+            imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
             
-            for (index, image) in viewModel.selectedImages.enumerated() {
-                let imageView = UIImageView(image: image)
-                imageView.contentMode = .scaleAspectFill
-                imageView.clipsToBounds = true
-                imageView.layer.cornerRadius = 10
-                imageView.translatesAutoresizingMaskIntoConstraints = false
-                imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-                imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-                
-                // Delete button
-                let deleteButton = UIButton(type: .custom)
-                deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
-                deleteButton.tintColor = .red
-                deleteButton.translatesAutoresizingMaskIntoConstraints = false
-                deleteButton.addTarget(self, action: #selector(deleteImage(_:)), for: .touchUpInside)
-                deleteButton.tag = index
-                
-                let containerView = UIView()
-                containerView.translatesAutoresizingMaskIntoConstraints = false
-                containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-                containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-                
-                containerView.addSubview(imageView)
-                containerView.addSubview(deleteButton)
-                
-                imageView.translatesAutoresizingMaskIntoConstraints = false
-                deleteButton.translatesAutoresizingMaskIntoConstraints = false
-                
-                NSLayoutConstraint.activate([
-                    imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-                    imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-                    imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
-                    imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-                    
-                    deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -5),
-                    deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 5)
-                ])
-                
-                imageStackView.addArrangedSubview(containerView)
-            }
+            // Delete button
+            let deleteButton = UIButton(type: .custom)
+            deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+            deleteButton.tintColor = .red
+            deleteButton.translatesAutoresizingMaskIntoConstraints = false
+            deleteButton.addTarget(self, action: #selector(deleteImage(_:)), for: .touchUpInside)
+            deleteButton.tag = index
             
-            imageStackView.addArrangedSubview(pickerImageView)
+            let containerView = UIView()
+            containerView.translatesAutoresizingMaskIntoConstraints = false
+            containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+            containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+            
+            containerView.addSubview(imageView)
+            containerView.addSubview(deleteButton)
+            
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            deleteButton.translatesAutoresizingMaskIntoConstraints = false
+            
+            NSLayoutConstraint.activate([
+                imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+                
+                deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -5),
+                deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 5)
+            ])
+            
+            imageStackView.addArrangedSubview(containerView)
         }
         
-        @objc private func deleteImage(_ sender: UIButton) {
-            let index = sender.tag
-            viewModel.selectedImages.remove(at: index)
-            updateImageStackView()
-        }
+        imageStackView.addArrangedSubview(pickerImageView)
+    }
+    
+    @objc private func deleteImage(_ sender: UIButton) {
+        let index = sender.tag
+        viewModel.selectedImages.remove(at: index)
+        updateImageStackView()
+    }
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true, completion: nil)

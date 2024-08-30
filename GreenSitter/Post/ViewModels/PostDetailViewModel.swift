@@ -5,9 +5,6 @@
 //  Created by 박지혜 on 8/11/24.
 //
 
-// PostCareProviderTableVC 불러오는 함수
-// PostCareSeekterTableVC 불러오는 함수
-// Seeker,Provider 데이터 지우는 함수
 
 import Foundation
 import FirebaseFirestore
@@ -20,7 +17,7 @@ protocol PostDetailViewModelDelegate: AnyObject {
 class PostDetailViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private var firestoreManager = FirestoreManager()
-
+    
     @Published var selectedPost: Post?
     var user = LoginViewModel.shared.user
     
@@ -69,7 +66,7 @@ class PostDetailViewModel: ObservableObject {
             }
         }
     }
-
+    
     // 채팅버튼 클릭 시 호출될 메서드
     func chatButtonTapped() async {
         guard let newChat = makeChat() else {
@@ -95,7 +92,7 @@ class PostDetailViewModel: ObservableObject {
                 }
                 return
             }
-
+            
             
             // 채팅방 데이터 저장
             try await self.firestoreManager.saveChatRoom(newChat)

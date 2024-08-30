@@ -9,7 +9,7 @@ import Foundation
 import FirebaseStorage
 import FirebaseFirestore
 import UIKit
-import PhotosUI // PHPickerResult를 사용하기 위해 추가
+import PhotosUI
 
 class AddPostViewModel: ObservableObject {
     @Published var postImages: [UIImage] = []

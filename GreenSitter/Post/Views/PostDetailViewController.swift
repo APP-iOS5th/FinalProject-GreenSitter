@@ -259,6 +259,7 @@ class PostDetailViewController: UIViewController {
                 navigationController.modalPresentationStyle = .fullScreen
                 self.present(navigationController, animated: true)
             },
+            
             UIAction(title: "삭제하기", image: UIImage(systemName: "trash")) { [weak self] _ in
                 guard let self = self else { return }
                 self.postDetailViewModel.deletePost(postId: post.id) { [weak self] success in

@@ -54,7 +54,6 @@ class MainPostListViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .bgPrimary
         
-        
         setupCategoryButtons()
         setupNavigationBarButtons()
         setupLocationLabel()
