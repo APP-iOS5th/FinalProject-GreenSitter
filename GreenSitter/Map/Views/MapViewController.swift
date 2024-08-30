@@ -155,15 +155,13 @@ class MapViewController: UIViewController {
         setupUI()
         viewModel.checkLocationAuthorization()
         bindViewModel()
-
-        // 로그인 했을 경우 그리고 위치 정보 있을 경우.
-        if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
-            print("MapView - userlocation: \(userLocation)")
-            postViewModel.fetchPostsWithin3Km(userLocation: userLocation)
-        } else {    // 비로그인, 혹은 위치 정보 없으면
-            print("MapView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
-            postViewModel.fetchPostsWithin3Km(userLocation: nil)
-        }
+        fetchPosts()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchPosts()
     }
     
     // MARK: - Help methods
@@ -293,6 +291,17 @@ class MapViewController: UIViewController {
                 }
                 
             }.store(in: &cancellables)
+    }
+    
+    private func fetchPosts() {
+        // 로그인 했을 경우 그리고 위치 정보 있을 경우.
+        if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
+            print("MapView - userlocation: \(userLocation)")
+            postViewModel.fetchPostsWithin3Km(userLocation: userLocation)
+        } else {    // 비로그인, 혹은 위치 정보 없으면
+            print("MapView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
+            postViewModel.fetchPostsWithin3Km(userLocation: nil)
+        }
         
         postViewModel.$filteredPosts
             .receive(on: DispatchQueue.main)
