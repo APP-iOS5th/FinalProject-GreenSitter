@@ -14,7 +14,7 @@ class ChatViewModel {
     private let firestorageManager = FirestorageManager()
     
     // 로그인 여부를 나타내는 변수
-    var isLoggedIn = true /// 임시로 true, false로 바꾸기
+    var isLoggedIn = false /// 임시로 true, false로 바꾸기
     var hasChats = false
     
     // 임시 유저 id
@@ -61,9 +61,24 @@ class ChatViewModel {
     var updateUI: (() -> Void)?
     
     init() {
-        // 현재 사용자 ID 설정
-        self.user = LoginViewModel.shared.user
-        self.isLoggedIn = user != nil
+        if let currentUser = Auth.auth().currentUser {
+            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid) {
+                // 현재 사용자 ID 설정
+                self.user = LoginViewModel.shared.user
+                self.isLoggedIn = self.user != nil
+            }
+        }
+    }
+    
+    func fetchUserFirebase() {
+        let loginViewModel = LoginViewModel.shared
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            print("로그인된 사용자가 없습니다.")
+            return
+        }
+        
+        loginViewModel.firebaseFetch(docId: currentUserID) {}
     }
     
 //    func loadUser(completion: @escaping () -> Void) {
