@@ -12,6 +12,8 @@ import Kingfisher
 
 class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
+    private let reportsAndBlocksViewModel = ReportsAndBlocksViewModel()
+
     private var imageUrls: [String] = []
     private let postId: String
     private var overlayPostMapping: [MKCircle: Post] = [:]
@@ -289,9 +291,11 @@ class PostDetailViewController: UIViewController {
     
     private func setupNavigationBarWithBlock(post: Post) {
         let menu = UIMenu(title: "", children: [
-            UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { _ in
+            UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { [weak self] _ in
+                self?.presentReportAlert(for: post)
             },
-            UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { _ in
+            UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { [weak self] _ in
+                self?.blockPost(post: post)
             }
         ])
         
@@ -304,6 +308,77 @@ class PostDetailViewController: UIViewController {
         
         let menuBarButtonItem = UIBarButtonItem(customView: menuButton)
         navigationItem.rightBarButtonItem = menuBarButtonItem
+    }
+    
+    // MARK: - 신고 기능 구현
+    private func presentReportAlert(for post: Post) {
+        let alertController = UIAlertController(title: "신고하기", message: "신고 사유를 입력하세요.", preferredStyle: .alert)
+        
+        alertController.addTextField { textField in
+            textField.placeholder = "신고 사유를 입력하세요"
+        }
+        
+        let reportAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            guard let reason = alertController.textFields?.first?.text, !reason.isEmpty else {
+                self?.presentErrorAlert(message: "신고 사유를 입력해야 합니다.")
+                return
+            }
+            
+            self?.reportPost(post: post, reason: reason)
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(reportAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    private func reportPost(post: Post, reason: String) {
+        
+        reportsAndBlocksViewModel.reportItem(reportedId: post.id, reportType: .post, reason: reason) { result in
+            switch result {
+            case .success():
+                self.presentConfirmationAlert(message: "신고가 완료되었습니다.")
+            case .failure(let error):
+                print("Failed to save report: \(error.localizedDescription)")
+                self.presentErrorAlert(message: "신고 저장에 실패했습니다.")
+            }
+        }
+    }
+
+    private func presentConfirmationAlert(message: String) {
+        let alert = UIAlertController(title: "완료", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    private func presentErrorAlert(message: String) {
+        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    // MARK: - 차단 기능 구현
+    private func blockPost(post: Post) {
+        reportsAndBlocksViewModel.blockItem(blockedId: post.id, blockType: .post) { result in
+            switch result {
+            case .success():
+                print("Block saved successfully.")
+                self.updateUIForBlockedPost()
+            case .failure(let error):
+                print("Failed to save block: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func updateUIForBlockedPost() {
+        let alert = UIAlertController(title: "차단 완료", message: "이 포스트는 더 이상 볼 수 없습니다.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+            self.navigationController?.popViewController(animated: true)
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
     // MARK: - 채팅 버튼

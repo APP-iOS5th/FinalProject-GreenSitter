@@ -91,6 +91,9 @@
 		97BC0DFC2C75BCCF00F4D0B4 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */; };
 		97BC0DFE2C75D26700F4D0B4 /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */; };
 		97BC0E002C76F40600F4D0B4 /* MainPostListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DFF2C76F40600F4D0B4 /* MainPostListViewModel.swift */; };
+		97C729C02C816139008567A8 /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729BF2C816139008567A8 /* Report.swift */; };
+		97C729C22C8164A4008567A8 /* ReportsAndBlocksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729C12C8164A4008567A8 /* ReportsAndBlocksViewModel.swift */; };
+		97C729C42C816515008567A8 /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729C32C816515008567A8 /* Block.swift */; };
 		97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */; };
 		97D1BE422C6C7F0500F7A983 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */; };
 		97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */; };
@@ -240,6 +243,9 @@
 		97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
 		97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
 		97BC0DFF2C76F40600F4D0B4 /* MainPostListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostListViewModel.swift; sourceTree = "<group>"; };
+		97C729BF2C816139008567A8 /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
+		97C729C12C8164A4008567A8 /* ReportsAndBlocksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsAndBlocksViewModel.swift; sourceTree = "<group>"; };
+		97C729C32C816515008567A8 /* Block.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Block.swift; sourceTree = "<group>"; };
 		97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetLocationViewController.swift; sourceTree = "<group>"; };
@@ -440,6 +446,8 @@
 				97934E202C62FAC300B38E0A /* Location.swift */,
 				97934E222C62FAC800B38E0A /* Plan.swift */,
 				97934E242C62FACE00B38E0A /* Contract.swift */,
+				97C729BF2C816139008567A8 /* Report.swift */,
+				97C729C32C816515008567A8 /* Block.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -462,6 +470,7 @@
 				97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */,
 				97934E142C62F8DF00B38E0A /* SearchMapViewModel.swift */,
 				97934E162C62F8E300B38E0A /* PlaceListViewModel.swift */,
+				97C729C12C8164A4008567A8 /* ReportsAndBlocksViewModel.swift */,
 				97934E182C62F8E700B38E0A /* ReviewListViewModel.swift */,
 				97934E1C2C62F8F000B38E0A /* ReviewViewModel.swift */,
 			);
@@ -797,6 +806,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F822E9F2C7F2472007402CB /* SearchPostViewModel.swift in Sources */,
+				97C729C42C816515008567A8 /* Block.swift in Sources */,
 				97BC0DE82C747A9800F4D0B4 /* AddPostViewModel.swift in Sources */,
 				97D1BE472C6C7F8800F7A983 /* LoginViewModel.swift in Sources */,
 				97D1BE802C6C8BBA00F7A983 /* MakePlanViewModel.swift in Sources */,
@@ -805,8 +815,10 @@
 				97D1BEC02C6C9DF400F7A983 /* ChatTableViewCell.swift in Sources */,
 				97934E3D2C62FFB600B38E0A /* (null) in Sources */,
 				97D1BEBF2C6C9DF400F7A983 /* ChatPostViewController.swift in Sources */,
+				97C729C22C8164A4008567A8 /* ReportsAndBlocksViewModel.swift in Sources */,
 				97D1BEBE2C6C9DF400F7A983 /* ChatMessageViewController.swift in Sources */,
 				97934E3D2C62FFB600B38E0A /* (null) in Sources */,
+				97C729C02C816139008567A8 /* Report.swift in Sources */,
 				97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */,
 				97934E4F2C633FA700B38E0A /* (null) in Sources */,
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
