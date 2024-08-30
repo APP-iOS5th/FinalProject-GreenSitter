@@ -165,13 +165,19 @@ class AddPostViewController: UIViewController {
         updateImageStackView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // TODO: 단순히 address으로 표시 -> Map 으로 표시
-        if let address = viewModel.postLocation?.address {
-            mapLabel.text = address
-        }
+    let address = post.location?.address
+    let placeName = post.location?.placeName
+    
+    if let address = address, !address.isEmpty, let placeName = placeName, !placeName.isEmpty {
+        mapPlaceLabel.text = "\(address) (\(placeName))" // 주소와 장소 이름을 함께 표시
+    } else if let address = address, !address.isEmpty {
+        mapPlaceLabel.text = address // 주소만 표시
+    } else if let placeName = placeName, !placeName.isEmpty {
+        mapPlaceLabel.text = placeName // 장소 이름만 표시
+    } else {
+        mapPlaceLabel.text = "주소 정보 없음" // 둘 다 없는 경우
     }
+    
     
     @objc private func saveButtonTapped() {
         guard validateInputs() else { return }
