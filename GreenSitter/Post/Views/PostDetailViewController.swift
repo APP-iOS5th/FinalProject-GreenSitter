@@ -365,7 +365,6 @@ class PostDetailViewController: UIViewController {
         reportsAndBlocksViewModel.blockItem(blockedId: post.id, blockType: .post) { result in
             switch result {
             case .success():
-                print("Block saved successfully.")
                 self.updateUIForBlockedPost()
             case .failure(let error):
                 print("Failed to save block: \(error.localizedDescription)")

@@ -14,8 +14,7 @@ class MainPostListViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     @Published var filteredPosts: [Post] = []
-    private var allPosts: [Post] = []
-
+    
     // Haversine 공식을 사용하여 두 위치 간의 거리 계산 (단위: 미터)
     private func calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
         let earthRadiusKm: Double = 6371.0
@@ -35,7 +34,6 @@ class MainPostListViewModel: ObservableObject {
             filteredPosts = []
             return
         }
-        
         
         db.collection("posts")
             .whereField("postType", isEqualTo: postType.rawValue)
@@ -66,8 +64,6 @@ class MainPostListViewModel: ObservableObject {
                         lat2: postLocation.latitude,
                         lon2: postLocation.longitude
                     ) ?? Double.greatestFiniteMagnitude
-                    print("유저 location정보:\(userLocation)")
-                    print("filteredPosts location정보:\(self?.filteredPosts)")
                     return distance <= 30000 // 30km 이내의 게시물만 포함
                 }.sorted(by: { $0.updateDate > $1.updateDate }) // 최신 업데이트 순으로 정렬
             }
@@ -95,7 +91,6 @@ class MainPostListViewModel: ObservableObject {
                 
                 // 사용자 위치를 기준으로 3km 이내의 게시물 필터링 및 최신 업데이트 순으로 정렬
                 self?.filteredPosts = posts.filter { post in
-                    print("fetch Filter Posts before: \(String(describing: post.location))")
 
                     // post.location이 nil인 경우 필터링에서 제외
                     guard let postLocation = post.location else {

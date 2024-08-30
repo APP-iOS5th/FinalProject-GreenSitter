@@ -184,7 +184,6 @@ class AddPostViewController: UIViewController {
         viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, userLevel: currentUser.levelPoint, postTitle: titleTextField.text!, postBody: textView.text) { result in
             switch result {
             case .success(let newPost):
-                print("Add Post: \(newPost)")
                 self.navigationController?.popViewController(animated: true)
             case .failure(let error):
                 print("Error add post: \(error.localizedDescription)")

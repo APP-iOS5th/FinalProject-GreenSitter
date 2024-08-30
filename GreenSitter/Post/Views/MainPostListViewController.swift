@@ -69,10 +69,8 @@ class MainPostListViewController: UIViewController {
         }
         // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
         if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
-            print("MainPostView - userlocation: \(userLocation)")
             viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: userLocation)
         } else {    // 비로그인, 혹은 위치 정보 없으면
-            print("MainPostView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
             viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: nil)
         }
     }
@@ -98,7 +96,6 @@ class MainPostListViewController: UIViewController {
         viewModel.$filteredPosts
             .receive(on: DispatchQueue.main)
             .sink { [weak self] posts in
-                print("MainView - bindViewModel posts: \(posts)")
                 self?.tableView.reloadData()
             }
             .store(in: &cancellables)
@@ -232,10 +229,8 @@ class MainPostListViewController: UIViewController {
         
         // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
         if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
-            print("MainPostView - userlocation: \(userLocation)")
             viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: userLocation)
         } else {    // 비로그인, 혹은 위치 정보 없으면
-            print("MainPostView - userlocation: \(String(describing: LoginViewModel.shared.user?.location))")
             viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: nil)
         }
     }
