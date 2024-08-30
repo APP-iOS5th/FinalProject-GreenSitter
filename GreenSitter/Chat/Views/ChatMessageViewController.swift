@@ -77,6 +77,7 @@ class ChatMessageViewController: UIViewController {
         tableView.register(ChatMessageTableViewPlanCell.self, forCellReuseIdentifier: "ChatMessagePlanCell")
         tableView.register(OneImageTableViewCell.self, forCellReuseIdentifier: "OneImageCell")
         tableView.register(TwoImagesTableViewCell.self, forCellReuseIdentifier: "TwoImagesCell")
+        tableView.register(ThreeImagesTableViewCell.self, forCellReuseIdentifier: "ThreeImagesCell")
         tableView.register(FourImagesTableViewCell.self, forCellReuseIdentifier: "FourImagesCell")
         tableView.register(MoreImagesTableViewCell.self, forCellReuseIdentifier: "MoreImagesCell")
         
@@ -128,8 +129,9 @@ extension ChatMessageViewController: UITableViewDataSource {
 //            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageImageCell", for: indexPath) as! ChatMessageTableViewImageCell
 //            let cell = tableView.dequeueReusableCell(withIdentifier: "OneImageCell", for: indexPath) as! OneImageTableViewCell
 //            let cell = tableView.dequeueReusableCell(withIdentifier: "TwoImagesCell", for: indexPath) as! TwoImagesTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ThreeImagesCell", for: indexPath) as! ThreeImagesTableViewCell
 //            let cell = tableView.dequeueReusableCell(withIdentifier: "FourImagesCell", for: indexPath) as! FourImagesTableViewCell
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MoreImagesCell", for: indexPath) as! MoreImagesTableViewCell
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "MoreImagesCell", for: indexPath) as! MoreImagesTableViewCell
             cell.backgroundColor = .clear
             
             cell.tag = indexPath.row
