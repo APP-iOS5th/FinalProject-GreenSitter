@@ -223,8 +223,10 @@ class PostDetailViewController: UIViewController {
         setupUI()
         
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
+            print("IMAGES")
             setupConstraintsWithImages()
         } else {
+            print("EMPTY IMAGES")
             setupConstraints()
         }
 
@@ -522,8 +524,6 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
         
-        contentView.addSubview(imagesScrollView)
-        imagesScrollView.addSubview(imagesStackView)
         
         contentView.addSubview(postBodyTextView)
         contentView.addSubview(dividerLine3)
@@ -535,6 +535,9 @@ class PostDetailViewController: UIViewController {
     }
 
     private func setupConstraintsWithImages() {
+        contentView.addSubview(imagesScrollView)
+        imagesScrollView.addSubview(imagesStackView)
+
         imagesScrollView.isHidden = false
         
         NSLayoutConstraint.activate([
@@ -627,7 +630,8 @@ class PostDetailViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        imagesScrollView.isHidden = false
+        imagesScrollView.isHidden = true
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -676,19 +680,8 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-
-            imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
-            imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            imagesScrollView.heightAnchor.constraint(equalToConstant: 200),
             
-            imagesStackView.topAnchor.constraint(equalTo: imagesScrollView.topAnchor),
-            imagesStackView.bottomAnchor.constraint(equalTo: imagesScrollView.bottomAnchor),
-            imagesStackView.leadingAnchor.constraint(equalTo: imagesScrollView.leadingAnchor),
-            imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
-            imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
-            
-            postBodyTextView.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
+            postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
