@@ -19,6 +19,8 @@
 		15F618B82C7C4FBF00A936D8 /* FourImagesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F618B72C7C4FBF00A936D8 /* FourImagesTableViewCell.swift */; };
 		15F618BA2C7C530E00A936D8 /* MoreImagesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F618B92C7C530E00A936D8 /* MoreImagesTableViewCell.swift */; };
 		15F618BC2C81442A00A936D8 /* ThreeImagesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F618BB2C81442A00A936D8 /* ThreeImagesTableViewCell.swift */; };
+		15F618C72C815D2700A936D8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 15F618C62C815D2700A936D8 /* GoogleService-Info.plist */; };
+		15F618C92C815D2E00A936D8 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 15F618C82C815D2E00A936D8 /* APPKey.plist */; };
 		3B57780B2C733533000643C9 /* ReviewSendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B57780A2C733533000643C9 /* ReviewSendTableViewCell.swift */; };
 		3B57780D2C73356E000643C9 /* ReviewPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B57780C2C73356E000643C9 /* ReviewPostTableViewCell.swift */; };
 		3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */; };
@@ -160,6 +162,8 @@
 		15F618B72C7C4FBF00A936D8 /* FourImagesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourImagesTableViewCell.swift; sourceTree = "<group>"; };
 		15F618B92C7C530E00A936D8 /* MoreImagesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreImagesTableViewCell.swift; sourceTree = "<group>"; };
 		15F618BB2C81442A00A936D8 /* ThreeImagesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeImagesTableViewCell.swift; sourceTree = "<group>"; };
+		15F618C62C815D2700A936D8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		15F618C82C815D2E00A936D8 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
 		3B57780A2C733533000643C9 /* ReviewSendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSendTableViewCell.swift; sourceTree = "<group>"; };
 		3B57780C2C73356E000643C9 /* ReviewPostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPostTableViewCell.swift; sourceTree = "<group>"; };
 		3B596DF72C6B460A00C71851 /* IntroductionTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionTableCell.swift; sourceTree = "<group>"; };

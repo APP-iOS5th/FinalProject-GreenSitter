@@ -10,6 +10,8 @@ import UIKit
 class TwoImagesTableViewCell: UITableViewCell {
     weak var delegate: ChatMessageTableViewImageCellDelegate?
     
+    private let firestorageManager = FirestorageManager()
+    
     var isIncoming: Bool = false {
         didSet {
             setupUI()
@@ -24,13 +26,7 @@ class TwoImagesTableViewCell: UITableViewCell {
     
     var imageSize: CGFloat?
     
-    var images: [UIImage] = [] {
-        didSet {
-            DispatchQueue.main.async {
-                self.updateBubbleView()
-            }
-        }
-    }
+    var imageURLs = [URL]()
     
     private lazy var firstImageView: UIImageView = {
        let firstImageView = UIImageView()
@@ -141,6 +137,14 @@ class TwoImagesTableViewCell: UITableViewCell {
             secondImageView.heightAnchor.constraint(equalToConstant: imageSize),
             secondImageView.widthAnchor.constraint(equalToConstant: imageSize),
         ])
+        
+        var imageViews = [firstImageView, secondImageView]
+
+        for (index, imageURL) in imageURLs.enumerated() {
+            if index < imageViews.count {
+                firestorageManager.loadImage(imageURL: imageURL, imageSize: imageSize, imageView: &imageViews[index])
+            }
+        }
     }
     
     // MARK: - Setup UI
@@ -173,6 +177,7 @@ class TwoImagesTableViewCell: UITableViewCell {
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
                 timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100),
+                timeLabel.widthAnchor.constraint(equalToConstant: 45),
                 
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
@@ -192,9 +197,11 @@ class TwoImagesTableViewCell: UITableViewCell {
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 isReadLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100),
+                isReadLabel.widthAnchor.constraint(equalToConstant: 41.333333333333336),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: isReadLabel.trailingAnchor, constant: 5),
+                timeLabel.widthAnchor.constraint(equalToConstant: 45),
                 
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
@@ -217,18 +224,22 @@ class TwoImagesTableViewCell: UITableViewCell {
         }
     }
     
-    private func updateBubbleView() {
-        firstImageView.image = images[0]
-        secondImageView.image = images[1]
-    }
-    
     @objc
     private func handleImageTap(_ sender: UITapGestureRecognizer) {
-        guard let imageView = sender.view as? UIImageView, let image = imageView.image else { return }
+        guard let imageView = sender.view as? UIImageView, let _ = imageView.image else { return }
         
-        guard let index = images.firstIndex(of: image) else { return }
+        var images = [UIImage]()
         
-        delegate?.imageViewTapped(images: images, index: index)
+        let imageViews = [firstImageView, secondImageView]
+        for imageView in imageViews {
+            if let image = imageView.image {
+                images.append(image)
+            }
+        }
+        
+        if let index = imageViews.firstIndex(of: imageView) {
+            delegate?.imageViewTapped(images: images, index: index)
+        }
     }
 }
 
