@@ -1,13 +1,17 @@
 //
-//  ThreeImagesTableViewCell.swift
+//  OneImageTableViewCell.swift
 //  GreenSitter
 //
-//  Created by 김영훈 on 8/30/24.
+//  Created by 김영훈 on 8/26/24.
 //
 
 import UIKit
 
-class ThreeImagesTableViewCell: UITableViewCell {
+protocol ChatMessageTableViewImageCellDelegate: AnyObject {
+    func imageViewTapped(images: [UIImage], index: Int)
+}
+
+class OneImageTableViewCell: UITableViewCell {
     weak var delegate: ChatMessageTableViewImageCellDelegate?
     
     var isIncoming: Bool = false {
@@ -44,34 +48,6 @@ class ThreeImagesTableViewCell: UITableViewCell {
         firstImageView.isUserInteractionEnabled = true
         firstImageView.addGestureRecognizer(tapGesture)
         return firstImageView
-    }()
-    
-    private lazy var secondImageView: UIImageView = {
-       let secondImageView = UIImageView()
-        secondImageView.layer.cornerRadius = 10
-        secondImageView.backgroundColor = .white
-        secondImageView.clipsToBounds = true
-        secondImageView.contentMode = .scaleAspectFit
-        secondImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
-        secondImageView.isUserInteractionEnabled = true
-        secondImageView.addGestureRecognizer(tapGesture)
-        return secondImageView
-    }()
-    
-    private lazy var thirdImageView: UIImageView = {
-       let thirdImageView = UIImageView()
-        thirdImageView.layer.cornerRadius = 10
-        thirdImageView.backgroundColor = .white
-        thirdImageView.clipsToBounds = true
-        thirdImageView.contentMode = .scaleAspectFit
-        thirdImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleImageTap(_:)))
-        thirdImageView.isUserInteractionEnabled = true
-        thirdImageView.addGestureRecognizer(tapGesture)
-        return thirdImageView
     }()
     
     lazy var bubbleView: UIView = {
@@ -115,6 +91,7 @@ class ThreeImagesTableViewCell: UITableViewCell {
         label.text = "오후 1:43"
         label.textColor = .labelsSecondary
         label.font = UIFont.systemFont(ofSize: 11)
+        
         return label
     }()
     
@@ -123,7 +100,7 @@ class ThreeImagesTableViewCell: UITableViewCell {
         label.textColor = .complementary
         label.font = UIFont.systemFont(ofSize: 11)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.sizeToFit()
+        
         return label
     }()
     
@@ -138,26 +115,24 @@ class ThreeImagesTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("layoutSubviews")
+        
         contentView.layoutIfNeeded()
 
         let bubbleViewWidth = bubbleView.bounds.width
         
         if imageSize == nil {
-            imageSize = ( bubbleViewWidth - 20 ) / 3
+            imageSize = bubbleViewWidth
         }
         
         guard let imageSize = imageSize else { return }
         NSLayoutConstraint.activate([
             firstImageView.heightAnchor.constraint(equalToConstant: imageSize),
-            secondImageView.heightAnchor.constraint(equalToConstant: imageSize),
-            thirdImageView.heightAnchor.constraint(equalToConstant: imageSize),
+            firstImageView.widthAnchor.constraint(equalToConstant: imageSize),
         ])
     }
     
     // MARK: - Setup UI
     private func setupUI() {
-        print("setupUI")
         // 제약조건 재설정을 위한 기존 제약조건 제거
         NSLayoutConstraint.deactivate(contentView.constraints)
         // profileImageView와 isReadLabel 제거
@@ -165,8 +140,6 @@ class ThreeImagesTableViewCell: UITableViewCell {
         isReadLabel.removeFromSuperview()
         
         bubbleView.addSubview(firstImageView)
-        bubbleView.addSubview(secondImageView)
-        bubbleView.addSubview(thirdImageView)
         
         contentView.addSubview(bubbleView)
         contentView.addSubview(timeLabel)
@@ -187,26 +160,12 @@ class ThreeImagesTableViewCell: UITableViewCell {
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
                 timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100),
-                timeLabel.widthAnchor.constraint(equalToConstant: 45),
                 
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
-                firstImageView.trailingAnchor.constraint(equalTo: secondImageView.leadingAnchor, constant: -10),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
                 firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
                 firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
-                
-                secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
-                secondImageView.leadingAnchor.constraint(equalTo: firstImageView.trailingAnchor, constant: 10),
-                secondImageView.trailingAnchor.constraint(equalTo: thirdImageView.leadingAnchor, constant: -10),
-                secondImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
-                secondImageView.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
-                secondImageView.heightAnchor.constraint(equalTo: secondImageView.widthAnchor),
-                
-                thirdImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
-                thirdImageView.leadingAnchor.constraint(equalTo: secondImageView.trailingAnchor, constant: -10),
-                thirdImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
-                thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
-                thirdImageView.heightAnchor.constraint(equalTo: thirdImageView.widthAnchor),
             ])
         } else {
             contentView.addSubview(isReadLabel)
@@ -214,12 +173,9 @@ class ThreeImagesTableViewCell: UITableViewCell {
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 isReadLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100),
-                isReadLabel.widthAnchor.constraint(equalToConstant: 41.333333333333336),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: isReadLabel.trailingAnchor, constant: 5),
-                timeLabel.widthAnchor.constraint(equalToConstant: 45),
-
                 
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
@@ -228,30 +184,16 @@ class ThreeImagesTableViewCell: UITableViewCell {
                 
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
-                firstImageView.trailingAnchor.constraint(equalTo: secondImageView.leadingAnchor, constant: -10),
+                firstImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
                 firstImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
                 firstImageView.heightAnchor.constraint(equalTo: firstImageView.widthAnchor),
                 
-                secondImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
-                secondImageView.leadingAnchor.constraint(equalTo: firstImageView.trailingAnchor, constant: 10),
-                secondImageView.trailingAnchor.constraint(equalTo: thirdImageView.leadingAnchor, constant: -10),
-                secondImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
-                secondImageView.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
-                secondImageView.heightAnchor.constraint(equalTo: secondImageView.widthAnchor),
-                
-                thirdImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
-                thirdImageView.leadingAnchor.constraint(equalTo: secondImageView.trailingAnchor, constant: 10),
-                thirdImageView.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
-                thirdImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
-                thirdImageView.heightAnchor.constraint(equalTo: thirdImageView.widthAnchor),
             ])
         }
     }
     
     private func updateBubbleView() {
         firstImageView.image = images[0]
-        secondImageView.image = images[1]
-        thirdImageView.image = images[2]
     }
     
     @objc
@@ -263,5 +205,4 @@ class ThreeImagesTableViewCell: UITableViewCell {
         delegate?.imageViewTapped(images: images, index: index)
     }
 }
-
 
