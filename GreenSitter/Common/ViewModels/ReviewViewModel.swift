@@ -1,4 +1,4 @@
-//
+//임의로 다른사용자 id적용
 //  ReviewViewModel.swift
 //  GreenSitter
 //
@@ -59,7 +59,7 @@ extension ReviewViewController {
             return
         }
         
-        guard let postId = review?.id else { // Post ID를 review에서 가져옵니다.
+        guard let postId = postId else {
             print("No post ID found in review")
             return
         }
@@ -107,80 +107,98 @@ extension ReviewViewController {
         }
         let reviewText = (tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell)?.reviewTextField.text
         
-        // 리뷰 아이디 생성
-        let reviewId = UUID().uuidString
-        
         // Prepare data to update user document
         let newReview: [String: Any] = [
-            "reviews": [
-                "id": reviewId,
-                "userId": userId,
-                "enabled": true,
-                "createDate": Timestamp(date: Date()),
-                "updateDate": Timestamp(date: Date()),
-                "postId": postId, // 여기에 postId를 저장
-                "rating": rating.rawValue,
-                "reviewText": reviewText ?? "",
-                "selectedTexts": selectedTexts
-            ]
+            "id": UUID().uuidString,
+            "userId": userId,
+            "enabled": true,
+            "createDate": Timestamp(date: Date()),
+            "updateDate": Timestamp(date: Date()),
+            "postId": postId,
+            "rating": rating.rawValue,
+            "reviewText": reviewText ?? "",
+            "selectedTexts": selectedTexts
         ]
         
-        // Update user document with new review data
-        db.collection("users").document(userId).setData(newReview, merge: true) { error in
-            if let error = error {
-                print("Error writing review to Firestore: \(error)")
-            } else {
-                print("Review successfully written!")
-            }
-        }
-        
+        let creatorId = "dHGnO3p9WwcWp8bgM4UHV6PZptn2" // 리뷰 대상자의 ID를 가져와야 합니다.
 
-        // 게시물 작성자 Firestore에 저장
-        db.collection("posts").document(postId).getDocument { document, error in
-            if let document = document, document.exists {
-                let postData = document.data()
-                if let creatorId = postData?["creatorId"] as? String {
-                    // Save the review to the post creator's document
-                    let reviewRef = self.db.collection("users").document(creatorId).collection("review").document(reviewId) // create a new document in the 'reviews' subcollection
-                    reviewRef.setData(newReview) { error in
+        // Fetch the existing reviews
+        db.collection("users").document(creatorId).getDocument { [weak self] document, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("작성자의 사용자 문서 가져오기 중 오류 발생: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let document = document, document.exists else {
+                print("작성자의 사용자 문서가 존재하지 않거나, 문서 가져오기 실패")
+                return
+            }
+            
+            var reviews = document.data()?["reviews"] as? [[String: Any]] ?? []
+            
+            // Find existing review and update it or append new review
+            if let existingIndex = reviews.firstIndex(where: { ($0["postId"] as? String) == postId }) {
+                reviews[existingIndex] = newReview
+            } else {
+                reviews.append(newReview)
+            }
+            
+            // Update the user's document with the modified reviews array
+            self.db.collection("users").document(creatorId).updateData(["reviews": reviews]) { error in
+                if let error = error {
+                    print("사용자 문서에 리뷰 업데이트 중 오류 발생: \(error)")
+                } else {
+                    print("리뷰가 성공적으로 사용자 문서에 업데이트되었습니다!")
+                    
+                    // Update exp
+                    self.db.collection("users").document(creatorId).getDocument { documentSnapshot, error in
                         if let error = error {
-                            print("Error writing review to post creator's Firestore document: \(error)")
-                        } else {
-                            print("Review successfully written to post creator's document!")
-                            
-                            //상대방 exp 업데이트
-                            self.db.collection("users").document(creatorId).getDocument { documentSnapshot, error in
-                                guard let document = documentSnapshot, var creatorUser = try? document.data(as: User.self) else {
-                                    print("Error retrieving creator's user document: \(String(describing: error))")
+                            print("작성자의 사용자 문서 가져오기 중 오류 발생: \(error.localizedDescription)")
+                            return
+                        }
+                        
+                        guard let documentSnapshot = documentSnapshot, documentSnapshot.exists else {
+                            print("작성자의 사용자 문서가 존재하지 않음")
+                            return
+                        }
+                        print("문서 데이터: \(documentSnapshot.data() ?? [:])")
+                        
+                        // 데이터 파싱 시도
+                            do {
+                                guard let documentData = documentSnapshot.data() else {
+                                    print("문서 데이터가 없습니다.")
                                     return
                                 }
                                 
-                                creatorUser.exp += expChange
-                                
-                                self.db.collection("user").document(creatorId).setData(creatorUser.toDictionary(), merge: true) { error in
-                                    
-                                    if let error = error {
-                                        print("exp 업데이트 실패: \(error)")
-                                    }
-                                    else {
-                                        print("exp 업데이트 성공")
-                                    }
-                                }
+                                // `User` 구조체로 변환
+                                let creatorUser = try documentSnapshot.data(as: User.self)
+                                print("파싱된 사용자 데이터: \(creatorUser)")
+                            } catch let decodingError {
+                                print("작성자의 사용자 문서 데이터 파싱 실패: \(decodingError.localizedDescription)")
                             }
-                            
+
+                        guard var creatorUser = try? documentSnapshot.data(as: User.self) else {
+                            print("작성자의 사용자 문서 데이터 파싱 실패")
+                            return
+                        }
+                        
+                        creatorUser.updateExp(by: expChange)
+                        
+                        self.db.collection("users").document(creatorId).setData(creatorUser.toDictionary(), merge: true) { error in
+                            if let error = error {
+                                print("exp 업데이트 실패: \(error)")
+                            } else {
+                                print("exp 업데이트 성공")
+                            }
                         }
                     }
-                } else {
-                    print("Creator ID not found in the post document")
                 }
-            } else {
-                print("Post document does not exist")
             }
         }
 
-        
         DispatchQueue.main.async {
-            
             guard let userId = LoginViewModel.shared.user?.id else {
                 print("User ID is not available")
                 return
@@ -190,66 +208,71 @@ extension ReviewViewController {
             self.navigationController?.pushViewController(aboutMeViewController, animated: true)
         }
     }
+
+
     
     func fetchPostFirebase() {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            print("User ID is not available")
+        guard let postId = self.postId else {
+            print("Post ID is not available")
             return
         }
-
-        db.collection("users").document(userId).getDocument { [weak self] (document, error) in
+        
+        db.collection("posts").document(postId).getDocument { [weak self] (document, error) in
             guard let self = self else { return }
-
+            
             if let error = error {
-                print("Error getting document: \(error)")
+                print("문서 가져오기 오류: \(error)")
                 return
             }
-
-            if let document = document, document.exists {
-                if let postData = document.data()?["post"] as? [String: Any] {
-                    if let postStatus = postData["postStatus"] as? String, postStatus == "거래완료" {
-                        let postTitle = postData["postTitle"] as? String ?? "제목 없음"
-                        let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
-                        let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
-                        let updateDate = updateDateTimestamp.dateValue()
-                        let postImages = postData["postImages"] as? [String] ?? []
-                        let postId = postData["id"] as? String ?? ""
-
-
-                        // Post 객체 생성 및 업데이트
-                        self.review = Post(
-                            id: postId,
-                            enabled: true,
-                            createDate: Date(),
-                            updateDate: updateDate,
-                            userId: userId,
-                            profileImage: "",
-                            nickname: "",
-                            userLocation: Location.seoulLocation,
-                            userNotification: false, userLevel: .flower,
-                            postType: .offeringToSitter,
-                            postTitle: postTitle,
-                            postBody: postBody,
-                            postImages: postImages,
-                            postStatus: .completedTrade,
-                            location: nil
-                        )
-                        
-                        // 테이블 뷰 업데이트
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                        }
-                    } else {
-                        print("Post status is not '거래완료'.")
-                    }
-                } else {
-                    print("Post data not found in document.")
+            
+            guard let document = document, document.exists else {
+                print("문서가 존재하지 않거나 문서 가져오기 실패")
+                return
+            }
+            
+            
+            // 문서 데이터 출력 (디버깅 용도)
+            let documentData = document.data() ?? [:]
+            print("문서 데이터: \(documentData)")
+            
+            // 문서가 예상 필드를 포함하는지 확인
+            if let postStatus = documentData["postStatus"] as? String, postStatus == "거래완료" {
+                let postTitle = documentData["postTitle"] as? String ?? "제목 없음"
+                let postBody = documentData["postBody"] as? String ?? "본문 내용 없음"
+                let userId = documentData["userId"] as? String ?? "id없음"
+                let updateDateTimestamp = documentData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
+                let updateDate = updateDateTimestamp.dateValue()
+                let postImages = documentData["postImages"] as? [String] ?? []
+                
+                // Post 객체 생성 및 업데이트
+                self.review = Post(
+                    id: postId,
+                    enabled: true,
+                    createDate: Date(),
+                    updateDate: updateDate,
+                    userId: userId,
+                    profileImage: "",
+                    nickname: "",
+                    userLocation: Location.seoulLocation,
+                    userNotification: false, userLevel: .flower,
+                    postType: .offeringToSitter,
+                    postTitle: postTitle,
+                    postBody: postBody,
+                    postImages: postImages,
+                    postStatus: .completedTrade,
+                    location: nil
+                )
+                
+                // 테이블 뷰 업데이트
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
                 }
             } else {
-                print("Document does not exist")
+                print("Post status is not '거래완료'.")
             }
         }
     }
+
     
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
