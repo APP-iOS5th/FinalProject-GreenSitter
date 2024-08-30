@@ -71,7 +71,9 @@ class ReviewListViewController: UIViewController, UITableViewDataSource, UITable
 
         // 사용자 ID가 다를 경우 ReceiveReviewViewController로 이동
         if currentUserId != selectedPost.userId {
-            let receiveReviewViewController = ReceiveReviewViewController()
+            let selectedPost = post[indexPath.row]
+            let postId = selectedPost.id
+            let receiveReviewViewController = ReceiveReviewViewController(postId: postId)
             receiveReviewViewController.post = [selectedPost]
             navigationController?.pushViewController(receiveReviewViewController, animated: true)
             return

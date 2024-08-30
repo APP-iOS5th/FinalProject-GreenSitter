@@ -16,15 +16,23 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
     var review: Post?
     var selectedTextButtons: Set<UIButton> = []
     var post: [Post] = []
-    var postId: String?
+    var postId: String
     var reviews: Review?
-    
     var selectedTexts: [String] = []
     
     let row1Button = UIButton()
     let row2Button = UIButton()
     let row3Button = UIButton()
     let row4Button = UIButton()
+    
+    init(postId: String) {
+        self.postId = postId
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()

@@ -25,7 +25,7 @@ class WriteReviewViewController: UIViewController,UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "내가 맡긴 식물"
+        navigationItem.title = "내가 쓴 돌봄 후기"
         
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
@@ -39,8 +39,8 @@ class WriteReviewViewController: UIViewController,UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedPost = post[indexPath.row]
-        
-        let receiveReviewViewController = ReceiveReviewViewController()
+        let postId = selectedPost.id
+        let receiveReviewViewController = ReceiveReviewViewController(postId: postId)
         navigationController?.pushViewController(receiveReviewViewController, animated: true)
     }
     
