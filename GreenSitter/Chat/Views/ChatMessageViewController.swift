@@ -11,6 +11,7 @@ class ChatMessageViewController: UIViewController {
     var chatViewModel: ChatViewModel?
     var chatRoom: ChatRoom
     private var messageListeners: [Task<Void, Never>] = []
+    private var unreadMessageListeners: [Task<Void, Never>] = []
     
     private let imageCache = NSCache<NSString, UIImage>()
     
@@ -44,9 +45,9 @@ class ChatMessageViewController: UIViewController {
     
     // MARK: - ViewWillAppear
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
+        super.viewWillAppear(animated)
         Task {
-            // 메세지 읽음 처리
+            // 초기 메세지 읽음 처리
             try await chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
             
             let messageListener = Task {
@@ -54,13 +55,39 @@ class ChatMessageViewController: UIViewController {
                 if let messagesStream = await chatViewModel?.loadMessages(chatRoomId: chatRoom.id) {
                     for await messages in messagesStream {
                         self.chatViewModel?.messages[chatRoom.id] = messages
-                        // await MainActor.run { self.tableView.reloadData() }
+                        
+                        // 메세지가 올 때마다 읽음 처리
+//                        do {
+//                            await chatViewModel?.loadUnreadMessages(chatRoomId: chatRoom.id)
+//                            try await chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
+//                        } catch {
+//                            // 에러 발생 시 처리 (로깅 등)
+//                            print("Failed to update unread status: \(error)")
+//                        }
                     }
                 } else {
                     print("Failed to load messages for chatRoomId: \(chatRoom.id)")
                 }
             }
             messageListeners.append(messageListener)
+            
+            // 읽지 않은 메시지 리스너 설정
+            let unreadMessageListener = Task {
+                if let unreadMessagesStream = await chatViewModel?.loadUnreadMessages(chatRoomId: chatRoom.id) {
+                    for await messages in unreadMessagesStream {
+                        self.chatViewModel?.unreadMessages[chatRoom.id] = messages
+                        do {
+                            try await chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
+                        } catch {
+                            // 에러 발생 시 처리 (로깅 등)
+                            print("Failed to update unread status: \(error)")
+                        }
+                    }
+                } else {
+                    print("Failed to load unread messages for chatRoomId: \(chatRoom.id)")
+                }
+            }
+            unreadMessageListeners.append(unreadMessageListener)
             
             // UI 업데이트
             await MainActor.run {
@@ -95,8 +122,12 @@ class ChatMessageViewController: UIViewController {
         for listener in messageListeners {
             listener.cancel()
         }
+        for listener in unreadMessageListeners {
+            listener.cancel()
+        }
 
         messageListeners.removeAll()
+        unreadMessageListeners.removeAll()
     }
     
     // MARK: - Setup UI
