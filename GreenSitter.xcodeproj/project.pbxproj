@@ -94,6 +94,7 @@
 		97C729C02C816139008567A8 /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729BF2C816139008567A8 /* Report.swift */; };
 		97C729C22C8164A4008567A8 /* ReportsAndBlocksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729C12C8164A4008567A8 /* ReportsAndBlocksViewModel.swift */; };
 		97C729C42C816515008567A8 /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729C32C816515008567A8 /* Block.swift */; };
+		97C729C62C81834D008567A8 /* DoubleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729C52C81834D008567A8 /* DoubleExtension.swift */; };
 		97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */; };
 		97D1BE422C6C7F0500F7A983 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */; };
 		97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */; };
@@ -246,6 +247,7 @@
 		97C729BF2C816139008567A8 /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
 		97C729C12C8164A4008567A8 /* ReportsAndBlocksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsAndBlocksViewModel.swift; sourceTree = "<group>"; };
 		97C729C32C816515008567A8 /* Block.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Block.swift; sourceTree = "<group>"; };
+		97C729C52C81834D008567A8 /* DoubleExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtension.swift; sourceTree = "<group>"; };
 		97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetLocationViewController.swift; sourceTree = "<group>"; };
@@ -352,6 +354,7 @@
 				97D1BEAE2C6C9DB100F7A983 /* BundleExtension.swift */,
 				15F316342C71FB6C00F30B72 /* ColorExtension.swift */,
 				15F316362C71FB7D00F30B72 /* UILabelExtension.swift */,
+				97C729C52C81834D008567A8 /* DoubleExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -834,6 +837,7 @@
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
 				3B61C69A2C71DCAD00337B66 /* SelfIntroductionViewModel.swift in Sources */,
 				15C8208A2C775ECB002991DE /* ImageDetailCollectionViewController.swift in Sources */,
+				97C729C62C81834D008567A8 /* DoubleExtension.swift in Sources */,
 				97D1BE812C6C8BBA00F7A983 /* ChatAdditionalButtonModel.swift in Sources */,
 				3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */,
 				4F822E9D2C7F243A007402CB /* SearchPostViewController.swift in Sources */,

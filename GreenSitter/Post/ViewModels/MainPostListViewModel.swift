@@ -15,7 +15,7 @@ class MainPostListViewModel: ObservableObject {
     
     @Published var filteredPosts: [Post] = []
     
-    // Haversine 공식을 사용하여 두 위치 간의 거리 계산 (단위: 미터)
+    // MARK: - Haversine 공식을 사용하여 두 위치 간의 거리 계산 (단위: 미터)
     private func calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
         let earthRadiusKm: Double = 6371.0
 
@@ -108,8 +108,4 @@ class MainPostListViewModel: ObservableObject {
                 }.sorted(by: { $0.updateDate > $1.updateDate }) // 최신 업데이트 순으로 정렬
             }
     }
-}
-
-extension Double {
-    var degreesToRadians: Double { return self * .pi / 180 }
 }
