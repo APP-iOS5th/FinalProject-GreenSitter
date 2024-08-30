@@ -63,28 +63,30 @@ class MainPostListViewController: UIViewController {
         fetchPostsByCategoryAndLocationWithViewModel()
     }
     
-    private func fetchPostsByCategoryAndLocationWithViewModel() {
+    private func fetchPostsByCategoryAndLocationWithViewModel(loadMore: Bool = false) {
         guard let categoryText = selectedButton?.titleLabel?.text else {
             return
         }
-        // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
+        
         if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
-            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: userLocation)
-        } else {    // 비로그인, 혹은 위치 정보 없으면
-            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: nil)
+            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: userLocation, loadMore: loadMore)
+        } else { // 비로그인, 혹은 위치 정보 없으면
+            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: nil, loadMore: loadMore)
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        guard let categoryText = selectedButton?.titleLabel?.text else {
+        guard (selectedButton?.titleLabel?.text) != nil else {
             return
         }
         
-        fetchPostsByCategoryAndLocationWithViewModel()
         
         setupLocationLabel()
+        
+        fetchPostsByCategoryAndLocationWithViewModel()
+//        self.tableView.reloadData()
         
         // 선택된 row 해제
         if let indexPath = tableView.indexPathForSelectedRow {
@@ -227,11 +229,12 @@ class MainPostListViewController: UIViewController {
         // 선택된 카테고리로 필터링
         guard let category = sender.titleLabel?.text else { return }
         
-        // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
+//        guard !viewModel.isLoading else { return }
+//        fetchPostsByCategoryAndLocationWithViewModel(loadMore: false)
         if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
-            viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: userLocation)
-        } else {    // 비로그인, 혹은 위치 정보 없으면
-            viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: nil)
+            viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: userLocation, loadMore: false)
+        } else { // 비로그인, 혹은 위치 정보 없으면
+            viewModel.fetchPostsByCategoryAndLocation(for: category, userLocation: nil, loadMore: false)
         }
     }
     
@@ -271,5 +274,25 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
         let postDetailViewController = PostDetailViewController(postId: post.id)
         postDetailViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(postDetailViewController, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == viewModel.filteredPosts.count - 1 {
+            guard !viewModel.filteredPosts.isEmpty else { return }
+            loadMorePosts()
+        }
+    }
+    
+    private func loadMorePosts() {
+        guard let categoryText = selectedButton?.titleLabel?.text else {
+            return
+        }
+
+        // MARK: - 로그인, 위치정보에 따라 post filter 다르게 적용
+        if Auth.auth().currentUser != nil, let userLocation = LoginViewModel.shared.user?.location {
+            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: userLocation, loadMore: true)
+        } else {    // 비로그인, 혹은 위치 정보 없으면
+            viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: nil, loadMore: true)
+        }
     }
 }

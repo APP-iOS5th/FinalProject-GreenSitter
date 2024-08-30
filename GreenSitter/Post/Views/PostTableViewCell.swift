@@ -53,11 +53,10 @@ class PostTableViewCell: UITableViewCell {
     
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 8
         imageView.layer.masksToBounds = true
-        imageView.image = UIImage(named: "defaultImage") // 기본 이미지 설정
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
@@ -119,9 +118,10 @@ class PostTableViewCell: UITableViewCell {
         }
         
         postImageView.isHidden = false
+        
         if let imageUrlString = postImages.first, let imageUrl = URL(string: imageUrlString) {
-            let processor = DownsamplingImageProcessor(size: postImageView.bounds.size)
-            
+            let processor = DownsamplingImageProcessor(size: CGSize(width: 80, height: 80))
+
             postImageView.kf.indicatorType = .activity
             postImageView.kf.setImage(
                 with: imageUrl,
@@ -129,19 +129,11 @@ class PostTableViewCell: UITableViewCell {
                 options: [
                     .processor(processor),
                     .scaleFactor(UIScreen.main.scale),
-                    .transition(.fade((0.25))),
+                    .transition(.fade(0.25)),
                     .cacheOriginalImage
-                ],
-                completionHandler: { result in
-                    switch result {
-                    case .success(_): break
-                    case .failure(let error):
-                        print("Failed to load Image: \(error.localizedDescription)")
-                    }
-                }
+                ]
             )
         } else {
-            // 이미지가 없을 때 기본 이미지
             
         }
     }
