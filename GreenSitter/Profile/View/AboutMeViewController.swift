@@ -11,7 +11,8 @@ import FirebaseFirestore
 import FirebaseStorage
 
 class AboutMeViewController: UIViewController {
-    
+    private let reportsAndBlocksViewModel = ReportsAndBlocksViewModel()
+
     let db = Firestore.firestore()
     var user: User?
     var userId: String
@@ -120,12 +121,12 @@ class AboutMeViewController: UIViewController {
         tableView.backgroundColor = UIColor(named: "BGSecondary")
         return tableView
     }()
-    
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "BGSecondary")
-        navigationItem.title = "프로필"
+        
+        setupNavigationBar()
         
         tableView.register(IntroductionTableCell.self, forCellReuseIdentifier: "introductionTableCell")
         tableView.register(CustomTableCell.self, forCellReuseIdentifier: "customTableCell")
@@ -225,5 +226,109 @@ class AboutMeViewController: UIViewController {
         if let progressLayer = circleView.layer.sublayers?.first(where: { $0 is CAShapeLayer }) as? CAShapeLayer {
             progressLayer.strokeEnd = percentage
         }
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.title = "프로필"
+            
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        if currentUserID != userId {
+            setupBlockButton(with: userId)
+        }
+    }
+    
+    private func setupBlockButton(with userId: String) {
+        let menu = UIMenu(title: "", children: [
+            UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { [weak self] _ in
+                self?.presentReportAlert(for: userId)
+            },
+            UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { [weak self] _ in
+                self?.blockUser(userId: userId)
+            }
+        ])
+        
+        let menuButton = UIButton(type: .system)
+        menuButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
+        menuButton.tintColor = .labelsPrimary
+        menuButton.menu = menu
+        menuButton.showsMenuAsPrimaryAction = true
+        menuButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let menuBarButtonItem = UIBarButtonItem(customView: menuButton)
+        navigationItem.rightBarButtonItem = menuBarButtonItem
+    }
+    
+    // MARK: - 신고 기능 구현
+    private func presentReportAlert(for userId: String) {
+        let alertController = UIAlertController(title: "신고하기", message: "신고 사유를 입력하세요.", preferredStyle: .alert)
+        
+        alertController.addTextField { textField in
+            textField.placeholder = "신고 사유를 입력하세요"
+        }
+        
+        let reportAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            guard let reason = alertController.textFields?.first?.text, !reason.isEmpty else {
+                self?.presentErrorAlert(message: "신고 사유를 입력해야 합니다.")
+                return
+            }
+            
+            self?.reportUser(userId: userId, reason: reason)
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(reportAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    private func reportUser(userId: String, reason: String) {
+        
+        reportsAndBlocksViewModel.reportItem(reportedId: userId, reportType: .user, reason: reason) { result in
+            switch result {
+            case .success():
+                self.presentConfirmationAlert(message: "신고가 완료되었습니다.")
+            case .failure(let error):
+                print("Failed to save report: \(error.localizedDescription)")
+                self.presentErrorAlert(message: "신고 저장에 실패했습니다.")
+            }
+        }
+    }
+
+    private func presentConfirmationAlert(message: String) {
+        let alert = UIAlertController(title: "완료", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    private func presentErrorAlert(message: String) {
+        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    // MARK: - 차단 기능 구현
+    private func blockUser(userId: String) {
+        reportsAndBlocksViewModel.blockItem(blockedId: userId, blockType: .user) { result in
+            switch result {
+            case .success():
+                print("Block saved successfully.")
+                self.updateUIForBlockedPost()
+            case .failure(let error):
+                print("Failed to save block: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func updateUIForBlockedPost() {
+        let alert = UIAlertController(title: "차단 완료", message: "이 유저는 더 이상 볼 수 없습니다.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+            self.navigationController?.popViewController(animated: true)
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
 }
