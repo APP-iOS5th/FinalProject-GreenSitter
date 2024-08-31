@@ -339,6 +339,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         ])
     }
     
+    
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true, completion: nil)
         
@@ -364,14 +365,14 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     private func addImageToStackView(_ image: UIImage) {
         let existingImages = imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
-            if existingImages.contains(image) {
-                return
-            }
+        if existingImages.contains(image) {
+            return
+        }
         
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.widthAnchor.constraint(equalToConstant: 130).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 130).isActive = true
+        containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
@@ -400,9 +401,14 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             deleteButton.heightAnchor.constraint(equalToConstant: 24),
         ])
         
-        imageStackView.insertArrangedSubview(containerView, at: imageStackView.arrangedSubviews.count - 1)
+        if let pickerImageViewIndex = imageStackView.arrangedSubviews.firstIndex(of: pickerImageView) {
+            imageStackView.insertArrangedSubview(containerView, at: pickerImageViewIndex + 1)
+        } else {
+            imageStackView.addArrangedSubview(containerView)
+        }
         
         updateImageStackView()
+        
     }
     
     @objc private func deleteImage(_ sender: UIButton) {
@@ -423,14 +429,23 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         for image in viewModel.postImages {
             addImageToStackView(image)
         }
-//        updateImageStackView()
+        updateImageStackView()
     }
     
     private func updateImageStackView() {
-        pickerImageView.isHidden = imageStackView.arrangedSubviews.count > 4
+        pickerImageView.isHidden = false        
+        imageScrollView.contentSize = CGSize(width: imageStackView.frame.width, height: imageStackView.frame.height)
     }
     
     private func presentImagePickerController() {
+        let numberOfImages = imageStackView.arrangedSubviews.count - 1 // -1 to exclude pickerImageView
+        
+        // 이미 10장이라면 이미지 피커를 비활성화
+        if numberOfImages >= 10 {
+            showAlert(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.")
+            return
+        }
+        
         var config = PHPickerConfiguration()
         config.selectionLimit = 10 - (imageStackView.arrangedSubviews.count - 1)
         config.filter = .images

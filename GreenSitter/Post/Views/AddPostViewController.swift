@@ -156,7 +156,7 @@ class AddPostViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .bgPrimary
         setupLayout()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(pickerImageViewTapped))
@@ -164,20 +164,6 @@ class AddPostViewController: UIViewController {
         
         updateImageStackView()
     }
-    
-    let address = post.location?.address
-    let placeName = post.location?.placeName
-    
-    if let address = address, !address.isEmpty, let placeName = placeName, !placeName.isEmpty {
-        mapPlaceLabel.text = "\(address) (\(placeName))" // 주소와 장소 이름을 함께 표시
-    } else if let address = address, !address.isEmpty {
-        mapPlaceLabel.text = address // 주소만 표시
-    } else if let placeName = placeName, !placeName.isEmpty {
-        mapPlaceLabel.text = placeName // 장소 이름만 표시
-    } else {
-        mapPlaceLabel.text = "주소 정보 없음" // 둘 다 없는 경우
-    }
-    
     
     @objc private func saveButtonTapped() {
         guard validateInputs() else { return }
@@ -355,7 +341,7 @@ extension AddPostViewController: UITextViewDelegate {
         let size = CGSize(width: textView.frame.width, height: .infinity)
         let estimatedSize = textView.sizeThatFits(size)
         
-        let minHeight: CGFloat = 200 // 최소 높이
+        let minHeight: CGFloat = 200
         
         textView.constraints.forEach { (constraint) in
             if constraint.firstAttribute == .height {
@@ -377,15 +363,13 @@ extension AddPostViewController: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == .labelsSecondary || textView.textColor == .red {
-            // 플레이스홀더 텍스트가 있다면 지우고 검정색으로 변경
             textView.text = nil
-            textView.textColor = .labelsPrimary // 검정색 텍스트로 변경
+            textView.textColor = .labelsPrimary
         }
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            // 텍스트가 비어 있으면 다시 플레이스홀더를 설정하고 빨간색으로 표시
             textView.text = textViewPlaceHolder
             textView.textColor = .red
         }
@@ -398,7 +382,10 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
     private func updateImageStackView() {
         imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        for (index, image) in viewModel.selectedImages.enumerated() {
+        imageStackView.addArrangedSubview(pickerImageView)
+        
+        // 나머지 이미지들을 추가합니다.
+        for (index, image) in viewModel.selectedImages.prefix(10).enumerated() {
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
@@ -419,7 +406,6 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
             containerView.translatesAutoresizingMaskIntoConstraints = false
             containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
             containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-            
             containerView.addSubview(imageView)
             containerView.addSubview(deleteButton)
             
@@ -438,8 +424,6 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
             
             imageStackView.addArrangedSubview(containerView)
         }
-        
-        imageStackView.addArrangedSubview(pickerImageView)
     }
     
     @objc private func deleteImage(_ sender: UIButton) {
@@ -451,13 +435,40 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true, completion: nil)
         
-        viewModel.addSelectedImages(results: results) { [weak self] in
-            DispatchQueue.main.async {
-                self?.updateImageStackView()
+        // 현재 선택된 이미지 수와 추가하려는 이미지 수의 합이 10장을 초과하는지 확인
+        let availableSlots = 10 - viewModel.selectedImages.count
+        
+        if availableSlots > 0 {
+            let selectedResults = results.prefix(availableSlots)
+            
+            viewModel.addSelectedImages(results: Array(selectedResults)) { [weak self] in
+                DispatchQueue.main.async {
+                    // 추가된 이미지를 업데이트
+                    for result in selectedResults {
+                        result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (image, error) in
+                            if let image = image as? UIImage {
+                                DispatchQueue.main.async {
+                                    self?.updateImageStackView()
+                                }
+                            }
+                        }
+                    }
+                }
             }
+            
+            // 선택한 이미지가 추가 가능한 슬롯보다 많을 경우 알림 표시
+            if results.count > availableSlots {
+                let alert = UIAlertController(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                present(alert, animated: true)
+            }
+        } else {
+            // 더 이상 이미지를 추가할 수 없는 경우 경고 메시지 표시
+            let alert = UIAlertController(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            present(alert, animated: true)
         }
     }
-    
     
     @objc private func pickerImageViewTapped() {
         checkPhotoLibraryPermission()
@@ -497,10 +508,17 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
     }
     
     private func presentImagePickerController() {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 10
-        configuration.filter = .images
-        let picker = PHPickerViewController(configuration: configuration)
+        if viewModel.selectedImages.count >= 10 {
+            let alert = UIAlertController(title: "이미지 제한", message: "최대 10장의 이미지만 선택할 수 있습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 10 - viewModel.selectedImages.count
+        config.filter = .images
+        let picker = PHPickerViewController(configuration: config)
         picker.delegate = self
         present(picker, animated: true, completion: nil)
     }
