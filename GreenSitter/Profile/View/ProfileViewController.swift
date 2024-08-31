@@ -199,7 +199,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     private func setupTextField() {
         //Container 설정
         let container = UIView()
-        container.backgroundColor = UIColor(named: "BGPrimary")
+        container.backgroundColor = UIColor(named: "BGPrimaryn")
         container.layer.cornerRadius = 10
         container.layer.shadowColor = UIColor.black.cgColor
         container.layer.shadowOffset = CGSize(width: 0, height: 2)
