@@ -34,9 +34,23 @@ struct User: Codable {
             levelPoint = levelPoint.nextLevel()
         } 
         
-        while exp < 0 {
-            levelPoint = levelPoint.previousLevel()
-        }
+        // 레벨 다운 처리
+           while exp < 0 {
+               let expNeededForCurrentLevel = 100 // 각 레벨마다 필요한 경험치
+               
+               // 경험치 부족분 계산
+               let expNeededForPreviousLevel = expNeededForCurrentLevel + exp
+               exp = expNeededForPreviousLevel
+               
+               // 레벨 변경
+               levelPoint = levelPoint.previousLevel()
+               
+               // 최하위 레벨에 도달한 경우
+               if levelPoint == .rottenSeeds {
+                   exp = 0
+                   break
+               }
+           }
     }
 }
 

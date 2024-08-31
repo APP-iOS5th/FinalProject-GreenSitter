@@ -24,7 +24,12 @@ extension ProfileViewController {
             return
         }
         
-        loginViewModel.firebaseFetch(docId: currentUserID) {}
+        loginViewModel.firebaseFetch(docId: currentUserID) {
+            print("Firebase fetch completed.")
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
         
         if let profileImageURL = loginViewModel.user?.profileImage {
             loginViewModel.loadProfileImage(from: profileImageURL) { [weak self] image in
@@ -35,9 +40,7 @@ extension ProfileViewController {
                 }
             }
         }
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+
     }
 
     

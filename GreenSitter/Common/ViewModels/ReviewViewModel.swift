@@ -151,12 +151,13 @@
                 // 수정된 리뷰 배열로 사용자 문서를 업데이트합니다.
                 self.db.collection("users").document(creatorId).updateData(["reviews": reviews]) { error in
                     if let error = error {
-                        print("사용자 문서에 리뷰 업데이트 중 오류 발생: \(error)")
+                        print("사용자 문서에 리뷰 업데이트 중 오류 발생: \(error.localizedDescription)")
                     } else {
                         print("리뷰가 성공적으로 사용자 문서에 업데이트되었습니다!")
                         
+                        // 경험치 및 레벨 업데이트
                         self.updateUserExp(userId: creatorId, expChange: expChange)
-                }
+                    }
                 }
             }
 
@@ -173,9 +174,12 @@
         }
 
 
+
         // MARK: - 사용자 경험치 업데이트 함수
         func updateUserExp(userId: String, expChange: Int) {
-            db.collection("users").document(userId).getDocument { document, error in
+            db.collection("users").document(userId).getDocument { [weak self] document, error in
+                guard let self = self else { return }
+                
                 if let error = error {
                     print("사용자 문서 가져오기 중 오류 발생: \(error.localizedDescription)")
                     return
@@ -186,21 +190,48 @@
                     return
                 }
                 
-                let currentExp = data["exp"] as? Int ?? 0
-                let newExp = currentExp + expChange
+                var currentExp = data["exp"] as? Int ?? 0
+                currentExp += expChange
                 
-                // 새로운 경험치 값으로 업데이트
-                data["exp"] = newExp
+                // 레벨 업데이트 처리
+                var levelPoint: Level = Level(rawValue: data["levelPoint"] as? String ?? "썩은 씨앗") ?? .rottenSeeds
+                
+                // 경험치가 0 이하로 떨어질 때의 처리
+                while currentExp < 0 {
+                    let expNeededForCurrentLevel = 100 // 각 레벨마다 필요한 경험치
+                    
+                    // 경험치 부족분 계산
+                    let expNeededForPreviousLevel = expNeededForCurrentLevel + currentExp
+                    currentExp = expNeededForPreviousLevel
+                    
+                    // 레벨 변경
+                    levelPoint = levelPoint.previousLevel()
+                    
+ 
+                }
+                
+                // 경험치가 100 이상으로 넘어가는 경우의 처리
+                while currentExp >= 100 {
+                    let extraExp = currentExp - 100
+                    currentExp = extraExp
+                    levelPoint = levelPoint.nextLevel()
+                }
+                
+                // 새로운 경험치와 레벨로 업데이트
+                data["exp"] = currentExp
+                data["levelPoint"] = levelPoint.rawValue
                 
                 self.db.collection("users").document(userId).updateData(data) { error in
                     if let error = error {
-                        print("사용자 문서에 경험치 업데이트 중 오류 발생: \(error.localizedDescription)")
+                        print("사용자 문서에 경험치 및 레벨 업데이트 중 오류 발생: \(error.localizedDescription)")
                     } else {
-                        print("사용자 경험치가 성공적으로 업데이트되었습니다!")
+                        print("사용자 경험치와 레벨이 성공적으로 업데이트되었습니다!")
                     }
                 }
             }
         }
+
+        
 
         
         // Firestore에서 받아온 데이터를 JSON으로 변환하기 전에 FIRTimestamp를 Date로 변환하는 유틸리티 함수
