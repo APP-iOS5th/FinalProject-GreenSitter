@@ -52,7 +52,7 @@ class MainPostListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .bgPrimary
+        self.view.backgroundColor = .systemBackground
         
         setupCategoryButtons()
         setupNavigationBarButtons()
