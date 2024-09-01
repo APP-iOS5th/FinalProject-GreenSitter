@@ -19,7 +19,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         setupTextField()
         self.tableView.reloadData()
     }
-    
+
     // MARK: - Properties
     var sectionTitle = ["내 정보", "돌봄 정보", "시스템", "이용약관 및 개인정보 처리방침" ]
     var textFieldContainer: UIView?
