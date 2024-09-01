@@ -199,7 +199,7 @@ class EditPostViewModel: ObservableObject {
     }
     
     // 포스트를 업데이트하는 함수
-    func updatePost(completion: @escaping (Result<Post, Error>) -> Void) {
+    func updatePost(userId: String, userProfileImage: String, userNickname: String, userLocation: Location?, userLevel: Level,postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
         deleteRemovedImages { [weak self] result in
             guard let self = self else { return }
             

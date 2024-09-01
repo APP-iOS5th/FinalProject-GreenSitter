@@ -186,21 +186,20 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     @objc private func saveButtonTapped() {
         guard validateInputs() else { return }
         
-        guard let userDocId = LoginViewModel.shared.user?.id else {
+        guard let currentUser = LoginViewModel.shared.user else {
             print("User ID is not available")
             return
         }
         
-        
         // ViewModel의 updatePost 메서드 호출
-        viewModel.updatePost { result in
+        viewModel.updatePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, userLevel: currentUser.levelPoint, postTitle: titleTextField.text!, postBody: textView.text) { result in
             switch result {
-            case .success:
-                print("Successfully updated post")
+            case .success(let updatePost):
+                print("Update Post: \(updatePost)")
                 self.navigationController?.popViewController(animated: true)
             case .failure(let error):
-                print("Failed to update post: \(error.localizedDescription)")
-                self.showAlert(title: "Error", message: error.localizedDescription)
+                print("Error add post: \(error.localizedDescription)")
+                self.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
             }
         }
     }
