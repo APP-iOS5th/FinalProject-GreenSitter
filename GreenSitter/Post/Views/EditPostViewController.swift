@@ -40,7 +40,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     private let titleTextField: UITextField = {
         let textField = UITextField()
-        textField.tintColor = .black
+        textField.tintColor = .labelsSecondary
         textField.font = .systemFont(ofSize: 18)
         textField.placeholder = "제목을 입력하세요."
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -124,54 +124,22 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     private let mapLabelButton: UIButton = {
         let button = UIButton()
-        
-        // 텍스트 설정
         let fullString = NSMutableAttributedString(string: "거래 희망 장소를 다시 선택하시겠어요? ")
-        
-        // 이미지 첨부
+ 
         let imageAttachment = NSTextAttachment()
         let symbolImage = UIImage(systemName: "arrow.uturn.left")
         imageAttachment.image = symbolImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
         let imageString = NSAttributedString(attachment: imageAttachment)
         fullString.append(imageString)
         
-        // 버튼의 타이틀과 속성 설정
         button.setAttributedTitle(fullString, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17)
         button.setTitleColor(.labelsSecondary, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        // 버튼의 클릭 이벤트를 추가
         button.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
-        
         return button
     }()
-
-    // 탭 제스처 발생 시 호출되는 메서드
-    @objc private func mapLabelButtonTapped() {
-        let searchMapVC = SearchMapViewController()
-        let navigationVC = UINavigationController(rootViewController: searchMapVC)
-        
-        navigationVC.modalPresentationStyle = .fullScreen
-        present(navigationVC, animated: true, completion: nil)
-    }
-
-    
-    @objc private func dismissModal() {
-        dismiss(animated: true, completion: nil)
-    }
-
-
-    
-//    private let mapPlaceLabel: UILabel = {
-//        let label = UILabel()
-//        label.textColor = .labelsPrimary
-//        label.font = .systemFont(ofSize: 17)
-//        label.numberOfLines = 0
-//        label.lineBreakMode = .byWordWrapping
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        return label
-//    }() 거래 희망장소를 선택하세요 텍스트였ㅇ
     
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
@@ -262,8 +230,6 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         
         if titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
             titleTextField.attributedPlaceholder = NSAttributedString(string: "제목을 입력하세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.red])
-            titleTextField.layer.borderColor = UIColor.red.cgColor
-            titleTextField.layer.borderWidth = 1.0
             isValid = false
         } else {
             titleTextField.layer.borderColor = UIColor.clear.cgColor
@@ -518,6 +484,21 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             textView.text = textViewPlaceHolder
             textView.textColor = .lightGray
         }
+    }
+    
+    //MARK: - mapLabelButton
+    
+    @objc private func mapLabelButtonTapped() {
+        let searchMapVC = SearchMapViewController()
+        let navigationVC = UINavigationController(rootViewController: searchMapVC)
+        
+        navigationVC.modalPresentationStyle = .fullScreen
+        present(navigationVC, animated: true, completion: nil)
+    }
+
+    
+    @objc private func dismissModal() {
+        dismiss(animated: true, completion: nil)
     }
 }
 extension EditPostViewController: MKMapViewDelegate {
