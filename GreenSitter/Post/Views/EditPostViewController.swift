@@ -152,7 +152,6 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .dominent
         button.layer.cornerRadius = 20
-        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -192,7 +191,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         }
         
         // ViewModel의 updatePost 메서드 호출
-        viewModel.updatePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, userLevel: currentUser.levelPoint, postTitle: titleTextField.text!, postBody: textView.text) { result in
+        viewModel.updatePost(postTitle: titleTextField.text!, postBody: textView.text) { result in
             switch result {
             case .success(let updatePost):
                 print("Update Post: \(updatePost)")
@@ -204,6 +203,14 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         }
     }
     
+    
+    @objc private func mapIconButtonTapped() {
+        let searchMapViewController = SearchMapViewController()
+        searchMapViewController.editPostViewModel = viewModel
+        let navigationController = UINavigationController(rootViewController: searchMapViewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true, completion: nil)
+    }
     
     @objc private func closeButtonTapped() {
         dismiss(animated: true)
@@ -242,8 +249,8 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         self.title = post.postType.rawValue
         navigationItem.leftBarButtonItem = closeButton
         
-        titleTextField.text = viewModel.postTitle
-        textView.text = viewModel.postBody
+        titleTextField.text = post.postTitle
+        textView.text = post.postBody
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -259,6 +266,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         contentView.addSubview(mapIconButton)
         contentView.addSubview(mapView)
         contentView.addSubview(saveButton)
+        mapIconButton.addTarget(self, action: #selector(mapIconButtonTapped), for: .touchUpInside)
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         imageScrollView.addSubview(imageStackView)
         imageStackView.addArrangedSubview(pickerImageView)

@@ -12,29 +12,17 @@ import UIKit
 import PhotosUI
 
 class EditPostViewModel: ObservableObject {
-    @Published var postTitle: String
-    @Published var postBody: String
     @Published var postImages: [UIImage] = []
     @Published var selectedImages: [UIImage] = []
-    @Published var location: Location?
+    
     @Published var imageURLsToDelete: [String] = []
     @Published var selectedPost: Post
-    
     private var firestoreManager = FirestoreManager()
     private let storage = Storage.storage()
     private let db = Firestore.firestore()
-    private let postId: String
-    private let postType: PostType
     
     init(selectedPost: Post) {
         self.selectedPost = selectedPost
-        self.postId = selectedPost.id
-        self.postTitle = selectedPost.postTitle
-        self.postBody = selectedPost.postBody
-        self.location = selectedPost.location
-        self.postType = selectedPost.postType
-        
-        
         // 초기화 시 기존 이미지를 로드
         if let postImageURLs = selectedPost.postImages {
             loadExistingImages(from: postImageURLs) {
@@ -199,7 +187,7 @@ class EditPostViewModel: ObservableObject {
     }
     
     // 포스트를 업데이트하는 함수
-    func updatePost(userId: String, userProfileImage: String, userNickname: String, userLocation: Location?, userLevel: Level,postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
+    func updatePost(postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
         deleteRemovedImages { [weak self] result in
             guard let self = self else { return }
             
@@ -212,27 +200,27 @@ class EditPostViewModel: ObservableObject {
                         allImageURLs.append(contentsOf: newImageURLs)
                         
                         let updatedPost = Post(
-                            id: self.postId,
+                            id: self.selectedPost.id,
                             enabled: true,
                             createDate: self.selectedPost.createDate,
                             updateDate: Date(),
                             userId: self.selectedPost.userId,
                             profileImage: self.selectedPost.profileImage,
                             nickname: self.selectedPost.nickname,
-                            userLocation: self.location ?? Location.seoulLocation,
+                            userLocation: self.selectedPost.userLocation,
                             userNotification: false,
                             userLevel: self.selectedPost.userLevel,
-                            postType: self.postType,
-                            postTitle: self.postTitle,
-                            postBody: self.postBody,
+                            postType: self.selectedPost.postType,
+                            postTitle: postTitle,
+                            postBody: postBody,
                             postImages: allImageURLs,
-                            postStatus: .beforeTrade,
-                            location: self.location
+                            postStatus: .beforeTrade,   // 수정 필요.
+                            location: self.selectedPost.location
                         )
                         
                         do {
                             let postData = try Firestore.Encoder().encode(updatedPost)
-                            self.db.collection("posts").document(self.postId).setData(postData) { error in
+                            self.db.collection("posts").document(self.selectedPost.id).setData(postData) { error in
                                 if let error = error {
                                     completion(.failure(error))
                                 } else {
