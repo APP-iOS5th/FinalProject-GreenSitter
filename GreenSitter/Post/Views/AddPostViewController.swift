@@ -126,22 +126,29 @@ class AddPostViewController: UIViewController {
         return line
     }()
     
-    private let mapLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .labelsSecondary
-        label.font = .systemFont(ofSize: 16)
-        label.text = "거래 희망 장소를 선택할 수 있어요."
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private let mapLabelButton: UIButton = {
+        let button = UIButton()
+        let fullString = NSMutableAttributedString(string: "거래 희망 장소를 선택하세요!   ")
+ 
+        let imageAttachment = NSTextAttachment()
+        let symbolImage = UIImage(systemName: "mappin.and.ellipse")
+        imageAttachment.image = symbolImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
+        let imageString = NSAttributedString(attachment: imageAttachment)
+        fullString.append(imageString)
+        
+        button.setAttributedTitle(fullString, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 17)
+        button.setTitleColor(.labelsSecondary, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
+        return button
     }()
     
-    private let mapIconButton: UIButton = {
-        let button = UIButton()
-        let image = UIImage(named: "lookingForSitterIcon")
-        button.setImage(image, for: .normal)
-        button.contentMode = .scaleAspectFit
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+    private lazy var mapView: MKMapView = {
+        let mapView = MKMapView()
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        return mapView
     }()
     
     private let saveButton: UIButton = {
@@ -241,12 +248,11 @@ class AddPostViewController: UIViewController {
         contentView.addSubview(textView)
         contentView.addSubview(remainCountLabel)
         contentView.addSubview(dividerLine3)
-        contentView.addSubview(mapLabel)
-        contentView.addSubview(mapIconButton)
+        contentView.addSubview(mapLabelButton)
+        contentView.addSubview(mapView)
         
         view.addSubview(saveButton)
         
-        mapIconButton.addTarget(self, action: #selector(mapIconButtonTapped), for: .touchUpInside)
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
@@ -303,15 +309,14 @@ class AddPostViewController: UIViewController {
             dividerLine3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
-            // map Label 간 하단 간격 필요
-            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
-            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8),
-            
-            mapIconButton.centerYAnchor.constraint(equalTo: mapLabel.centerYAnchor),
-            mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
-            mapIconButton.heightAnchor.constraint(equalToConstant: 50),
-            mapIconButton.widthAnchor.constraint(equalToConstant: 50),
+            mapLabelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabelButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
+            mapLabelButton.heightAnchor.constraint(equalToConstant: 40),
+         
+            mapView.topAnchor.constraint(equalTo: mapLabelButton.bottomAnchor, constant: 12),
+            mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            mapView.heightAnchor.constraint(equalToConstant: 200),
             
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -327,8 +332,6 @@ class AddPostViewController: UIViewController {
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true, completion: nil)
     }
-    
-    
 }
 
 extension AddPostViewController: UITextViewDelegate {
@@ -388,7 +391,23 @@ extension AddPostViewController: UITextViewDelegate {
         }
     }
     
+    //MARK: - mapLabelButton
+    
+    @objc private func mapLabelButtonTapped() {
+        let searchMapVC = SearchMapViewController()
+        let navigationVC = UINavigationController(rootViewController: searchMapVC)
+        
+        navigationVC.modalPresentationStyle = .fullScreen
+        present(navigationVC, animated: true, completion: nil)
+    }
+
+    
+    @objc private func dismissModal() {
+        dismiss(animated: true, completion: nil)
+    }
+    
 }
+
 
 extension AddPostViewController: PHPickerViewControllerDelegate {
     
