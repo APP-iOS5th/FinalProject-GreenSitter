@@ -245,8 +245,9 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     private func showAlertWithNavigation(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-                self?.navigationController?.popViewController(animated: true)
-            }
+            let mainPostListVC = MainPostListViewController()
+            self?.navigationController?.setViewControllers([mainPostListVC], animated: true)
+        }
         
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
