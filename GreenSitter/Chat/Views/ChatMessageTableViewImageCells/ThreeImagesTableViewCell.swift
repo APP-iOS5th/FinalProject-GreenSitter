@@ -10,6 +10,8 @@ import UIKit
 class ThreeImagesTableViewCell: UITableViewCell {
     weak var delegate: ChatMessageTableViewImageCellDelegate?
     
+    private let firestorageManager = FirestorageManager()
+    
     var isIncoming: Bool = false {
         didSet {
             setupUI()
@@ -24,13 +26,7 @@ class ThreeImagesTableViewCell: UITableViewCell {
     
     var imageSize: CGFloat?
     
-    var images: [UIImage] = [] {
-        didSet {
-            DispatchQueue.main.async {
-                self.updateBubbleView()
-            }
-        }
-    }
+    var imageURLs = [URL]()
     
     private lazy var firstImageView: UIImageView = {
        let firstImageView = UIImageView()
@@ -152,6 +148,14 @@ class ThreeImagesTableViewCell: UITableViewCell {
             secondImageView.heightAnchor.constraint(equalToConstant: imageSize),
             thirdImageView.heightAnchor.constraint(equalToConstant: imageSize),
         ])
+        
+        var imageViews = [firstImageView, secondImageView, thirdImageView]
+
+        for (index, imageURL) in imageURLs.enumerated() {
+            if index < imageViews.count {
+                firestorageManager.loadImage(imageURL: imageURL, imageSize: imageSize, imageView: &imageViews[index])
+            }
+        }
     }
     
     // MARK: - Setup UI
@@ -246,19 +250,22 @@ class ThreeImagesTableViewCell: UITableViewCell {
         }
     }
     
-    private func updateBubbleView() {
-        firstImageView.image = images[0]
-        secondImageView.image = images[1]
-        thirdImageView.image = images[2]
-    }
-    
     @objc
     private func handleImageTap(_ sender: UITapGestureRecognizer) {
-        guard let imageView = sender.view as? UIImageView, let image = imageView.image else { return }
+        guard let imageView = sender.view as? UIImageView, let _ = imageView.image else { return }
         
-        guard let index = images.firstIndex(of: image) else { return }
+        var images = [UIImage]()
         
-        delegate?.imageViewTapped(images: images, index: index)
+        let imageViews = [firstImageView, secondImageView, thirdImageView]
+        for imageView in imageViews {
+            if let image = imageView.image {
+                images.append(image)
+            }
+        }
+        
+        if let index = imageViews.firstIndex(of: imageView) {
+            delegate?.imageViewTapped(images: images, index: index)
+        }
     }
 }
 

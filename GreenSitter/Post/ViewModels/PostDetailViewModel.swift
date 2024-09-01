@@ -58,7 +58,6 @@ class PostDetailViewModel: ObservableObject {
                 let post = try document.data(as: Post.self)
                 DispatchQueue.main.async {
                     self.selectedPost = post
-                    print("Successfully fetched post: \(String(describing: self.selectedPost))")
                     completion(.success(post))
                 }
             } catch {

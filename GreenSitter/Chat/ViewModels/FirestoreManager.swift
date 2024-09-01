@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
+import FirebaseStorage
 
 class FirestoreManager {
     private let db = Firestore.firestore()
@@ -352,5 +353,17 @@ class FirestoreManager {
         }
     }
 }
+    // 스토리지에 저장된 path를 downloadURL로 변환
+    func imagePathToDownloadURLString(imagePath: String) async -> String {
+        let storageRef = Storage.storage().reference()
+        var downloadURLString = ""
+        do {
+            let downloadURL = try await storageRef.child(imagePath).downloadURL()
+            downloadURLString = downloadURL.absoluteString
+        } catch {
+            print(error.localizedDescription)
+        }
+        return downloadURLString
+    }
     
 }

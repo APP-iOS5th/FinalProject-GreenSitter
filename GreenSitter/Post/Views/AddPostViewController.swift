@@ -165,22 +165,45 @@ class AddPostViewController: UIViewController {
         updateImageStackView()
     }
     
+//    let address = post.location?.address
+//    let placeName = post.location?.placeName
+//    
+//    if let address = address, !address.isEmpty, let placeName = placeName, !placeName.isEmpty {
+//        mapPlaceLabel.text = "\(address) (\(placeName))" // 주소와 장소 이름을 함께 표시
+//    } else if let address = address, !address.isEmpty {
+//        mapPlaceLabel.text = address // 주소만 표시
+//    } else if let placeName = placeName, !placeName.isEmpty {
+//        mapPlaceLabel.text = placeName // 장소 이름만 표시
+//    } else {
+//        mapPlaceLabel.text = "주소 정보 없음" // 둘 다 없는 경우
+//    }
+    
+    
     @objc private func saveButtonTapped() {
-        guard validateInputs() else { return }
+        saveButton.isEnabled = false
         
-        guard let currentUser = LoginViewModel.shared.user else {
-            print("User ID is not available")
+        guard validateInputs() else {
+            saveButton.isEnabled = true
             return
         }
         
-        viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, userLevel: currentUser.levelPoint, postTitle: titleTextField.text!, postBody: textView.text) { result in
+        guard let currentUser = LoginViewModel.shared.user else {
+            print("User ID is not available")
+            saveButton.isEnabled = true
+
+            return
+        }
+        
+        viewModel.savePost(userId: currentUser.id, userProfileImage: currentUser.profileImage, userNickname: currentUser.nickname, userLocation: currentUser.location, userLevel: currentUser.levelPoint, postTitle: titleTextField.text!, postBody: textView.text) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.saveButton.isEnabled = true
+            }
             switch result {
-            case .success(let newPost):
-                print("Add Post: \(newPost)")
-                self.navigationController?.popViewController(animated: true)
+            case .success(_):
+                self?.showAlert(title: "알림", message: "게시물을 성공적으로 저장했습니다.")
             case .failure(let error):
                 print("Error add post: \(error.localizedDescription)")
-                self.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
+                self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
             }
         }
     }
@@ -210,7 +233,12 @@ class AddPostViewController: UIViewController {
     
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        
+        let popAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        
+        alert.addAction(popAction)
         present(alert, animated: true, completion: nil)
     }
     

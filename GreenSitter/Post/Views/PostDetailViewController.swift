@@ -12,6 +12,8 @@ import Kingfisher
 
 class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
+    private let reportsAndBlocksViewModel = ReportsAndBlocksViewModel()
+
     private var imageUrls: [String] = []
     private let postId: String
     private var overlayPostMapping: [MKCircle: Post] = [:]
@@ -54,7 +56,8 @@ class PostDetailViewController: UIViewController {
         imageView.layer.cornerRadius = 25
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .lightGray
+        imageView.layer.borderColor = UIColor.separatorsNonOpaque.cgColor
+        imageView.layer.borderWidth = 1
         return imageView
     }()
     
@@ -220,8 +223,10 @@ class PostDetailViewController: UIViewController {
         setupUI()
         
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
+            print("IMAGES")
             setupConstraintsWithImages()
         } else {
+            print("EMPTY IMAGES")
             setupConstraints()
         }
 
@@ -289,9 +294,11 @@ class PostDetailViewController: UIViewController {
     
     private func setupNavigationBarWithBlock(post: Post) {
         let menu = UIMenu(title: "", children: [
-            UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { _ in
+            UIAction(title: "신고하기", image: UIImage(systemName: "light.beacon.max.fill")) { [weak self] _ in
+                self?.presentReportAlert(for: post)
             },
-            UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { _ in
+            UIAction(title: "차단하기", image: UIImage(systemName: "person.slash.fill")) { [weak self] _ in
+                self?.blockPost(post: post)
             }
         ])
         
@@ -304,6 +311,76 @@ class PostDetailViewController: UIViewController {
         
         let menuBarButtonItem = UIBarButtonItem(customView: menuButton)
         navigationItem.rightBarButtonItem = menuBarButtonItem
+    }
+    
+    // MARK: - 신고 기능 구현
+    private func presentReportAlert(for post: Post) {
+        let alertController = UIAlertController(title: "신고하기", message: "신고 사유를 입력하세요.", preferredStyle: .alert)
+        
+        alertController.addTextField { textField in
+            textField.placeholder = "신고 사유를 입력하세요"
+        }
+        
+        let reportAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            guard let reason = alertController.textFields?.first?.text, !reason.isEmpty else {
+                self?.presentErrorAlert(message: "신고 사유를 입력해야 합니다.")
+                return
+            }
+            
+            self?.reportPost(post: post, reason: reason)
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(reportAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    private func reportPost(post: Post, reason: String) {
+        
+        reportsAndBlocksViewModel.reportItem(reportedId: post.id, reportType: .post, reason: reason) { result in
+            switch result {
+            case .success():
+                self.presentConfirmationAlert(message: "신고가 완료되었습니다.")
+            case .failure(let error):
+                print("Failed to save report: \(error.localizedDescription)")
+                self.presentErrorAlert(message: "신고 저장에 실패했습니다.")
+            }
+        }
+    }
+
+    private func presentConfirmationAlert(message: String) {
+        let alert = UIAlertController(title: "완료", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    private func presentErrorAlert(message: String) {
+        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    // MARK: - 차단 기능 구현
+    private func blockPost(post: Post) {
+        reportsAndBlocksViewModel.blockItem(blockedId: post.id, blockType: .post) { result in
+            switch result {
+            case .success():
+                self.updateUIForBlockedPost()
+            case .failure(let error):
+                print("Failed to save block: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func updateUIForBlockedPost() {
+        let alert = UIAlertController(title: "차단 완료", message: "이 포스트는 더 이상 볼 수 없습니다.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+            self.navigationController?.popViewController(animated: true)
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
     // MARK: - 채팅 버튼
@@ -345,10 +422,8 @@ class PostDetailViewController: UIViewController {
             mapPlaceLabel.text = "주소 정보 없음" // 둘 다 없는 경우
         }
         
-        profileImageView.image = UIImage(named: post.profileImage)
-        
-        imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        imageUrls.removeAll()
+        loadProfileImage(from: post)
+        loadPostImages(from: post)
         
         // profile button
         userProfileButton.addAction(UIAction { [weak self] _ in
@@ -357,13 +432,44 @@ class PostDetailViewController: UIViewController {
             let aboutMeVC = AboutMeViewController(userId: post.userId)
             self.navigationController?.pushViewController(aboutMeVC, animated: true)
         }, for: .touchUpInside)
-        
-        
+    }
+    
+    private func loadProfileImage(from post: Post) {
+        if let imageUrl = URL(string: post.profileImage) {
+            let processor = DownsamplingImageProcessor(size: CGSize(width: 80, height: 80))
+                           |> RoundCornerImageProcessor(cornerRadius: 4)
+            
+            profileImageView.kf.indicatorType = .activity
+            profileImageView.kf.setImage(
+                with: imageUrl,
+                placeholder: UIImage(named: "PlaceholderAvatar"),
+                options: [
+                    .processor(processor),
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade(0.25)),
+                    .cacheOriginalImage
+                ],
+                completionHandler: { result in
+                    switch result {
+                    case .success(_): break
+                    case .failure(let error):
+                        print("Failed to load image: \(error.localizedDescription)")
+                    }
+                }
+            )
+
+        } else {
+            profileImageView.backgroundColor = .lightGray
+            print("Profile Image is empty.")
+        }
+    }
+    private func loadPostImages(from post: Post) {
+        imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        imageUrls.removeAll()
         // image
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
             self.imageUrls = imageUrls //이게원인
             for (index, imageUrl) in imageUrls.enumerated() {
-                print("ImageURL: \(index), \(imageUrl)")
                 
                 // Create a new UIImageView for each image
                 let imageView = UIImageView()
@@ -387,7 +493,6 @@ class PostDetailViewController: UIViewController {
                     completionHandler: { result in
                         switch result {
                         case .success(_):
-                            print("Image successfully loaded.")
                             self.addTapGestureToImages()
                         case .failure(let error):
                             print("Failed to load image: \(error.localizedDescription)")
@@ -420,8 +525,6 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(statusLabel)
         contentView.addSubview(postTitleLabel)
         
-        contentView.addSubview(imagesScrollView)
-        imagesScrollView.addSubview(imagesStackView)
         
         contentView.addSubview(postBodyTextView)
         contentView.addSubview(dividerLine3)
@@ -433,6 +536,9 @@ class PostDetailViewController: UIViewController {
     }
 
     private func setupConstraintsWithImages() {
+        contentView.addSubview(imagesScrollView)
+        imagesScrollView.addSubview(imagesStackView)
+
         imagesScrollView.isHidden = false
         
         NSLayoutConstraint.activate([
@@ -525,7 +631,8 @@ class PostDetailViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        imagesScrollView.isHidden = false
+        imagesScrollView.isHidden = true
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -574,19 +681,8 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-
-            imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
-            imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            imagesScrollView.heightAnchor.constraint(equalToConstant: 200),
             
-            imagesStackView.topAnchor.constraint(equalTo: imagesScrollView.topAnchor),
-            imagesStackView.bottomAnchor.constraint(equalTo: imagesScrollView.bottomAnchor),
-            imagesStackView.leadingAnchor.constraint(equalTo: imagesScrollView.leadingAnchor),
-            imagesStackView.trailingAnchor.constraint(equalTo: imagesScrollView.trailingAnchor),
-            imagesStackView.heightAnchor.constraint(equalTo: imagesScrollView.heightAnchor),
-            
-            postBodyTextView.topAnchor.constraint(equalTo: imagesStackView.bottomAnchor, constant: 20),
+            postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postBodyTextView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
@@ -715,7 +811,6 @@ extension PostDetailViewController: UITextViewDelegate {
 extension PostDetailViewController: MKMapViewDelegate {
     
     private func configureMapView(with post: Post) {
-        print("Post Detail Map with Post: \(post)")
 //        mapView.removeAnnotations(mapView.annotations)
 //        mapView.removeOverlays(mapView.overlays)
 //        overlayPostMapping.removeAll()

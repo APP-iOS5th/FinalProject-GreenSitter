@@ -14,7 +14,7 @@ class ChatViewModel {
     private let firestorageManager = FirestorageManager()
     
     // 로그인 여부를 나타내는 변수
-    var isLoggedIn = true /// 임시로 true, false로 바꾸기
+    var isLoggedIn = false /// 임시로 true, false로 바꾸기
     var hasChats = false
     
     // 임시 유저 id
@@ -24,6 +24,11 @@ class ChatViewModel {
             isLoggedIn = user != nil
         }
     }
+    
+    private var currentUserId: String? {
+        return Auth.auth().currentUser?.uid
+    }
+    
     var userId: String {
         return user!.id
     }
@@ -56,9 +61,24 @@ class ChatViewModel {
     var updateUI: (() -> Void)?
     
     init() {
-        // 현재 사용자 ID 설정
-        self.user = LoginViewModel.shared.user
-        self.isLoggedIn = user != nil
+        if let currentUser = Auth.auth().currentUser {
+            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid) {
+                // 현재 사용자 ID 설정
+                self.user = LoginViewModel.shared.user
+                self.isLoggedIn = self.user != nil
+            }
+        }
+    }
+    
+    func fetchUserFirebase() {
+        let loginViewModel = LoginViewModel.shared
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            print("로그인된 사용자가 없습니다.")
+            return
+        }
+        
+        loginViewModel.firebaseFetch(docId: currentUserID) {}
     }
     
 //    func loadUser(completion: @escaping () -> Void) {
@@ -227,7 +247,8 @@ class ChatViewModel {
                 
                 for await imagePath in group {
                     if let path = imagePath {
-                        imagePaths.append(path)
+                        let imageURLString = await firestoreManager.imagePathToDownloadURLString(imagePath: path)
+                        imagePaths.append(imageURLString)
                     }
                 }
             }
@@ -260,33 +281,33 @@ class ChatViewModel {
         }
     }
     
-    //MARK: - 파이어베이스 스토리지에서 이미지 가져오기
-    func loadChatImages(imagePaths: [String]) async -> [UIImage] {
-        var images = [UIImage]()
-        
-        //파이어베이스 스토리지에서 이미지 가져오기
-        await withTaskGroup(of: UIImage?.self) { group in
-            for imagePath in imagePaths {
-                group.addTask {
-                    do {
-                        let image = try await self.firestorageManager.loadImage(imagePath: imagePath)
-                        return image
-                    } catch {
-                        print("Failed to load image: \(error.localizedDescription)")
-                        return nil
-                    }
-                }
-            }
-            
-            for await image in group {
-                if let image = image {
-                    images.append(image)
-                }
-            }
-        }
-        
-        return images
-    }
+//    //MARK: - 파이어베이스 스토리지에서 이미지 가져오기
+//    func loadChatImages(imagePaths: [String]) async -> [UIImage] {
+//        var images = [UIImage]()
+//        
+//        //파이어베이스 스토리지에서 이미지 가져오기
+//        await withTaskGroup(of: UIImage?.self) { group in
+//            for imagePath in imagePaths {
+//                group.addTask {
+//                    do {
+//                        let image = try await self.firestorageManager.loadImage(imagePath: imagePath)
+//                        return image
+//                    } catch {
+//                        print("Failed to load image: \(error.localizedDescription)")
+//                        return nil
+//                    }
+//                }
+//            }
+//            
+//            for await image in group {
+//                if let image = image {
+//                    images.append(image)
+//                }
+//            }
+//        }
+//        
+//        return images
+//    }
     
     //MARK: - 약속 메세지 전송
     func sendPlanMessage(plan: Plan, chatRoom: ChatRoom) {

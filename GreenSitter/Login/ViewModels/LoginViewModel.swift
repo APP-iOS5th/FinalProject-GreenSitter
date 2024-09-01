@@ -20,8 +20,6 @@ class LoginViewModel: ObservableObject {
     
     private init() {}
 
-
-    
     func firebaseFetch(docId: String, completion: @escaping () -> Void) {
         db.collection("users").document(docId).getDocument { (document, error) in
             if let error = error {

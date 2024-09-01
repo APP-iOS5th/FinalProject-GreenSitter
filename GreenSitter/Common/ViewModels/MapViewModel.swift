@@ -104,6 +104,8 @@ extension MapViewModel: CLLocationManagerDelegate {
             print("DidUpdateLocations called with location: \(location.coordinate.latitude), \(location.coordinate.longitude)")
 
             updateLocation(with: location)  // 위치 정보를 currentLocation에 저장
+            
+            manager.stopUpdatingLocation()
         }
     }
     

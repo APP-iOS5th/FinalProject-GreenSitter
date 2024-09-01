@@ -40,12 +40,12 @@
 		3BAD24632C77340E004C2DBA /* ServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD24622C77340E004C2DBA /* ServiceViewController.swift */; };
 		3BAD24662C773DD0004C2DBA /* LocationServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD24652C773DD0004C2DBA /* LocationServiceViewController.swift */; };
 		3BAD24682C773E2A004C2DBA /* PersonalinfomationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAD24672C773E2A004C2DBA /* PersonalinfomationViewController.swift */; };
-		4F730FEA2C819E8E00892463 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4F730FE82C819E8E00892463 /* GoogleService-Info.plist */; };
-		4F730FEB2C819E8E00892463 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4F730FE92C819E8E00892463 /* APPKey.plist */; };
 		4F822E822C79FC9D007402CB /* FullScreenImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E812C79FC9D007402CB /* FullScreenImageViewController.swift */; };
 		4F822E842C79FE6F007402CB /* FullScreenPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */; };
 		4F822E9D2C7F243A007402CB /* SearchPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E9C2C7F243A007402CB /* SearchPostViewController.swift */; };
 		4F822E9F2C7F2472007402CB /* SearchPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F822E9E2C7F2472007402CB /* SearchPostViewModel.swift */; };
+		588E73122C81821100ABF72C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588E73102C81821100ABF72C /* GoogleService-Info.plist */; };
+		588E73132C81821100ABF72C /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 588E73112C81821100ABF72C /* APPKey.plist */; };
 		58F68FE92C7217AB00A7F564 /* MessageInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */; };
 		58F68FEB2C72273700A7F564 /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */; };
 		9731BD242C78544C001B6A44 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 58E98C322C781BD7001E4140 /* GoogleSignIn */; };
@@ -54,6 +54,8 @@
 		9731BD272C78544C001B6A44 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 58E98C382C781C00001E4140 /* FirebaseFirestore */; };
 		9731BD282C78544C001B6A44 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 58E98C3A2C781C00001E4140 /* FirebaseMessaging */; };
 		9731BD292C78544C001B6A44 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 58E98C3C2C781C00001E4140 /* FirebaseStorage */; };
+		973C83472C81A94600AAB090 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 973C83462C81A94500AAB090 /* GoogleService-Info.plist */; };
+		973C83492C81A9B000AAB090 /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 973C83482C81A9AF00AAB090 /* APPKey.plist */; };
 		974FF2522C6C5BA5009277B9 /* SearchMapDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */; };
 		977A52B32C69A84500E375F1 /* AnnotationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977A52B22C69A84500E375F1 /* AnnotationDetailViewController.swift */; };
 		97934DD52C62F3C600B38E0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97934DD42C62F3C600B38E0A /* AppDelegate.swift */; };
@@ -95,6 +97,10 @@
 		97BC0DFC2C75BCCF00F4D0B4 /* AddPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */; };
 		97BC0DFE2C75D26700F4D0B4 /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */; };
 		97BC0E002C76F40600F4D0B4 /* MainPostListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97BC0DFF2C76F40600F4D0B4 /* MainPostListViewModel.swift */; };
+		97C729C02C816139008567A8 /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729BF2C816139008567A8 /* Report.swift */; };
+		97C729C22C8164A4008567A8 /* ReportsAndBlocksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729C12C8164A4008567A8 /* ReportsAndBlocksViewModel.swift */; };
+		97C729C42C816515008567A8 /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729C32C816515008567A8 /* Block.swift */; };
+		97C729C62C81834D008567A8 /* DoubleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C729C52C81834D008567A8 /* DoubleExtension.swift */; };
 		97D1BE412C6C7F0500F7A983 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */; };
 		97D1BE422C6C7F0500F7A983 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */; };
 		97D1BE432C6C7F0500F7A983 /* SetLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */; };
@@ -182,8 +188,6 @@
 		3BAD24622C77340E004C2DBA /* ServiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceViewController.swift; sourceTree = "<group>"; };
 		3BAD24652C773DD0004C2DBA /* LocationServiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationServiceViewController.swift; sourceTree = "<group>"; };
 		3BAD24672C773E2A004C2DBA /* PersonalinfomationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalinfomationViewController.swift; sourceTree = "<group>"; };
-		4F730FE82C819E8E00892463 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "GreenSitter/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
-		4F730FE92C819E8E00892463 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = GreenSitter/APPKey.plist; sourceTree = SOURCE_ROOT; };
 		4F822E812C79FC9D007402CB /* FullScreenImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageViewController.swift; sourceTree = "<group>"; };
 		4F822E832C79FE6F007402CB /* FullScreenPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenPageViewController.swift; sourceTree = "<group>"; };
 		4F822E9C2C7F243A007402CB /* SearchPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPostViewController.swift; sourceTree = "<group>"; };
@@ -201,11 +205,15 @@
 		582F5D182C69ABF800141938 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		582F5D1A2C69EA9A00141938 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		582F5D1C2C69EAA700141938 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		588E73102C81821100ABF72C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		588E73112C81821100ABF72C /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
 		58E7821F2C6C2F4B00572554 /* ChatPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPostViewController.swift; sourceTree = "<group>"; };
 		58E782212C6C36FB00572554 /* PostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
 		58E782232C6C4F5300572554 /* ChatMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageViewController.swift; sourceTree = "<group>"; };
 		58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputViewController.swift; sourceTree = "<group>"; };
 		58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewCell.swift; sourceTree = "<group>"; };
+		973C83462C81A94500AAB090 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		973C83482C81A9AF00AAB090 /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = APPKey.plist; sourceTree = "<group>"; };
 		974FF2512C6C5BA5009277B9 /* SearchMapDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMapDetailViewController.swift; sourceTree = "<group>"; };
 		977A52B22C69A84500E375F1 /* AnnotationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationDetailViewController.swift; sourceTree = "<group>"; };
 		97934DD12C62F3C600B38E0A /* GreenSitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenSitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -249,6 +257,10 @@
 		97BC0DF52C75BCCF00F4D0B4 /* AddPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPostViewController.swift; sourceTree = "<group>"; };
 		97BC0DFD2C75D26700F4D0B4 /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
 		97BC0DFF2C76F40600F4D0B4 /* MainPostListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPostListViewModel.swift; sourceTree = "<group>"; };
+		97C729BF2C816139008567A8 /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
+		97C729C12C8164A4008567A8 /* ReportsAndBlocksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsAndBlocksViewModel.swift; sourceTree = "<group>"; };
+		97C729C32C816515008567A8 /* Block.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Block.swift; sourceTree = "<group>"; };
+		97C729C52C81834D008567A8 /* DoubleExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtension.swift; sourceTree = "<group>"; };
 		97D1BE3E2C6C7F0500F7A983 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		97D1BE3F2C6C7F0500F7A983 /* SetProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		97D1BE402C6C7F0500F7A983 /* SetLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetLocationViewController.swift; sourceTree = "<group>"; };
@@ -355,6 +367,7 @@
 				97D1BEAE2C6C9DB100F7A983 /* BundleExtension.swift */,
 				15F316342C71FB6C00F30B72 /* ColorExtension.swift */,
 				15F316362C71FB7D00F30B72 /* UILabelExtension.swift */,
+				97C729C52C81834D008567A8 /* DoubleExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -417,9 +430,9 @@
 		97934DD32C62F3C600B38E0A /* GreenSitter */ = {
 			isa = PBXGroup;
 			children = (
+				973C83462C81A94500AAB090 /* GoogleService-Info.plist */,
+				973C83482C81A9AF00AAB090 /* APPKey.plist */,
 				97D1BEB02C6C9DDD00F7A983 /* GreenSitter.entitlements */,
-				4F730FE92C819E8E00892463 /* APPKey.plist */,
-				4F730FE82C819E8E00892463 /* GoogleService-Info.plist */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
 				97934DD82C62F3C600B38E0A /* ViewController.swift */,
@@ -461,6 +474,8 @@
 				97934E202C62FAC300B38E0A /* Location.swift */,
 				97934E222C62FAC800B38E0A /* Plan.swift */,
 				97934E242C62FACE00B38E0A /* Contract.swift */,
+				97C729BF2C816139008567A8 /* Report.swift */,
+				97C729C32C816515008567A8 /* Block.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -483,6 +498,7 @@
 				97B4E8942C6AF0FB0028BE1F /* MapViewModel.swift */,
 				97934E142C62F8DF00B38E0A /* SearchMapViewModel.swift */,
 				97934E162C62F8E300B38E0A /* PlaceListViewModel.swift */,
+				97C729C12C8164A4008567A8 /* ReportsAndBlocksViewModel.swift */,
 				97934E182C62F8E700B38E0A /* ReviewListViewModel.swift */,
 				97934E1C2C62F8F000B38E0A /* ReviewViewModel.swift */,
 			);
@@ -804,9 +820,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4F730FEB2C819E8E00892463 /* APPKey.plist in Resources */,
+				973C83492C81A9B000AAB090 /* APPKey.plist in Resources */,
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
-				4F730FEA2C819E8E00892463 /* GoogleService-Info.plist in Resources */,
+				588E73122C81821100ABF72C /* GoogleService-Info.plist in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -819,6 +835,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F822E9F2C7F2472007402CB /* SearchPostViewModel.swift in Sources */,
+				97C729C42C816515008567A8 /* Block.swift in Sources */,
 				97BC0DE82C747A9800F4D0B4 /* AddPostViewModel.swift in Sources */,
 				97D1BE472C6C7F8800F7A983 /* LoginViewModel.swift in Sources */,
 				15F618BA2C7C530E00A936D8 /* MoreImagesTableViewCell.swift in Sources */,
@@ -828,8 +845,10 @@
 				97D1BEC02C6C9DF400F7A983 /* ChatTableViewCell.swift in Sources */,
 				97934E3D2C62FFB600B38E0A /* (null) in Sources */,
 				97D1BEBF2C6C9DF400F7A983 /* ChatPostViewController.swift in Sources */,
+				97C729C22C8164A4008567A8 /* ReportsAndBlocksViewModel.swift in Sources */,
 				97D1BEBE2C6C9DF400F7A983 /* ChatMessageViewController.swift in Sources */,
 				97934E3D2C62FFB600B38E0A /* (null) in Sources */,
+				97C729C02C816139008567A8 /* Report.swift in Sources */,
 				97934E662C68614E00B38E0A /* CustomAnnotation.swift in Sources */,
 				97934E4F2C633FA700B38E0A /* (null) in Sources */,
 				97934E2D2C62FE1900B38E0A /* PlaceListViewController.swift in Sources */,
@@ -845,6 +864,7 @@
 				97934E432C63003C00B38E0A /* Colors.swift in Sources */,
 				3B61C69A2C71DCAD00337B66 /* SelfIntroductionViewModel.swift in Sources */,
 				15C8208A2C775ECB002991DE /* ImageDetailCollectionViewController.swift in Sources */,
+				97C729C62C81834D008567A8 /* DoubleExtension.swift in Sources */,
 				97D1BE812C6C8BBA00F7A983 /* ChatAdditionalButtonModel.swift in Sources */,
 				3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */,
 				4F822E9D2C7F243A007402CB /* SearchPostViewController.swift in Sources */,
@@ -1100,9 +1120,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = greenSitter_dev;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1139,9 +1163,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = greenSitter_adhoc;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

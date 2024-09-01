@@ -55,15 +55,6 @@ class ChatMessageViewController: UIViewController {
                 if let messagesStream = await chatViewModel?.loadMessages(chatRoomId: chatRoom.id) {
                     for await messages in messagesStream {
                         self.chatViewModel?.messages[chatRoom.id] = messages
-                        
-                        // 메세지가 올 때마다 읽음 처리
-//                        do {
-//                            await chatViewModel?.loadUnreadMessages(chatRoomId: chatRoom.id)
-//                            try await chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
-//                        } catch {
-//                            // 에러 발생 시 처리 (로깅 등)
-//                            print("Failed to update unread status: \(error)")
-//                        }
                     }
                 } else {
                     print("Failed to load messages for chatRoomId: \(chatRoom.id)")
@@ -122,6 +113,7 @@ class ChatMessageViewController: UIViewController {
         for listener in messageListeners {
             listener.cancel()
         }
+        
         for listener in unreadMessageListeners {
             listener.cancel()
         }
@@ -202,57 +194,12 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.backgroundColor = .clear
                 
-                cell.tag = indexPath.row
-
-                
-                var progressImages = [UIImage]()
-                
-                for _ in 0..<imageCounts {
-                    if let photoImage = UIImage(systemName: "photo") {
-                        
-                        let targetSize = CGSize(width: 400, height: 400)
-                        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
-                        photoImage.draw(in: CGRect(origin: .zero, size: targetSize))
-                        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-                        UIGraphicsEndImageContext()
-                        
-                        if let resizedImage = resizedImage {
-                            progressImages.append(resizedImage)
-                        }
-                    }
-                }
-                cell.images = progressImages
-                
                 let imagePaths = messages[indexPath.row].image ?? []
-                var cachedImages = [UIImage]()
-                var imagesToLoad = [String]()
                 
                 for imagePath in imagePaths {
-                    if let cachedImage = imageCache.object(forKey: NSString(string: imagePath)) {
-                        cachedImages.append(cachedImage)
-                    } else {
-                        imagesToLoad.append(imagePath)
+                    if let imageURL = URL(string: imagePath) {
+                        cell.imageURLs.append(imageURL)
                     }
-                }
-                
-                if !imagesToLoad.isEmpty {
-                    Task {
-                        let loadedImages = await chatViewModel?.loadChatImages(imagePaths: imagesToLoad)
-                        DispatchQueue.main.async {
-                            if cell.tag == indexPath.row {
-                                if let loadedImages = loadedImages {
-                                    for (index, image) in loadedImages.enumerated() {
-                                        let path = imagesToLoad[index]
-                                        self.imageCache.setObject(image, forKey: NSString(string: path))
-                                        cachedImages.append(image)
-                                    }
-                                    cell.images = cachedImages
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    cell.images = cachedImages
                 }
                 
                 cell.delegate = self
@@ -270,57 +217,12 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.backgroundColor = .clear
                 
-                cell.tag = indexPath.row
-
-                
-                var progressImages = [UIImage]()
-                
-                for _ in 0..<imageCounts {
-                    if let photoImage = UIImage(systemName: "photo") {
-                        
-                        let targetSize = CGSize(width: 400, height: 400)
-                        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
-                        photoImage.draw(in: CGRect(origin: .zero, size: targetSize))
-                        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-                        UIGraphicsEndImageContext()
-                        
-                        if let resizedImage = resizedImage {
-                            progressImages.append(resizedImage)
-                        }
-                    }
-                }
-                cell.images = progressImages
-                
                 let imagePaths = messages[indexPath.row].image ?? []
-                var cachedImages = [UIImage]()
-                var imagesToLoad = [String]()
                 
                 for imagePath in imagePaths {
-                    if let cachedImage = imageCache.object(forKey: NSString(string: imagePath)) {
-                        cachedImages.append(cachedImage)
-                    } else {
-                        imagesToLoad.append(imagePath)
+                    if let imageURL = URL(string: imagePath) {
+                        cell.imageURLs.append(imageURL)
                     }
-                }
-                
-                if !imagesToLoad.isEmpty {
-                    Task {
-                        let loadedImages = await chatViewModel?.loadChatImages(imagePaths: imagesToLoad)
-                        DispatchQueue.main.async {
-                            if cell.tag == indexPath.row {
-                                if let loadedImages = loadedImages {
-                                    for (index, image) in loadedImages.enumerated() {
-                                        let path = imagesToLoad[index]
-                                        self.imageCache.setObject(image, forKey: NSString(string: path))
-                                        cachedImages.append(image)
-                                    }
-                                    cell.images = cachedImages
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    cell.images = cachedImages
                 }
                 
                 cell.delegate = self
@@ -338,57 +240,12 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.backgroundColor = .clear
                 
-                cell.tag = indexPath.row
-
-                
-                var progressImages = [UIImage]()
-                
-                for _ in 0..<imageCounts {
-                    if let photoImage = UIImage(systemName: "photo") {
-                        
-                        let targetSize = CGSize(width: 400, height: 400)
-                        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
-                        photoImage.draw(in: CGRect(origin: .zero, size: targetSize))
-                        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-                        UIGraphicsEndImageContext()
-                        
-                        if let resizedImage = resizedImage {
-                            progressImages.append(resizedImage)
-                        }
-                    }
-                }
-                cell.images = progressImages
-                
                 let imagePaths = messages[indexPath.row].image ?? []
-                var cachedImages = [UIImage]()
-                var imagesToLoad = [String]()
                 
                 for imagePath in imagePaths {
-                    if let cachedImage = imageCache.object(forKey: NSString(string: imagePath)) {
-                        cachedImages.append(cachedImage)
-                    } else {
-                        imagesToLoad.append(imagePath)
+                    if let imageURL = URL(string: imagePath) {
+                        cell.imageURLs.append(imageURL)
                     }
-                }
-                
-                if !imagesToLoad.isEmpty {
-                    Task {
-                        let loadedImages = await chatViewModel?.loadChatImages(imagePaths: imagesToLoad)
-                        DispatchQueue.main.async {
-                            if cell.tag == indexPath.row {
-                                if let loadedImages = loadedImages {
-                                    for (index, image) in loadedImages.enumerated() {
-                                        let path = imagesToLoad[index]
-                                        self.imageCache.setObject(image, forKey: NSString(string: path))
-                                        cachedImages.append(image)
-                                    }
-                                    cell.images = cachedImages
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    cell.images = cachedImages
                 }
                 
                 cell.delegate = self
@@ -406,57 +263,12 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.backgroundColor = .clear
                 
-                cell.tag = indexPath.row
-
-                
-                var progressImages = [UIImage]()
-                
-                for _ in 0..<imageCounts {
-                    if let photoImage = UIImage(systemName: "photo") {
-                        
-                        let targetSize = CGSize(width: 400, height: 400)
-                        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
-                        photoImage.draw(in: CGRect(origin: .zero, size: targetSize))
-                        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-                        UIGraphicsEndImageContext()
-                        
-                        if let resizedImage = resizedImage {
-                            progressImages.append(resizedImage)
-                        }
-                    }
-                }
-                cell.images = progressImages
-                
                 let imagePaths = messages[indexPath.row].image ?? []
-                var cachedImages = [UIImage]()
-                var imagesToLoad = [String]()
                 
                 for imagePath in imagePaths {
-                    if let cachedImage = imageCache.object(forKey: NSString(string: imagePath)) {
-                        cachedImages.append(cachedImage)
-                    } else {
-                        imagesToLoad.append(imagePath)
+                    if let imageURL = URL(string: imagePath) {
+                        cell.imageURLs.append(imageURL)
                     }
-                }
-                
-                if !imagesToLoad.isEmpty {
-                    Task {
-                        let loadedImages = await chatViewModel?.loadChatImages(imagePaths: imagesToLoad)
-                        DispatchQueue.main.async {
-                            if cell.tag == indexPath.row {
-                                if let loadedImages = loadedImages {
-                                    for (index, image) in loadedImages.enumerated() {
-                                        let path = imagesToLoad[index]
-                                        self.imageCache.setObject(image, forKey: NSString(string: path))
-                                        cachedImages.append(image)
-                                    }
-                                    cell.images = cachedImages
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    cell.images = cachedImages
                 }
                 
                 cell.delegate = self
@@ -507,25 +319,25 @@ extension ChatMessageViewController: UITableViewDataSource {
                     }
                 }
                 
-                if !imagesToLoad.isEmpty {
-                    Task {
-                        let loadedImages = await chatViewModel?.loadChatImages(imagePaths: imagesToLoad)
-                        DispatchQueue.main.async {
-                            if cell.tag == indexPath.row {
-                                if let loadedImages = loadedImages {
-                                    for (index, image) in loadedImages.enumerated() {
-                                        let path = imagesToLoad[index]
-                                        self.imageCache.setObject(image, forKey: NSString(string: path))
-                                        cachedImages.append(image)
-                                    }
-                                    cell.images = cachedImages
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    cell.images = cachedImages
-                }
+//                if !imagesToLoad.isEmpty {
+//                    Task {
+//                        let loadedImages = await chatViewModel?.loadChatImages(imagePaths: imagesToLoad)
+//                        DispatchQueue.main.async {
+//                            if cell.tag == indexPath.row {
+//                                if let loadedImages = loadedImages {
+//                                    for (index, image) in loadedImages.enumerated() {
+//                                        let path = imagesToLoad[index]
+//                                        self.imageCache.setObject(image, forKey: NSString(string: path))
+//                                        cachedImages.append(image)
+//                                    }
+//                                    cell.images = cachedImages
+//                                }
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    cell.images = cachedImages
+//                }
                 
                 cell.delegate = self
                 
