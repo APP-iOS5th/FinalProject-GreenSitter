@@ -224,15 +224,16 @@ class AddPostViewController: UIViewController {
     }
     
     private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        let popAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            self?.navigationController?.popViewController(animated: true)
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            
+            let popAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            
+            alert.addAction(popAction)
+            present(alert, animated: true, completion: nil)
         }
-        
-        alert.addAction(popAction)
-        present(alert, animated: true, completion: nil)
-    }
+
     
     private func setupLayout() {
         self.title = postType.rawValue
@@ -325,7 +326,7 @@ class AddPostViewController: UIViewController {
         ])
     }
     
-    @objc private func mapIconButtonTapped() {
+    @objc private func mapLabelButtonTapped() {
         let searchMapViewController = SearchMapViewController()
         searchMapViewController.addPostViewModel = viewModel
         let navigationController = UINavigationController(rootViewController: searchMapViewController)
@@ -390,24 +391,7 @@ extension AddPostViewController: UITextViewDelegate {
             textView.textColor = .red
         }
     }
-    
-    //MARK: - mapLabelButton
-    
-    @objc private func mapLabelButtonTapped() {
-        let searchMapVC = SearchMapViewController()
-        let navigationVC = UINavigationController(rootViewController: searchMapVC)
-        
-        navigationVC.modalPresentationStyle = .fullScreen
-        present(navigationVC, animated: true, completion: nil)
-    }
-
-    
-    @objc private func dismissModal() {
-        dismiss(animated: true, completion: nil)
-    }
-    
 }
-
 
 extension AddPostViewController: PHPickerViewControllerDelegate {
     
