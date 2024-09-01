@@ -25,6 +25,7 @@ class SearchMapViewController: UIViewController, UISearchBarDelegate {
     
     var makePlanViewModel: MakePlanViewModel?
     var addPostViewModel: AddPostViewModel?
+    var editPostViewModel: EditPostViewModel?
 
     private var searchWorkItem: DispatchWorkItem?
 
@@ -257,6 +258,11 @@ extension SearchMapViewController: UITableViewDataSource, UITableViewDelegate {
             present(navigationController, animated: true, completion: nil)
         } else if let addPostViewModel = self.addPostViewModel {
             let detailViewController = SearchMapDetailViewController(location: selectedLocation, addPostViewModel: addPostViewModel)
+            let navigationController = UINavigationController(rootViewController: detailViewController)
+            navigationController.modalPresentationStyle = .pageSheet
+            present(navigationController, animated: true, completion: nil)
+        } else if let editPostViewModel = self.editPostViewModel {
+            let detailViewController = SearchMapDetailViewController(location: selectedLocation, editPostViewModel: editPostViewModel)
             let navigationController = UINavigationController(rootViewController: detailViewController)
             navigationController.modalPresentationStyle = .pageSheet
             present(navigationController, animated: true, completion: nil)
