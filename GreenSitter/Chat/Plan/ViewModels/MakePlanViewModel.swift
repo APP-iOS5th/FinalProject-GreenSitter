@@ -31,9 +31,34 @@ class MakePlanViewModel {
     init(date: Date = Date(), planPlace: Location? = nil, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0, isPlaceSelected: Bool = false, planType: PlanType, chatRoom: ChatRoom, messageId: String? = nil) {
         let interval = 5
         let calendar = Calendar.current
-        let date = calendar.date(bySettingHour: calendar.component(.hour, from: date), minute: ((calendar.component(.minute, from: date) + 5) / interval) * interval, second: 0, of: date) ?? date
+        let currentDateComponents = calendar.dateComponents([.hour, .minute, .second], from: date)
+        let currentMinute = currentDateComponents.minute ?? 0
+        let currentHour = currentDateComponents.hour ?? 0
+
+        let remainder = currentMinute % interval
+        var newMinute: Int
+        let newHour: Int
+
+        if remainder == 0 {
+            newMinute = currentMinute
+            newHour = currentHour
+        } else {
+            newMinute = ((currentMinute / interval) + 1) * interval
+            newHour = newMinute >= 60 ? currentHour + 1 : currentHour
+            if newMinute >= 60 {
+                newMinute -= 60
+            }
+        }
+
+        let newDate = calendar.date(
+            bySettingHour: newHour,
+            minute: newMinute,
+            second: 0,
+            of: date
+        ) ?? date
+
         
-        self.planDate = date
+        self.planDate = newDate
         self.planPlace = planPlace ?? chatRoom.postUserLocation
         self.ownerNotification = ownerNotification
         self.sitterNotification = sitterNotification
