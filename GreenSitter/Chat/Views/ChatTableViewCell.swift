@@ -154,6 +154,8 @@ class ChatTableViewCell: UITableViewCell {
         // 마지막 메세지 내용
         // TODO: - lastMessage가 없을 때 return되면서 이전 값으로 적용되는 문제
         guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
+            lastMessageLabel.text = ""
+            dateLabel.text = ""
             return
         }
 
@@ -175,6 +177,7 @@ class ChatTableViewCell: UITableViewCell {
         // 안 읽은 메세지 수
         /// read = false인 메세지 수
         guard let unreadCount = chatViewModel?.unreadMessages[chatRoom!.id]?.count else {
+            unreadCountLabel.text = ""
             return
         }
         

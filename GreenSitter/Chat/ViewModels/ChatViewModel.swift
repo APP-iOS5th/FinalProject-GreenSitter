@@ -17,18 +17,11 @@ class ChatViewModel {
     var isLoggedIn = false
     var hasChats = false
     
-    // 임시 유저 id
-//    let userId = "250e8400-e29b-41d4-a716-446655440003"
-    
     var user: User? {
         didSet {
             isLoggedIn = true
         }
     }
-    
-//    var userId: String {
-//        return user!.id
-//    }
     
     var chatRooms: [ChatRoom] = [] {
         didSet {
@@ -70,13 +63,6 @@ class ChatViewModel {
             }
         }
     }
-    
-//    func loadUser(completion: @escaping () -> Void) {
-//        firestoreManager.fetchUser() { [weak self] updatedUser in
-//            self?.user = updatedUser
-//            completion()
-//        }
-//    }
     
     func loadChatRooms() async throws -> [ChatRoom] {
         do {
