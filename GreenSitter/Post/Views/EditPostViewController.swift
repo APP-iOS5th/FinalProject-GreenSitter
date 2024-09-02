@@ -184,6 +184,17 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         return mapView
     }()
     
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.preferredFont(forTextStyle: .footnote)
+        label.textColor = .labelsSecondary
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.text = "이 위치는 500m 반경 이내의 지역이 표시됩니다."
+        return label
+    }()
+    
     private let saveButton: UIButton = {
         let button = UIButton()
         button.setTitle("작성완료", for: .normal)
@@ -215,7 +226,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         // 기존 이미지를 로드
         loadExistingImages()
         updateImageStackView()
-        
+        configureMapView(with: post)
         titleTextField.delegate = self
         textView.delegate = self
         mapView.delegate = self
@@ -241,6 +252,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         } else {
             textLabel.text = "거래 희망 장소를 선택하세요!"
         }
+        configureMapView(with: viewModel.selectedPost)
     }
     
     @objc private func pickerImageViewTapped() {
@@ -331,6 +343,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         contentView.addSubview(mapLabelButton)
         contentView.addSubview(mapView)
         contentView.addSubview(saveButton)
+        contentView.addSubview(descriptionLabel)
+        
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         mapLabelButton.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
 
@@ -400,7 +414,10 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             mapView.heightAnchor.constraint(equalToConstant: 200),
             
-            saveButton.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
+            descriptionLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
+            
+            saveButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 32),
             saveButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             saveButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             saveButton.heightAnchor.constraint(equalToConstant: 50),
@@ -567,9 +584,9 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
 extension EditPostViewController: MKMapViewDelegate {
     
     private func configureMapView(with post: Post) {
-        //        mapView.removeAnnotations(mapView.annotations)
-        //        mapView.removeOverlays(mapView.overlays)
-        //        overlayPostMapping.removeAll()
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
+        overlayPostMapping.removeAll()
         guard let latitude = post.location?.latitude,
               let longitude = post.location?.longitude else { return }
         

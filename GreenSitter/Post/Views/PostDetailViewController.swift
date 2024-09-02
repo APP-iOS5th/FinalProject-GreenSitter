@@ -817,9 +817,9 @@ extension PostDetailViewController: UITextViewDelegate {
 extension PostDetailViewController: MKMapViewDelegate {
     
     private func configureMapView(with post: Post) {
-//        mapView.removeAnnotations(mapView.annotations)
-//        mapView.removeOverlays(mapView.overlays)
-//        overlayPostMapping.removeAll()
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
+        overlayPostMapping.removeAll()
         guard let latitude = post.location?.latitude,
               let longitude = post.location?.longitude else { return }
         
