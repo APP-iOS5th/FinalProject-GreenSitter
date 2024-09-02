@@ -30,7 +30,6 @@ class EditPostViewModel: ObservableObject {
             }
         }
         
-        print("selectedPost: \(self.selectedPost)")
     }
     
     // 기존 이미지를 로드하는 함수

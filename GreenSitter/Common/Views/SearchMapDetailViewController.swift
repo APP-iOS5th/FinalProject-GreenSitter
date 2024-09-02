@@ -245,7 +245,6 @@ class SearchMapDetailViewController: UIViewController {
             self.dismiss(animated: true) {
                 parentViewController.dismiss(animated: true)
             }
-            // login 에서 필요한 기능
         }
         else {
             LoginViewModel.shared.updateUserLocation(with: location)
