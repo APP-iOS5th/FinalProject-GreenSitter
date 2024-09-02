@@ -142,8 +142,8 @@ class AddPostViewModel: ObservableObject {
                     id: UUID().uuidString,
                     enabled: true,
                     createDate: Date(),
-                    updateDate: Date(),
-                    
+                    updateDate: Date(), 
+                    recipientId: "",
                     userId: userId,
                     profileImage: userProfileImage,
                     nickname: userNickname,

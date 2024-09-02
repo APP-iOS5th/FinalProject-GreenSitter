@@ -43,6 +43,7 @@ extension CareRecordViewController {
                            enabled: true,
                            createDate: Date(),
                            updateDate: updateDate,
+                           recipientId: "",
                            userId: targetUserId, // 초기화 시 전달받은 userId 사용
                            profileImage: "",  // 필요시 추가
                            nickname: "",      // 필요시 추가

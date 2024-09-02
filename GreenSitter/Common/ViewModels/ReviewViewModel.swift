@@ -54,8 +54,8 @@ extension ReviewViewController {
     
     //MARK: - 완료
     @objc func completeButtonTap() {
-        guard let creatorId = self.creatorId else {
-            print("Creator ID가 없습니다.")
+        guard let recipientId = self.review?.recipientId, !recipientId.isEmpty else { // recipientId로 변경
+            print("Recipient ID가 없습니다.")
             return
         }
         // 현재 로그인한 사용자의 ID를 가져옵니다.
@@ -128,7 +128,7 @@ extension ReviewViewController {
         ]
 
         // 기존 리뷰를 가져옵니다.
-        db.collection("users").document(creatorId).getDocument { [weak self] document, error in
+        db.collection("users").document(recipientId).getDocument { [weak self] document, error in
             guard let self = self else { return }
             
             if let error = error {
@@ -150,14 +150,14 @@ extension ReviewViewController {
             }
             
             // 수정된 리뷰 배열로 사용자 문서를 업데이트합니다.
-            self.db.collection("users").document(creatorId).updateData(["reviews": reviews]) { error in
+            self.db.collection("users").document(recipientId).updateData(["reviews": reviews]) { error in
                 if let error = error {
                     print("사용자 문서에 리뷰 업데이트 중 오류 발생: \(error.localizedDescription)")
                 } else {
                     print("리뷰가 성공적으로 사용자 문서에 업데이트되었습니다!")
                     
                     // 경험치 및 레벨 업데이트
-                    self.updateUserExp(userId: creatorId, expChange: expChange)
+                    self.updateUserExp(userId: recipientId, expChange: expChange)
                 }
             }
         }
@@ -328,12 +328,14 @@ extension ReviewViewController {
             
             // 문서가 예상 필드를 포함하는지 확인
             if let postStatus = documentData["postStatus"] as? String, postStatus == "거래완료" {
+                let recipientId = documentData["recipientId"] as? String ?? ""
                 let postTitle = documentData["postTitle"] as? String ?? "제목 없음"
                 let postBody = documentData["postBody"] as? String ?? "본문 내용 없음"
                 let userId = documentData["userId"] as? String ?? "id없음"
                 let updateDateTimestamp = documentData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
                 let createDate: Date = (documentData["createDate"] as? Timestamp)?.dateValue() ?? Date()
                 let updateDate: Date = (documentData["updateDate"] as? Timestamp)?.dateValue() ?? Date()
+                
                 
                 let postImages = documentData["postImages"] as? [String] ?? []
                 
@@ -343,6 +345,7 @@ extension ReviewViewController {
                     enabled: true,
                     createDate: createDate,
                     updateDate: updateDate,
+                    recipientId: recipientId,
                     userId: userId,
                     profileImage: "",
                     nickname: "",
