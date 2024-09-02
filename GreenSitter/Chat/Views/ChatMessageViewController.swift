@@ -320,7 +320,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.planPlaceLabel.text = "장소: \(planPlace)"
             
             if let plan = messages[indexPath.row].plan {
-                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, chatRoom: chatRoom, messageId: messages[indexPath.row].id)
+                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, planType: plan.planType, chatRoom: chatRoom, messageId: messages[indexPath.row].id)
                 cell.detailButtonAction = {
                     self.present(MakePlanViewController(viewModel: makePlanViewModel), animated: true)
                 }

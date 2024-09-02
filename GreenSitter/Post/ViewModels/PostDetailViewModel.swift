@@ -129,7 +129,7 @@ class PostDetailViewModel: ObservableObject {
             return nil
         }
         
-        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost!.userNotification, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus)
+        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost!.userNotification, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus, hasLeavePlan: false, hasGetBackPlan: false)
         
         return newChat
     }

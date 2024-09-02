@@ -376,4 +376,27 @@ class FirestoreManager {
         ])
     }
     
+    func updatePostStatus(chatRoomId: String, planType: PlanType, postId: String) async throws {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+        let postRef = db.collection("posts").document(postId)
+        
+        switch planType {
+        case .leavePlan:
+            try await chatRoomRef.updateData([
+                "hasLeavePlan" : true,
+                "postStatus" : "거래중"
+            ])
+            try await postRef.updateData([
+                "postStatus" : "거래중"
+            ])
+        case .getBackPlan:
+            try await chatRoomRef.updateData([
+                "hasGetBackPlan" : true,
+                "postStatus" : "거래중"
+            ])
+            try await postRef.updateData([
+                "postStatus" : "거래중"
+            ])
+        }
+    }
 }

@@ -18,15 +18,15 @@ class ChatViewModel {
     var hasChats = false
     
     // 임시 유저 id
-    let userId = "250e8400-e29b-41d4-a716-446655440003"
+//    let userId = "250e8400-e29b-41d4-a716-446655440003"
     var user: User? {
         didSet {
             isLoggedIn = user != nil
         }
     }
-//    var userId: String {
-//        return user!.id
-//    }
+    var userId: String {
+        return user!.id
+    }
     
     var chatRooms: [ChatRoom] = [] {
         didSet {
@@ -326,5 +326,14 @@ class ChatViewModel {
                 return
             }
         }
+    }
+    
+    func updatePostStatus(chatRoomId: String, planType: PlanType, postId: String) async {
+        do {
+            try await firestoreManager.updatePostStatus(chatRoomId: chatRoomId, planType: planType, postId: postId)
+        } catch {
+            print("Failed to update post status: \(error.localizedDescription)")
+        }
+        
     }
 }
