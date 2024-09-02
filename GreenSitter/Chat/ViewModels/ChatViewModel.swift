@@ -199,7 +199,6 @@ class ChatViewModel {
             return
         }
         
-        // TODO: - userId 수정
         let receiverUserId: String?
         if user!.id == chatRoom.userId {
             receiverUserId = chatRoom.postUserId
