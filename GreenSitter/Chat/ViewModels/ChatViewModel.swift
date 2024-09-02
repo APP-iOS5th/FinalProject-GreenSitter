@@ -8,10 +8,16 @@
 import UIKit
 import FirebaseAuth
 
+protocol ChatViewModelDelegate: AnyObject {
+    func updatePostStatusLabel()
+}
+
 @MainActor
 class ChatViewModel {
     private var firestoreManager = FirestoreManager()
     private let firestorageManager = FirestorageManager()
+    
+    var delegate: ChatViewModelDelegate?
     
     // 로그인 여부를 나타내는 변수
     var isLoggedIn = true /// 임시로 true, false로 바꾸기
@@ -300,19 +306,19 @@ class ChatViewModel {
         }
         
         let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
-        
-        // 로컬 메시지 리스트에 메시지 추가
-        if var chatRoomMessages = self.messages[chatRoom.id] {
-            chatRoomMessages.append(planMessage)
-            self.messages[chatRoom.id] = chatRoomMessages
-        } else {
-            self.messages[chatRoom.id] = [planMessage]
-        }
 
         // UI 업데이트
 //        self.updateUI?()
         
         Task {
+            // 로컬 메시지 리스트에 메시지 추가
+            if var chatRoomMessages = self.messages[chatRoom.id] {
+                chatRoomMessages.append(planMessage)
+                self.messages[chatRoom.id] = chatRoomMessages
+            } else {
+                self.messages[chatRoom.id] = [planMessage]
+            }
+            
             do {
                 try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: planMessage)
             } catch {
@@ -331,6 +337,8 @@ class ChatViewModel {
     func updatePostStatus(chatRoomId: String, planType: PlanType, postId: String) async {
         do {
             try await firestoreManager.updatePostStatus(chatRoomId: chatRoomId, planType: planType, postId: postId)
+            
+            delegate?.updatePostStatusLabel()
         } catch {
             print("Failed to update post status: \(error.localizedDescription)")
         }

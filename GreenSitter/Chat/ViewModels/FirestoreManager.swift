@@ -384,18 +384,18 @@ class FirestoreManager {
         case .leavePlan:
             try await chatRoomRef.updateData([
                 "hasLeavePlan" : true,
-                "postStatus" : "거래중"
+                "postStatus" : PostStatus.inTrade.rawValue
             ])
             try await postRef.updateData([
-                "postStatus" : "거래중"
+                "postStatus" : PostStatus.inTrade.rawValue
             ])
         case .getBackPlan:
             try await chatRoomRef.updateData([
                 "hasGetBackPlan" : true,
-                "postStatus" : "거래중"
+                "postStatus" : PostStatus.inTrade.rawValue
             ])
             try await postRef.updateData([
-                "postStatus" : "거래중"
+                "postStatus" : PostStatus.inTrade.rawValue
             ])
         }
     }

@@ -54,8 +54,6 @@ class MakePlanViewModel {
     
     func sendPlan() {
         let plan = Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: planDate, planPlace: planPlace, contract: nil, ownerNotification: ownerNotification, sitterNotification: sitterNotification, isAccepted: false, planType: planType)
-        print("chatRoomID: \(chatRoom.id)")
-        print("chatRoom.postId: \(chatRoom.postId)")
         Task {
             await chatViewModel?.sendPlanMessage(plan: plan, chatRoom: chatRoom)
             await chatViewModel?.updatePostStatus(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
