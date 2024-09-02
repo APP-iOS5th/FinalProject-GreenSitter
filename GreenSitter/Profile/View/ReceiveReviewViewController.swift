@@ -96,7 +96,7 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.plantImage.image = UIImage(named: "logo7")
             }
 
-            cell.backgroundColor = UIColor.white
+            cell.backgroundColor = UIColor(named: "BGPrimary")
             return cell
 
         case 1:
@@ -113,7 +113,8 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
             cell.row4Button.setTitle("매우 친절해요!", for: .normal)
             
             // 리뷰 텍스트 설정
-            cell.reviewTextField.placeholder = reviews?.reviewText
+            cell.reviewTextField.placeholder = reviews?.reviewText 
+            cell.reviewTextField.isUserInteractionEnabled = false
             
             // 버튼 배경색 설정
             let buttons = [cell.row1Button, cell.row2Button, cell.row3Button, cell.row4Button]

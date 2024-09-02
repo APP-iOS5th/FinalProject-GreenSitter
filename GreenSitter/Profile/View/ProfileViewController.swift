@@ -19,7 +19,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         setupTextField()
         self.tableView.reloadData()
     }
-    
+
     // MARK: - Properties
     var sectionTitle = ["내 정보", "돌봄 정보", "시스템", "이용약관 및 개인정보 처리방침" ]
     var textFieldContainer: UIView?
@@ -90,6 +90,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         super.viewDidLoad()
         setupBindings() //위치변경 되었을때 뷰에 로드해줌
         fetchUserExperience()
+        
         
         // 로그인 상태가 아닐 때 로그인 화면 표시
         if Auth.auth().currentUser == nil {
@@ -198,7 +199,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     private func setupTextField() {
         //Container 설정
         let container = UIView()
-        container.backgroundColor = UIColor.white
+        container.backgroundColor = UIColor(named: "BGSecondary")
         container.layer.cornerRadius = 10
         container.layer.shadowColor = UIColor.black.cgColor
         container.layer.shadowOffset = CGSize(width: 0, height: 2)
@@ -208,6 +209,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         
         let textTitle = UILabel()
         textTitle.text = "단계란 무엇인가요?"
+        textTitle.textColor = UIColor(named: "LabelsPrimary")
         textTitle.font = UIFont.boldSystemFont(ofSize: 14)
         textTitle.translatesAutoresizingMaskIntoConstraints = false
         
@@ -217,6 +219,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
 캐릭터가 점점 성장하는 시스템입니다.
 후기에 따라 단계는 하락할 수도 있습니다.
 """
+        textBody.textColor = UIColor(named: "LabelsPrimary")
         textBody.numberOfLines = 0 // 여러 줄 텍스트를 지원
         textBody.font = UIFont.systemFont(ofSize: 14)
         textBody.translatesAutoresizingMaskIntoConstraints = false

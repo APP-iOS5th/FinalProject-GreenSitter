@@ -8,16 +8,16 @@
 import Foundation
 
 struct Review: Codable {
-    let id: String
-    let enabled: Bool
-    let createDate: Date
-    let updateDate: Date
-    let userId: String
-    let postId: String
-    let rating: Rating
-    let reviewText: String?
-    let reviewImage: String?
-    let selectedTexts: [String]?
+    var id: String
+    var enabled: Bool
+    var createDate: Date
+    var updateDate: Date
+    var userId: String
+    var postId: String
+    var rating: Rating
+    var reviewText: String?
+    var reviewImage: String?
+    var selectedTexts: [String]?
 }
 
 enum Rating: String, Codable {
