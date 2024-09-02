@@ -212,11 +212,15 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     private func showAlertWithNavigation(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            let mainPostListVC = MainPostListViewController()
-            self?.navigationController?.setViewControllers([mainPostListVC], animated: true)
+            self?.dismiss(animated: true)
         }
-        
         alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
@@ -244,13 +248,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         
         return isValid
     }
-    
-    private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
-    
+
     private func setupLayout() {
         self.title = post.postType.rawValue
         navigationItem.leftBarButtonItem = closeButton
@@ -497,11 +495,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         
         navigationVC.modalPresentationStyle = .fullScreen
         present(navigationVC, animated: true, completion: nil)
-    }
-    
-    
-    @objc private func dismissModal() {
-        dismiss(animated: true, completion: nil)
     }
 }
 
