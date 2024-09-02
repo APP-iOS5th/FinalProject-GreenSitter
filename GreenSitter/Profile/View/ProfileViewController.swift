@@ -51,7 +51,6 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         progressLayer.path = circularPath.cgPath
         view.layer.addSublayer(progressLayer)
         
-        view.layer.addSublayer(progressLayer)
         view.backgroundColor = UIColor(named: "SeparatorsOpaque")
         
         return view
