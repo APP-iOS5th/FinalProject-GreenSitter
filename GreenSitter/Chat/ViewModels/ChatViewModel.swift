@@ -14,24 +14,21 @@ class ChatViewModel {
     private let firestorageManager = FirestorageManager()
     
     // 로그인 여부를 나타내는 변수
-    var isLoggedIn = true /// 임시로 true, false로 바꾸기
+    var isLoggedIn = false
     var hasChats = false
     
     // 임시 유저 id
 //    let userId = "250e8400-e29b-41d4-a716-446655440003"
+    
     var user: User? {
         didSet {
-            isLoggedIn = user != nil
+            isLoggedIn = true
         }
     }
     
-    private var currentUserId: String? {
-        return Auth.auth().currentUser?.uid
-    }
-    
-    var userId: String {
-        return user!.id
-    }
+//    var userId: String {
+//        return user!.id
+//    }
     
     var chatRooms: [ChatRoom] = [] {
         didSet {
@@ -61,9 +58,17 @@ class ChatViewModel {
     var updateUI: (() -> Void)?
     
     init() {
-        // 현재 사용자 ID 설정
-        self.user = LoginViewModel.shared.user
-        self.isLoggedIn = user != nil
+        if let currentUser = Auth.auth().currentUser {
+            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid) {
+                // 현재 사용자 ID 설정
+                if let fetchedUser = LoginViewModel.shared.user {
+                    self.user = fetchedUser
+                    self.isLoggedIn = true
+                } else {
+                    self.isLoggedIn = false
+                }
+            }
+        }
     }
     
 //    func loadUser(completion: @escaping () -> Void) {
@@ -75,7 +80,7 @@ class ChatViewModel {
     
     func loadChatRooms() async throws -> [ChatRoom] {
         do {
-            let updatedChatRooms = try await firestoreManager.fetchChatRooms(userId: userId)
+            let updatedChatRooms = try await firestoreManager.fetchChatRooms(userId: user!.id)
             self.chatRooms = updatedChatRooms
             return updatedChatRooms
         } catch {
@@ -89,7 +94,15 @@ class ChatViewModel {
     }
     
     func loadUnreadMessages(chatRoomId: String) async -> AsyncStream<[Message]> {
-        return firestoreManager.fetchUnreadMessages(chatRoomId: chatRoomId, userId: userId)
+        // TODO: - 여기서 nil 값으로 전달되는 이유
+        guard let user = user else {
+            print("User is nil. Cannot fetch unread messages.")
+            return AsyncStream { continuation in
+                continuation.finish()
+            }
+        }
+        
+        return firestoreManager.fetchUnreadMessages(chatRoomId: chatRoomId, userId: user.id)
     }
     
     func loadMessages(chatRoomId: String) async -> AsyncStream<[Message]>  {
@@ -105,7 +118,7 @@ class ChatViewModel {
         let chatRoom = self.chatRooms[index]
         
         do {
-            let updatedChatRoom = try await firestoreManager.deleteChatRoom(userId: userId, chatRoom: chatRoom)
+            let updatedChatRoom = try await firestoreManager.deleteChatRoom(userId: user!.id, chatRoom: chatRoom)
             self.chatRooms[index] = updatedChatRoom
             self.chatRooms.remove(at: index)
         } catch {
@@ -145,7 +158,7 @@ class ChatViewModel {
             guard let unreadMessages = self.unreadMessages[chatRoomId] else {
                 return
             }
-            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: self.userId, unreadMessages: unreadMessages)
+            let readMessages = try await firestoreManager.markMessagesAsRead(chatRoomId: chatRoomId, userId: user!.id, unreadMessages: unreadMessages)
             self.unreadMessages[chatRoomId] = []
         } catch {
             print("Error updating notification of chatRoom: \(error.localizedDescription)")
@@ -162,13 +175,13 @@ class ChatViewModel {
         }
 
         let receiverUserId: String?
-        if userId == chatRoom.userId {
+        if user!.id == chatRoom.userId {
             receiverUserId = chatRoom.postUserId
         } else {
             receiverUserId = chatRoom.userId
         }
         
-        let textMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .text, text: messageText, image: nil, plan: nil)
+        let textMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: user!.id, receiverUserId: receiverUserId!, isRead: false, messageType: .text, text: messageText, image: nil, plan: nil)
         
         // 로컬 메시지 리스트에 메시지 추가
         if var chatRoomMessages = self.messages[chatRoom.id] {
@@ -202,7 +215,7 @@ class ChatViewModel {
         
         // TODO: - userId 수정
         let receiverUserId: String?
-        if userId == chatRoom.userId {
+        if user!.id == chatRoom.userId {
             receiverUserId = chatRoom.postUserId
         } else {
             receiverUserId = chatRoom.userId
@@ -238,7 +251,7 @@ class ChatViewModel {
                 }
             }
             // 파이어 스토어 메세지 저장
-            let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
+            let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: user!.id, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
             
             // 로컬 메시지 리스트에 메시지 추가
             if var chatRoomMessages = self.messages[chatRoom.id] {
@@ -296,15 +309,14 @@ class ChatViewModel {
     
     //MARK: - 약속 메세지 전송
     func sendPlanMessage(plan: Plan, chatRoom: ChatRoom) {
-        // TODO: - userId 수정
         let receiverUserId: String?
-        if userId == chatRoom.userId {
+        if user!.id == chatRoom.userId {
             receiverUserId = chatRoom.postUserId
         } else {
             receiverUserId = chatRoom.userId
         }
         
-        let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
+        let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: user!.id, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
         
         // 로컬 메시지 리스트에 메시지 추가
         if var chatRoomMessages = self.messages[chatRoom.id] {

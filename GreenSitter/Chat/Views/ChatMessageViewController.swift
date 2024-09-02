@@ -55,15 +55,6 @@ class ChatMessageViewController: UIViewController {
                 if let messagesStream = await chatViewModel?.loadMessages(chatRoomId: chatRoom.id) {
                     for await messages in messagesStream {
                         self.chatViewModel?.messages[chatRoom.id] = messages
-                        
-                        // 메세지가 올 때마다 읽음 처리
-//                        do {
-//                            await chatViewModel?.loadUnreadMessages(chatRoomId: chatRoom.id)
-//                            try await chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
-//                        } catch {
-//                            // 에러 발생 시 처리 (로깅 등)
-//                            print("Failed to update unread status: \(error)")
-//                        }
                     }
                 } else {
                     print("Failed to load messages for chatRoomId: \(chatRoom.id)")
@@ -122,6 +113,7 @@ class ChatMessageViewController: UIViewController {
         for listener in messageListeners {
             listener.cancel()
         }
+        
         for listener in unreadMessageListeners {
             listener.cancel()
         }
@@ -174,7 +166,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.backgroundColor = .clear
             cell.messageLabel.text = messages[indexPath.row].text
             
-            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+            if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true
@@ -212,7 +204,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -235,7 +227,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -258,7 +250,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -281,7 +273,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -349,7 +341,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -400,7 +392,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 }
             }
             
-            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+            if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true
@@ -421,7 +413,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.backgroundColor = .clear
             cell.messageLabel.text = messages[indexPath.row].text
             
-            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+            if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true

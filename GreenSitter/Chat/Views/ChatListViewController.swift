@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ChatListViewController: UIViewController {
     private var chatViewModel = ChatViewModel()
@@ -87,6 +88,36 @@ class ChatListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
+        if Auth.auth().currentUser != nil {
+            chatViewModel.user = LoginViewModel.shared.user
+        } else {
+            chatViewModel.user = nil
+            self.view.subviews.forEach {
+                $0.removeFromSuperview()
+            }
+        }
+        createChatList()
+    }
+    
+    // MARK: - viewWillDisappear
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        
+        // 메세지 리스너 해제
+        for listener in lastMessageListeners {
+            listener.cancel()
+        }
+
+        for listener in unreadMessageListeners {
+            listener.cancel()
+        }
+
+        lastMessageListeners.removeAll()
+        unreadMessageListeners.removeAll()
+    }
+    
+    // MARK: - 로그인 여부에 따른 채팅 목록 생성 Methods
+    func createChatList() {
         if chatViewModel.isLoggedIn {
             Task {
                 guard let updatedChatRooms = try? await chatViewModel.loadChatRooms() else {
@@ -133,29 +164,11 @@ class ChatListViewController: UIViewController {
                     
                     chatViewModel.updateUI?()
                 }
-                
             }
         } else {
             // MARK: - 비로그인
             presentLoginViewController()
         }
-    }
-    
-    // MARK: - viewWillDisappear
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(true)
-        
-        // 메세지 리스너 해제
-        for listener in lastMessageListeners {
-            listener.cancel()
-        }
-
-        for listener in unreadMessageListeners {
-            listener.cancel()
-        }
-
-        lastMessageListeners.removeAll()
-        unreadMessageListeners.removeAll()
     }
     
     // MARK: - Setup ChatList UI
@@ -178,7 +191,6 @@ class ChatListViewController: UIViewController {
         ])
     }
     
-    // MARK: - 로그인/채팅 목록 있음 Methods
     // TODO: - Edit 버튼 액션
     @objc private func editButtonTapped() {
         
@@ -260,8 +272,7 @@ extension ChatListViewController: UITableViewDataSource {
         chatRoom = chatViewModel.chatRooms[indexPath.row]
         cell.chatRoom = chatRoom!
         cell.chatViewModel = self.chatViewModel
-        cell.configure(userId: self.chatViewModel.userId)
-//        cell.setupUI()
+        cell.configure(userId: self.chatViewModel.user!.id)
         
         return cell
     }
