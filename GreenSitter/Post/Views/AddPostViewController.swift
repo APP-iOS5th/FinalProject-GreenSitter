@@ -128,20 +128,61 @@ class AddPostViewController: UIViewController {
     
     private let mapLabelButton: UIButton = {
         let button = UIButton()
-        let fullString = NSMutableAttributedString(string: "거래 희망 장소를 선택하세요!   ")
- 
-        let imageAttachment = NSTextAttachment()
-        let symbolImage = UIImage(systemName: "mappin.and.ellipse")
-        imageAttachment.image = symbolImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
-        let imageString = NSAttributedString(attachment: imageAttachment)
-        fullString.append(imageString)
-        
-        button.setAttributedTitle(fullString, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17)
-        button.setTitleColor(.labelsSecondary, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        // StackView to hold the image and label (left side)
+        let leftStackView = UIStackView()
+        leftStackView.axis = .horizontal
+        leftStackView.alignment = .center
+        leftStackView.spacing = 8 // Space between image and text
+        leftStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Image on the left
+        let symbolImageView = UIImageView()
+        let symbolImage = UIImage(systemName: "mappin.and.ellipse")
+        symbolImageView.image = symbolImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
+        
+        // Text label
+        let textLabel = UILabel()
+        textLabel.text = "거래 희망 장소를 선택하세요!"
+        textLabel.font = .systemFont(ofSize: 17)
+        textLabel.textColor = .labelsSecondary
+        
+        // Add image and label to the left stack view
+        leftStackView.addArrangedSubview(symbolImageView)
+        leftStackView.addArrangedSubview(textLabel)
+        
+        // Right arrow '>' on the far right
+        let arrowImageView = UIImageView()
+        let arrowImage = UIImage(systemName: "chevron.right")
+        arrowImageView.image = arrowImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
+        arrowImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add the left stack view and the arrow to the button
+        button.addSubview(leftStackView)
+        button.addSubview(arrowImageView)
+        
+        // Constraints for the left stack view (image and text)
+        NSLayoutConstraint.activate([
+            leftStackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
+            leftStackView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
+        ])
+        
+        // Constraints for the arrow on the right
+        NSLayoutConstraint.activate([
+            arrowImageView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
+            arrowImageView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
+        ])
+        
+        // Button appearance
+        button.layer.cornerRadius = 4
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.gray.cgColor
+        
         return button
     }()
+
+
     
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
@@ -169,6 +210,28 @@ class AddPostViewController: UIViewController {
         
         updateImageStackView()
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let address = viewModel.postLocation?.address
+        let placeName = viewModel.postLocation?.placeName
+        
+        guard let textLabel = mapLabelButton.subviews
+            .compactMap({ $0 as? UIStackView })
+            .first?
+            .arrangedSubviews
+            .compactMap({ $0 as? UILabel })
+            .first else { return }
+        
+        if let address = address, !address.isEmpty {
+            textLabel.text = address
+        } else if let placeName = placeName, !placeName.isEmpty {
+            textLabel.text = placeName
+        } else {
+            textLabel.text = "거래 희망 장소를 선택하세요!"
+        }
     }
     
     @objc private func saveButtonTapped() {
@@ -232,7 +295,6 @@ class AddPostViewController: UIViewController {
             present(alert, animated: true, completion: nil)
         }
 
-    
     private func setupLayout() {
         self.title = postType.rawValue
         view.addSubview(scrollView)
@@ -310,8 +372,9 @@ class AddPostViewController: UIViewController {
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
             mapLabelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabelButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapLabelButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
-            mapLabelButton.heightAnchor.constraint(equalToConstant: 40),
+            mapLabelButton.heightAnchor.constraint(equalToConstant: 60),
          
             mapView.topAnchor.constraint(equalTo: mapLabelButton.bottomAnchor, constant: 12),
             mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
