@@ -165,6 +165,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         return button
     }()
     
+    //MARK: - viewDidLoad
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
@@ -177,9 +179,16 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         loadExistingImages()
         updateImageStackView()
         
+        updateSaveButtonState()
+        titleTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        
         titleTextField.delegate = self
         textView.delegate = self
         mapView.delegate = self
+    }
+    
+    @objc private func textDidChange() {
+        updateSaveButtonState()
     }
     
     @objc private func pickerImageViewTapped() {
@@ -470,12 +479,13 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         }
         
         updateSaveButtonState()
+        
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == textViewPlaceHolder {
             textView.text = ""
-            textView.textColor = .black
+            textView.textColor = .labelsPrimary
         } else {
             textView.textColor = .labelsPrimary
         }
@@ -488,13 +498,13 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         }
     }
     
-    //MARK: - mapLabelButton
+    //MARK: - mapLabelButton 탭하면 MainPostListVC로 이동하는 메서
     
     @objc private func mapLabelButtonTapped() {
         let searchMapVC = SearchMapViewController()
         let navigationVC = UINavigationController(rootViewController: searchMapVC)
         
-        navigationVC.modalPresentationStyle = .fullScreen
+        navigationVC.modalPresentationStyle = .pageSheet
         present(navigationVC, animated: true, completion: nil)
     }
     
@@ -628,17 +638,18 @@ extension EditPostViewController: UITextFieldDelegate, UITextViewDelegate {
     }
     // Save 버튼의 상태를 업데이트하는 메서드
     private func updateSaveButtonState() {
-        let titleTextFieldIsNotEmpty = ((titleTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty) == true)
-        let textViewIsNotEmpty = !(textView.text.trimmingCharacters(in: .whitespaces).isEmpty)
-
-        if titleTextFieldIsNotEmpty && textViewIsNotEmpty {
-            saveButton.backgroundColor = .dominent
-            saveButton.isEnabled = true
-        } else {
-            saveButton.backgroundColor = .fillSecondary
-            saveButton.isEnabled = false
+        let titleTextFieldIsNotEmpty = !(titleTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
+            let textViewIsNotEmpty = !(textView.text.trimmingCharacters(in: .whitespaces).isEmpty)
+            
+            if titleTextFieldIsNotEmpty && textViewIsNotEmpty {
+                saveButton.backgroundColor = .dominent
+                saveButton.isEnabled = true
+            } else {
+                saveButton.backgroundColor = .fillSecondary
+                saveButton.isEnabled = false
+            }
         }
-    }
+    
 }
 
 
