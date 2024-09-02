@@ -207,17 +207,22 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             return
         }
         
-        viewModel.updatePost(postTitle: titleTextField.text!, postBody: textView.text) { result in
+        viewModel.updatePost(postTitle: titleTextField.text!, postBody: textView.text) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.saveButton.isEnabled = true
+            }
             switch result {
             case .success(let updatedPost):
                 print("Update Post: \(updatedPost)")
-                self.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
+                self?.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
             case .failure(let error):
                 print("Error updating post: \(error.localizedDescription)")
-                self.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
+                self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
             }
         }
     }
+
+
     
     private func showAlertWithNavigation(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -357,6 +362,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        print("Picker did finish picking. Results count: \(results.count)")
+        
         picker.dismiss(animated: true, completion: nil)
         
         let itemProviders = results.map(\.itemProvider)
@@ -372,12 +379,17 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
                     guard let image = image as? UIImage else { return }
                     
                     DispatchQueue.main.async {
+                        // View model에 이미지 추가
+                        self?.viewModel.selectedImages.append(image)
+                        
+                        // UI 업데이트
                         self?.addImageToStackView(image)
                     }
                 }
             }
         }
     }
+
     
     private func addImageToStackView(_ image: UIImage) {
         let existingImages = imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
@@ -514,7 +526,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     }
 }
 
-    //MARK: - MKMapViewDelegate
+//MARK: - MKMapViewDelegate
 
 extension EditPostViewController: MKMapViewDelegate {
     
@@ -639,17 +651,16 @@ extension EditPostViewController: UITextFieldDelegate, UITextViewDelegate {
     // Save 버튼의 상태를 업데이트하는 메서드
     private func updateSaveButtonState() {
         let titleTextFieldIsNotEmpty = !(titleTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
-            let textViewIsNotEmpty = !(textView.text.trimmingCharacters(in: .whitespaces).isEmpty)
-            
-            if titleTextFieldIsNotEmpty && textViewIsNotEmpty {
-                saveButton.backgroundColor = .dominent
-                saveButton.isEnabled = true
-            } else {
-                saveButton.backgroundColor = .fillSecondary
-                saveButton.isEnabled = false
-            }
+        let textViewIsNotEmpty = !(textView.text.trimmingCharacters(in: .whitespaces).isEmpty)
+        
+        if titleTextFieldIsNotEmpty && textViewIsNotEmpty {
+            saveButton.backgroundColor = .dominent
+            saveButton.isEnabled = true
+        } else {
+            saveButton.backgroundColor = .fillSecondary
+            saveButton.isEnabled = false
         }
-    
+    }
 }
 
 
