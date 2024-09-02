@@ -14,6 +14,7 @@ class SearchMapDetailViewController: UIViewController {
     
     private var makePlanViewModel: MakePlanViewModel?
     private var addPostViewModel: AddPostViewModel?
+    private var editPostViewModel: EditPostViewModel?
     
     private var location: Location
     private var isInitialLoad = true  // 초기 로드를 체크하기 위한 플래그    
@@ -109,10 +110,11 @@ class SearchMapDetailViewController: UIViewController {
     
     // MARK: - Initializer
     
-    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil, addPostViewModel: AddPostViewModel? = nil) {
+    init(location: Location, makePlanViewModel: MakePlanViewModel? = nil, addPostViewModel: AddPostViewModel? = nil, editPostViewModel: EditPostViewModel? = nil) {
         self.location = location
         self.makePlanViewModel = makePlanViewModel
         self.addPostViewModel = addPostViewModel
+        self.editPostViewModel = editPostViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -232,6 +234,13 @@ class SearchMapDetailViewController: UIViewController {
             // post 에서 필요한 기능
         } else if self.addPostViewModel != nil {
             self.addPostViewModel?.postLocation = location
+            guard let parentViewController = self.presentingViewController else { return }
+            self.dismiss(animated: true) {
+                parentViewController.dismiss(animated: true)
+            }
+            
+        } else if self.editPostViewModel != nil {
+            self.editPostViewModel?.selectedPost.location = location
             guard let parentViewController = self.presentingViewController else { return }
             self.dismiss(animated: true) {
                 parentViewController.dismiss(animated: true)
