@@ -25,7 +25,9 @@ class MakePlanViewModel {
     var chatViewModel: ChatViewModel?
     var chatRoom: ChatRoom
     
-    init(date: Date = Date(), planPlace: Location? = Location.sampleLocation, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0, isPlaceSelected: Bool = false, chatRoom: ChatRoom) {
+    var messageId: String?
+    
+    init(date: Date = Date(), planPlace: Location? = Location.sampleLocation, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0, isPlaceSelected: Bool = false, chatRoom: ChatRoom, messageId: String? = nil) {
         let interval = 5
         let calendar = Calendar.current
         let date = calendar.date(bySettingHour: calendar.component(.hour, from: date), minute: ((calendar.component(.minute, from: date) + 5) / interval) * interval, second: 0, of: date) ?? date
@@ -37,6 +39,7 @@ class MakePlanViewModel {
         self.progress = progress
         self.isPlaceSelected = isPlaceSelected
         self.chatRoom = chatRoom
+        self.messageId = messageId
     }
     
     func gotoNextPage() {
@@ -51,6 +54,17 @@ class MakePlanViewModel {
         let plan = Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: planDate, planPlace: planPlace, contract: nil, ownerNotification: ownerNotification, sitterNotification: sitterNotification, isAccepted: false)
         Task {
             await chatViewModel?.sendPlanMessage(plan: plan, chatRoom: chatRoom)
+        }
+    }
+    
+    func updatePlanNotification() async {
+        guard let messageId = messageId else { return }
+        
+        let firestoreManager = FirestoreManager()
+        do {
+            try await firestoreManager.updatePlanNotification(chatRoomId: chatRoom.id, messageId: messageId, ownerNotification: ownerNotification, sitterNotification: sitterNotification)
+        } catch {
+            print(error.localizedDescription)
         }
     }
 }

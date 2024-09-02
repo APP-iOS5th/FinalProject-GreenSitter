@@ -366,4 +366,14 @@ class FirestoreManager {
         return downloadURLString
     }
     
+    func updatePlanNotification(chatRoomId: String, messageId: String, ownerNotification: Bool, sitterNotification: Bool) async throws {
+        let planRef = db.collection("chatRooms").document(chatRoomId)
+            .collection("messages").document(messageId)
+
+        try await planRef.updateData([
+            "plan.ownerNotification": ownerNotification,
+            "plan.sitterNotification": sitterNotification
+        ])
+    }
+    
 }

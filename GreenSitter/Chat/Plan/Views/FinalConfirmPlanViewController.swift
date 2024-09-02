@@ -20,6 +20,10 @@ class FinalConfirmPlanViewController: UIViewController {
     
     private var viewModel: MakePlanViewModel
     
+    private lazy var currentId: String? = {
+        viewModel.chatViewModel?.userId
+    }()
+    
     private lazy var scrollView: UIScrollView = {
        let scrollView = UIScrollView()
         scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 10)
@@ -164,7 +168,12 @@ class FinalConfirmPlanViewController: UIViewController {
     
     private lazy var notificationSwitch: UISwitch = {
         let notificationSwitch = UISwitch()
-        notificationSwitch.isOn = true
+        if currentId == viewModel.chatRoom.postUserId {
+            notificationSwitch.isOn = viewModel.ownerNotification
+        } else {
+            notificationSwitch.isOn = viewModel.sitterNotification
+        }
+        notificationSwitch.addTarget(self, action: #selector(switchValueChanged(_:)), for: .valueChanged)
         return notificationSwitch
     }()
     
@@ -205,7 +214,11 @@ class FinalConfirmPlanViewController: UIViewController {
                 print("notificationSwitch is wrong")
                 return
             }
-            self?.viewModel.ownerNotification = isNotificationSwitchOn
+            if self?.currentId == self?.viewModel.chatRoom.postUserId {
+                self?.viewModel.ownerNotification = isNotificationSwitchOn
+            } else {
+                self?.viewModel.sitterNotification = isNotificationSwitchOn
+            }
             self?.viewModel.progress = 3
             self?.viewModel.sendPlan()
             self?.dismiss(animated: true)
@@ -374,4 +387,12 @@ class FinalConfirmPlanViewController: UIViewController {
         placeText.text = viewModel.planPlace?.placeName
     }
     
+    @objc
+    private func switchValueChanged(_ sender: UISwitch) {
+        if currentId == viewModel.chatRoom.postUserId {
+            viewModel.ownerNotification = sender.isOn
+        } else {
+            viewModel.sitterNotification = sender.isOn
+        }
+    }
 }
