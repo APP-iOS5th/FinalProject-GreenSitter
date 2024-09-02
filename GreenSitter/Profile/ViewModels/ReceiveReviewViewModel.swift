@@ -101,43 +101,45 @@ extension ReceiveReviewViewController {
                 return
             }
             
-            if let reviewsData = document.data()?["reviews"] as? [String: Any] {
-                // Initialize variables to safely decode
-                let reviewId = reviewsData["id"] as? String ?? ""
-                let userId = reviewsData["userId"] as? String ?? ""
-                let enabled = reviewsData["enabled"] as? Bool ?? false
-                let createDate = (reviewsData["createDate"] as? Timestamp)?.dateValue() ?? Date()
-                let updateDate = (reviewsData["updateDate"] as? Timestamp)?.dateValue() ?? Date()
-                let postId = reviewsData["postId"] as? String ?? ""
-                let reviewImage = reviewsData["reviewImage"] as? [String] ?? []
-                
-                // Safely decode `rating` to `Rating` enum
-                let ratingRawValue = reviewsData["rating"] as? String ?? "average"
-                let rating = Rating(rawValue: ratingRawValue) ?? .average
-                
-                let reviewText = reviewsData["reviewText"] as? String
-                let selectedTexts = reviewsData["selectedTexts"] as? [String] ?? []
-                
-                // Initialize `self.reviews` with decoded data
-                self.reviews = Review(id: reviewId, enabled: enabled, createDate: createDate, updateDate: updateDate, userId: userId, postId: postId, rating: rating, reviewText: reviewText, reviewImage: "reviewsData", selectedTexts: selectedTexts)
-                
-                print("Fetched Review: \(String(describing: self.reviews))")
-                
-                // postId가 savedPostId와 일치하는지 확인
-                if postId == savedPostId {
-                    self.selectedTexts = selectedTexts
+            if let reviewsArray = document.data()?["reviews"] as? [[String: Any]] { // 배열로 처리
+                for reviewsData in reviewsArray { // 배열 순회
+                    let reviewId = reviewsData["id"] as? String ?? ""
+                    let userId = reviewsData["userId"] as? String ?? ""
+                    let enabled = reviewsData["enabled"] as? Bool ?? false
+                    let createDate = (reviewsData["createDate"] as? Timestamp)?.dateValue() ?? Date()
+                    let updateDate = (reviewsData["updateDate"] as? Timestamp)?.dateValue() ?? Date()
+                    let postId = reviewsData["postId"] as? String ?? ""
+                    let reviewImage = reviewsData["reviewImage"] as? [String] ?? []
                     
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
+                    // Safely decode `rating` to `Rating` enum
+                    let ratingRawValue = reviewsData["rating"] as? String ?? "average"
+                    let rating = Rating(rawValue: ratingRawValue) ?? .average
+                    
+                    let reviewText = reviewsData["reviewText"] as? String
+                    let selectedTexts = reviewsData["selectedTexts"] as? [String] ?? []
+                    
+                    // 리뷰 데이터를 Review 객체에 저장
+                    let review = Review(id: reviewId, enabled: enabled, createDate: createDate, updateDate: updateDate, userId: userId, postId: postId, rating: rating, reviewText: reviewText, reviewImage: "reviewImage", selectedTexts: selectedTexts)
+                    
+                    print("Fetched Review: \(String(describing: review))")
+                    
+                    // postId가 savedPostId와 일치하는지 확인
+                    if postId == savedPostId {
+                        self.selectedTexts = selectedTexts
+                        self.reviews = review  // self.reviews에 저장
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
+                    } else {
+                        print("Review post ID does not match saved post ID.")
                     }
-                } else {
-                    print("Review post ID does not match saved post ID.")
                 }
             } else {
                 print("Reviews data not found")
             }
         }
     }
+
     
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {

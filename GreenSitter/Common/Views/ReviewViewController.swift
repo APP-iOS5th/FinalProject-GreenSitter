@@ -18,9 +18,6 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
     var post: [Post] = []
     var postId: String?
     var creatorId: String?
-
-   
-
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()

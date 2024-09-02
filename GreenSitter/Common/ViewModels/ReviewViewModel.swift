@@ -126,6 +126,7 @@ extension ReviewViewController {
             "reviewText": reviewText ?? "",
             "selectedTexts": selectedTexts
         ]
+
         // 기존 리뷰를 가져옵니다.
         db.collection("users").document(creatorId).getDocument { [weak self] document, error in
             guard let self = self else { return }
@@ -157,6 +158,39 @@ extension ReviewViewController {
                     
                     // 경험치 및 레벨 업데이트
                     self.updateUserExp(userId: creatorId, expChange: expChange)
+                }
+            }
+        }
+        // 내 리뷰도 저장하기 위해 현재 사용자의 문서도 업데이트
+        db.collection("users").document(userId).getDocument { [weak self] document, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("현재 사용자의 문서 가져오기 중 오류 발생: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let document = document, document.exists else {
+                print("현재 사용자의 문서가 존재하지 않거나, 문서 가져오기 실패")
+                return
+            }
+            
+            var reviews = document.data()?["reviews"] as? [[String: Any]] ?? []
+            
+            // 기존 리뷰를 찾아 업데이트하거나 새로운 리뷰를 추가합니다.
+            if let existingIndex = reviews.firstIndex(where: { ($0["postId"] as? String) == postId }) {
+                reviews[existingIndex] = newReview
+            } else {
+                reviews.append(newReview)
+            }
+            
+            // 수정된 리뷰 배열로 사용자 문서를 업데이트합니다.
+            self.db.collection("users").document(userId).updateData(["reviews": reviews]) { error in
+                if let error = error {
+                    print("현재 사용자 문서에 리뷰 업데이트 중 오류 발생: \(error.localizedDescription)")
+                } else {
+                    print("리뷰가 성공적으로 현재 사용자 문서에 업데이트되었습니다!")
+                    
                 }
             }
         }
@@ -230,10 +264,6 @@ extension ReviewViewController {
             }
         }
     }
-    
-    
-    
-    
     // Firestore에서 받아온 데이터를 JSON으로 변환하기 전에 FIRTimestamp를 Date로 변환하는 유틸리티 함수
     func convertFirestoreData(_ data: [String: Any]) -> [String: Any] {
         var convertedData = [String: Any]()
