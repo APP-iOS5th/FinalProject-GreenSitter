@@ -140,8 +140,6 @@ class AddPostViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 17)
         button.setTitleColor(.labelsSecondary, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        
-        button.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -255,7 +253,8 @@ class AddPostViewController: UIViewController {
         view.addSubview(saveButton)
         
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
-        
+        mapLabelButton.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
+
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),

@@ -135,7 +135,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         button.titleLabel?.font = .systemFont(ofSize: 17)
         button.setTitleColor(.labelsSecondary, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -273,6 +272,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         contentView.addSubview(mapView)
         contentView.addSubview(saveButton)
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+        mapLabelButton.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
+
         imageScrollView.addSubview(imageStackView)
         imageStackView.addArrangedSubview(pickerImageView)
         
@@ -618,7 +619,7 @@ extension EditPostViewController: MKMapViewDelegate {
         return MKOverlayRenderer()
     }
 }
-//MARK: -UITextFieldDelegate,UITextViewDelegate
+// MARK: -UITextFieldDelegate,UITextViewDelegate
 
 extension EditPostViewController: UITextFieldDelegate, UITextViewDelegate {
     
