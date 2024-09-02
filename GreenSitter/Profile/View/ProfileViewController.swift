@@ -43,7 +43,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         let progressLayer = CAShapeLayer()
         progressLayer.strokeColor = UIColor(named: "DominentColor")?.cgColor
         progressLayer.fillColor = UIColor.clear.cgColor
-        progressLayer.lineWidth = 10
+        progressLayer.lineWidth = 20
         progressLayer.lineCap = .round
         progressLayer.strokeEnd = 0.0
         
