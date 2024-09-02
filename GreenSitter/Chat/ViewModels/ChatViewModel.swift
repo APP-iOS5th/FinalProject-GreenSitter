@@ -19,7 +19,7 @@ class ChatViewModel {
     
     var user: User? {
         didSet {
-            isLoggedIn = true
+            isLoggedIn = user != nil
         }
     }
     
@@ -199,7 +199,6 @@ class ChatViewModel {
             return
         }
         
-        // TODO: - userId 수정
         let receiverUserId: String?
         if user!.id == chatRoom.userId {
             receiverUserId = chatRoom.postUserId
