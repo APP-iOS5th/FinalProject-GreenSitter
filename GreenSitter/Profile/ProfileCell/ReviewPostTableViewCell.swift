@@ -68,14 +68,14 @@ class ReviewPostTableViewCell: UITableViewCell {
             timeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
             
             // plantImage 제약 조건
-            plantImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            plantImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
             plantImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             plantImage.widthAnchor.constraint(equalToConstant: 50),
             plantImage.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
-    required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {    
         fatalError("init(coder:) has not been implemented")
     }
     
