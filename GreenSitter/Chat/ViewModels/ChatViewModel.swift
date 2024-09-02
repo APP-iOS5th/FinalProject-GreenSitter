@@ -19,7 +19,7 @@ class ChatViewModel {
     
     var user: User? {
         didSet {
-            isLoggedIn = true
+            isLoggedIn = user != nil
         }
     }
     

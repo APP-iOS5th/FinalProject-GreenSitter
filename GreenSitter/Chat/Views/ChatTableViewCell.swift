@@ -152,7 +152,6 @@ class ChatTableViewCell: UITableViewCell {
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
-        // TODO: - lastMessage가 없을 때 return되면서 이전 값으로 적용되는 문제
         guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
             lastMessageLabel.text = ""
             dateLabel.text = ""
