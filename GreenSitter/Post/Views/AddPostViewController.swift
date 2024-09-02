@@ -9,7 +9,7 @@ import UIKit
 import PhotosUI
 import MapKit
 
-class AddPostViewController: UIViewController {
+class AddPostViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     private var postType: PostType
     private var viewModel: AddPostViewModel
@@ -129,7 +129,7 @@ class AddPostViewController: UIViewController {
     private let mapLabelButton: UIButton = {
         let button = UIButton()
         let fullString = NSMutableAttributedString(string: "거래 희망 장소를 선택하세요!   ")
- 
+        
         let imageAttachment = NSTextAttachment()
         let symbolImage = UIImage(systemName: "mappin.and.ellipse")
         imageAttachment.image = symbolImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
@@ -169,8 +169,16 @@ class AddPostViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(pickerImageViewTapped))
         pickerImageView.addGestureRecognizer(tapGesture)
         
+        updateSaveButtonState()
+        titleTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        
+        
         updateImageStackView()
         
+    }
+    
+    @objc private func textDidChange() {
+        updateSaveButtonState()
     }
     
     @objc private func saveButtonTapped() {
@@ -224,16 +232,16 @@ class AddPostViewController: UIViewController {
     }
     
     private func showAlert(title: String, message: String) {
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            
-            let popAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-                self?.navigationController?.popViewController(animated: true)
-            }
-            
-            alert.addAction(popAction)
-            present(alert, animated: true, completion: nil)
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        let popAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
         }
-
+        
+        alert.addAction(popAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
     
     private func setupLayout() {
         self.title = postType.rawValue
@@ -313,7 +321,7 @@ class AddPostViewController: UIViewController {
             mapLabelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             mapLabelButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
             mapLabelButton.heightAnchor.constraint(equalToConstant: 40),
-         
+            
             mapView.topAnchor.constraint(equalTo: mapLabelButton.bottomAnchor, constant: 12),
             mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -333,9 +341,6 @@ class AddPostViewController: UIViewController {
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true, completion: nil)
     }
-}
-
-extension AddPostViewController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         let textCount = textView.text.count
@@ -375,6 +380,8 @@ extension AddPostViewController: UITextViewDelegate {
         } else if textView.textColor == .labelsSecondary && textView.text != textViewPlaceHolder {
             textView.textColor = .labelsPrimary
         }
+        
+        updateSaveButtonState()
     }
     
     
@@ -537,5 +544,25 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
         let picker = PHPickerViewController(configuration: config)
         picker.delegate = self
         present(picker, animated: true, completion: nil)
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        updateSaveButtonState()
+        return true
+    }
+    
+    // Save 버튼의 상태를 업데이트하는 메서드
+    private func updateSaveButtonState() {
+        let titleTextFieldIsNotEmpty = !(titleTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
+        
+        let textViewIsNotEmpty = !textView.text.trimmingCharacters(in: .whitespaces).isEmpty && textView.text != textViewPlaceHolder
+        
+        if titleTextFieldIsNotEmpty && textViewIsNotEmpty {
+            saveButton.backgroundColor = .dominent
+            saveButton.isEnabled = true
+        } else {
+            saveButton.backgroundColor = .fillSecondary
+            saveButton.isEnabled = false
+        }
     }
 }
