@@ -38,7 +38,7 @@ extension ReviewViewController {
             print("Good selected")
         }
     }
-
+    
     //MARK: - 텍스트 리뷰
     @objc func slectTextButtonTap(_ sender: UIButton) {
         let isSelected = sender.isSelected
@@ -54,17 +54,23 @@ extension ReviewViewController {
     
     //MARK: - 완료
     @objc func completeButtonTap() {
+        guard let creatorId = self.creatorId else {
+            print("Creator ID가 없습니다.")
+            return
+        }
+        // 현재 로그인한 사용자의 ID를 가져옵니다.
         guard let userId = Auth.auth().currentUser?.uid else {
             print("No authenticated user")
             return
         }
         
+        // 리뷰를 작성할 게시물 ID를 가져옵니다.
         guard let postId = postId else {
             print("No post ID found in review")
             return
         }
-
-        // Get the rating
+        
+        // 사용자가 선택한 평점을 가져옵니다.
         let rating: Rating = {
             guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell else { return .average }
             if let selectedButton = selectedRatingButton {
@@ -79,6 +85,7 @@ extension ReviewViewController {
             return .average
         }()
         
+        // 평점에 따른 경험치 변화를 설정합니다.
         let expChange: Int
         switch rating {
         case .bad:
@@ -89,7 +96,7 @@ extension ReviewViewController {
             expChange = 7
         }
         
-        // Get the selected texts
+        // 선택된 텍스트를 가져옵니다.
         var selectedTexts = [String]()
         if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell {
             if cell.row1Button.isSelected {
@@ -107,22 +114,20 @@ extension ReviewViewController {
         }
         let reviewText = (tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? ReviewSendTableViewCell)?.reviewTextField.text
         
-        // Prepare data to update user document
+        // 새로운 리뷰 데이터 준비
         let newReview: [String: Any] = [
             "id": UUID().uuidString,
             "userId": userId,
             "enabled": true,
-            "createDate": Timestamp(date: Date()),
-            "updateDate": Timestamp(date: Date()),
+            "createDate": Timestamp(date: Date()), // Date를 Timestamp로 변환
+            "updateDate": Timestamp(date: Date()), // Date를 Timestamp로 변환
             "postId": postId,
             "rating": rating.rawValue,
             "reviewText": reviewText ?? "",
             "selectedTexts": selectedTexts
         ]
-        
-        let creatorId = "dHGnO3p9WwcWp8bgM4UHV6PZptn2" // 리뷰 대상자의 ID를 가져와야 합니다.
 
-        // Fetch the existing reviews
+        // 기존 리뷰를 가져옵니다.
         db.collection("users").document(creatorId).getDocument { [weak self] document, error in
             guard let self = self else { return }
             
@@ -135,69 +140,62 @@ extension ReviewViewController {
                 print("작성자의 사용자 문서가 존재하지 않거나, 문서 가져오기 실패")
                 return
             }
-            
             var reviews = document.data()?["reviews"] as? [[String: Any]] ?? []
             
-            // Find existing review and update it or append new review
+            // 기존 리뷰를 찾아 업데이트하거나 새로운 리뷰를 추가합니다.
             if let existingIndex = reviews.firstIndex(where: { ($0["postId"] as? String) == postId }) {
                 reviews[existingIndex] = newReview
             } else {
                 reviews.append(newReview)
             }
             
-            // Update the user's document with the modified reviews array
+            // 수정된 리뷰 배열로 사용자 문서를 업데이트합니다.
             self.db.collection("users").document(creatorId).updateData(["reviews": reviews]) { error in
                 if let error = error {
-                    print("사용자 문서에 리뷰 업데이트 중 오류 발생: \(error)")
+                    print("사용자 문서에 리뷰 업데이트 중 오류 발생: \(error.localizedDescription)")
                 } else {
                     print("리뷰가 성공적으로 사용자 문서에 업데이트되었습니다!")
                     
-                    // Update exp
-                    self.db.collection("users").document(creatorId).getDocument { documentSnapshot, error in
-                        if let error = error {
-                            print("작성자의 사용자 문서 가져오기 중 오류 발생: \(error.localizedDescription)")
-                            return
-                        }
-                        
-                        guard let documentSnapshot = documentSnapshot, documentSnapshot.exists else {
-                            print("작성자의 사용자 문서가 존재하지 않음")
-                            return
-                        }
-                        print("문서 데이터: \(documentSnapshot.data() ?? [:])")
-                        
-                        // 데이터 파싱 시도
-                            do {
-                                guard let documentData = documentSnapshot.data() else {
-                                    print("문서 데이터가 없습니다.")
-                                    return
-                                }
-                                
-                                // `User` 구조체로 변환
-                                let creatorUser = try documentSnapshot.data(as: User.self)
-                                print("파싱된 사용자 데이터: \(creatorUser)")
-                            } catch let decodingError {
-                                print("작성자의 사용자 문서 데이터 파싱 실패: \(decodingError.localizedDescription)")
-                            }
-
-                        guard var creatorUser = try? documentSnapshot.data(as: User.self) else {
-                            print("작성자의 사용자 문서 데이터 파싱 실패")
-                            return
-                        }
-                        
-                        creatorUser.updateExp(by: expChange)
-                        
-                        self.db.collection("users").document(creatorId).setData(creatorUser.toDictionary(), merge: true) { error in
-                            if let error = error {
-                                print("exp 업데이트 실패: \(error)")
-                            } else {
-                                print("exp 업데이트 성공")
-                            }
-                        }
-                    }
+                    // 경험치 및 레벨 업데이트
+                    self.updateUserExp(userId: creatorId, expChange: expChange)
                 }
             }
         }
-
+        // 내 리뷰도 저장하기 위해 현재 사용자의 문서도 업데이트
+        db.collection("users").document(userId).getDocument { [weak self] document, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("현재 사용자의 문서 가져오기 중 오류 발생: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let document = document, document.exists else {
+                print("현재 사용자의 문서가 존재하지 않거나, 문서 가져오기 실패")
+                return
+            }
+            
+            var reviews = document.data()?["reviews"] as? [[String: Any]] ?? []
+            
+            // 기존 리뷰를 찾아 업데이트하거나 새로운 리뷰를 추가합니다.
+            if let existingIndex = reviews.firstIndex(where: { ($0["postId"] as? String) == postId }) {
+                reviews[existingIndex] = newReview
+            } else {
+                reviews.append(newReview)
+            }
+            
+            // 수정된 리뷰 배열로 사용자 문서를 업데이트합니다.
+            self.db.collection("users").document(userId).updateData(["reviews": reviews]) { error in
+                if let error = error {
+                    print("현재 사용자 문서에 리뷰 업데이트 중 오류 발생: \(error.localizedDescription)")
+                } else {
+                    print("리뷰가 성공적으로 현재 사용자 문서에 업데이트되었습니다!")
+                    
+                }
+            }
+        }
+        
+        // 리뷰 완료 후 사용자 프로필로 이동
         DispatchQueue.main.async {
             guard let userId = LoginViewModel.shared.user?.id else {
                 print("User ID is not available")
@@ -208,8 +206,103 @@ extension ReviewViewController {
             self.navigationController?.pushViewController(aboutMeViewController, animated: true)
         }
     }
-
-
+    
+    
+    
+    // MARK: - 사용자 경험치 업데이트 함수
+    func updateUserExp(userId: String, expChange: Int) {
+        db.collection("users").document(userId).getDocument { [weak self] document, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("사용자 문서 가져오기 중 오류 발생: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let document = document, document.exists, var data = document.data() else {
+                print("문서가 존재하지 않거나 문서 가져오기 실패")
+                return
+            }
+            
+            var currentExp = data["exp"] as? Int ?? 0
+            currentExp += expChange
+            
+            // 레벨 업데이트 처리
+            var levelPoint: Level = Level(rawValue: data["levelPoint"] as? String ?? "썩은 씨앗") ?? .rottenSeeds
+            
+            // 경험치가 0 이하로 떨어질 때의 처리
+            while currentExp < 0 {
+                let expNeededForCurrentLevel = 100 // 각 레벨마다 필요한 경험치
+                
+                // 경험치 부족분 계산
+                let expNeededForPreviousLevel = expNeededForCurrentLevel + currentExp
+                currentExp = expNeededForPreviousLevel
+                
+                // 레벨 변경
+                levelPoint = levelPoint.previousLevel()
+                
+                
+            }
+            
+            // 경험치가 100 이상으로 넘어가는 경우의 처리
+            while currentExp >= 100 {
+                let extraExp = currentExp - 100
+                currentExp = extraExp
+                levelPoint = levelPoint.nextLevel()
+            }
+            
+            // 새로운 경험치와 레벨로 업데이트
+            data["exp"] = currentExp
+            data["levelPoint"] = levelPoint.rawValue
+            
+            self.db.collection("users").document(userId).updateData(data) { error in
+                if let error = error {
+                    print("사용자 문서에 경험치 및 레벨 업데이트 중 오류 발생: \(error.localizedDescription)")
+                } else {
+                    print("사용자 경험치와 레벨이 성공적으로 업데이트되었습니다!")
+                }
+            }
+        }
+    }
+    // Firestore에서 받아온 데이터를 JSON으로 변환하기 전에 FIRTimestamp를 Date로 변환하는 유틸리티 함수
+    func convertFirestoreData(_ data: [String: Any]) -> [String: Any] {
+        var convertedData = [String: Any]()
+        let dateFormatter = ISO8601DateFormatter()
+        
+        for (key, value) in data {
+            if let timestamp = value as? Timestamp {
+                convertedData[key] = dateFormatter.string(from: timestamp.dateValue())
+            } else if let date = value as? Date {
+                convertedData[key] = dateFormatter.string(from: date)
+            } else if let stringValue = value as? String {
+                convertedData[key] = stringValue
+            } else if let boolValue = value as? Bool {
+                convertedData[key] = boolValue ? 1 : 0
+            } else if let intValue = value as? Int {
+                convertedData[key] = intValue
+            } else if let doubleValue = value as? Double {
+                convertedData[key] = doubleValue
+            } else if let arrayValue = value as? [Any] {
+                convertedData[key] = arrayValue.compactMap { element in
+                    if let elementDict = element as? [String: Any] {
+                        return convertFirestoreData(elementDict)
+                    } else {
+                        return nil
+                    }
+                }
+            } else if let nestedData = value as? [String: Any] {
+                convertedData[key] = convertFirestoreData(nestedData)
+            } else if let geoPoint = value as? GeoPoint {
+                convertedData[key] = ["latitude": geoPoint.latitude, "longitude": geoPoint.longitude]
+            } else {
+                print("Unhandled data type for key: \(key), value: \(value)")
+                convertedData[key] = value
+            }
+        }
+        
+        print("Converted Data: \(convertedData)")
+        return convertedData
+    }
     
     func fetchPostFirebase() {
         guard let postId = self.postId else {
@@ -230,10 +323,8 @@ extension ReviewViewController {
                 return
             }
             
-            
             // 문서 데이터 출력 (디버깅 용도)
             let documentData = document.data() ?? [:]
-            print("문서 데이터: \(documentData)")
             
             // 문서가 예상 필드를 포함하는지 확인
             if let postStatus = documentData["postStatus"] as? String, postStatus == "거래완료" {
@@ -241,14 +332,16 @@ extension ReviewViewController {
                 let postBody = documentData["postBody"] as? String ?? "본문 내용 없음"
                 let userId = documentData["userId"] as? String ?? "id없음"
                 let updateDateTimestamp = documentData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
-                let updateDate = updateDateTimestamp.dateValue()
+                let createDate: Date = (documentData["createDate"] as? Timestamp)?.dateValue() ?? Date()
+                let updateDate: Date = (documentData["updateDate"] as? Timestamp)?.dateValue() ?? Date()
+                
                 let postImages = documentData["postImages"] as? [String] ?? []
                 
                 // Post 객체 생성 및 업데이트
                 self.review = Post(
                     id: postId,
                     enabled: true,
-                    createDate: Date(),
+                    createDate: createDate,
                     updateDate: updateDate,
                     userId: userId,
                     profileImage: "",
@@ -272,7 +365,6 @@ extension ReviewViewController {
             }
         }
     }
-
     
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {
@@ -323,5 +415,4 @@ extension ReviewViewController {
         }
         task.resume()
     }
-
 }
