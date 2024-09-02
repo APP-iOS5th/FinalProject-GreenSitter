@@ -37,6 +37,10 @@ class ReviewPostTableViewCell: UITableViewCell {
         image.image = UIImage(named: "로고7")
         image.contentMode = .scaleAspectFill
         image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 15
+        image.layer.masksToBounds = true
+        image.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+
         return image
     }()
     
@@ -44,14 +48,14 @@ class ReviewPostTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-
+        
         contentView.addSubview(titleLabel)
         contentView.addSubview(bodyLabel)
         contentView.addSubview(timeLabel)
         contentView.addSubview(plantImage)
         
         NSLayoutConstraint.activate([
-
+            
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             titleLabel.trailingAnchor.constraint(equalTo: plantImage.leadingAnchor, constant: -10),
@@ -68,14 +72,14 @@ class ReviewPostTableViewCell: UITableViewCell {
             timeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
             
             // plantImage 제약 조건
-            plantImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            plantImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             plantImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            plantImage.widthAnchor.constraint(equalToConstant: 50),
-            plantImage.heightAnchor.constraint(equalToConstant: 50)
+            plantImage.widthAnchor.constraint(equalToConstant: 80),
+            plantImage.heightAnchor.constraint(equalToConstant: 80)
         ])
     }
     
-    required init?(coder: NSCoder) {    
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
