@@ -200,6 +200,12 @@ class PostDetailViewController: UIViewController {
         loadPost(with: postId)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        loadPost(with: postId)
+    }
+    
     // MARK: - Helpful Functions
     
     private func loadPost(with postId: String) {
