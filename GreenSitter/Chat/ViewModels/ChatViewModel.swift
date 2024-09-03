@@ -64,6 +64,29 @@ class ChatViewModel {
         }
     }
     
+    // 채팅목록 정렬 함수
+    func sortChatRoomsByLastMessageDate() {
+        self.chatRooms.sort { (chatRoom1, chatRoom2) -> Bool in
+            let lastMessage1 = lastMessages[chatRoom1.id]?.last
+            let lastMessage2 = lastMessages[chatRoom2.id]?.last
+            
+            switch (lastMessage1, lastMessage2) {
+                // 두 채팅방 모두 lastMessage가 없는 경우, 순서 유지
+            case (nil, nil):
+                return false
+                // chatRoom1의 lastMessage가 없으면 chatRoom2의 뒤에 위치
+            case (nil, _):
+                return false
+                // chatRoom2의 lastMessage가 없으면 chatRoom1의 뒤에 위치
+            case (_, nil):
+                return true
+                // 두 채팅방 모두 lastMessage가 있을 경우, 최신순으로 정렬
+            case let (message1?, message2?):
+                return message1.createDate > message2.createDate
+            }
+        }
+    }
+    
     func loadChatRooms() async throws -> [ChatRoom] {
         do {
             let updatedChatRooms = try await firestoreManager.fetchChatRooms(userId: user!.id)

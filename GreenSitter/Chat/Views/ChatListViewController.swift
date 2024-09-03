@@ -82,6 +82,7 @@ class ChatListViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .bgSecondary
+        self.chatViewModel.sortChatRoomsByLastMessageDate()
     }
     
     // MARK: - ViewWillAppear
@@ -129,6 +130,12 @@ class ChatListViewController: UIViewController {
                     let lastMessageListener = Task {
                         for await messages in await chatViewModel.loadLastMessages(chatRoomId: chatRoom.id) {
                             self.chatViewModel.lastMessages[chatRoom.id] = messages
+                            
+                            // lastMessages가 업데이트될 때마다 채팅방 정렬
+                            await MainActor.run {
+                                self.chatViewModel.sortChatRoomsByLastMessageDate()
+                                self.tableView.reloadData()
+                            }
                         }
                     }
                     lastMessageListeners.append(lastMessageListener)
