@@ -110,6 +110,7 @@ class FirestoreManager {
     // 채팅방 데이터 가져오기
     func fetchChatRooms(userId: String) async throws -> [ChatRoom] {
         // 사용자 아이디와 userId가 같은 문서와 사용자 아이디와 postUserId가 같은 문서 필터링
+        // TODO: - 최신 메세지 순으로 채팅방 정렬
         let userQuery = db.collection("chatRooms")
             .whereField("userId", isEqualTo: userId)
             .whereField("userEnabled", isEqualTo: true)
