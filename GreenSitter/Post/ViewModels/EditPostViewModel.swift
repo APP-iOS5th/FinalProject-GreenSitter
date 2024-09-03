@@ -27,9 +27,6 @@ class EditPostViewModel: ObservableObject {
         self.selectedPost = selectedPost
         if let postImageURLs = selectedPost.postImages {
             self.selectedImageURLs = postImageURLs
-            loadExistingImages(from: postImageURLs) { [weak self] message in
-                print("All images loaded \(message)")
-            }
         }
     }
     
@@ -55,9 +52,7 @@ class EditPostViewModel: ObservableObject {
             URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
                 defer { group.leave() }
                 
-                guard let self = self,
-                      let data = data,
-                      let image = UIImage(data: data) else {
+                guard let self = self else {
                     return
                 }
                 
@@ -182,7 +177,8 @@ class EditPostViewModel: ObservableObject {
             switch result {
             case .success:
                 var allImageURLs = self.selectedPost.postImages ?? []
-                allImageURLs.append(contentsOf: self.selectedImageURLs)
+                allImageURLs = self.selectedImageURLs
+                allImageURLs = allImageURLs.filter{ !self.imageURLsToDelete.contains($0) }
                 
                 // 기존의 포스트 데이터 업데이트
                 let updatedPost = Post(
