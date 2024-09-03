@@ -89,7 +89,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
         super.viewDidLoad()
         setupBindings() //위치변경 되었을때 뷰에 로드해줌
         fetchUserExperience()
-        
+        fetchUserLevelAndUpdateImage()
         
         // 로그인 상태가 아닐 때 로그인 화면 표시
         if Auth.auth().currentUser == nil {
