@@ -13,7 +13,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     private let post: Post
     private var viewModel: EditPostViewModel
-    
     private var overlayPostMapping: [MKCircle: Post] = [:]
     
     init(post: Post, viewModel: EditPostViewModel) {
@@ -221,8 +220,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             }
         }
     }
-
-
+    
+    
     
     private func showAlertWithNavigation(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -389,7 +388,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             }
         }
     }
-
+    
+    
     
     private func addImageToStackView(_ image: UIImage) {
         let existingImages = imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
@@ -445,19 +445,37 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         updateImageStackView()
     }
     
+    
     private func loadExistingImages() {
-        viewModel.loadExistingImages(from: viewModel.selectedPost.postImages ?? []) { [weak self] in
+        viewModel.loadExistingImages(from: viewModel.selectedPost.postImages ?? []) { _ in
             DispatchQueue.main.async {
-                self?.updateUIWithLoadedImages()
+                self.updateUIWithLoadedImages()
             }
         }
     }
     
     private func updateUIWithLoadedImages() {
-        for image in viewModel.postImages {
-            addImageToStackView(image)
+            for urlString in viewModel.selectedImageURLs { // URL 배열을 가져옴
+                loadImageFromURL(urlString) { [weak self] image in
+                    guard let image = image else { return }
+                    self?.addImageToStackView(image)
+                }
+            }
         }
-        updateImageStackView()
+    // URL로부터 UIImage를 로드하는 함수
+    private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(nil)
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil, let image = UIImage(data: data) else {
+                completion(nil)
+                return
+            }
+            completion(image)
+        }.resume()
     }
     
     private func updateImageStackView() {
