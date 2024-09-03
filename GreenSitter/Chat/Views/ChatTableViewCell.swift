@@ -160,6 +160,8 @@ class ChatTableViewCell: UITableViewCell {
         guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
             lastMessageLabel.text = ""
             dateLabel.text = ""
+            circleView.backgroundColor = .clear
+            unreadCountLabel.text = ""
             return
         }
 
@@ -181,7 +183,6 @@ class ChatTableViewCell: UITableViewCell {
         // 안 읽은 메세지 수
         /// read = false인 메세지 수
         guard let unreadCount = chatViewModel?.unreadMessages[chatRoom!.id]?.count else {
-            unreadCountLabel.text = ""
             return
         }
         
