@@ -52,6 +52,9 @@ class CareRecordTableViewCell: UITableViewCell {
         image.image = UIImage(named: "로고7")
         image.contentMode = .scaleAspectFill
         image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 20
+        image.layer.masksToBounds = true
+        image.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         return image
     }()
     
@@ -94,10 +97,10 @@ class CareRecordTableViewCell: UITableViewCell {
             timeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
             
             // plantImage 제약 조건
-            plantImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            plantImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             plantImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            plantImage.widthAnchor.constraint(equalToConstant: 50),
-            plantImage.heightAnchor.constraint(equalToConstant: 50)
+            plantImage.widthAnchor.constraint(equalToConstant: 100),
+            plantImage.heightAnchor.constraint(equalToConstant: 100)
         ])
     }
     

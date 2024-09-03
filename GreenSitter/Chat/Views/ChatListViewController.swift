@@ -270,9 +270,10 @@ extension ChatListViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatTableViewCell", for: indexPath) as! ChatTableViewCell
         
         chatRoom = chatViewModel.chatRooms[indexPath.row]
+        print("indexPath.row: \(indexPath.row)")
         cell.chatRoom = chatRoom!
         cell.chatViewModel = self.chatViewModel
-        cell.configure(userId: self.chatViewModel.userId)
+        cell.configure(userId: self.chatViewModel.user!.id)
         
         return cell
     }

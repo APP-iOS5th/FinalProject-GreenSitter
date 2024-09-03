@@ -79,13 +79,19 @@ extension NicknameViewController {
                             // 해당 id를 사용해 posts 컬렉션 업데이트
                             self.updatePostsNickname(postId, nickname)
                         }
+                        
                     }
                 }
             }
         }
     }
     
+    //MARK: - post에 업데이트된 닉네임 저장
     func updatePostsNickname(_ postId: String, _ nickname: String) {
+        guard let currentId = Auth.auth().currentUser?.uid else {
+            print("유저 정보 없음")
+            return
+        }
         db.collection("posts").whereField("userId", isEqualTo: postId).getDocuments { querySnapshot, error in
             if let error = error {
                 print("Firestore Query Error in posts collection: \(error.localizedDescription)")
@@ -103,6 +109,66 @@ extension NicknameViewController {
                         print("Error updating post nickname in document \(document.documentID): \(error.localizedDescription)")
                     } else {
                         print("Post Nickname successfully updated in document \(document.documentID)!")
+                    }
+                }
+            }
+            self.updateChatUserNickname(currentId, nickname)
+            self.updateChatPostNickname(currentId, nickname)
+
+        }
+    }
+    //MARK: - 채팅에 업데이트된 유저닉네임 저장
+    func updateChatUserNickname(_ currentId: String, _ nickname: String) {
+        guard let currentId = Auth.auth().currentUser?.uid else {
+            print("유저 정보 없음")
+            return
+        }
+        db.collection("chatRooms").whereField("userId", isEqualTo: currentId).getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Firestore Query Error in chat collection: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                print("No matching documents found in chat collection")
+                return
+            }
+            
+            for document in documents {
+                document.reference.updateData(["userNickname": nickname]) { error in
+                    if let error = error {
+                        print("Error updating post nickname in document \(document.documentID): \(error.localizedDescription)")
+                    } else {
+                        print("updateChatNickname Nickname successfully updated in document \(document.documentID)!")
+                    }
+                }
+            }
+        }
+    }
+    
+    //MARK: - 채팅에 업데이트된 post닉네임 저장
+    func updateChatPostNickname(_ currentId: String, _ nickname: String) {
+        guard let currentId = Auth.auth().currentUser?.uid else {
+            print("유저 정보 없음")
+            return
+        }
+        db.collection("chatRooms").whereField("postUserId", isEqualTo: currentId).getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Firestore Query Error in chat collection: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                print("No matching documents found in chat collection")
+                return
+            }
+            
+            for document in documents {
+                document.reference.updateData(["postUserNickname": nickname]) { error in
+                    if let error = error {
+                        print("Error updating post nickname in document \(document.documentID): \(error.localizedDescription)")
+                    } else {
+                        print("updateChatNickname Nickname successfully updated in document \(document.documentID)!")
                     }
                 }
             }

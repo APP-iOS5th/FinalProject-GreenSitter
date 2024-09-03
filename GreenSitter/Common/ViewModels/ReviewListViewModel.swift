@@ -52,6 +52,7 @@ extension ReviewListViewController {
                     enabled: true,
                     createDate: Date(),
                     updateDate: updateDate,
+                    recipientId: "",
                     userId: targetUserId,
                     profileImage: "",  // 필요시 추가
                     nickname: "",      // 필요시 추가
@@ -104,9 +105,6 @@ extension ReviewListViewController {
                 completion(nil)
                 return
             }
-            
-            // 데이터 크기 및 내용 확인
-            print("Image data size: \(data.count) bytes")
             
             // 데이터의 일부를 문자열로 변환하여 출력 (디버깅 용도)
             if let dataString = String(data: data, encoding: .utf8) {

@@ -166,7 +166,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.backgroundColor = .clear
             cell.messageLabel.text = messages[indexPath.row].text
             
-            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+            if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true
@@ -204,7 +204,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -227,7 +227,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -250,7 +250,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -273,7 +273,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -341,7 +341,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.delegate = self
                 
-                if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+                if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                     cell.isIncoming = false
                 } else {
                     cell.isIncoming = true
@@ -392,7 +392,7 @@ extension ChatMessageViewController: UITableViewDataSource {
                 }
             }
             
-            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+            if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true
@@ -413,7 +413,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.backgroundColor = .clear
             cell.messageLabel.text = messages[indexPath.row].text
             
-            if chatViewModel?.userId == messages[indexPath.row].senderUserId {
+            if chatViewModel?.user?.id == messages[indexPath.row].senderUserId {
                 cell.isIncoming = false
             } else {
                 cell.isIncoming = true

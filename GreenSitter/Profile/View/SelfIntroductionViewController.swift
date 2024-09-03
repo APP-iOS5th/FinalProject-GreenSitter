@@ -55,7 +55,7 @@ class SelfIntroductionViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "SeparatorsOpaque")
+        view.backgroundColor = UIColor(named: "BGPrimary")
         
         view.addSubview(titleLabel)
         view.addSubview(closeButton)

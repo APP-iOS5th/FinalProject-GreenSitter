@@ -40,6 +40,9 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
                     self.updatePostsImageURL(forUserId: userId, imageURL: imageURL)
                     self.updateUserProfileImageURL(forUserId: userId, imageURL: imageURL)
                     self.imageButton.setImage(originalImage, for: .normal)
+                    self.updateChatUserImageURL(forUserId: userId, imageURL: imageURL)
+                    self.updateChatPostsImageURL(forUserId: userId, imageURL: imageURL)
+
                 }
             }
         }
@@ -76,6 +79,56 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
                         print("Error updating profileImageURL in document \(document.documentID): \(error.localizedDescription)")
                     } else {
                         print("ProfileImageURL successfully updated in document \(document.documentID)!")
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateChatUserImageURL(forUserId userId: String, imageURL: String) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        db.collection("chatRooms").whereField("userId", isEqualTo: userId).getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Firestore Query Error in posts collection: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                print("No matching documents found in chat user collection")
+                return
+            }
+            
+            for document in documents {
+                document.reference.updateData(["userProfileImage": imageURL]) { error in
+                    if let error = error {
+                        print("Error updating chat user profileImageURL in document \(document.documentID): \(error.localizedDescription)")
+                    } else {
+                        print("ProfileImageURL chat user successfully updated in document \(document.documentID)!")
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateChatPostsImageURL(forUserId userId: String, imageURL: String) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        db.collection("chatRooms").whereField("postUserId", isEqualTo: userId).getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Firestore Query Error in chat posts collection: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                print("No matching documents found in chat posts collection")
+                return
+            }
+            
+            for document in documents {
+                document.reference.updateData(["postUserProfileImage": imageURL]) { error in
+                    if let error = error {
+                        print("Error updating chat posts profileImageURL in document \(document.documentID): \(error.localizedDescription)")
+                    } else {
+                        print("ProfileImageURL chat posts successfully updated in document \(document.documentID)!")
                     }
                 }
             }

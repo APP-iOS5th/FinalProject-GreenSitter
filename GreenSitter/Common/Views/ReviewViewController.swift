@@ -17,8 +17,6 @@ class ReviewViewController: UIViewController, UITableViewDelegate, UITableViewDa
     var selectedTextButtons: Set<UIButton> = []
     var post: [Post] = []
     var postId: String?
-   
-
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()

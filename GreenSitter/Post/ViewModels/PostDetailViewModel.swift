@@ -74,10 +74,6 @@ class PostDetailViewModel: ObservableObject {
             return
         }
         
-        guard let user = LoginViewModel.shared.user else {
-            return
-        }
-        
         do {
             // 중복 체크
             if let existingChatRoom = await self.firestoreManager.chatRoomExists(userId: newChat.userId, postUserId: newChat.postUserId, postId: newChat.postId) {
