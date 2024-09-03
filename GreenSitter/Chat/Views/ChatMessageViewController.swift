@@ -405,6 +405,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             }
             cell.chatRoom = chatRoom
             cell.chatViewModel = self.chatViewModel
+            cell.setupUI()
             cell.updateRecipientName()
             
             return cell
