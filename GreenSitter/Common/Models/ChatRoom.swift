@@ -31,4 +31,5 @@ struct ChatRoom: Codable {
     var postStatus: PostStatus
     var hasLeavePlan: Bool
     var hasGetBackPlan: Bool
+    var preferredPlace: Location?
 }

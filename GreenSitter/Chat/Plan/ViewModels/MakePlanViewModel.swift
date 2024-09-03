@@ -59,7 +59,7 @@ class MakePlanViewModel {
 
         
         self.planDate = newDate
-        self.planPlace = planPlace ?? chatRoom.postUserLocation
+        self.planPlace = planPlace ?? chatRoom.preferredPlace
         self.ownerNotification = ownerNotification
         self.sitterNotification = sitterNotification
         self.progress = progress
