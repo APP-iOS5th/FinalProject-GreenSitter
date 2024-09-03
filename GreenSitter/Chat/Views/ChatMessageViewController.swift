@@ -13,8 +13,6 @@ class ChatMessageViewController: UIViewController {
     private var messageListeners: [Task<Void, Never>] = []
     private var unreadMessageListeners: [Task<Void, Never>] = []
     
-    private let imageCache = NSCache<NSString, UIImage>()
-    
     init(chatRoom: ChatRoom) {
         self.chatRoom = chatRoom
         super.init(nibName: nil, bundle: nil)
@@ -131,6 +129,7 @@ class ChatMessageViewController: UIViewController {
         tableView.register(FourImagesTableViewCell.self, forCellReuseIdentifier: "FourImagesCell")
         tableView.register(MoreImagesTableViewCell.self, forCellReuseIdentifier: "MoreImagesCell")
         tableView.register(ChatMessageTableViewPlanCell.self, forCellReuseIdentifier: "ChatMessagePlanCell")
+        tableView.register(ChatMessageTableViewReviewCell.self, forCellReuseIdentifier: "ChatMessageReviewCell")
         
         self.view.addSubview(tableView)
         
@@ -195,12 +194,14 @@ extension ChatMessageViewController: UITableViewDataSource {
                 cell.backgroundColor = .clear
                 
                 let imagePaths = messages[indexPath.row].image ?? []
+                var imageURLs = [URL]()
                 
                 for imagePath in imagePaths {
                     if let imageURL = URL(string: imagePath) {
-                        cell.imageURLs.append(imageURL)
+                        imageURLs.append(imageURL)
                     }
                 }
+                cell.imageURLs = imageURLs
                 
                 cell.delegate = self
                 
@@ -218,12 +219,14 @@ extension ChatMessageViewController: UITableViewDataSource {
                 cell.backgroundColor = .clear
                 
                 let imagePaths = messages[indexPath.row].image ?? []
+                var imageURLs = [URL]()
                 
                 for imagePath in imagePaths {
                     if let imageURL = URL(string: imagePath) {
-                        cell.imageURLs.append(imageURL)
+                        imageURLs.append(imageURL)
                     }
                 }
+                cell.imageURLs = imageURLs
                 
                 cell.delegate = self
                 
@@ -241,12 +244,14 @@ extension ChatMessageViewController: UITableViewDataSource {
                 cell.backgroundColor = .clear
                 
                 let imagePaths = messages[indexPath.row].image ?? []
+                var imageURLs = [URL]()
                 
                 for imagePath in imagePaths {
                     if let imageURL = URL(string: imagePath) {
-                        cell.imageURLs.append(imageURL)
+                        imageURLs.append(imageURL)
                     }
                 }
+                cell.imageURLs = imageURLs
                 
                 cell.delegate = self
                 
@@ -264,12 +269,14 @@ extension ChatMessageViewController: UITableViewDataSource {
                 cell.backgroundColor = .clear
                 
                 let imagePaths = messages[indexPath.row].image ?? []
+                var imageURLs = [URL]()
                 
                 for imagePath in imagePaths {
                     if let imageURL = URL(string: imagePath) {
-                        cell.imageURLs.append(imageURL)
+                        imageURLs.append(imageURL)
                     }
                 }
+                cell.imageURLs = imageURLs
                 
                 cell.delegate = self
                 
@@ -286,58 +293,15 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.backgroundColor = .clear
                 
-                cell.tag = indexPath.row
-
-                
-                var progressImages = [UIImage]()
-                
-                for _ in 0..<imageCounts {
-                    if let photoImage = UIImage(systemName: "photo") {
-                        
-                        let targetSize = CGSize(width: 400, height: 400)
-                        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
-                        photoImage.draw(in: CGRect(origin: .zero, size: targetSize))
-                        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-                        UIGraphicsEndImageContext()
-                        
-                        if let resizedImage = resizedImage {
-                            progressImages.append(resizedImage)
-                        }
-                    }
-                }
-                cell.images = progressImages
-                
                 let imagePaths = messages[indexPath.row].image ?? []
-                var cachedImages = [UIImage]()
-                var imagesToLoad = [String]()
+                var imageURLs = [URL]()
                 
                 for imagePath in imagePaths {
-                    if let cachedImage = imageCache.object(forKey: NSString(string: imagePath)) {
-                        cachedImages.append(cachedImage)
-                    } else {
-                        imagesToLoad.append(imagePath)
+                    if let imageURL = URL(string: imagePath) {
+                        imageURLs.append(imageURL)
                     }
                 }
-                
-//                if !imagesToLoad.isEmpty {
-//                    Task {
-//                        let loadedImages = await chatViewModel?.loadChatImages(imagePaths: imagesToLoad)
-//                        DispatchQueue.main.async {
-//                            if cell.tag == indexPath.row {
-//                                if let loadedImages = loadedImages {
-//                                    for (index, image) in loadedImages.enumerated() {
-//                                        let path = imagesToLoad[index]
-//                                        self.imageCache.setObject(image, forKey: NSString(string: path))
-//                                        cachedImages.append(image)
-//                                    }
-//                                    cell.images = cachedImages
-//                                }
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    cell.images = cachedImages
-//                }
+                cell.imageURLs = imageURLs
                 
                 cell.delegate = self
                 
@@ -379,7 +343,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.planPlaceLabel.text = "장소: \(planPlace)"
             
             if let plan = messages[indexPath.row].plan {
-                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, chatRoom: chatRoom)
+                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, planType: plan.planType, chatViewModel: chatViewModel, chatRoom: chatRoom, messageId: messages[indexPath.row].id)
                 cell.detailButtonAction = {
                     self.present(MakePlanViewController(viewModel: makePlanViewModel), animated: true)
                 }
@@ -401,7 +365,25 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.isRead = messages[indexPath.row].isRead
             
             return cell
+        case .review:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageReviewCell", for: indexPath) as! ChatMessageTableViewReviewCell
+            cell.backgroundColor = .clear
             
+            guard let messages = self.chatViewModel?.messages[chatRoom.id],
+                  indexPath.row < messages.count else {
+                fatalError("Unable to retrieve messages for the selected chat room")
+            }
+            
+            cell.makeReviewButtonAction = {
+                let navigationController = UINavigationController(rootViewController: WriteReviewViewController())
+                navigationController.modalPresentationStyle = .fullScreen
+                self.present(navigationController, animated: true)
+            }
+            cell.chatRoom = chatRoom
+            cell.chatViewModel = self.chatViewModel
+            cell.updateRecipientName()
+            
+            return cell
         case .none:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
             

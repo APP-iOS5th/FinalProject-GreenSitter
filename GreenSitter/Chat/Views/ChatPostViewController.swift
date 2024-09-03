@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ChatPostViewController: UIViewController {
     var chatViewModel: ChatViewModel?
@@ -66,6 +67,8 @@ class ChatPostViewController: UIViewController {
 
         setupUI()
         
+        chatViewModel?.delegate = self
+        
         // 게시물 디테일로 이동하기 위한 Tap Gesture
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         self.view.addGestureRecognizer(tapGesture)
@@ -75,7 +78,12 @@ class ChatPostViewController: UIViewController {
     private func setupUI() {
         if let firstImageUrlString = chatRoom.postImage,
            let postThumbnailUrl = URL(string: firstImageUrlString) {
-            chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView)
+            // 이미지 다운로드 실패 시 기본 이미지로 설정
+            let placeholderImage = UIImage(named: "chatIcon")
+            
+//            chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView, placeholderImage: placeholderImage)
+            // Kingfisher를 사용하여 이미지 다운로드 및 설정
+            postThumbnailView.kf.setImage(with: postThumbnailUrl, placeholder: placeholderImage)
         }
         
         postTitleLabel.text = chatRoom.postTitle
@@ -121,4 +129,19 @@ class ChatPostViewController: UIViewController {
         self.navigationController?.pushViewController(postDetailViewController, animated: true)
     }
 
+}
+
+extension ChatPostViewController: ChatViewModelDelegate {
+    func updatePostStatusLabelAfterMakePlan() {
+        chatRoom.postStatus = .inTrade
+        postStatusLabel.text = chatRoom.postStatus.rawValue
+    }
+    func updatePostStatusLabelAfterCancelPlan() {
+        chatRoom.postStatus = .beforeTrade
+        postStatusLabel.text = chatRoom.postStatus.rawValue
+    }
+    func updatePostStatusLabelAfterCompleteTrade() {
+        chatRoom.postStatus = .completedTrade
+        postStatusLabel.text = chatRoom.postStatus.rawValue
+    }
 }

@@ -152,7 +152,18 @@ class ChatViewController: UIViewController {
             }
         }
         
-        let menuItems = [notificationToggleAction, leaveChatRoomAction]
+        let completeTradeAction = UIAction(
+            title: "거래 완료하기",
+            image: UIImage(systemName: "checkmark.circle")
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            Task {
+                await self.chatViewModel?.completeTrade(chatRoomId: self.chatRoom.id, postId: self.chatRoom.postId, recipientId: self.chatRoom.userId)
+                self.chatViewModel?.sendReviewMessage(chatRoom: self.chatRoom)
+            }
+        }
+        
+        let menuItems = [notificationToggleAction, completeTradeAction, leaveChatRoomAction]
         let menu = UIMenu(children: menuItems)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
     }

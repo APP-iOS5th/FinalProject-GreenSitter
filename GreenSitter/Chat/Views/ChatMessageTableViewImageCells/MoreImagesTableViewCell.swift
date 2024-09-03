@@ -10,6 +10,8 @@ import UIKit
 class MoreImagesTableViewCell: UITableViewCell {
     weak var delegate: ChatMessageTableViewImageCellDelegate?
     
+    private let firestorageManager = FirestorageManager()
+    
     var isIncoming: Bool = false {
         didSet {
             setupUI()
@@ -24,13 +26,7 @@ class MoreImagesTableViewCell: UITableViewCell {
     
     var imageSize: CGFloat?
     
-    var images: [UIImage] = [] {
-        didSet {
-            DispatchQueue.main.async {
-                self.updateBubbleView()
-            }
-        }
-    }
+    var imageURLs = [URL]()
     
     private lazy var firstImageView: UIImageView = {
        let firstImageView = UIImageView()
@@ -175,6 +171,16 @@ class MoreImagesTableViewCell: UITableViewCell {
             moreImagesLabel.heightAnchor.constraint(equalToConstant: imageSize),
             moreImagesLabel.widthAnchor.constraint(equalToConstant: imageSize),
         ])
+        
+        var imageViews = [firstImageView, secondImageView, thirdImageView]
+
+        for (index, imageURL) in imageURLs.enumerated() {
+            if index < imageViews.count {
+                firestorageManager.loadImage(imageURL: imageURL, imageSize: imageSize, imageView: &imageViews[index])
+            }
+        }
+        
+        moreImagesLabel.text = "+ \(imageURLs.count - 3)\n더보기"
     }
     
     // MARK: - Setup UI
@@ -280,27 +286,76 @@ class MoreImagesTableViewCell: UITableViewCell {
         }
     }
     
-    private func updateBubbleView() {
-        firstImageView.image = images[0]
-        secondImageView.image = images[1]
-        thirdImageView.image = images[2]
-        moreImagesLabel.text = "+ \(images.count - 3)\n더보기"
-    }
-    
     @objc
     private func handleImageTap(_ sender: UITapGestureRecognizer) {
-        guard let imageView = sender.view as? UIImageView, let image = imageView.image else { return }
+        guard let imageView = sender.view as? UIImageView, let _ = imageView.image else { return }
         
-        guard let index = images.firstIndex(of: image) else { return }
+        var images = [UIImage]()
         
-        delegate?.imageViewTapped(images: images, index: index)
+        let imageViews = [firstImageView, secondImageView, thirdImageView]
+        for imageView in imageViews {
+            if let image = imageView.image {
+                images.append(image)
+            }
+        }
+        
+        guard let imageSize = imageSize else { return }
+        
+        let group = DispatchGroup()
+        
+        for (index, imageURL) in imageURLs.enumerated() {
+            if index > 2 {
+                group.enter()
+                var imageView = UIImageView()
+                firestorageManager.loadImage(imageURL: imageURL, imageSize: imageSize, imageView: &imageView) {
+                    if let image = imageView.image {
+                        images.append(image)
+                    }
+                    group.leave()
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            if let index = imageViews.firstIndex(of: imageView) {
+                self.delegate?.imageViewTapped(images: images, index: index)
+            }
+        }
     }
     
     @objc
     private func handleMorePhotosLabelTap(_ sender: UITapGestureRecognizer) {
         guard let _ = sender.view as? UILabel else { return }
         
-        delegate?.imageViewTapped(images: images, index: 3)
+        var images = [UIImage]()
+        
+        let imageViews = [firstImageView, secondImageView, thirdImageView]
+        for imageView in imageViews {
+            if let image = imageView.image {
+                images.append(image)
+            }
+        }
+        
+        guard let imageSize = imageSize else { return }
+        
+        let group = DispatchGroup()
+        
+        for (index, imageURL) in imageURLs.enumerated() {
+            if index > 2 {
+                group.enter()
+                var imageView = UIImageView()
+                firestorageManager.loadImage(imageURL: imageURL, imageSize: imageSize, imageView: &imageView) {
+                    if let image = imageView.image {
+                        images.append(image)
+                    }
+                    group.leave()
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            self.delegate?.imageViewTapped(images: images, index: 3)
+        }
     }
 }
 
