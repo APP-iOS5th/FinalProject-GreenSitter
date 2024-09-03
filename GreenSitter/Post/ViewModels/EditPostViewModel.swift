@@ -12,10 +12,11 @@ import UIKit
 import PhotosUI
 
 class EditPostViewModel: ObservableObject {
-    @Published var postImages: [UIImage] = []
-    @Published var selectedImages: [UIImage] = []
-    
+    @Published var postImageURLs: [String] = []  // URL 배열로 변경
+    @Published var selectedImageURLs: [String] = []  // URL 배열로 변경
+
     @Published var imageURLsToDelete: [String] = []
+    
     @Published var selectedPost: Post
     private var firestoreManager = FirestoreManager()
     private let storage = Storage.storage()

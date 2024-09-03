@@ -392,51 +392,52 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
 
     
     private func addImageToStackView(_ image: UIImage) {
-        let existingImages = imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
-        if existingImages.contains(image) {
-            return
-        }
-        
-        let containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        
-        let imageView = UIImageView(image: image)
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let deleteButton = UIButton(type: .custom)
-        deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
-        deleteButton.tintColor = .red
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.addTarget(self, action: #selector(deleteImage(_:)), for: .touchUpInside)
-        
-        containerView.addSubview(imageView)
-        containerView.addSubview(deleteButton)
-        
-        NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+        DispatchQueue.main.async {
+            let existingImages = self.imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
+            if existingImages.contains(image) {
+                return
+            }
             
-            deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 5),
-            deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -5),
-            deleteButton.widthAnchor.constraint(equalToConstant: 24),
-            deleteButton.heightAnchor.constraint(equalToConstant: 24),
-        ])
-        
-        if let pickerImageViewIndex = imageStackView.arrangedSubviews.firstIndex(of: pickerImageView) {
-            imageStackView.insertArrangedSubview(containerView, at: pickerImageViewIndex + 1)
-        } else {
-            imageStackView.addArrangedSubview(containerView)
+            let containerView = UIView()
+            containerView.translatesAutoresizingMaskIntoConstraints = false
+            containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+            containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+            
+            let imageView = UIImageView(image: image)
+            imageView.contentMode = .scaleAspectFill
+            imageView.clipsToBounds = true
+            imageView.layer.cornerRadius = 10
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            let deleteButton = UIButton(type: .custom)
+            deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+            deleteButton.tintColor = .red
+            deleteButton.translatesAutoresizingMaskIntoConstraints = false
+            deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+            
+            containerView.addSubview(imageView)
+            containerView.addSubview(deleteButton)
+            
+            NSLayoutConstraint.activate([
+                imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+                
+                deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 5),
+                deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -5),
+                deleteButton.widthAnchor.constraint(equalToConstant: 24),
+                deleteButton.heightAnchor.constraint(equalToConstant: 24),
+            ])
+            
+            if let pickerImageViewIndex = self.imageStackView.arrangedSubviews.firstIndex(of: self.pickerImageView) {
+                self.imageStackView.insertArrangedSubview(containerView, at: pickerImageViewIndex + 1)
+            } else {
+                self.imageStackView.addArrangedSubview(containerView)
+            }
+            
+            self.updateImageStackView()
         }
-        
-        updateImageStackView()
-        
     }
     
     @objc private func deleteImage(_ sender: UIButton) {
