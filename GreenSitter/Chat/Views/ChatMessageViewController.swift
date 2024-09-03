@@ -292,7 +292,6 @@ extension ChatMessageViewController: UITableViewDataSource {
             }
             
         case .plan:
-            // 플랜 수정하기 기능 추가해야함
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessagePlanCell", for: indexPath) as! ChatMessageTableViewPlanCell
             cell.backgroundColor = .clear
             
@@ -320,7 +319,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.planPlaceLabel.text = "장소: \(planPlace)"
             
             if let plan = messages[indexPath.row].plan {
-                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, planType: plan.planType, chatRoom: chatRoom, messageId: messages[indexPath.row].id)
+                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, planType: plan.planType, chatViewModel: chatViewModel, chatRoom: chatRoom, messageId: messages[indexPath.row].id)
                 cell.detailButtonAction = {
                     self.present(MakePlanViewController(viewModel: makePlanViewModel), animated: true)
                 }

@@ -9,7 +9,8 @@ import UIKit
 import FirebaseAuth
 
 protocol ChatViewModelDelegate: AnyObject {
-    func updatePostStatusLabel()
+    func updatePostStatusLabelAfterMakePlan()
+    func updatePostStatusLabelAfterCancelPlan()
 }
 
 @MainActor
@@ -334,11 +335,24 @@ class ChatViewModel {
         }
     }
     
-    func updatePostStatus(chatRoomId: String, planType: PlanType, postId: String) async {
+    func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String) async {
         do {
-            try await firestoreManager.updatePostStatus(chatRoomId: chatRoomId, planType: planType, postId: postId)
+            try await firestoreManager.updatePostStatusAfterMakePlan(chatRoomId: chatRoomId, planType: planType, postId: postId)
             
-            delegate?.updatePostStatusLabel()
+            delegate?.updatePostStatusLabelAfterMakePlan()
+        } catch {
+            print("Failed to update post status: \(error.localizedDescription)")
+        }
+        
+    }
+    
+    func updatePostStatusAfterCancelPlan(chatRoomId: String, planType: PlanType, postId: String) async {
+        print("chatViewModel func")
+        do {
+            let needUpdatePostLabel = try await firestoreManager.updatePostStatusAfterCancelPlan(chatRoomId: chatRoomId, planType: planType, postId: postId)
+            if needUpdatePostLabel {
+                delegate?.updatePostStatusLabelAfterCancelPlan()
+            }
         } catch {
             print("Failed to update post status: \(error.localizedDescription)")
         }

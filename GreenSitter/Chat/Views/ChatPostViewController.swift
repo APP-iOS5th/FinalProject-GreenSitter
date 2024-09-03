@@ -126,8 +126,12 @@ class ChatPostViewController: UIViewController {
 }
 
 extension ChatPostViewController: ChatViewModelDelegate {
-    func updatePostStatusLabel() {
+    func updatePostStatusLabelAfterMakePlan() {
         chatRoom.postStatus = .inTrade
+        postStatusLabel.text = chatRoom.postStatus.rawValue
+    }
+    func updatePostStatusLabelAfterCancelPlan() {
+        chatRoom.postStatus = .beforeTrade
         postStatusLabel.text = chatRoom.postStatus.rawValue
     }
 }

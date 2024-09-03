@@ -28,7 +28,7 @@ class MakePlanViewModel {
     
     var messageId: String?
     
-    init(date: Date = Date(), planPlace: Location? = nil, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0, isPlaceSelected: Bool = false, planType: PlanType, chatRoom: ChatRoom, messageId: String? = nil) {
+    init(date: Date = Date(), planPlace: Location? = nil, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0, isPlaceSelected: Bool = false, planType: PlanType, chatViewModel: ChatViewModel? = nil, chatRoom: ChatRoom, messageId: String? = nil) {
         let interval = 5
         let calendar = Calendar.current
         let currentDateComponents = calendar.dateComponents([.hour, .minute, .second], from: date)
@@ -65,6 +65,7 @@ class MakePlanViewModel {
         self.progress = progress
         self.isPlaceSelected = isPlaceSelected
         self.planType = planType
+        self.chatViewModel = chatViewModel
         self.chatRoom = chatRoom
         self.messageId = messageId
     }
@@ -81,7 +82,7 @@ class MakePlanViewModel {
         let plan = Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: planDate, planPlace: planPlace, contract: nil, ownerNotification: ownerNotification, sitterNotification: sitterNotification, isAccepted: false, planType: planType)
         Task {
             await chatViewModel?.sendPlanMessage(plan: plan, chatRoom: chatRoom)
-            await chatViewModel?.updatePostStatus(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
+            await chatViewModel?.updatePostStatusAfterMakePlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
         }
     }
     
@@ -93,6 +94,12 @@ class MakePlanViewModel {
             try await firestoreManager.updatePlanNotification(chatRoomId: chatRoom.id, messageId: messageId, ownerNotification: ownerNotification, sitterNotification: sitterNotification)
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    func cancelPlan() {
+        Task {
+            await chatViewModel?.updatePostStatusAfterCancelPlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
         }
     }
 }

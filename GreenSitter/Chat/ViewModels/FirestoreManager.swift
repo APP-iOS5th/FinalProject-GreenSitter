@@ -376,7 +376,7 @@ class FirestoreManager {
         ])
     }
     
-    func updatePostStatus(chatRoomId: String, planType: PlanType, postId: String) async throws {
+    func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String) async throws {
         let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
         let postRef = db.collection("posts").document(postId)
         
@@ -398,5 +398,42 @@ class FirestoreManager {
                 "postStatus" : PostStatus.inTrade.rawValue
             ])
         }
+    }
+    
+    func updatePostStatusAfterCancelPlan(chatRoomId: String, planType: PlanType, postId: String) async throws -> Bool {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+        let postRef = db.collection("posts").document(postId)
+        
+        switch planType {
+        case .leavePlan:
+            print("leavePlan")
+            try await chatRoomRef.updateData([
+                "hasLeavePlan" : false,
+            ])
+            let chatRoomSnapshot = try await chatRoomRef.getDocument()
+            if let chatRoomData = chatRoomSnapshot.data(),
+               let hasGetBackPlan = chatRoomData["hasGetBackPlan"] as? Bool,
+               hasGetBackPlan == false {
+                try await postRef.updateData([
+                    "postStatus" : PostStatus.beforeTrade.rawValue
+                ])
+                return true
+            }
+        case .getBackPlan:
+            print("getBackPlan")
+            try await chatRoomRef.updateData([
+                "hasGetBackPlan" : false,
+            ])
+            let chatRoomSnapshot = try await chatRoomRef.getDocument()
+            if let chatRoomData = chatRoomSnapshot.data(),
+               let hasLeavePlan = chatRoomData["hasLeavePlan"] as? Bool,
+               hasLeavePlan == false {
+                try await postRef.updateData([
+                    "postStatus" : PostStatus.beforeTrade.rawValue
+                ])
+                return true
+            }
+        }
+        return false
     }
 }
