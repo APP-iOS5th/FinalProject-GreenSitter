@@ -64,6 +64,29 @@ class ChatViewModel {
         }
     }
     
+    // 채팅목록 정렬 함수
+    func sortChatRoomsByLastMessageDate() {
+        self.chatRooms.sort { (chatRoom1, chatRoom2) -> Bool in
+            let lastMessage1 = lastMessages[chatRoom1.id]?.last
+            let lastMessage2 = lastMessages[chatRoom2.id]?.last
+            
+            switch (lastMessage1, lastMessage2) {
+                // 두 채팅방 모두 lastMessage가 없는 경우, 순서 유지
+            case (nil, nil):
+                return false
+                // chatRoom1의 lastMessage가 없으면 chatRoom2의 뒤에 위치
+            case (nil, _):
+                return false
+                // chatRoom2의 lastMessage가 없으면 chatRoom1의 뒤에 위치
+            case (_, nil):
+                return true
+                // 두 채팅방 모두 lastMessage가 있을 경우, 최신순으로 정렬
+            case let (message1?, message2?):
+                return message1.createDate > message2.createDate
+            }
+        }
+    }
+    
     func loadChatRooms() async throws -> [ChatRoom] {
         do {
             let updatedChatRooms = try await firestoreManager.fetchChatRooms(userId: user!.id)
@@ -112,18 +135,32 @@ class ChatViewModel {
         }
     }
     
-    func downloadImage(from url: URL, to imageView: UIImageView) {
+    func downloadImage(from url: URL, to imageView: UIImageView, placeholderImage: UIImage? = nil) {
+        let currentURL = url
+        // 셀의 이미지 뷰에 현재 로드 중인 URL을 태그로 설정
+        imageView.tag = url.hashValue
+        
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let self = self, let data = data, error == nil else {
-                print("Failed to download image: \(error?.localizedDescription ?? "")")
-                return
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Failed to download image: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    imageView.image = placeholderImage
+                }
             }
             
-            DispatchQueue.main.async {
-                if let image = UIImage(data: data) {
-                    imageView.image = image
-                } else {
-                    print("Failed to convert data to image")
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    // 태그가 여전히 동일한 URL을 가리키고 있는지 확인
+                    if imageView.tag == currentURL.hashValue {
+                        imageView.image = image
+                    }
+                }
+            } else {
+                print("Failed to convert data to image")
+                DispatchQueue.main.async {
+                    imageView.image = placeholderImage
                 }
             }
         }.resume()

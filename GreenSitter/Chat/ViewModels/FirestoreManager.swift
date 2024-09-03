@@ -70,13 +70,6 @@ class FirestoreManager {
         let userId = chatRoom.userId
         let postUserId = chatRoom.postUserId
         let postId = chatRoom.postId
-        
-        // 중복 검사
-//        if await chatRoomExists(userId: userId, postUserId: postUserId, postId: postId) != nil {
-//            print("Chat room with userId \(userId), postUserId \(postUserId), and postId \(postId) already exists")
-//            return
-//        }
-        
         let documentRef = db.collection("chatRooms").document(chatRoom.id)
         
         do {
@@ -110,14 +103,14 @@ class FirestoreManager {
     // 채팅방 데이터 가져오기
     func fetchChatRooms(userId: String) async throws -> [ChatRoom] {
         // 사용자 아이디와 userId가 같은 문서와 사용자 아이디와 postUserId가 같은 문서 필터링
-        // TODO: - 최신 메세지 순으로 채팅방 정렬
         let userQuery = db.collection("chatRooms")
             .whereField("userId", isEqualTo: userId)
             .whereField("userEnabled", isEqualTo: true)
+//            .order(by: "createDate", descending: true)
         let postUserQuery = db.collection("chatRooms")
             .whereField("postUserId", isEqualTo: userId)
             .whereField("postUserEnabled", isEqualTo: true)
-        
+//            .order(by: "createDate", descending: true)
         do {
             // 사용자 관련 채팅방 가져오기
             let userSnapshot = try await userQuery.getDocuments()
