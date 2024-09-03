@@ -131,7 +131,6 @@ class ChatViewModel {
                 DispatchQueue.main.async {
                     // 태그가 여전히 동일한 URL을 가리키고 있는지 확인
                     if imageView.tag == currentURL.hashValue {
-                        print("currentURL: \(currentURL)")
                         imageView.image = image
                     }
                 }

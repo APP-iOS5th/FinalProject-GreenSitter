@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ChatPostViewController: UIViewController {
     var chatViewModel: ChatViewModel?
@@ -78,7 +79,9 @@ class ChatPostViewController: UIViewController {
             // 이미지 다운로드 실패 시 기본 이미지로 설정
             let placeholderImage = UIImage(named: "chatIcon")
             
-            chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView, placeholderImage: placeholderImage)
+//            chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView, placeholderImage: placeholderImage)
+            // Kingfisher를 사용하여 이미지 다운로드 및 설정
+            postThumbnailView.kf.setImage(with: postThumbnailUrl, placeholder: placeholderImage)
         }
         
         postTitleLabel.text = chatRoom.postTitle
