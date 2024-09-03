@@ -100,6 +100,7 @@ class MakePlanViewModel {
     func cancelPlan() {
         Task {
             await chatViewModel?.updatePostStatusAfterCancelPlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
+            await chatViewModel?.sendButtonTapped(text: "약속을 취소했습니다.", chatRoom: chatRoom)
         }
     }
 }
