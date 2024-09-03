@@ -15,7 +15,7 @@ class EditPostViewModel: ObservableObject {
     @Published var postImageURLs: [String] = []  // URL 배열로 변경
     @Published var selectedImageURLs: [String] = []  // URL 배열로 변경
     @Published var selectedImages: [UIImage] = []
-    
+    @Published var addedImages: [UIImage] = []
     
     @Published var imageURLsToDelete: [String] = []
     @Published var selectedPost: Post
@@ -144,8 +144,43 @@ class EditPostViewModel: ObservableObject {
     }
     
     // 서버에서 이미지 삭제
-    func deleteRemovedImages(completion: @escaping (Result<Void, Error>) -> Void) {
+    func deleteRemovedImages(completion: @escaping (Result<[String], Error>) -> Void) {
+        var imageURLs: [String] = []
         let group = DispatchGroup()
+        
+        for image in addedImages {
+            group.enter()
+            
+            guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+                group.leave()
+                completion(.failure(NSError(domain: "Image conversion failed", code: 0, userInfo: nil)))
+                return
+            }
+            
+            let imageName = UUID().uuidString + ".jpg"
+            let storageRef = storage.reference().child("post_images/\(imageName)")
+            
+            storageRef.putData(imageData, metadata: nil) { (_, error) in
+                if let error = error {
+                    group.leave()
+                    completion(.failure(error))
+                    return
+                }
+                
+                storageRef.downloadURL { (url, error) in
+                    if let error = error {
+                        group.leave()
+                        completion(.failure(error))
+                        return
+                    }
+                    
+                    if let imageURL = url?.absoluteString {
+                        imageURLs.append(imageURL)
+                    }
+                    group.leave()
+                }
+            }
+        }
         
         print("Starting to delete removed images. Image URLs to delete: \(imageURLsToDelete)")
         
@@ -164,7 +199,7 @@ class EditPostViewModel: ObservableObject {
         }
         
         group.notify(queue: .main) {
-            completion(.success(()))
+            completion(.success((imageURLs)))
         }
     }
     
@@ -175,10 +210,11 @@ class EditPostViewModel: ObservableObject {
             guard let self = self else { return }
             
             switch result {
-            case .success:
+            case .success(let imageUrls):
                 var allImageURLs = self.selectedPost.postImages ?? []
                 allImageURLs = self.selectedImageURLs
                 allImageURLs = allImageURLs.filter{ !self.imageURLsToDelete.contains($0) }
+                allImageURLs += imageUrls
                 
                 // 기존의 포스트 데이터 업데이트
                 let updatedPost = Post(

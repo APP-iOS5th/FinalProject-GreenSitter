@@ -380,7 +380,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
                     DispatchQueue.main.async {
                         // View model에 이미지 추가
                         self?.viewModel.selectedImages.append(image)
-                        
+                        self?.viewModel.addedImages.append(image)
                         // UI 업데이트
                         self?.addImageToStackView(image)
                     }
@@ -686,5 +686,7 @@ extension EditPostViewController: UITextFieldDelegate, UITextViewDelegate {
         }
     }
 }
+
+
 
 
