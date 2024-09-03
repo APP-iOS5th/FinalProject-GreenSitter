@@ -15,7 +15,7 @@ extension ReviewListViewController {
         let targetUserId = self.userId
 
 
-        db.collection("posts").whereField("userId", isEqualTo: targetUserId).whereField("postType", isEqualTo: "새싹돌봄이 찾습니다").whereField("postStatus", isEqualTo: "거래완료").getDocuments { [weak self] (snapshot, error) in
+        db.collection("posts").whereField("userId", isEqualTo: targetUserId).whereField("postStatus", isEqualTo: "거래완료").getDocuments { [weak self] (snapshot, error) in
             guard let self = self else { return }
             
             if let error = error {
