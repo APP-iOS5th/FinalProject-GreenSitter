@@ -50,7 +50,6 @@ class ChatMessageTableViewCell: UITableViewCell {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.image = UIImage(named: "logo7")
         
         return imageView
     }()
@@ -194,7 +193,10 @@ class ChatMessageTableViewCell: UITableViewCell {
             return
         }
         
-        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
+        // 이미지 다운로드 실패 시 기본 이미지로 설정
+        let placeholderImage = UIImage(named: "profileIcon")
+        
+        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView, placeholderImage: placeholderImage)
         
         // 메세지 시간 설정
         let date = Date()

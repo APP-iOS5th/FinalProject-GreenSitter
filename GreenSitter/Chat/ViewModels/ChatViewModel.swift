@@ -113,12 +113,11 @@ class ChatViewModel {
     }
     
     func downloadImage(from url: URL, to imageView: UIImageView, placeholderImage: UIImage? = nil) {
+        let currentURL = url
+        // 셀의 이미지 뷰에 현재 로드 중인 URL을 태그로 설정
+        imageView.tag = url.hashValue
+        
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-//            guard let self = self, let data = data, error == nil else {
-//                print("Failed to download image: \(error?.localizedDescription ?? "")")
-//                return
-//            }
-            
             guard let self = self else { return }
             
             if let error = error {
@@ -130,7 +129,11 @@ class ChatViewModel {
             
             if let data = data, let image = UIImage(data: data) {
                 DispatchQueue.main.async {
-                    imageView.image = image
+                    // 태그가 여전히 동일한 URL을 가리키고 있는지 확인
+                    if imageView.tag == currentURL.hashValue {
+                        print("currentURL: \(currentURL)")
+                        imageView.image = image
+                    }
                 }
             } else {
                 print("Failed to convert data to image")
