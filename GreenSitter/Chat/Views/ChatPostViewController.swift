@@ -67,6 +67,8 @@ class ChatPostViewController: UIViewController {
 
         setupUI()
         
+        chatViewModel?.delegate = self
+        
         // 게시물 디테일로 이동하기 위한 Tap Gesture
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         self.view.addGestureRecognizer(tapGesture)
@@ -127,4 +129,19 @@ class ChatPostViewController: UIViewController {
         self.navigationController?.pushViewController(postDetailViewController, animated: true)
     }
 
+}
+
+extension ChatPostViewController: ChatViewModelDelegate {
+    func updatePostStatusLabelAfterMakePlan() {
+        chatRoom.postStatus = .inTrade
+        postStatusLabel.text = chatRoom.postStatus.rawValue
+    }
+    func updatePostStatusLabelAfterCancelPlan() {
+        chatRoom.postStatus = .beforeTrade
+        postStatusLabel.text = chatRoom.postStatus.rawValue
+    }
+    func updatePostStatusLabelAfterCompleteTrade() {
+        chatRoom.postStatus = .completedTrade
+        postStatusLabel.text = chatRoom.postStatus.rawValue
+    }
 }

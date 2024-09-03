@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		15358F5C2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15358F5B2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift */; };
 		156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156A3B582C749E3900F22B74 /* PlanPlaceDetailViewController.swift */; };
 		15C8208A2C775ECB002991DE /* ImageDetailCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C820892C775ECB002991DE /* ImageDetailCollectionViewController.swift */; };
 		15C8208C2C776FA2002991DE /* ImageDetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C8208B2C776FA2002991DE /* ImageDetailCollectionViewCell.swift */; };
@@ -136,6 +137,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		15358F5B2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewReviewCell.swift; sourceTree = "<group>"; };
 		1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewController.swift; sourceTree = "<group>"; };
 		1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewModel.swift; sourceTree = "<group>"; };
 		1543FB2C2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonModel.swift; sourceTree = "<group>"; };
@@ -726,6 +728,7 @@
 				58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */,
 				15F618BD2C81500700A936D8 /* ChatMessageTableViewImageCells */,
 				15F221A72C76BBF700DF285A /* ChatMessageTableViewPlanCell.swift */,
+				15358F5B2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift */,
 				58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */,
 				97D1BEB12C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift */,
 				15C820892C775ECB002991DE /* ImageDetailCollectionViewController.swift */,
@@ -947,6 +950,7 @@
 				97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */,
 				97BC0DF72C75BCCF00F4D0B4 /* PostDetailViewController.swift in Sources */,
 				3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */,
+				15358F5C2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift in Sources */,
 				15F618BC2C81442A00A936D8 /* ThreeImagesTableViewCell.swift in Sources */,
 				97934E192C62F8E700B38E0A /* ReviewListViewModel.swift in Sources */,
 			);

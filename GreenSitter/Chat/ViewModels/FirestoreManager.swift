@@ -360,4 +360,92 @@ class FirestoreManager {
         return downloadURLString
     }
     
+    func updatePlanNotification(chatRoomId: String, messageId: String, ownerNotification: Bool, sitterNotification: Bool) async throws {
+        let planRef = db.collection("chatRooms").document(chatRoomId)
+            .collection("messages").document(messageId)
+
+        try await planRef.updateData([
+            "plan.ownerNotification": ownerNotification,
+            "plan.sitterNotification": sitterNotification
+        ])
+    }
+    
+    func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String) async throws {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+        let postRef = db.collection("posts").document(postId)
+        
+        switch planType {
+        case .leavePlan:
+            try await chatRoomRef.updateData([
+                "hasLeavePlan" : true,
+                "postStatus" : PostStatus.inTrade.rawValue
+            ])
+            try await postRef.updateData([
+                "postStatus" : PostStatus.inTrade.rawValue
+            ])
+        case .getBackPlan:
+            try await chatRoomRef.updateData([
+                "hasGetBackPlan" : true,
+                "postStatus" : PostStatus.inTrade.rawValue
+            ])
+            try await postRef.updateData([
+                "postStatus" : PostStatus.inTrade.rawValue
+            ])
+        }
+    }
+    
+    func updatePostStatusAfterCancelPlan(chatRoomId: String, planType: PlanType, postId: String) async throws -> Bool {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+        let postRef = db.collection("posts").document(postId)
+        
+        switch planType {
+        case .leavePlan:
+            try await chatRoomRef.updateData([
+                "hasLeavePlan" : false,
+            ])
+            let chatRoomSnapshot = try await chatRoomRef.getDocument()
+            if let chatRoomData = chatRoomSnapshot.data(),
+               let hasGetBackPlan = chatRoomData["hasGetBackPlan"] as? Bool,
+               hasGetBackPlan == false {
+                try await chatRoomRef.updateData([
+                    "postStatus" : PostStatus.beforeTrade.rawValue
+                ])
+                try await postRef.updateData([
+                    "postStatus" : PostStatus.beforeTrade.rawValue
+                ])
+                return true
+            }
+        case .getBackPlan:
+            try await chatRoomRef.updateData([
+                "hasGetBackPlan" : false,
+            ])
+            let chatRoomSnapshot = try await chatRoomRef.getDocument()
+            if let chatRoomData = chatRoomSnapshot.data(),
+               let hasLeavePlan = chatRoomData["hasLeavePlan"] as? Bool,
+               hasLeavePlan == false {
+                try await chatRoomRef.updateData([
+                    "postStatus" : PostStatus.beforeTrade.rawValue
+                ])
+                try await postRef.updateData([
+                    "postStatus" : PostStatus.beforeTrade.rawValue
+                ])
+                return true
+            }
+        }
+        return false
+    }
+    
+    func completeTrade(chatRoomId: String, postId: String, recipientId: String) async throws {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+        let postRef = db.collection("posts").document(postId)
+        
+        try await chatRoomRef.updateData([
+            "postStatus" : PostStatus.completedTrade.rawValue
+        ])
+        
+        try await postRef.updateData([
+            "postStatus" : PostStatus.completedTrade.rawValue,
+            "recipientId" : recipientId
+        ])
+    }
 }
