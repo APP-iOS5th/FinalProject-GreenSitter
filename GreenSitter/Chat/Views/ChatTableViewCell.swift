@@ -131,7 +131,10 @@ class ChatTableViewCell: UITableViewCell {
             return
         }
         
-        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
+        // 이미지 다운로드 실패 시 기본 이미지로 설정
+        let placeholderImage = UIImage(named: "profileIcon")
+        
+        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView, placeholderImage: placeholderImage)
         
         // 닉네임
         let nickname = chatRoom?.userId == userId ? chatRoom?.postUserNickname: chatRoom?.userNickname

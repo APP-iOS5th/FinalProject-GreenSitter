@@ -112,18 +112,30 @@ class ChatViewModel {
         }
     }
     
-    func downloadImage(from url: URL, to imageView: UIImageView) {
+    func downloadImage(from url: URL, to imageView: UIImageView, placeholderImage: UIImage? = nil) {
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let self = self, let data = data, error == nil else {
-                print("Failed to download image: \(error?.localizedDescription ?? "")")
-                return
+//            guard let self = self, let data = data, error == nil else {
+//                print("Failed to download image: \(error?.localizedDescription ?? "")")
+//                return
+//            }
+            
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Failed to download image: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    imageView.image = placeholderImage
+                }
             }
             
-            DispatchQueue.main.async {
-                if let image = UIImage(data: data) {
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
                     imageView.image = image
-                } else {
-                    print("Failed to convert data to image")
+                }
+            } else {
+                print("Failed to convert data to image")
+                DispatchQueue.main.async {
+                    imageView.image = placeholderImage
                 }
             }
         }.resume()

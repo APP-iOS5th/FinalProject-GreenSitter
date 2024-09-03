@@ -75,7 +75,10 @@ class ChatPostViewController: UIViewController {
     private func setupUI() {
         if let firstImageUrlString = chatRoom.postImage,
            let postThumbnailUrl = URL(string: firstImageUrlString) {
-            chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView)
+            // 이미지 다운로드 실패 시 기본 이미지로 설정
+            let placeholderImage = UIImage(named: "chatIcon")
+            
+            chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView, placeholderImage: placeholderImage)
         }
         
         postTitleLabel.text = chatRoom.postTitle
