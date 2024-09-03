@@ -11,6 +11,7 @@ import FirebaseAuth
 protocol ChatViewModelDelegate: AnyObject {
     func updatePostStatusLabelAfterMakePlan()
     func updatePostStatusLabelAfterCancelPlan()
+    func updatePostStatusLabelAfterCompleteTrade()
 }
 
 @MainActor
@@ -334,6 +335,40 @@ class ChatViewModel {
             }
         }
     }
+    //MARK: - 거래 완료 시 후기 작성 메세지 전송
+    func sendReviewMessage(chatRoom: ChatRoom) {
+
+        let receiverUserId: String?
+        if userId == chatRoom.userId {
+            receiverUserId = chatRoom.postUserId
+        } else {
+            receiverUserId = chatRoom.userId
+        }
+        
+        let reviewMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .review, text: nil, image: nil, plan: nil)
+        
+        // 로컬 메시지 리스트에 메시지 추가
+        if var chatRoomMessages = self.messages[chatRoom.id] {
+            chatRoomMessages.append(reviewMessage)
+            self.messages[chatRoom.id] = chatRoomMessages
+        } else {
+            self.messages[chatRoom.id] = [reviewMessage]
+        }
+        
+        Task {
+            do {
+                try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: reviewMessage)
+            } catch {
+                print("Failed to save message: \(error.localizedDescription)")
+                // Firestore에 저장 실패 시, 로컬 메시지 리스트에서 해당 메시지 제거
+                if var chatRoomMessages = self.messages[chatRoom.id] {
+                    chatRoomMessages.removeAll { $0.id == reviewMessage.id }
+                    self.messages[chatRoom.id] = chatRoomMessages
+                }
+                return
+            }
+        }
+    }
     
     func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String) async {
         do {
@@ -347,7 +382,6 @@ class ChatViewModel {
     }
     
     func updatePostStatusAfterCancelPlan(chatRoomId: String, planType: PlanType, postId: String) async {
-        print("chatViewModel func")
         do {
             let needUpdatePostLabel = try await firestoreManager.updatePostStatusAfterCancelPlan(chatRoomId: chatRoomId, planType: planType, postId: postId)
             if needUpdatePostLabel {
@@ -356,6 +390,14 @@ class ChatViewModel {
         } catch {
             print("Failed to update post status: \(error.localizedDescription)")
         }
-        
+    }
+    
+    func completeTrade(chatRoomId: String, postId: String, recipientId: String) async {
+        do {
+            try await firestoreManager.completeTrade(chatRoomId: chatRoomId, postId: postId, recipientId: recipientId)
+            delegate?.updatePostStatusLabelAfterCompleteTrade()
+        } catch {
+            print("Failed to complete trade: \(error.localizedDescription)")
+        }
     }
 }

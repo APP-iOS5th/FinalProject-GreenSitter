@@ -134,4 +134,8 @@ extension ChatPostViewController: ChatViewModelDelegate {
         chatRoom.postStatus = .beforeTrade
         postStatusLabel.text = chatRoom.postStatus.rawValue
     }
+    func updatePostStatusLabelAfterCompleteTrade() {
+        chatRoom.postStatus = .completedTrade
+        postStatusLabel.text = chatRoom.postStatus.rawValue
+    }
 }

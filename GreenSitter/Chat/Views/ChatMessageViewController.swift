@@ -106,6 +106,7 @@ class ChatMessageViewController: UIViewController {
         tableView.register(FourImagesTableViewCell.self, forCellReuseIdentifier: "FourImagesCell")
         tableView.register(MoreImagesTableViewCell.self, forCellReuseIdentifier: "MoreImagesCell")
         tableView.register(ChatMessageTableViewPlanCell.self, forCellReuseIdentifier: "ChatMessagePlanCell")
+        tableView.register(ChatMessageTableViewReviewCell.self, forCellReuseIdentifier: "ChatMessageReviewCell")
         
         self.view.addSubview(tableView)
         
@@ -341,7 +342,25 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.isRead = messages[indexPath.row].isRead
             
             return cell
+        case .review:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageReviewCell", for: indexPath) as! ChatMessageTableViewReviewCell
+            cell.backgroundColor = .clear
             
+            guard let messages = self.chatViewModel?.messages[chatRoom.id],
+                  indexPath.row < messages.count else {
+                fatalError("Unable to retrieve messages for the selected chat room")
+            }
+            
+            cell.makeReviewButtonAction = {
+                let navigationController = UINavigationController(rootViewController: WriteReviewViewController())
+                navigationController.modalPresentationStyle = .fullScreen
+                self.present(navigationController, animated: true)
+            }
+            cell.chatRoom = chatRoom
+            cell.chatViewModel = self.chatViewModel
+            cell.updateRecipientName()
+            
+            return cell
         case .none:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageTableViewCell
             

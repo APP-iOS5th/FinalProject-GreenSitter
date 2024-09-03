@@ -406,7 +406,6 @@ class FirestoreManager {
         
         switch planType {
         case .leavePlan:
-            print("leavePlan")
             try await chatRoomRef.updateData([
                 "hasLeavePlan" : false,
             ])
@@ -414,13 +413,15 @@ class FirestoreManager {
             if let chatRoomData = chatRoomSnapshot.data(),
                let hasGetBackPlan = chatRoomData["hasGetBackPlan"] as? Bool,
                hasGetBackPlan == false {
+                try await chatRoomRef.updateData([
+                    "postStatus" : PostStatus.beforeTrade.rawValue
+                ])
                 try await postRef.updateData([
                     "postStatus" : PostStatus.beforeTrade.rawValue
                 ])
                 return true
             }
         case .getBackPlan:
-            print("getBackPlan")
             try await chatRoomRef.updateData([
                 "hasGetBackPlan" : false,
             ])
@@ -428,6 +429,9 @@ class FirestoreManager {
             if let chatRoomData = chatRoomSnapshot.data(),
                let hasLeavePlan = chatRoomData["hasLeavePlan"] as? Bool,
                hasLeavePlan == false {
+                try await chatRoomRef.updateData([
+                    "postStatus" : PostStatus.beforeTrade.rawValue
+                ])
                 try await postRef.updateData([
                     "postStatus" : PostStatus.beforeTrade.rawValue
                 ])
@@ -435,5 +439,19 @@ class FirestoreManager {
             }
         }
         return false
+    }
+    
+    func completeTrade(chatRoomId: String, postId: String, recipientId: String) async throws {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+        let postRef = db.collection("posts").document(postId)
+        
+        try await chatRoomRef.updateData([
+            "postStatus" : PostStatus.completedTrade.rawValue
+        ])
+        
+        try await postRef.updateData([
+            "postStatus" : PostStatus.completedTrade.rawValue,
+            "recipientId" : recipientId
+        ])
     }
 }
