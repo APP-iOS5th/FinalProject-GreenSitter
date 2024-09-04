@@ -29,10 +29,17 @@ class MakePlanViewController: UIViewController {
         backButton.setTitleColor(.systemBlue, for: .normal)
         backButton.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         backButton.addAction(UIAction { [weak self] _ in
-            if self?.viewModel.progress == 0 || self?.viewModel.progress == 3 {
+            if self?.viewModel.progress == 0 {
                 self?.dismiss(animated: true)
                 return
-            } else {
+            } else if self?.viewModel.progress == 3 {
+                // 알람 설정 여부 수정되게
+                Task {
+                    await self?.viewModel.updatePlanNotification()
+                    self?.dismiss(animated: false)
+                }
+            }
+            else {
                 self?.viewModel.progress -= 1
                 self?.backtoPreviousPage()
             }

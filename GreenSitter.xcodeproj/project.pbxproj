@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		15358F5C2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15358F5B2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift */; };
 		156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156A3B582C749E3900F22B74 /* PlanPlaceDetailViewController.swift */; };
 		15C8208A2C775ECB002991DE /* ImageDetailCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C820892C775ECB002991DE /* ImageDetailCollectionViewController.swift */; };
 		15C8208C2C776FA2002991DE /* ImageDetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C8208B2C776FA2002991DE /* ImageDetailCollectionViewCell.swift */; };
@@ -30,6 +31,8 @@
 		3B6DE1AC2C72D24B009DD41A /* CareRecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DE1AB2C72D24B009DD41A /* CareRecordViewController.swift */; };
 		3B6DE1AE2C72D457009DD41A /* CareRecordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DE1AD2C72D457009DD41A /* CareRecordViewModel.swift */; };
 		3B6DE1B02C72D483009DD41A /* CareRecordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DE1AF2C72D483009DD41A /* CareRecordTableViewCell.swift */; };
+		3B7404BC2C86CFF90054CA7D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B7404BB2C86CFF90054CA7D /* GoogleService-Info.plist */; };
+		3B7404BE2C86D0010054CA7D /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B7404BD2C86D0000054CA7D /* APPKey.plist */; };
 		3B7D8F3D2C75686700008F22 /* WriteReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F3C2C75686700008F22 /* WriteReviewViewController.swift */; };
 		3B7D8F3F2C75689C00008F22 /* WriteReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F3E2C75689C00008F22 /* WriteReviewViewModel.swift */; };
 		3B7D8F492C75890A00008F22 /* ReceiveReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D8F482C75890A00008F22 /* ReceiveReviewViewController.swift */; };
@@ -139,6 +142,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		15358F5B2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewReviewCell.swift; sourceTree = "<group>"; };
 		1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewController.swift; sourceTree = "<group>"; };
 		1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewModel.swift; sourceTree = "<group>"; };
 		1543FB2C2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonModel.swift; sourceTree = "<group>"; };
@@ -174,6 +178,8 @@
 		3B6DE1AB2C72D24B009DD41A /* CareRecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareRecordViewController.swift; sourceTree = "<group>"; };
 		3B6DE1AD2C72D457009DD41A /* CareRecordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareRecordViewModel.swift; sourceTree = "<group>"; };
 		3B6DE1AF2C72D483009DD41A /* CareRecordTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareRecordTableViewCell.swift; sourceTree = "<group>"; };
+		3B7404BB2C86CFF90054CA7D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		3B7404BD2C86D0000054CA7D /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
 		3B7D8F3C2C75686700008F22 /* WriteReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteReviewViewController.swift; sourceTree = "<group>"; };
 		3B7D8F3E2C75689C00008F22 /* WriteReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteReviewViewModel.swift; sourceTree = "<group>"; };
 		3B7D8F482C75890A00008F22 /* ReceiveReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveReviewViewController.swift; sourceTree = "<group>"; };
@@ -729,6 +735,7 @@
 				58F68FEA2C72273700A7F564 /* ChatMessageTableViewCell.swift */,
 				15F618BD2C81500700A936D8 /* ChatMessageTableViewImageCells */,
 				15F221A72C76BBF700DF285A /* ChatMessageTableViewPlanCell.swift */,
+				15358F5B2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift */,
 				58F68FE82C7217AB00A7F564 /* MessageInputViewController.swift */,
 				97D1BEB12C6C9DF400F7A983 /* ChatAdditionalButtonsViewController.swift */,
 				15C820892C775ECB002991DE /* ImageDetailCollectionViewController.swift */,
@@ -821,13 +828,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				971D20A62C88179700CF94F4 /* APPKey.plist in Resources */,
-				971D20A32C87FBEB00CF94F4 /* (null) in Resources */,
+				3B7404BE2C86D0010054CA7D /* APPKey.plist in Resources */,
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				971D20A22C87FBEB00CF94F4 /* (null) in Resources */,
 				971D20A42C87FCA600CF94F4 /* LaunchScreen.storyboard in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
-				971D20A82C8817B100CF94F4 /* GoogleService-Info.plist in Resources */,
+				3B7404BC2C86CFF90054CA7D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -953,6 +959,7 @@
 				97934DD72C62F3C600B38E0A /* SceneDelegate.swift in Sources */,
 				97BC0DF72C75BCCF00F4D0B4 /* PostDetailViewController.swift in Sources */,
 				3B596DF82C6B460A00C71851 /* IntroductionTableCell.swift in Sources */,
+				15358F5C2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift in Sources */,
 				15F618BC2C81442A00A936D8 /* ThreeImagesTableViewCell.swift in Sources */,
 				97934E192C62F8E700B38E0A /* ReviewListViewModel.swift in Sources */,
 			);

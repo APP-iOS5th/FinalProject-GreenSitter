@@ -27,7 +27,7 @@ extension ProfileViewController {
         loginViewModel.firebaseFetch(docId: currentUserID) {
             print("Firebase fetch completed.")
             DispatchQueue.main.async {
-                self.fetchUserLevelAndUpdateImage()
+//                self.fetchUserLevelAndUpdateImage()
                 self.tableView.reloadData()
             }
         }

@@ -22,5 +22,5 @@ struct Message: Codable {
 }
 
 enum MessageType: String, Codable {
-    case text, image, plan
+    case text, image, plan, review
 }

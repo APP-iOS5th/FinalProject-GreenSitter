@@ -8,19 +8,32 @@
 import UIKit
 import FirebaseAuth
 
+protocol ChatViewModelDelegate: AnyObject {
+    func updatePostStatusLabelAfterMakePlan()
+    func updatePostStatusLabelAfterCancelPlan()
+    func updatePostStatusLabelAfterCompleteTrade()
+}
+
 @MainActor
 class ChatViewModel {
     private var firestoreManager = FirestoreManager()
     private let firestorageManager = FirestorageManager()
     
+    var delegate: ChatViewModelDelegate?
+    
     // 로그인 여부를 나타내는 변수
     var isLoggedIn = false
     var hasChats = false
     
+    // 임시 유저 id
+//    let userId = "250e8400-e29b-41d4-a716-446655440003"
     var user: User? {
         didSet {
             isLoggedIn = user != nil
         }
+    }
+    var userId: String {
+        return user!.id
     }
     
     var chatRooms: [ChatRoom] = [] {
@@ -60,6 +73,29 @@ class ChatViewModel {
                 } else {
                     self.isLoggedIn = false
                 }
+            }
+        }
+    }
+    
+    // 채팅목록 정렬 함수
+    func sortChatRoomsByLastMessageDate() {
+        self.chatRooms.sort { (chatRoom1, chatRoom2) -> Bool in
+            let lastMessage1 = lastMessages[chatRoom1.id]?.last
+            let lastMessage2 = lastMessages[chatRoom2.id]?.last
+            
+            switch (lastMessage1, lastMessage2) {
+                // 두 채팅방 모두 lastMessage가 없는 경우, 순서 유지
+            case (nil, nil):
+                return false
+                // chatRoom1의 lastMessage가 없으면 chatRoom2의 뒤에 위치
+            case (nil, _):
+                return false
+                // chatRoom2의 lastMessage가 없으면 chatRoom1의 뒤에 위치
+            case (_, nil):
+                return true
+                // 두 채팅방 모두 lastMessage가 있을 경우, 최신순으로 정렬
+            case let (message1?, message2?):
+                return message1.createDate > message2.createDate
             }
         }
     }
@@ -112,18 +148,32 @@ class ChatViewModel {
         }
     }
     
-    func downloadImage(from url: URL, to imageView: UIImageView) {
+    func downloadImage(from url: URL, to imageView: UIImageView, placeholderImage: UIImage? = nil) {
+        let currentURL = url
+        // 셀의 이미지 뷰에 현재 로드 중인 URL을 태그로 설정
+        imageView.tag = url.hashValue
+        
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let self = self, let data = data, error == nil else {
-                print("Failed to download image: \(error?.localizedDescription ?? "")")
-                return
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Failed to download image: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    imageView.image = placeholderImage
+                }
             }
             
-            DispatchQueue.main.async {
-                if let image = UIImage(data: data) {
-                    imageView.image = image
-                } else {
-                    print("Failed to convert data to image")
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    // 태그가 여전히 동일한 URL을 가리키고 있는지 확인
+                    if imageView.tag == currentURL.hashValue {
+                        imageView.image = image
+                    }
+                }
+            } else {
+                print("Failed to convert data to image")
+                DispatchQueue.main.async {
+                    imageView.image = placeholderImage
                 }
             }
         }.resume()
@@ -301,20 +351,20 @@ class ChatViewModel {
             receiverUserId = chatRoom.userId
         }
         
-        let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: user!.id, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
-        
-        // 로컬 메시지 리스트에 메시지 추가
-        if var chatRoomMessages = self.messages[chatRoom.id] {
-            chatRoomMessages.append(planMessage)
-            self.messages[chatRoom.id] = chatRoomMessages
-        } else {
-            self.messages[chatRoom.id] = [planMessage]
-        }
+        let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
 
         // UI 업데이트
 //        self.updateUI?()
         
         Task {
+            // 로컬 메시지 리스트에 메시지 추가
+            if var chatRoomMessages = self.messages[chatRoom.id] {
+                chatRoomMessages.append(planMessage)
+                self.messages[chatRoom.id] = chatRoomMessages
+            } else {
+                self.messages[chatRoom.id] = [planMessage]
+            }
+            
             do {
                 try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: planMessage)
             } catch {
@@ -327,6 +377,71 @@ class ChatViewModel {
 //                self.updateUI?()
                 return
             }
+        }
+    }
+    //MARK: - 거래 완료 시 후기 작성 메세지 전송
+    func sendReviewMessage(chatRoom: ChatRoom) {
+
+        let receiverUserId: String?
+        if userId == chatRoom.userId {
+            receiverUserId = chatRoom.postUserId
+        } else {
+            receiverUserId = chatRoom.userId
+        }
+        
+        let reviewMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .review, text: nil, image: nil, plan: nil)
+        
+        // 로컬 메시지 리스트에 메시지 추가
+        if var chatRoomMessages = self.messages[chatRoom.id] {
+            chatRoomMessages.append(reviewMessage)
+            self.messages[chatRoom.id] = chatRoomMessages
+        } else {
+            self.messages[chatRoom.id] = [reviewMessage]
+        }
+        
+        Task {
+            do {
+                try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: reviewMessage)
+            } catch {
+                print("Failed to save message: \(error.localizedDescription)")
+                // Firestore에 저장 실패 시, 로컬 메시지 리스트에서 해당 메시지 제거
+                if var chatRoomMessages = self.messages[chatRoom.id] {
+                    chatRoomMessages.removeAll { $0.id == reviewMessage.id }
+                    self.messages[chatRoom.id] = chatRoomMessages
+                }
+                return
+            }
+        }
+    }
+    
+    func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String) async {
+        do {
+            try await firestoreManager.updatePostStatusAfterMakePlan(chatRoomId: chatRoomId, planType: planType, postId: postId)
+            
+            delegate?.updatePostStatusLabelAfterMakePlan()
+        } catch {
+            print("Failed to update post status: \(error.localizedDescription)")
+        }
+        
+    }
+    
+    func updatePostStatusAfterCancelPlan(chatRoomId: String, planType: PlanType, postId: String) async {
+        do {
+            let needUpdatePostLabel = try await firestoreManager.updatePostStatusAfterCancelPlan(chatRoomId: chatRoomId, planType: planType, postId: postId)
+            if needUpdatePostLabel {
+                delegate?.updatePostStatusLabelAfterCancelPlan()
+            }
+        } catch {
+            print("Failed to update post status: \(error.localizedDescription)")
+        }
+    }
+    
+    func completeTrade(chatRoomId: String, postId: String, recipientId: String) async {
+        do {
+            try await firestoreManager.completeTrade(chatRoomId: chatRoomId, postId: postId, recipientId: recipientId)
+            delegate?.updatePostStatusLabelAfterCompleteTrade()
+        } catch {
+            print("Failed to complete trade: \(error.localizedDescription)")
         }
     }
 }

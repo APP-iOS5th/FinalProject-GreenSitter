@@ -10,7 +10,7 @@ import Foundation
 protocol ChatAdditionalButtonsViewModelDelegate {
     func presentPhotoPicker()
     func presentCamera()
-    func presentMakePlan()
+    func presentMakePlan(planType: PlanType)
 }
 
 class ChatAdditionalButtonsViewModel {
@@ -21,7 +21,8 @@ class ChatAdditionalButtonsViewModel {
         return [
             ChatAdditionalButtonModel(imageName: "photo.on.rectangle", titleText: "앨범", buttonAction: albumButtonTapped),
             ChatAdditionalButtonModel(imageName: "camera.fill", titleText: "카메라", buttonAction: cameraButtonTapped),
-            ChatAdditionalButtonModel(imageName: "calendar", titleText: "약속 정하기", buttonAction: planButtonTapped)
+            ChatAdditionalButtonModel(imageName: "tray.and.arrow.up", titleText: "위탁 약속 정하기", buttonAction: { [weak self] in self?.planButtonTapped(planType: .leavePlan) }),
+            ChatAdditionalButtonModel(imageName: "tray.and.arrow.down", titleText: "회수 약속 정하기", buttonAction: { [weak self] in self?.planButtonTapped(planType: .getBackPlan) })
         ]
     }
     
@@ -34,7 +35,7 @@ class ChatAdditionalButtonsViewModel {
         delegate?.presentCamera()
     }
     
-    func planButtonTapped() {
-        delegate?.presentMakePlan()
+    func planButtonTapped(planType: PlanType) {
+        delegate?.presentMakePlan(planType: planType)
     }
 }
