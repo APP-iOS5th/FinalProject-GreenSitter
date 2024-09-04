@@ -285,7 +285,6 @@ class ChatViewModel {
                     }
                 }
             }
-            // 파이어 스토어 메세지 저장
             let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: user!.id, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
             
             // 로컬 메시지 리스트에 메시지 추가
@@ -299,6 +298,7 @@ class ChatViewModel {
             // UI 업데이트
 //            self.updateUI?()
             
+            // 파이어 스토어 메세지 저장
             do {
                 try await firestoreManager.saveMessage(chatRoomId: chatRoom.id, message: imageMessage)
             } catch {
@@ -351,12 +351,12 @@ class ChatViewModel {
             receiverUserId = chatRoom.userId
         }
         
-        let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
-
         // UI 업데이트
 //        self.updateUI?()
         
         Task {
+            let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
+
             // 로컬 메시지 리스트에 메시지 추가
             if var chatRoomMessages = self.messages[chatRoom.id] {
                 chatRoomMessages.append(planMessage)
