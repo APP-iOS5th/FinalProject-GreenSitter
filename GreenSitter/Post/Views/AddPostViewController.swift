@@ -175,8 +175,18 @@ class AddPostViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         
         updateImageStackView()
         
-        
+        hideKeyboard()
     }
+    
+    func hideKeyboard() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    
     
     @objc private func textDidChange() {
         updateSaveButtonState()

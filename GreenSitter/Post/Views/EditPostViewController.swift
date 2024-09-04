@@ -185,10 +185,16 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         textView.delegate = self
         mapView.delegate = self
         
+        hideKeyboard()
     }
-    //MARK: - hideKeyBoard
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
+    
+    
+    func hideKeyboard() {
+            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        }
+
+        @objc func dismissKeyboard() {
+            view.endEditing(true)
     }
     
     @objc private func textDidChange() {

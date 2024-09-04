@@ -198,7 +198,16 @@ class PostDetailViewController: UIViewController {
 
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
         loadPost(with: postId)
+        hideKeyboard()
     }
+    
+    func hideKeyboard() {
+            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        }
+
+        @objc func dismissKeyboard() {
+            view.endEditing(true)
+        }
     
     // MARK: - Helpful Functions
     
