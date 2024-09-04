@@ -38,7 +38,7 @@ extension ReceiveReviewViewController {
             let documentData = document.data() ?? [:]
             
             // 문서가 예상 필드를 포함하는지 확인
-            if let postStatus = documentData["postStatus"] as? String, postStatus == "거래완료" {
+                let postStatus = documentData["postStatus"] as? String ?? ""
                 let recipientId = documentData["recipientId"] as? String ?? ""
                 let postTitle = documentData["postTitle"] as? String ?? "제목 없음"
                 let postBody = documentData["postBody"] as? String ?? "본문 내용 없음"
@@ -50,6 +50,7 @@ extension ReceiveReviewViewController {
                 
                 let postImages = documentData["postImages"] as? [String] ?? []
                 
+                print("Fetched Post Data: \(documentData)")
                 // Post 객체 생성 및 업데이트
                 self.review = Post(
                     id: postId,
@@ -69,14 +70,13 @@ extension ReceiveReviewViewController {
                     postStatus: .completedTrade,
                     location: nil
                 )
-                
+                self.post.append(self.review!) // 추가된 부분
+
                 // 테이블 뷰 업데이트
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
-            } else {
-                print("Post status is not '거래완료'.")
-            }
+
         }
     }
 
