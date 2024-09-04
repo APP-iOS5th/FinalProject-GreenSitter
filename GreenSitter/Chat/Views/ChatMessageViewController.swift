@@ -173,7 +173,9 @@ extension ChatMessageViewController: UITableViewDataSource {
 
             cell.chatRoom = chatRoom
             cell.chatViewModel = self.chatViewModel
-            cell.configure()
+            
+            let messageTime = messages[indexPath.row].createDate
+            cell.configure(date: messageTime)
             
             return cell
             

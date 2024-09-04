@@ -95,12 +95,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
-        print(error.localizedDescription)
+        print("Failed to register for remote notifications: \(error.localizedDescription)")
     }
     
     // 푸시 알림을 처리하기 위한 함수
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .badge, .sound/*, .list*/]) /// 앱 켜진 상태에서도 알림 설정
+        completionHandler([.banner, .badge, .sound, .list]) /// 앱 켜진 상태에서도 알림 설정
     }
 }
 
