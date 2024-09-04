@@ -175,6 +175,7 @@ class AddPostViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         
         updateImageStackView()
         
+        
     }
     
     @objc private func textDidChange() {
