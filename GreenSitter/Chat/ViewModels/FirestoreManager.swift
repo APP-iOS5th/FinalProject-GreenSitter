@@ -106,11 +106,11 @@ class FirestoreManager {
         let userQuery = db.collection("chatRooms")
             .whereField("userId", isEqualTo: userId)
             .whereField("userEnabled", isEqualTo: true)
-//            .order(by: "createDate", descending: true)
+
         let postUserQuery = db.collection("chatRooms")
             .whereField("postUserId", isEqualTo: userId)
             .whereField("postUserEnabled", isEqualTo: true)
-//            .order(by: "createDate", descending: true)
+
         do {
             // 사용자 관련 채팅방 가져오기
             let userSnapshot = try await userQuery.getDocuments()
