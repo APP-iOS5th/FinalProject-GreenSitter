@@ -217,7 +217,7 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
                         }
                     }
                 case .getBackPlan :
-                    let hasGetBackPlan = await chatViewModel?.fetchChatHasLeavePlan(chatRoomId: chatRoom.id) ?? true
+                    let hasGetBackPlan = await chatViewModel?.fetchChatHasGetBackPlan(chatRoomId: chatRoom.id) ?? true
                     if hasGetBackPlan {
                         self.dismiss(animated: true) {
                             let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 회수 약속이 있습니다. 약속을 새로 만드시려면 기존 약속을 먼저 취소해주세요.", preferredStyle: .alert)

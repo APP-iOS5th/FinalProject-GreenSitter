@@ -463,7 +463,19 @@ class FirestoreManager {
     
     func fetchChatPostStatus(chatRoomId: String) async throws -> PostStatus {
         let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
-        let postStatus = try await chatRoomRef.getDocument().get("postStatus") as? PostStatus ?? .completedTrade
+        let postStatus: PostStatus
+        let postStatusString = try await chatRoomRef.getDocument().get("postStatus") as? String
+        switch postStatusString {
+        case PostStatus.beforeTrade.rawValue:
+            postStatus = .beforeTrade
+        case PostStatus.inTrade.rawValue:
+            postStatus = .inTrade
+        case PostStatus.completedTrade.rawValue:
+            postStatus = .completedTrade
+        default:
+            postStatus = .completedTrade
+        }
         return postStatus
+
     }
 }
