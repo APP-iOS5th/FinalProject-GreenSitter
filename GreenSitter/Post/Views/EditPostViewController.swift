@@ -9,10 +9,11 @@ import UIKit
 import PhotosUI
 import MapKit
 
-class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerViewControllerDelegate {
+class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     private let post: Post
     private var viewModel: EditPostViewModel
+    private var overlayPostMapping: [MKCircle: Post] = [:]
     
     init(post: Post, viewModel: EditPostViewModel) {
         self.post = post
@@ -38,7 +39,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     
     private let titleTextField: UITextField = {
         let textField = UITextField()
-        textField.tintColor = .black
+        textField.tintColor = .labelsSecondary
         textField.font = .systemFont(ofSize: 18)
         textField.placeholder = "제목을 입력하세요."
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -120,39 +121,86 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         return line
     }()
     
-    private let mapLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .secondaryLabel
-        label.font = .systemFont(ofSize: 16)
-        label.text = "거래 희망 장소를 선택할 수 있어요."
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let mapIconButton: UIButton = {
+    private let mapLabelButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(named: "lookingForSitterIcon")
-        button.setImage(image, for: .normal)
-        button.contentMode = .scaleAspectFit
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        // StackView to hold the image and label (left side)
+        let leftStackView = UIStackView()
+        leftStackView.axis = .horizontal
+        leftStackView.alignment = .center
+        leftStackView.spacing = 8 // Space between image and text
+        leftStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Image on the left
+        let symbolImageView = UIImageView()
+        let symbolImage = UIImage(systemName: "mappin.and.ellipse")
+        symbolImageView.image = symbolImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
+        
+        // Text label
+        let textLabel = UILabel()
+        textLabel.text = "거래 희망 장소를 선택하세요!"
+        textLabel.font = .systemFont(ofSize: 17)
+        textLabel.textColor = .labelsSecondary
+        
+        // Add image and label to the left stack view
+        leftStackView.addArrangedSubview(symbolImageView)
+        leftStackView.addArrangedSubview(textLabel)
+        
+        // Right arrow '>' on the far right
+        let arrowImageView = UIImageView()
+        let arrowImage = UIImage(systemName: "chevron.right")
+        arrowImageView.image = arrowImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
+        arrowImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add the left stack view and the arrow to the button
+        button.addSubview(leftStackView)
+        button.addSubview(arrowImageView)
+        
+        // Constraints for the left stack view (image and text)
+        NSLayoutConstraint.activate([
+            leftStackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
+            leftStackView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
+        ])
+        
+        // Constraints for the arrow on the right
+        NSLayoutConstraint.activate([
+            arrowImageView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
+            arrowImageView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
+        ])
+        
+        // Button appearance
+        button.layer.cornerRadius = 4
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.gray.cgColor
+        
         return button
     }()
     
-    private let mapView: MKMapView = {
+    private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
-        mapView.isHidden = true
         mapView.translatesAutoresizingMaskIntoConstraints = false
         return mapView
+    }()
+    
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.preferredFont(forTextStyle: .footnote)
+        label.textColor = .labelsSecondary
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.text = "이 위치는 500m 반경 이내의 지역이 표시됩니다."
+        return label
     }()
     
     private let saveButton: UIButton = {
         let button = UIButton()
         button.setTitle("작성완료", for: .normal)
-        button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .dominent
+        button.isEnabled = true
+        button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 20
-        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -166,6 +214,8 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         return button
     }()
     
+    //MARK: - viewDidLoad
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
@@ -177,6 +227,52 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         // 기존 이미지를 로드
         loadExistingImages()
         updateImageStackView()
+        configureMapView(with: post)
+        
+        updateSaveButtonState()
+        titleTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        
+        titleTextField.delegate = self
+        textView.delegate = self
+        mapView.delegate = self
+        
+        hideKeyboard()
+    }
+    
+    
+    func hideKeyboard() {
+            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        }
+
+        @objc func dismissKeyboard() {
+            view.endEditing(true)
+    }
+    
+    @objc private func textDidChange() {
+        updateSaveButtonState()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let address = viewModel.selectedPost.location?.address
+        let placeName = viewModel.selectedPost.location?.placeName
+        print("ADDRESS: \(String(describing: address)), placeName: \(String(describing: placeName))")
+        guard let textLabel = mapLabelButton.subviews
+            .compactMap({ $0 as? UIStackView })
+            .first?
+            .arrangedSubviews
+            .compactMap({ $0 as? UILabel })
+            .first else { return }
+        
+        if let address = address, !address.isEmpty {
+            textLabel.text = address
+        } else if let placeName = placeName, !placeName.isEmpty {
+            textLabel.text = placeName
+        } else {
+            textLabel.text = "거래 희망 장소를 선택하세요!"
+        }
+        configureMapView(with: viewModel.selectedPost)
     }
     
     @objc private func pickerImageViewTapped() {
@@ -184,27 +280,48 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
     }
     
     @objc private func saveButtonTapped() {
-        guard validateInputs() else { return }
-        
-        guard let userDocId = LoginViewModel.shared.user?.id else {
-            print("User ID is not available")
+        guard validateInputs() else {
+            saveButton.isEnabled = true
             return
         }
         
+        guard let currentUser = LoginViewModel.shared.user else {
+            print("User ID is not available")
+            saveButton.isEnabled = true
+            return
+        }
         
-        // ViewModel의 updatePost 메서드 호출
-        viewModel.updatePost { result in
+        viewModel.updatePost(postTitle: titleTextField.text!, postBody: textView.text) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.saveButton.isEnabled = true
+            }
             switch result {
-            case .success:
-                print("Successfully updated post")
-                self.navigationController?.popViewController(animated: true)
+            case .success(let updatedPost):
+                print("Update Post: \(updatedPost)")
+                self?.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
             case .failure(let error):
-                print("Failed to update post: \(error.localizedDescription)")
-                self.showAlert(title: "Error", message: error.localizedDescription)
+                print("Error updating post: \(error.localizedDescription)")
+                self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
             }
         }
     }
     
+    
+    
+    private func showAlertWithNavigation(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.dismiss(animated: true)
+        }
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
     
     @objc private func closeButtonTapped() {
         dismiss(animated: true)
@@ -215,8 +332,6 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         
         if titleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
             titleTextField.attributedPlaceholder = NSAttributedString(string: "제목을 입력하세요.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.red])
-            titleTextField.layer.borderColor = UIColor.red.cgColor
-            titleTextField.layer.borderWidth = 1.0
             isValid = false
         } else {
             titleTextField.layer.borderColor = UIColor.clear.cgColor
@@ -232,19 +347,13 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         
         return isValid
     }
-    
-    private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
-    
+
     private func setupLayout() {
         self.title = post.postType.rawValue
         navigationItem.leftBarButtonItem = closeButton
         
-        titleTextField.text = viewModel.postTitle
-        textView.text = viewModel.postBody
+        titleTextField.text = post.postTitle
+        textView.text = post.postBody
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -256,11 +365,14 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         contentView.addSubview(textView)
         contentView.addSubview(remainCountLabel)
         contentView.addSubview(dividerLine3)
-        contentView.addSubview(mapLabel)
-        contentView.addSubview(mapIconButton)
+        contentView.addSubview(mapLabelButton)
         contentView.addSubview(mapView)
         contentView.addSubview(saveButton)
+        contentView.addSubview(descriptionLabel)
+        
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+        mapLabelButton.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
+
         imageScrollView.addSubview(imageStackView)
         imageStackView.addArrangedSubview(pickerImageView)
         
@@ -287,7 +399,7 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             
             imageScrollView.topAnchor.constraint(equalTo: dividerLine1.bottomAnchor, constant: 16),
             imageScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            imageScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16), // 오른쪽 여백 추가
+            imageScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             imageScrollView.heightAnchor.constraint(equalToConstant: 130),
             
             imageStackView.topAnchor.constraint(equalTo: imageScrollView.topAnchor),
@@ -317,21 +429,20 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
             dividerLine3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
-            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
-            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8), //
-            
-            mapIconButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 16),
-            mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
-            mapIconButton.heightAnchor.constraint(equalToConstant: 50),
-            mapIconButton.widthAnchor.constraint(equalToConstant: 50),
-            
-            mapView.topAnchor.constraint(equalTo: mapIconButton.bottomAnchor, constant: 16),
-            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            mapLabelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabelButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            mapLabelButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
+            mapLabelButton.heightAnchor.constraint(equalToConstant: 60),
+
+            mapView.topAnchor.constraint(equalTo: mapLabelButton.bottomAnchor, constant: 12),
+            mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             mapView.heightAnchor.constraint(equalToConstant: 200),
             
-            saveButton.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
+            descriptionLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
+            
+            saveButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 32),
             saveButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             saveButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             saveButton.heightAnchor.constraint(equalToConstant: 50),
@@ -339,7 +450,10 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         ])
     }
     
+    
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        print("Picker did finish picking. Results count: \(results.count)")
+        
         picker.dismiss(animated: true, completion: nil)
         
         let itemProviders = results.map(\.itemProvider)
@@ -355,6 +469,10 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
                     guard let image = image as? UIImage else { return }
                     
                     DispatchQueue.main.async {
+                        // View model에 이미지 추가
+                        self?.viewModel.selectedImages.append(image)
+                        self?.viewModel.addedImages.append(image)
+                        // UI 업데이트
                         self?.addImageToStackView(image)
                     }
                 }
@@ -362,75 +480,115 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         }
     }
     
+    
     private func addImageToStackView(_ image: UIImage) {
-        let existingImages = imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
+        DispatchQueue.main.async {
+            let existingImages = self.imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
             if existingImages.contains(image) {
                 return
             }
-        
-        let containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.widthAnchor.constraint(equalToConstant: 130).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 130).isActive = true
-        
-        let imageView = UIImageView(image: image)
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let deleteButton = UIButton(type: .custom)
-        deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
-        deleteButton.tintColor = .red
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.addTarget(self, action: #selector(deleteImage(_:)), for: .touchUpInside)
-        
-        containerView.addSubview(imageView)
-        containerView.addSubview(deleteButton)
-        
-        NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             
-            deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 5),
-            deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -5),
-            deleteButton.widthAnchor.constraint(equalToConstant: 24),
-            deleteButton.heightAnchor.constraint(equalToConstant: 24),
-        ])
-        
-        imageStackView.insertArrangedSubview(containerView, at: imageStackView.arrangedSubviews.count - 1)
-        
-        updateImageStackView()
+            let containerView = UIView()
+            containerView.translatesAutoresizingMaskIntoConstraints = false
+            containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+            containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+            
+            let imageView = UIImageView(image: image)
+            imageView.contentMode = .scaleAspectFill
+            imageView.clipsToBounds = true
+            imageView.layer.cornerRadius = 10
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            let deleteButton = UIButton(type: .custom)
+            deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+            deleteButton.tintColor = .red
+            deleteButton.translatesAutoresizingMaskIntoConstraints = false
+            deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+            
+            containerView.addSubview(imageView)
+            containerView.addSubview(deleteButton)
+            
+            NSLayoutConstraint.activate([
+                imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+                
+                deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 5),
+                deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -5),
+                deleteButton.widthAnchor.constraint(equalToConstant: 24),
+                deleteButton.heightAnchor.constraint(equalToConstant: 24),
+            ])
+            
+            if let pickerImageViewIndex = self.imageStackView.arrangedSubviews.firstIndex(of: self.pickerImageView) {
+                self.imageStackView.insertArrangedSubview(containerView, at: pickerImageViewIndex + 1)
+            } else {
+                self.imageStackView.addArrangedSubview(containerView)
+            }
+            
+            self.updateImageStackView()
+        }
     }
     
     @objc private func deleteImage(_ sender: UIButton) {
+        print("before: \(viewModel.postImageURLs)")
         guard let containerView = sender.superview else { return }
+        guard let containerViewIndex = imageStackView.arrangedSubviews.firstIndex(of: containerView) else {
+            return
+        }
+        let originalImageViewIndex: Int = Int(containerViewIndex) - 1
+        viewModel.imageURLsToDelete.append(viewModel.postImageURLs[originalImageViewIndex])
         containerView.removeFromSuperview()
         updateImageStackView()
     }
     
+    
     private func loadExistingImages() {
-        viewModel.loadExistingImages(from: viewModel.selectedPost.postImages ?? []) { [weak self] in
+        viewModel.loadExistingImages(from: viewModel.selectedPost.postImages ?? []) { _ in
             DispatchQueue.main.async {
-                self?.updateUIWithLoadedImages()
+                self.updateUIWithLoadedImages()
             }
         }
     }
     
     private func updateUIWithLoadedImages() {
-        for image in viewModel.postImages {
-            addImageToStackView(image)
+        for urlString in viewModel.selectedImageURLs { // URL 배열을 가져옴
+            loadImageFromURL(urlString) { [weak self] image in
+                guard let image = image else { return }
+                self?.addImageToStackView(image)
+            }
         }
-//        updateImageStackView()
+    }
+    // URL로부터 UIImage를 로드하는 함수
+    private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(nil)
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil, let image = UIImage(data: data) else {
+                completion(nil)
+                return
+            }
+            completion(image)
+        }.resume()
     }
     
     private func updateImageStackView() {
-        pickerImageView.isHidden = imageStackView.arrangedSubviews.count > 4
+        pickerImageView.isHidden = false
+        imageScrollView.contentSize = CGSize(width: imageStackView.frame.width, height: imageStackView.frame.height)
     }
     
     private func presentImagePickerController() {
+        let numberOfImages = imageStackView.arrangedSubviews.count - 1 // -1 to exclude pickerImageView
+        
+        // 이미 10장이라면 이미지 피커를 비활성화
+        if numberOfImages >= 10 {
+            showAlert(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.")
+            return
+        }
+        
         var config = PHPickerConfiguration()
         config.selectionLimit = 10 - (imageStackView.arrangedSubviews.count - 1)
         config.filter = .images
@@ -446,12 +604,15 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         if characterCount > 700 {
             textView.deleteBackward()
         }
+        
+        updateSaveButtonState()
+        
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == textViewPlaceHolder {
             textView.text = ""
-            textView.textColor = .black
+            textView.textColor = .labelsPrimary
         } else {
             textView.textColor = .labelsPrimary
         }
@@ -461,6 +622,154 @@ class EditPostViewController: UIViewController, UITextViewDelegate, PHPickerView
         if textView.text.isEmpty {
             textView.text = textViewPlaceHolder
             textView.textColor = .lightGray
+        }
+    }
+    
+    //MARK: - mapLabelButton 탭하면 MainPostListVC로 이동하는 메서
+    
+    @objc private func mapLabelButtonTapped() {
+        let searchMapVC = SearchMapViewController()
+        searchMapVC.editPostViewModel = viewModel
+        let navigationVC = UINavigationController(rootViewController: searchMapVC)
+        
+        navigationVC.modalPresentationStyle = .fullScreen
+        present(navigationVC, animated: true, completion: nil)
+    }
+}
+
+//MARK: - MKMapViewDelegate
+
+extension EditPostViewController: MKMapViewDelegate {
+    
+    private func configureMapView(with post: Post) {
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
+        overlayPostMapping.removeAll()
+        guard let latitude = post.location?.latitude,
+              let longitude = post.location?.longitude else { return }
+        
+        let circleCenter = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        
+        // make random Center
+        let randomOffset = generateRandomOffset(for: circleCenter, radius: 500)
+        let randomCenter = CLLocationCoordinate2D (
+            latitude: circleCenter.latitude + randomOffset.latitudeDelta,
+            longitude: circleCenter.longitude + randomOffset.longitudeDelta
+        )
+        
+        let circle = MKCircle(center: randomCenter, radius: 500)
+        
+        // setRegion
+        DispatchQueue.main.async {
+            let region = MKCoordinateRegion(center: randomCenter, latitudinalMeters: 1500, longitudinalMeters: 1500)
+            self.mapView.setRegion(region, animated: false)
+        }
+        
+        // 맵 뷰에 오버레이 추가하기 전에, post 값을 circle 키에 넣기
+        overlayPostMapping[circle] = post
+        mapView.addOverlay(circle)  // MKOverlayRenderer 메소드 호출
+        
+        let annotation = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
+        mapView.addAnnotation(annotation)  // MKAnnotationView
+        
+    }
+    
+    // 실제 위치(center) 기준으로 반경 내의 무작위 좌표를 새로운 중심점으로 설정
+    func generateRandomOffset(for center: CLLocationCoordinate2D, radius: Double) -> (latitudeDelta: Double, longitudeDelta: Double) {
+        let earthRadius: Double = 6378137 // meters
+        let dLat = (radius / earthRadius) * (180 / .pi)
+        let dLong = dLat / cos(center.latitude * .pi / 180)
+        
+        let randomLatDelta = Double.random(in: -dLat...dLat)
+        let randomLongDelta = Double.random(in: -dLong...dLong)
+        
+        return (latitudeDelta: randomLatDelta, longitudeDelta: randomLongDelta)
+    }
+    
+    // MKAnnotationView
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard let annotation = annotation as? CustomAnnotation else {
+            return nil
+        }
+        
+        var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: CustomAnnotationView.identifier)
+        
+        if annotationView == nil {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: CustomAnnotationView.identifier)
+            annotationView?.canShowCallout = false
+            annotationView?.contentMode = .scaleAspectFit
+        } else {
+            annotationView?.annotation = annotation
+        }
+        
+        // postType 따라서 어노테이션에 이미지 다르게 적용
+        let sesacImage: UIImage!
+        let size = CGSize(width: 50, height: 50)
+        UIGraphicsBeginImageContext(size)
+        
+        switch annotation.postType {
+        case .lookingForSitter:
+            sesacImage = UIImage(named: "lookingForSitterIcon")
+        case .offeringToSitter:
+            sesacImage = UIImage(named: "offeringToSitterIcon")
+        default:
+            sesacImage = UIImage(systemName: "mappin.circle.fill")
+        }
+        
+        sesacImage.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        annotationView?.image = resizedImage
+        
+        return annotationView
+    }
+    
+    
+    // MKOverlayRenderer
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let circleOverlay = overlay as? MKCircle {
+            let circleRenderer = MKCircleRenderer(circle: circleOverlay)
+            //            print("rendererFor methods: dict: \(overlayPostMapping)")
+            
+            // 딕셔너리로부터 해당 circleOverlay에 저장된 Post 가져오기
+            if let post = overlayPostMapping[circleOverlay] {
+                // 오버레이 색 적용
+                switch post.postType {
+                case .lookingForSitter:
+                    circleRenderer.fillColor = UIColor.complementary.withAlphaComponent(0.5)
+                case .offeringToSitter:
+                    circleRenderer.fillColor = UIColor.dominent.withAlphaComponent(0.5)
+                }
+            } else {
+                print("post is nil")
+                circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.5) // Default color
+            }
+            
+            circleRenderer.strokeColor = .separatorsNonOpaque
+            circleRenderer.lineWidth = 2
+            return circleRenderer
+        }
+        return MKOverlayRenderer()
+    }
+    
+}
+// MARK: -UITextFieldDelegate,UITextViewDelegate
+
+extension EditPostViewController: UITextFieldDelegate, UITextViewDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        updateSaveButtonState()
+        return true
+    }
+    // Save 버튼의 상태를 업데이트하는 메서드
+    private func updateSaveButtonState() {
+        let titleTextFieldIsNotEmpty = !(titleTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
+        let textViewIsNotEmpty = !(textView.text.trimmingCharacters(in: .whitespaces).isEmpty)
+        
+        if titleTextFieldIsNotEmpty && textViewIsNotEmpty {
+            saveButton.backgroundColor = .dominent
+            saveButton.isEnabled = true
+        } else {
+            saveButton.backgroundColor = .fillSecondary
+            saveButton.isEnabled = false
         }
     }
 }

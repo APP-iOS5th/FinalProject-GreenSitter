@@ -28,7 +28,7 @@ struct Post: Codable {
     let postBody: String
     let postImages: [String]?
     let postStatus: PostStatus
-    let location: Location?
+    var location: Location?
 }
 
 enum PostType: String, Codable {

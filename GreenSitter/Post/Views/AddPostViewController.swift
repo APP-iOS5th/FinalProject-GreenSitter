@@ -9,7 +9,7 @@ import UIKit
 import PhotosUI
 import MapKit
 
-class AddPostViewController: UIViewController {
+class AddPostViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     private var postType: PostType
     private var viewModel: AddPostViewModel
@@ -126,22 +126,68 @@ class AddPostViewController: UIViewController {
         return line
     }()
     
-    private let mapLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .labelsSecondary
-        label.font = .systemFont(ofSize: 16)
-        label.text = "거래 희망 장소를 선택할 수 있어요."
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let mapIconButton: UIButton = {
+    private let mapLabelButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(named: "lookingForSitterIcon")
-        button.setImage(image, for: .normal)
-        button.contentMode = .scaleAspectFit
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        // StackView to hold the image and label (left side)
+        let leftStackView = UIStackView()
+        leftStackView.axis = .horizontal
+        leftStackView.alignment = .center
+        leftStackView.spacing = 8 // Space between image and text
+        leftStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Image on the left
+        let symbolImageView = UIImageView()
+        let symbolImage = UIImage(systemName: "mappin.and.ellipse")
+        symbolImageView.image = symbolImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
+        
+        // Text label
+        let textLabel = UILabel()
+        textLabel.text = "거래 희망 장소를 선택하세요!"
+        textLabel.font = .systemFont(ofSize: 17)
+        textLabel.textColor = .labelsSecondary
+        
+        // Add image and label to the left stack view
+        leftStackView.addArrangedSubview(symbolImageView)
+        leftStackView.addArrangedSubview(textLabel)
+        
+        // Right arrow '>' on the far right
+        let arrowImageView = UIImageView()
+        let arrowImage = UIImage(systemName: "chevron.right")
+        arrowImageView.image = arrowImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
+        arrowImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add the left stack view and the arrow to the button
+        button.addSubview(leftStackView)
+        button.addSubview(arrowImageView)
+        
+        // Constraints for the left stack view (image and text)
+        NSLayoutConstraint.activate([
+            leftStackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
+            leftStackView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
+        ])
+        
+        // Constraints for the arrow on the right
+        NSLayoutConstraint.activate([
+            arrowImageView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
+            arrowImageView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
+        ])
+        
+        // Button appearance
+        button.layer.cornerRadius = 4
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.gray.cgColor
+        
         return button
+    }()
+
+
+    
+    private lazy var mapView: MKMapView = {
+        let mapView = MKMapView()
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        return mapView
     }()
     
     private let saveButton: UIButton = {
@@ -156,31 +202,58 @@ class AddPostViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .bgPrimary
         setupLayout()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(pickerImageViewTapped))
         pickerImageView.addGestureRecognizer(tapGesture)
         
+        updateSaveButtonState()
+        titleTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        
+        
         updateImageStackView()
+        
+        hideKeyboard()
     }
     
-//    let address = post.location?.address
-//    let placeName = post.location?.placeName
-//    
-//    if let address = address, !address.isEmpty, let placeName = placeName, !placeName.isEmpty {
-//        mapPlaceLabel.text = "\(address) (\(placeName))" // 주소와 장소 이름을 함께 표시
-//    } else if let address = address, !address.isEmpty {
-//        mapPlaceLabel.text = address // 주소만 표시
-//    } else if let placeName = placeName, !placeName.isEmpty {
-//        mapPlaceLabel.text = placeName // 장소 이름만 표시
-//    } else {
-//        mapPlaceLabel.text = "주소 정보 없음" // 둘 다 없는 경우
-//    }
+    func hideKeyboard() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+    }
     
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    
+    
+    @objc private func textDidChange() {
+        updateSaveButtonState()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let address = viewModel.postLocation?.address
+        let placeName = viewModel.postLocation?.placeName
+        
+        guard let textLabel = mapLabelButton.subviews
+            .compactMap({ $0 as? UIStackView })
+            .first?
+            .arrangedSubviews
+            .compactMap({ $0 as? UILabel })
+            .first else { return }
+        
+        if let address = address, !address.isEmpty {
+            textLabel.text = address
+        } else if let placeName = placeName, !placeName.isEmpty {
+            textLabel.text = placeName
+        } else {
+            textLabel.text = "거래 희망 장소를 선택하세요!"
+        }
+    }
     
     @objc private func saveButtonTapped() {
-        saveButton.isEnabled = false
         
         guard validateInputs() else {
             saveButton.isEnabled = true
@@ -190,7 +263,6 @@ class AddPostViewController: UIViewController {
         guard let currentUser = LoginViewModel.shared.user else {
             print("User ID is not available")
             saveButton.isEnabled = true
-
             return
         }
         
@@ -242,6 +314,7 @@ class AddPostViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    
     private func setupLayout() {
         self.title = postType.rawValue
         view.addSubview(scrollView)
@@ -256,14 +329,14 @@ class AddPostViewController: UIViewController {
         contentView.addSubview(textView)
         contentView.addSubview(remainCountLabel)
         contentView.addSubview(dividerLine3)
-        contentView.addSubview(mapLabel)
-        contentView.addSubview(mapIconButton)
+        contentView.addSubview(mapLabelButton)
+        contentView.addSubview(mapView)
         
         view.addSubview(saveButton)
         
-        mapIconButton.addTarget(self, action: #selector(mapIconButtonTapped), for: .touchUpInside)
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
-        
+        mapLabelButton.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
+
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),
@@ -318,15 +391,15 @@ class AddPostViewController: UIViewController {
             dividerLine3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             dividerLine3.heightAnchor.constraint(equalToConstant: 1),
             
-            mapLabel.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 40),
-            // map Label 간 하단 간격 필요
-            mapLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60),
-            mapLabel.trailingAnchor.constraint(equalTo: mapIconButton.leadingAnchor, constant: -8),
-            
-            mapIconButton.centerYAnchor.constraint(equalTo: mapLabel.centerYAnchor),
-            mapIconButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -55), // 버튼의 우측 여백
-            mapIconButton.heightAnchor.constraint(equalToConstant: 50),
-            mapIconButton.widthAnchor.constraint(equalToConstant: 50),
+            mapLabelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mapLabelButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            mapLabelButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
+            mapLabelButton.heightAnchor.constraint(equalToConstant: 60),
+         
+            mapView.topAnchor.constraint(equalTo: mapLabelButton.bottomAnchor, constant: 12),
+            mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
+            mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            mapView.heightAnchor.constraint(equalToConstant: 200),
             
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -335,18 +408,13 @@ class AddPostViewController: UIViewController {
         ])
     }
     
-    @objc private func mapIconButtonTapped() {
+    @objc private func mapLabelButtonTapped() {
         let searchMapViewController = SearchMapViewController()
         searchMapViewController.addPostViewModel = viewModel
         let navigationController = UINavigationController(rootViewController: searchMapViewController)
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true, completion: nil)
     }
-    
-    
-}
-
-extension AddPostViewController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         let textCount = textView.text.count
@@ -369,7 +437,7 @@ extension AddPostViewController: UITextViewDelegate {
         let size = CGSize(width: textView.frame.width, height: .infinity)
         let estimatedSize = textView.sizeThatFits(size)
         
-        let minHeight: CGFloat = 200 // 최소 높이
+        let minHeight: CGFloat = 200
         
         textView.constraints.forEach { (constraint) in
             if constraint.firstAttribute == .height {
@@ -386,25 +454,24 @@ extension AddPostViewController: UITextViewDelegate {
         } else if textView.textColor == .labelsSecondary && textView.text != textViewPlaceHolder {
             textView.textColor = .labelsPrimary
         }
+        
+        updateSaveButtonState()
     }
     
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == .labelsSecondary || textView.textColor == .red {
-            // 플레이스홀더 텍스트가 있다면 지우고 검정색으로 변경
             textView.text = nil
-            textView.textColor = .labelsPrimary // 검정색 텍스트로 변경
+            textView.textColor = .labelsPrimary
         }
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            // 텍스트가 비어 있으면 다시 플레이스홀더를 설정하고 빨간색으로 표시
             textView.text = textViewPlaceHolder
             textView.textColor = .red
         }
     }
-    
 }
 
 extension AddPostViewController: PHPickerViewControllerDelegate {
@@ -412,7 +479,10 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
     private func updateImageStackView() {
         imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        for (index, image) in viewModel.selectedImages.enumerated() {
+        imageStackView.addArrangedSubview(pickerImageView)
+        
+        // 나머지 이미지들을 추가합니다.
+        for (index, image) in viewModel.selectedImages.prefix(10).enumerated() {
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
@@ -433,7 +503,6 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
             containerView.translatesAutoresizingMaskIntoConstraints = false
             containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
             containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-            
             containerView.addSubview(imageView)
             containerView.addSubview(deleteButton)
             
@@ -452,8 +521,6 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
             
             imageStackView.addArrangedSubview(containerView)
         }
-        
-        imageStackView.addArrangedSubview(pickerImageView)
     }
     
     @objc private func deleteImage(_ sender: UIButton) {
@@ -465,13 +532,40 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true, completion: nil)
         
-        viewModel.addSelectedImages(results: results) { [weak self] in
-            DispatchQueue.main.async {
-                self?.updateImageStackView()
+        // 현재 선택된 이미지 수와 추가하려는 이미지 수의 합이 10장을 초과하는지 확인
+        let availableSlots = 10 - viewModel.selectedImages.count
+        
+        if availableSlots > 0 {
+            let selectedResults = results.prefix(availableSlots)
+            
+            viewModel.addSelectedImages(results: Array(selectedResults)) { [weak self] in
+                DispatchQueue.main.async {
+                    // 추가된 이미지를 업데이트
+                    for result in selectedResults {
+                        result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (image, error) in
+                            if let image = image as? UIImage {
+                                DispatchQueue.main.async {
+                                    self?.updateImageStackView()
+                                }
+                            }
+                        }
+                    }
+                }
             }
+            
+            // 선택한 이미지가 추가 가능한 슬롯보다 많을 경우 알림 표시
+            if results.count > availableSlots {
+                let alert = UIAlertController(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                present(alert, animated: true)
+            }
+        } else {
+            // 더 이상 이미지를 추가할 수 없는 경우 경고 메시지 표시
+            let alert = UIAlertController(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            present(alert, animated: true)
         }
     }
-    
     
     @objc private func pickerImageViewTapped() {
         checkPhotoLibraryPermission()
@@ -511,11 +605,38 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
     }
     
     private func presentImagePickerController() {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 10
-        configuration.filter = .images
-        let picker = PHPickerViewController(configuration: configuration)
+        if viewModel.selectedImages.count >= 10 {
+            let alert = UIAlertController(title: "이미지 제한", message: "최대 10장의 이미지만 선택할 수 있습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 10 - viewModel.selectedImages.count
+        config.filter = .images
+        let picker = PHPickerViewController(configuration: config)
         picker.delegate = self
         present(picker, animated: true, completion: nil)
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        updateSaveButtonState()
+        return true
+    }
+    
+    // Save 버튼의 상태를 업데이트하는 메서드
+    private func updateSaveButtonState() {
+        let titleTextFieldIsNotEmpty = !(titleTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
+        
+        let textViewIsNotEmpty = !textView.text.trimmingCharacters(in: .whitespaces).isEmpty && textView.text != textViewPlaceHolder
+        
+        if titleTextFieldIsNotEmpty && textViewIsNotEmpty {
+            saveButton.backgroundColor = .dominent
+            saveButton.isEnabled = true
+        } else {
+            saveButton.backgroundColor = .fillSecondary
+            saveButton.isEnabled = false
+        }
     }
 }
