@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ChatMessageTableViewCell: UITableViewCell {
     var chatViewModel: ChatViewModel?
@@ -50,7 +51,6 @@ class ChatMessageTableViewCell: UITableViewCell {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.image = UIImage(named: "logo7")
         
         return imageView
     }()
@@ -73,7 +73,7 @@ class ChatMessageTableViewCell: UITableViewCell {
     lazy var timeLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "오후 1:43"
+        label.text = "\(Date())"
         label.textColor = .labelsSecondary
         label.font = UIFont.systemFont(ofSize: 11)
         
@@ -184,7 +184,7 @@ class ChatMessageTableViewCell: UITableViewCell {
     func configure() {
         // 프로필 이미지 설정
         let profileImage: String?
-        if chatRoom?.userId == chatViewModel?.userId {
+        if chatRoom?.userId == chatViewModel?.user?.id {
             profileImage = chatRoom?.postUserProfileImage
         } else {
             profileImage = chatRoom?.userProfileImage
@@ -194,7 +194,22 @@ class ChatMessageTableViewCell: UITableViewCell {
             return
         }
         
-        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
+        // 이미지 다운로드 실패 시 기본 이미지로 설정
+        let placeholderImage = UIImage(named: "profileIcon")
+        
+//        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView, placeholderImage: placeholderImage)
+        // Kingfisher를 사용하여 이미지 다운로드 및 설정
+        profileImageView.kf.setImage(with: profileImageUrl, placeholder: placeholderImage)
+        
+        // 메세지 시간 설정
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        formatter.dateFormat = "a h:mm" // ex) 오전 9시 05분
+        let timeString = formatter.string(from: date)
+        
+        timeLabel.text = timeString
     }
 
 }

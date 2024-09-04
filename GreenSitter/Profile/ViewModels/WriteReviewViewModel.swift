@@ -18,7 +18,7 @@ extension WriteReviewViewController {
             return
         }
         
-        db.collection("posts").whereField("userId", isEqualTo: userId).whereField("postType", isEqualTo: "새싹돌봄이 찾습니다").whereField("postStatus", isEqualTo: "거래완료").getDocuments { [weak self] (snapshot, error) in
+        db.collection("posts").whereField("userId", isEqualTo: userId).whereField("postStatus", isEqualTo: "거래완료").getDocuments { [weak self] (snapshot, error) in
             guard let self = self else { return }
             
             if let error = error {
@@ -54,7 +54,8 @@ extension WriteReviewViewController {
                     id: document.documentID,
                     enabled: true,
                     createDate: Date(),
-                    updateDate: updateDate,
+                    updateDate: updateDate, 
+                    recipientId: "",
                     userId: userId,
                     profileImage: "",  // 필요시 추가
                     nickname: "",      // 필요시 추가

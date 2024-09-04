@@ -18,4 +18,10 @@ struct Plan: Codable {
     let ownerNotification: Bool
     let sitterNotification: Bool
     let isAccepted: Bool
+    let planType: PlanType
+}
+
+enum PlanType: String, Codable {
+    case leavePlan, getBackPlan
+    
 }

@@ -12,14 +12,14 @@ class ReceiveReviewTableViewCell: UITableViewCell {
     lazy var badButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 30 // 버튼의 반지름을 설정하여 동그랗게 만듦
+        button.layer.cornerRadius = 30
         button.clipsToBounds = true
         return button
     }()
     
     lazy var averageButton: UIButton = {
         let button = UIButton()
-        button.layer.cornerRadius = 30 // 버튼의 반지름을 설정하여 동그랗게 만듦
+        button.layer.cornerRadius = 30
         button.clipsToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -27,7 +27,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
     
     lazy var goodButton: UIButton = {
         let button = UIButton()
-        button.layer.cornerRadius = 30 // 버튼의 반지름을 설정하여 동그랗게 만듦
+        button.layer.cornerRadius = 30
         button.clipsToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -37,7 +37,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(UIColor.black, for: .normal)
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "BGPrimary")
         return button
     }()
     
@@ -45,7 +45,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
         let button = UIButton()
         button.setTitleColor(UIColor.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "BGPrimary")
         return button
     }()
     
@@ -53,7 +53,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
         let button = UIButton()
         button.setTitleColor(UIColor.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "BGPrimary")
         return button
     }()
     
@@ -61,7 +61,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
         let button = UIButton()
         button.setTitleColor(UIColor.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "BGPrimary")
         return button
     }()
     
@@ -89,13 +89,13 @@ class ReceiveReviewTableViewCell: UITableViewCell {
             // badButton: 왼쪽 배치
             badButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 50),
             badButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 30),
-            badButton.widthAnchor.constraint(equalToConstant: 100), // width와 height를 동일하게 설정
+            badButton.widthAnchor.constraint(equalToConstant: 100),
             badButton.heightAnchor.constraint(equalToConstant: 100),
             
             // averageButton: 가운데 배치
             averageButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 50),
             averageButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            averageButton.widthAnchor.constraint(equalToConstant: 100), // width와 height를 동일하게 설정
+            averageButton.widthAnchor.constraint(equalToConstant: 100), 
             averageButton.heightAnchor.constraint(equalToConstant: 100),
             
             // goodButton: 오른쪽 배치

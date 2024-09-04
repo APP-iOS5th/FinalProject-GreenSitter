@@ -216,6 +216,7 @@ class EditPostViewModel: ObservableObject {
                             enabled: true,
                             createDate: self.selectedPost.createDate,
                             updateDate: Date(),
+                            recipientId: "",
                             userId: self.selectedPost.userId,
                             profileImage: self.selectedPost.profileImage,
                             nickname: self.selectedPost.nickname,

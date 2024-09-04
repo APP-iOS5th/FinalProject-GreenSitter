@@ -60,7 +60,9 @@ struct SampleChatData {
             postId: "450e8400-e29b-41d4-a716-446655440001",
             postImage: "https://example.com/post1.jpg",
             postTitle: "Post Title 1",
-            postStatus: .beforeTrade
+            postStatus: .beforeTrade,
+            hasLeavePlan: false,
+            hasGetBackPlan: false
         ),
         ChatRoom(
             id: "150e8400-e29b-41d4-a716-446655440002",
@@ -106,13 +108,15 @@ struct SampleChatData {
                     messageType: .plan,
                     text: nil,
                     image: nil,
-                    plan: Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: Date(), planPlace: nil, contract: nil, ownerNotification: true, sitterNotification: true, isAccepted: true)
+                    plan: Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: Date(), planPlace: nil, contract: nil, ownerNotification: true, sitterNotification: true, isAccepted: true, planType: .leavePlan)
                 )
             ],
             postId: "450e8400-e29b-41d4-a716-446655440002",
             postImage: "https://example.com/post2.jpg",
             postTitle: "Post Title 2",
-            postStatus: .inTrade
+            postStatus: .inTrade,
+            hasLeavePlan: false,
+            hasGetBackPlan: false
         ),
         ChatRoom(
             id: "150e8400-e29b-41d4-a716-446655440003",
@@ -151,7 +155,9 @@ struct SampleChatData {
             postId: "450e8400-e29b-41d4-a716-446655440003",
             postImage: "https://example.com/post3.jpg",
             postTitle: "Post Title 3",
-            postStatus: .inTrade
+            postStatus: .inTrade,
+            hasLeavePlan: false,
+            hasGetBackPlan: false
         )
     ]
     
@@ -203,6 +209,7 @@ struct SampleChatData {
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
+            recipientId: "",
             userId: "250e8400-e29b-41d4-a716-446655440001",
             profileImage: "https://picsum.photos/300",
             nickname: "JoneDoe",
@@ -224,6 +231,7 @@ struct SampleChatData {
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
+            recipientId: "",
             userId: "250e8400-e29b-41d4-a716-446655440002",
             profileImage: "https://picsum.photos/300",
             nickname: "JaneDoe",
@@ -244,6 +252,7 @@ struct SampleChatData {
             enabled: true,
             createDate: Date(),
             updateDate: Date(),
+            recipientId: "",
             userId: "250e8400-e29b-41d4-a716-446655440003",
             profileImage: "https://picsum.photos/300",
             nickname: "AliceSmith",

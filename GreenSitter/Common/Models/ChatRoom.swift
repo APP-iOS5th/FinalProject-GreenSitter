@@ -28,5 +28,7 @@ struct ChatRoom: Codable {
     let postId: String
     let postImage: String?
     let postTitle: String
-    let postStatus: PostStatus
+    var postStatus: PostStatus
+    var hasLeavePlan: Bool
+    var hasGetBackPlan: Bool
 }

@@ -20,6 +20,10 @@ class FinalConfirmPlanViewController: UIViewController {
     
     private var viewModel: MakePlanViewModel
     
+    private lazy var currentId: String? = {
+        viewModel.chatViewModel?.userId
+    }()
+    
     private lazy var scrollView: UIScrollView = {
        let scrollView = UIScrollView()
         scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 10)
@@ -135,7 +139,7 @@ class FinalConfirmPlanViewController: UIViewController {
     }()
     
     private lazy var imageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: "tree"))
+        let imageView = UIImageView(image: UIImage(named: "ChatIcon"))
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -164,7 +168,12 @@ class FinalConfirmPlanViewController: UIViewController {
     
     private lazy var notificationSwitch: UISwitch = {
         let notificationSwitch = UISwitch()
-        notificationSwitch.isOn = true
+        if currentId == viewModel.chatRoom.postUserId {
+            notificationSwitch.isOn = viewModel.ownerNotification
+        } else {
+            notificationSwitch.isOn = viewModel.sitterNotification
+        }
+        notificationSwitch.addTarget(self, action: #selector(switchValueChanged(_:)), for: .valueChanged)
         return notificationSwitch
     }()
     
@@ -186,6 +195,40 @@ class FinalConfirmPlanViewController: UIViewController {
         return notificationStackView
     }()
     
+    private lazy var cancelButton: UIButton = {
+        let cancelButton = UIButton()
+            
+        var config = UIButton.Configuration.plain()
+        config.title = "약속 취소하기"
+        config.contentInsets = .init(top: 6.5, leading: 16, bottom: 6.5, trailing: 16)
+        config.baseForegroundColor = .systemRed
+        cancelButton.configuration = config
+        cancelButton.contentHorizontalAlignment = .leading
+        cancelButton.backgroundColor = UIColor(named: "BGPrimary")
+        cancelButton.layer.cornerRadius = 10
+        cancelButton.clipsToBounds = true
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.addAction(UIAction { [weak self] _ in
+            let alert = UIAlertController(title: "약속 취소하기", message: "약속을 취소하시겠습니까?", preferredStyle: .alert)
+            
+            let cancelAction = UIAlertAction(title: "약속 취소하기", style: .cancel) { _ in
+                self?.viewModel.cancelPlan()
+                self?.dismiss(animated: true)
+            }
+            alert.addAction(cancelAction)
+            
+            let confirmAction = UIAlertAction(title: "약속 유지하기", style: .default) { _ in
+                
+            }
+            
+            alert.addAction(confirmAction)
+            
+            self?.present(alert, animated: true, completion: nil)
+        }, for: .touchUpInside)
+        
+        return cancelButton
+    }()
+    
     private lazy var bottomPaddingView: UIView = {
        let bottomPaddingView = UIView()
         bottomPaddingView.backgroundColor = .clear
@@ -205,7 +248,11 @@ class FinalConfirmPlanViewController: UIViewController {
                 print("notificationSwitch is wrong")
                 return
             }
-            self?.viewModel.ownerNotification = isNotificationSwitchOn
+            if self?.currentId == self?.viewModel.chatRoom.postUserId {
+                self?.viewModel.ownerNotification = isNotificationSwitchOn
+            } else {
+                self?.viewModel.sitterNotification = isNotificationSwitchOn
+            }
             self?.viewModel.progress = 3
             self?.viewModel.sendPlan()
             self?.dismiss(animated: true)
@@ -236,9 +283,6 @@ class FinalConfirmPlanViewController: UIViewController {
         buttonStackView.layoutMargins = UIEdgeInsets(top: 16, left: 30, bottom: 16, right: 30)
         buttonStackView.isLayoutMarginsRelativeArrangement = true
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
-        if viewModel.progress == 3 {
-            buttonStackView.isHidden = true
-        }
         return buttonStackView
     }()
     
@@ -285,77 +329,143 @@ class FinalConfirmPlanViewController: UIViewController {
         dealHereView.addSubview(dealHereText)
         notificationStackView.addArrangedSubview(notificationSwitch)
         
-        view.addSubview(buttonStackView)
-        buttonStackView.addArrangedSubview(offeringButton)
-        buttonStackView.addArrangedSubview(editingButton)
-        
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        if viewModel.progress == 3 {
+            scrollView.addSubview(cancelButton)
+            NSLayoutConstraint.activate([
+                scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+                scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                
+                cautionTextStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                cautionTextStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                cautionTextStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                dateTimeTitle.topAnchor.constraint(equalTo: cautionTextStackView.bottomAnchor, constant: 35),
+                dateTimeTitle.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 30),
+                dateTimeTitle.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                dateLabel.topAnchor.constraint(equalTo: dateTimeTitle.bottomAnchor, constant: 15),
+                dateLabel.trailingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: -6),
+                dateLabel.widthAnchor.constraint(equalToConstant: 130),
+                dateLabel.heightAnchor.constraint(equalToConstant: 40),
+                
+                timeLabel.topAnchor.constraint(equalTo: dateTimeTitle.bottomAnchor, constant: 15),
+                timeLabel.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                timeLabel.widthAnchor.constraint(equalToConstant: 90),
+                timeLabel.heightAnchor.constraint(equalToConstant: 40),
+                
+                placeTitle.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 25),
+                placeTitle.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                placeTitle.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                dealHereView.topAnchor.constraint(equalTo: placeTitle.bottomAnchor, constant: 15),
+                dealHereView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                dealHereView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                dealHereView.heightAnchor.constraint(equalToConstant: 150),
+                
+                placeText.centerXAnchor.constraint(equalTo: dealHereView.centerXAnchor),
+                placeText.centerYAnchor.constraint(equalTo: dealHereView.centerYAnchor, constant: -16),
+                
+                dealHereText.centerXAnchor.constraint(equalTo: dealHereView.centerXAnchor),
+                dealHereText.centerYAnchor.constraint(equalTo: dealHereView.centerYAnchor, constant: 16),
+                
+                imageView.topAnchor.constraint(equalTo: dealHereView.bottomAnchor, constant: 90),
+                imageView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+                imageView.widthAnchor.constraint(equalToConstant: 200),
+                imageView.heightAnchor.constraint(equalToConstant: 200),
+                
+                transportAdviceStackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 40),
+                transportAdviceStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                transportAdviceStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                notificationStackView.topAnchor.constraint(equalTo: transportAdviceStackView.bottomAnchor, constant: 40),
+                notificationStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                notificationStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                cancelButton.topAnchor.constraint(equalTo: notificationStackView.bottomAnchor, constant: 10),
+                cancelButton.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                cancelButton.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                bottomPaddingView.heightAnchor.constraint(equalToConstant: 150),
+                bottomPaddingView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                bottomPaddingView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                bottomPaddingView.topAnchor.constraint(equalTo: cancelButton.bottomAnchor),
+                bottomPaddingView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+                
+            ])
+        } else {
+            view.addSubview(buttonStackView)
+            buttonStackView.addArrangedSubview(offeringButton)
+            buttonStackView.addArrangedSubview(editingButton)
             
-            cautionTextStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            cautionTextStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
-            cautionTextStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
-            
-            dateTimeTitle.topAnchor.constraint(equalTo: cautionTextStackView.bottomAnchor, constant: 35),
-            dateTimeTitle.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 30),
-            dateTimeTitle.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
-            
-            dateLabel.topAnchor.constraint(equalTo: dateTimeTitle.bottomAnchor, constant: 15),
-            dateLabel.trailingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: -6),
-            dateLabel.widthAnchor.constraint(equalToConstant: 130),
-            dateLabel.heightAnchor.constraint(equalToConstant: 40),
-            
-            timeLabel.topAnchor.constraint(equalTo: dateTimeTitle.bottomAnchor, constant: 15),
-            timeLabel.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
-            timeLabel.widthAnchor.constraint(equalToConstant: 90),
-            timeLabel.heightAnchor.constraint(equalToConstant: 40),
-            
-            placeTitle.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 25),
-            placeTitle.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
-            placeTitle.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
-            
-            dealHereView.topAnchor.constraint(equalTo: placeTitle.bottomAnchor, constant: 15),
-            dealHereView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
-            dealHereView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
-            dealHereView.heightAnchor.constraint(equalToConstant: 150),
-            
-            placeText.centerXAnchor.constraint(equalTo: dealHereView.centerXAnchor),
-            placeText.centerYAnchor.constraint(equalTo: dealHereView.centerYAnchor, constant: -16),
-            
-            dealHereText.centerXAnchor.constraint(equalTo: dealHereView.centerXAnchor),
-            dealHereText.centerYAnchor.constraint(equalTo: dealHereView.centerYAnchor, constant: 16),
-            
-            imageView.topAnchor.constraint(equalTo: dealHereView.bottomAnchor, constant: 90),
-            imageView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            imageView.widthAnchor.constraint(equalToConstant: 200),
-            imageView.heightAnchor.constraint(equalToConstant: 200),
-            
-            transportAdviceStackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 40),
-            transportAdviceStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
-            transportAdviceStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
-            
-            notificationStackView.topAnchor.constraint(equalTo: transportAdviceStackView.bottomAnchor, constant: 40),
-            notificationStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
-            notificationStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
-            
-            offeringButton.heightAnchor.constraint(equalToConstant: 44),
-            editingButton.heightAnchor.constraint(equalToConstant: 44),
-            
-            bottomPaddingView.heightAnchor.constraint(equalToConstant: 150),
-            bottomPaddingView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
-            bottomPaddingView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
-            bottomPaddingView.topAnchor.constraint(equalTo: notificationStackView.bottomAnchor),
-            bottomPaddingView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            
-            buttonStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-        ])
-        
+            NSLayoutConstraint.activate([
+                scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+                scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                
+                cautionTextStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                cautionTextStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                cautionTextStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                dateTimeTitle.topAnchor.constraint(equalTo: cautionTextStackView.bottomAnchor, constant: 35),
+                dateTimeTitle.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 30),
+                dateTimeTitle.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                dateLabel.topAnchor.constraint(equalTo: dateTimeTitle.bottomAnchor, constant: 15),
+                dateLabel.trailingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: -6),
+                dateLabel.widthAnchor.constraint(equalToConstant: 130),
+                dateLabel.heightAnchor.constraint(equalToConstant: 40),
+                
+                timeLabel.topAnchor.constraint(equalTo: dateTimeTitle.bottomAnchor, constant: 15),
+                timeLabel.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                timeLabel.widthAnchor.constraint(equalToConstant: 90),
+                timeLabel.heightAnchor.constraint(equalToConstant: 40),
+                
+                placeTitle.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 25),
+                placeTitle.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                placeTitle.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                dealHereView.topAnchor.constraint(equalTo: placeTitle.bottomAnchor, constant: 15),
+                dealHereView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                dealHereView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                dealHereView.heightAnchor.constraint(equalToConstant: 150),
+                
+                placeText.centerXAnchor.constraint(equalTo: dealHereView.centerXAnchor),
+                placeText.centerYAnchor.constraint(equalTo: dealHereView.centerYAnchor, constant: -16),
+                
+                dealHereText.centerXAnchor.constraint(equalTo: dealHereView.centerXAnchor),
+                dealHereText.centerYAnchor.constraint(equalTo: dealHereView.centerYAnchor, constant: 16),
+                
+                imageView.topAnchor.constraint(equalTo: dealHereView.bottomAnchor, constant: 90),
+                imageView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+                imageView.widthAnchor.constraint(equalToConstant: 200),
+                imageView.heightAnchor.constraint(equalToConstant: 200),
+                
+                transportAdviceStackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 40),
+                transportAdviceStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                transportAdviceStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                notificationStackView.topAnchor.constraint(equalTo: transportAdviceStackView.bottomAnchor, constant: 40),
+                notificationStackView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                notificationStackView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                
+                offeringButton.heightAnchor.constraint(equalToConstant: 44),
+                editingButton.heightAnchor.constraint(equalToConstant: 44),
+                
+                bottomPaddingView.heightAnchor.constraint(equalToConstant: 150),
+                bottomPaddingView.leadingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.leadingAnchor, constant: 30),
+                bottomPaddingView.trailingAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.trailingAnchor, constant: -30),
+                bottomPaddingView.topAnchor.constraint(equalTo: notificationStackView.bottomAnchor),
+                bottomPaddingView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+                
+                buttonStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                
+            ])
+        }
     }
     
     private func updateLabel() {
@@ -374,4 +484,12 @@ class FinalConfirmPlanViewController: UIViewController {
         placeText.text = viewModel.planPlace?.placeName
     }
     
+    @objc
+    private func switchValueChanged(_ sender: UISwitch) {
+        if currentId == viewModel.chatRoom.postUserId {
+            viewModel.ownerNotification = sender.isOn
+        } else {
+            viewModel.sitterNotification = sender.isOn
+        }
+    }
 }

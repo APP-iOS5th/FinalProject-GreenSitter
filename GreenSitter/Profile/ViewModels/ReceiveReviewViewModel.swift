@@ -13,69 +13,73 @@ import FirebaseStorage
 extension ReceiveReviewViewController {
     // MARK: - post정보 불러오기
     func fetchPostFirebase() {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            print("User ID is not available")
+        if self.postId.isEmpty {
+            print("Post ID is not set")
             return
         }
+        
+        print("Fetching post with Post ID: \(postId)") // 디버깅용 로그 추가
 
-        db.collection("posts").whereField("userId", isEqualTo: userId).whereField("postType", isEqualTo: "새싹돌봄이 찾습니다").whereField("postStatus", isEqualTo: "거래완료").getDocuments { [weak self] (snapshot, error) in
+        
+        db.collection("posts").document(postId).getDocument { [weak self] (document, error) in
             guard let self = self else { return }
             
             if let error = error {
-                print("Error getting document: \(error)")
+                print("문서 가져오기 오류: \(error)")
                 return
             }
             
-            guard let documents = snapshot?.documents else {
-                print("No documents found")
+            guard let document = document, document.exists else {
+                print("문서가 존재하지 않거나 문서 가져오기 실패")
                 return
             }
             
-            // 문서가 존재하는지 확인
-            for document in documents {
-                let postData = document.data()
+            // 문서 데이터 출력 (디버깅 용도)
+            let documentData = document.data() ?? [:]
+            
+            // 문서가 예상 필드를 포함하는지 확인
+                let postStatus = documentData["postStatus"] as? String ?? ""
+                let recipientId = documentData["recipientId"] as? String ?? ""
+                let postTitle = documentData["postTitle"] as? String ?? "제목 없음"
+                let postBody = documentData["postBody"] as? String ?? "본문 내용 없음"
+                let userId = documentData["userId"] as? String ?? "id없음"
+                let updateDateTimestamp = documentData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
+                let createDate: Date = (documentData["createDate"] as? Timestamp)?.dateValue() ?? Date()
+                let updateDate: Date = (documentData["updateDate"] as? Timestamp)?.dateValue() ?? Date()
                 
-                let postStatus = PostStatus(rawValue: postData["postStatus"] as? String ?? "") ?? .completedTrade
-                let postTitle = postData["postTitle"] as? String ?? "제목 없음"
-                let postBody = postData["postBody"] as? String ?? "본문 내용 없음"
-                let updateDateTimestamp = postData["updateDate"] as? Timestamp ?? Timestamp(date: Date())
-                let updateDate = updateDateTimestamp.dateValue()
-                let postImages = postData["postImages"] as? [String] ?? []
                 
-                // 데이터가 올바르게 불러와졌는지 출력해보기
-                print("Post Title: \(postTitle)")
-                print("Post Body: \(postBody)")
+                let postImages = documentData["postImages"] as? [String] ?? []
                 
-                print("Update Date: \(updateDate)")
-                print("Post Images: \(postImages)")
-                
-                // Post 객체 생성 및 배열에 추가
-                let post = Post(
-                    id: document.documentID,
+                print("Fetched Post Data: \(documentData)")
+                // Post 객체 생성 및 업데이트
+                self.review = Post(
+                    id: postId,
                     enabled: true,
-                    createDate: Date(),
+                    createDate: createDate,
                     updateDate: updateDate,
+                    recipientId: recipientId,
                     userId: userId,
-                    profileImage: "",  // 필요시 추가
-                    nickname: "",      // 필요시 추가
-                    userLocation: Location.seoulLocation, // 예시 위치
-                    userNotification: false,
-                    userLevel: .rottenSeeds,
-                    postType: .lookingForSitter,
+                    profileImage: "",
+                    nickname: "",
+                    userLocation: Location.seoulLocation,
+                    userNotification: false, userLevel: .flower,
+                    postType: .offeringToSitter,
                     postTitle: postTitle,
                     postBody: postBody,
                     postImages: postImages,
-                    postStatus: postStatus,
+                    postStatus: .completedTrade,
                     location: nil
                 )
-                self.post.append(post)
+                self.post.append(self.review!) // 추가된 부분
+
                 // 테이블 뷰 업데이트
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
-            }
+
         }
     }
+
     
     // MARK: - 리뷰데이터 정보 불러오기
     func fetchReviewFirebase() {
@@ -84,9 +88,12 @@ extension ReceiveReviewViewController {
             return
         }
         
-        // UserDefaults에서 저장된 postId 가져오기
-        let savedPostId = UserDefaults.standard.string(forKey: "savedPostId") ?? ""
-        print("Saved Post ID: \(savedPostId)")
+        if self.postId.isEmpty {
+            print("Post ID is not set")
+            return
+        }
+        
+        print("Post ID: \(postId)")
         
         let userRef = db.collection("users").document(userId)
         userRef.getDocument { [weak self] (document, error) in
@@ -101,43 +108,46 @@ extension ReceiveReviewViewController {
                 return
             }
             
-            if let reviewsData = document.data()?["reviews"] as? [String: Any] {
-                // Initialize variables to safely decode
-                let reviewId = reviewsData["id"] as? String ?? ""
-                let userId = reviewsData["userId"] as? String ?? ""
-                let enabled = reviewsData["enabled"] as? Bool ?? false
-                let createDate = (reviewsData["createDate"] as? Timestamp)?.dateValue() ?? Date()
-                let updateDate = (reviewsData["updateDate"] as? Timestamp)?.dateValue() ?? Date()
-                let postId = reviewsData["postId"] as? String ?? ""
-                let reviewImage = reviewsData["reviewImage"] as? [String] ?? []
-                
-                // Safely decode `rating` to `Rating` enum
-                let ratingRawValue = reviewsData["rating"] as? String ?? "average"
-                let rating = Rating(rawValue: ratingRawValue) ?? .average
-                
-                let reviewText = reviewsData["reviewText"] as? String
-                let selectedTexts = reviewsData["selectedTexts"] as? [String] ?? []
-                
-                // Initialize `self.reviews` with decoded data
-                self.reviews = Review(id: reviewId, enabled: enabled, createDate: createDate, updateDate: updateDate, userId: userId, postId: postId, rating: rating, reviewText: reviewText, reviewImage: "reviewsData", selectedTexts: selectedTexts)
-                
-                print("Fetched Review: \(String(describing: self.reviews))")
-                
-                // postId가 savedPostId와 일치하는지 확인
-                if postId == savedPostId {
-                    self.selectedTexts = selectedTexts
+            if let reviewsArray = document.data()?["reviews"] as? [[String: Any]] { // 배열로 처리
+                for reviewsData in reviewsArray { // 배열 순회
+                    let reviewId = reviewsData["id"] as? String ?? ""
+                    let userId = reviewsData["userId"] as? String ?? ""
+                    let enabled = reviewsData["enabled"] as? Bool ?? false
+                    let createDate = (reviewsData["createDate"] as? Timestamp)?.dateValue() ?? Date()
+                    let updateDate = (reviewsData["updateDate"] as? Timestamp)?.dateValue() ?? Date()
+                    let reviewPostId = reviewsData["postId"] as? String ?? ""
                     
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
+                    let reviewImage = reviewsData["reviewImage"] as? [String] ?? []
+                    
+                    // Safely decode `rating` to `Rating` enum
+                    let ratingRawValue = reviewsData["rating"] as? String ?? "average"
+                    let rating = Rating(rawValue: ratingRawValue) ?? .average
+                    
+                    let reviewText = reviewsData["reviewText"] as? String
+                    let selectedTexts = reviewsData["selectedTexts"] as? [String] ?? []
+                    
+                    // 리뷰 데이터가 현재 포스트 ID와 일치하는 경우에만 처리
+                    if reviewPostId == self.postId {
+                        let review = Review(id: reviewId, enabled: enabled, createDate: createDate, updateDate: updateDate, userId: userId, postId: reviewPostId, rating: rating, reviewText: reviewText, reviewImage: "reviewImage", selectedTexts: selectedTexts)
+                        
+                        print("Fetched Review: \(String(describing: review))")
+                        
+                        self.selectedTexts = selectedTexts
+                        self.reviews = review
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
+                    } else {
+                        print("Review post ID does not match provided post ID.")
                     }
-                } else {
-                    print("Review post ID does not match saved post ID.")
                 }
             } else {
                 print("Reviews data not found")
             }
         }
     }
+
+
     
     //MARK: - 이미지 스토리지에서 이미지 파일 불러오기
     func loadImage(from gsURL: String, completion: @escaping (UIImage?) -> Void) {

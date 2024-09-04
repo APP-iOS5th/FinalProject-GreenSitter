@@ -15,10 +15,10 @@ import GoogleSignIn
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        //MARK: -Firbase init
+        //MARK: - Firbase init
         FirebaseApp.configure()
         
-        //MARK: - Google Login유무 확인
+        //MARK: - Google Login 유무 확인
         GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
           if error != nil || user == nil {
             // Show the app's signed-out state.
@@ -29,15 +29,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         //MARK: - Push Notification
-        //push notificatioin 시도 중
-
-        // 원격 알림 등록
+        // 알림 허용 권한 받음
         UNUserNotificationCenter.current().delegate = self
+        
+        // 원격 알림 등록
         let authOptions: UNAuthorizationOptions = [.badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,
             completionHandler: { _, _ in }
         )
+        
         application.registerForRemoteNotifications()
         
         // 등록 토큰 엑세스
@@ -85,6 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: - Push Notification 함수
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // APN 토큰과 등록 토큰 매핑
+    // 백그라운드에서 푸시 알림 탭했을 때 실행
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("APN TOKEN MAPPING")
         Messaging.messaging().apnsToken = deviceToken
@@ -96,12 +98,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     // 푸시 알림을 처리하기 위한 함수
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .badge, .sound])
+        completionHandler([.banner, .badge, .sound/*, .list*/]) /// 앱 켜진 상태에서도 알림 설정
     }
 }
 
 extension AppDelegate: MessagingDelegate {
-    //디바이스 등록 토큰 가져오기
+    // 디바이스 등록 토큰 가져오기
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("fcmToken: \(fcmToken ?? "nil")")
     }

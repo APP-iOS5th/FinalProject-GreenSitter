@@ -24,7 +24,13 @@ extension ProfileViewController {
             return
         }
         
-        loginViewModel.firebaseFetch(docId: currentUserID) {}
+        loginViewModel.firebaseFetch(docId: currentUserID) {
+            print("Firebase fetch completed.")
+            DispatchQueue.main.async {
+//                self.fetchUserLevelAndUpdateImage()
+                self.tableView.reloadData()
+            }
+        }
         
         if let profileImageURL = loginViewModel.user?.profileImage {
             loginViewModel.loadProfileImage(from: profileImageURL) { [weak self] image in
@@ -35,9 +41,7 @@ extension ProfileViewController {
                 }
             }
         }
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+
     }
 
     
@@ -59,14 +63,11 @@ extension ProfileViewController {
     }
     
     func fetchUserLevelAndUpdateImage() {
-        
         guard let currentUserID = Auth.auth().currentUser?.uid else {
             print("로그인된 사용자가 없습니다.")
             return
         }
 
-
-        // Firestore에서 현재 사용자의 레벨을 가져옵니다.
         db.collection("users").document(currentUserID).getDocument { [weak self] (document: DocumentSnapshot?, error: Error?) in
             guard let self = self else { return }
             
@@ -84,19 +85,19 @@ extension ProfileViewController {
             }
             
             // 레벨에 따른 이미지 URL을 가져옵니다.
-            guard let imageURLString = self.imageURLForLevel(level),
-                  let httpsURLString = self.convertToHttpsURL(gsURL: imageURLString) else {
+            guard let imageURLString = self.imageURLForLevel(level) else {
                 print("레벨에 맞는 이미지 URL을 생성할 수 없습니다.")
                 return
             }
             
-            // 이미지를 다운로드하여 ProfileTableViewCell의 iconImageView에 설정합니다.
+            print("Level image URL: \(imageURLString)")
+            
+            guard let httpsURLString = self.convertToHttpsURL(gsURL: imageURLString) else {
+                print("https URL로 변환할 수 없습니다.")
+                return
+            }
+            
             self.downloadImage(from: httpsURLString) { image in
-                guard let image = image else {
-                    print("이미지를 다운로드할 수 없습니다.")
-                    return
-                }
-                
                 DispatchQueue.main.async {
                     if let profileTableView = self.profileTableView {
                         if let visibleCells = profileTableView.visibleCells as? [ProfileTableViewCell] {
@@ -105,14 +106,16 @@ extension ProfileViewController {
                             }
                         }
                     }
-                    else {
-                        print("profileTableView is nil")
+                    if image != nil {
+                        print("레벨에 따른 프로필 이미지가 성공적으로 설정되었습니다.")
+                    } else {
+                        print("레벨에 따른 프로필 이미지 설정 실패.")
                     }
-                    print("레벨에 따른 프로필 이미지가 성공적으로 설정되었습니다.")
                 }
             }
         }
     }
+
 
 
     

@@ -34,9 +34,9 @@ class ChatViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         
-        if chatViewModel?.userId == chatRoom.userId {
+        if chatViewModel?.user?.id == chatRoom.userId {
             self.title = chatRoom.postUserNickname
-        } else if chatViewModel?.userId == chatRoom.postUserId {
+        } else if chatViewModel?.user?.id == chatRoom.postUserId {
             self.title = chatRoom.userNickname
         }
         
@@ -91,7 +91,7 @@ class ChatViewController: UIViewController {
     
     // MARK: - UIMenu Action Methods
     private func notificationToggleAction() -> UIAction {
-        let notificationStatus = chatViewModel?.userId == chatRoom.userId ? chatRoom.userNotification : chatRoom.postUserNotification
+        let notificationStatus = chatViewModel?.user?.id == chatRoom.userId ? chatRoom.userNotification : chatRoom.postUserNotification
         return UIAction(
             title: notificationStatus ? "알림 끄기" : "알림 켜기",
             image: notificationStatus ? UIImage(systemName: "bell.slash.fill") : UIImage(systemName: "bell.fill")) { [weak self] _ in
@@ -99,7 +99,7 @@ class ChatViewController: UIViewController {
             let newNotificationStatus = !notificationStatus
             Task {
                 do {
-                    if self.chatViewModel?.userId == self.chatRoom.userId {
+                    if self.chatViewModel?.user?.id == self.chatRoom.userId {
                         try await self.chatViewModel?.updateNotification(
                             chatRoomId: self.chatRoom.id,
                             userNotification: newNotificationStatus,
@@ -114,7 +114,7 @@ class ChatViewController: UIViewController {
                     }
                     
                     // 상태 업데이트
-                    if self.chatViewModel?.userId == self.chatRoom.userId {
+                    if self.chatViewModel?.user?.id == self.chatRoom.userId {
                         self.chatRoom.userNotification = newNotificationStatus
                     } else {
                         self.chatRoom.postUserNotification = newNotificationStatus
@@ -152,7 +152,18 @@ class ChatViewController: UIViewController {
             }
         }
         
-        let menuItems = [notificationToggleAction, leaveChatRoomAction]
+        let completeTradeAction = UIAction(
+            title: "거래 완료하기",
+            image: UIImage(systemName: "checkmark.circle")
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            Task {
+                await self.chatViewModel?.completeTrade(chatRoomId: self.chatRoom.id, postId: self.chatRoom.postId, recipientId: self.chatRoom.userId)
+                self.chatViewModel?.sendReviewMessage(chatRoom: self.chatRoom)
+            }
+        }
+        
+        let menuItems = [notificationToggleAction, completeTradeAction, leaveChatRoomAction]
         let menu = UIMenu(children: menuItems)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), menu: menu)
     }

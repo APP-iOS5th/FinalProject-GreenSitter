@@ -56,6 +56,7 @@ extension LeavePlantListViewController {
                     enabled: true,
                     createDate: Date(),
                     updateDate: updateDate,
+                    recipientId: "",
                     userId: userId,
                     profileImage: "",  // 필요시 추가
                     nickname: "",      // 필요시 추가

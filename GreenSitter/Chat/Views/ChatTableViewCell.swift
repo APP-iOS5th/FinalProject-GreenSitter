@@ -5,8 +5,8 @@
 //  Created by 박지혜 on 8/8/24.
 //
 
-//import FirebaseFirestore
 import UIKit
+import Kingfisher
 
 class ChatTableViewCell: UITableViewCell {
     var chatViewModel: ChatViewModel?
@@ -131,7 +131,12 @@ class ChatTableViewCell: UITableViewCell {
             return
         }
         
-        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView)
+        // 이미지 다운로드 실패 시 기본 이미지로 설정
+        let placeholderImage = UIImage(named: "profileIcon")
+        
+        //        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView, placeholderImage: placeholderImage)
+        // Kingfisher를 사용하여 이미지 다운로드 및 설정
+        profileImageView.kf.setImage(with: profileImageUrl, placeholder: placeholderImage)
         
         // 닉네임
         let nickname = chatRoom?.userId == userId ? chatRoom?.postUserNickname: chatRoom?.userNickname
@@ -143,7 +148,7 @@ class ChatTableViewCell: UITableViewCell {
         //        userLocationLabel.text = location
         
         // 임시 위치 데이터
-//        userLocationLabel.text = "상도동"
+        //        userLocationLabel.text = "상도동"
         
         // 알림 여부
         guard let notification = chatRoom?.userId == userId ? chatRoom?.userNotification : chatRoom?.postUserNotification else {
@@ -152,17 +157,23 @@ class ChatTableViewCell: UITableViewCell {
         notificationImageView.image = notification ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell.slash.fill")
         
         // 마지막 메세지 내용
-        // TODO: - lastMessage가 없을 때 return되면서 이전 값으로 적용되는 문제
         guard let lastMessage = chatViewModel?.lastMessages[chatRoom!.id]?.last else {
+            lastMessageLabel.text = ""
+            dateLabel.text = ""
+            circleView.backgroundColor = .clear
+            unreadCountLabel.text = ""
             return
         }
-
-        if let text = lastMessage.text {
-            lastMessageLabel.text = text
-        } else if (lastMessage.image) != nil {
+        
+        switch lastMessage.messageType {
+        case .text:
+            lastMessageLabel.text = lastMessage.text
+        case .image:
             lastMessageLabel.text = "사진"
-        } else if (lastMessage.plan) != nil {
-            lastMessageLabel.text = "약속"
+        case .plan:
+            lastMessageLabel.text = "약속이 정해졌습니다."
+        case .review:
+            lastMessageLabel.text = "거래가 완료되었습니다."
         }
         
         // 마지막 메세지 시간
