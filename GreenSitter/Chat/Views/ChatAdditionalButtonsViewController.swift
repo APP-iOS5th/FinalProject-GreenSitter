@@ -210,7 +210,7 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
                             viewController.present(alert, animated: true, completion: nil)
                         }
                     } else {
-                        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planType: planType, chatRoom: chatRoom))
+                        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planPlace: chatRoom.preferredPlace, planType: planType, chatRoom: chatRoom))
                         makePlanViewController.modalPresentationStyle = .fullScreen
                         makePlanViewController.viewModel.chatViewModel = chatViewModel
                         DispatchQueue.main.async {
@@ -232,7 +232,7 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
                             viewController.present(alert, animated: true, completion: nil)
                         }
                     } else {
-                        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planType: planType, chatRoom: chatRoom))
+                        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planPlace: chatRoom.preferredPlace, planType: planType, chatRoom: chatRoom))
                         makePlanViewController.modalPresentationStyle = .fullScreen
                         makePlanViewController.viewModel.chatViewModel = chatViewModel
                         DispatchQueue.main.async {

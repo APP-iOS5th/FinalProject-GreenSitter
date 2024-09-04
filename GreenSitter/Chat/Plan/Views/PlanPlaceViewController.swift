@@ -206,6 +206,7 @@ class PlanPlaceViewController: UIViewController {
             self.dealHereText.font = UIFont.systemFont(ofSize: 17, weight: .bold)
             self.nextButton.backgroundColor = UIColor(named: "DominentColor")
             self.placeText.text = self.viewModel.planPlace?.placeName
+            self.dealHereText.text = "여기서 거래할게요!"
         }
         self.viewModel.isPlaceSelected = true
         self.nextButton.isEnabled = true
