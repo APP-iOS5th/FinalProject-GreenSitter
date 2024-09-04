@@ -8,6 +8,9 @@
 import UIKit
 
 class MoreImagesTableViewCell: UITableViewCell {
+    var chatViewModel: ChatViewModel?
+    var chatRoom: ChatRoom?
+    
     weak var delegate: ChatMessageTableViewImageCellDelegate?
     
     private let firestorageManager = FirestorageManager()
@@ -321,6 +324,38 @@ class MoreImagesTableViewCell: UITableViewCell {
                 self.delegate?.imageViewTapped(images: images, index: index)
             }
         }
+    }
+    
+    // MARK: - Cell 구성
+    func configure() {
+        // 프로필 이미지 설정
+        let profileImage: String?
+        if chatRoom?.userId == chatViewModel?.user?.id {
+            profileImage = chatRoom?.postUserProfileImage
+        } else {
+            profileImage = chatRoom?.userProfileImage
+        }
+        
+        guard let profileImageUrl = URL(string: profileImage!) else {
+            return
+        }
+        
+        // 이미지 다운로드 실패 시 기본 이미지로 설정
+        let placeholderImage = UIImage(named: "profileIcon")
+        
+//        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView, placeholderImage: placeholderImage)
+        // Kingfisher를 사용하여 이미지 다운로드 및 설정
+        profileImageView.kf.setImage(with: profileImageUrl, placeholder: placeholderImage)
+        
+        // 메세지 시간 설정
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        formatter.dateFormat = "a h:mm" // ex) 오전 9시 05분
+        let timeString = formatter.string(from: date)
+        
+        timeLabel.text = timeString
     }
     
     @objc

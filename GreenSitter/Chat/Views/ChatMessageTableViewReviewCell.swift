@@ -78,27 +78,91 @@ class ChatMessageTableViewReviewCell: UITableViewCell {
     }
     
     // MARK: - Setup UI
-    private func setupUI() {
-        bubbleView.addSubview(messageLabel)
-        bubbleView.addSubview(makeReviewButton)
-        contentView.addSubview(bubbleView)
+    func setupUI() {
+        NSLayoutConstraint.deactivate(bubbleView.constraints)
         
-        NSLayoutConstraint.activate([
-            messageLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 20),
-            messageLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
-            messageLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
-            messageLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
-            
-            makeReviewButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 20),
-            makeReviewButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
-            makeReviewButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
-            makeReviewButton.widthAnchor.constraint(equalToConstant: 130),
-            
-            bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-        ])
+        if chatRoom?.postType == .lookingForSitter {
+            if chatRoom?.postUserId == currentId {
+                bubbleView.addSubview(messageLabel)
+                bubbleView.addSubview(makeReviewButton)
+                contentView.addSubview(bubbleView)
+                
+                NSLayoutConstraint.activate([
+                    messageLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 20),
+                    messageLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                    messageLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
+                    messageLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
+                    
+                    makeReviewButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 20),
+                    makeReviewButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+                    makeReviewButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
+                    makeReviewButton.widthAnchor.constraint(equalToConstant: 130),
+                    
+                    bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+                    bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+                    bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+                    bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+                ])
+            } else {
+                bubbleView.addSubview(messageLabel)
+                contentView.addSubview(bubbleView)
+                
+                NSLayoutConstraint.activate([
+                    messageLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 20),
+                    messageLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                    messageLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
+                    messageLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
+                    messageLabel.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor),
+                    messageLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -20),
+                    
+                    bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+                    bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+                    bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+                    bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+                ])
+            }
+        } else {
+            if chatRoom?.postUserId == currentId {
+                bubbleView.addSubview(messageLabel)
+                contentView.addSubview(bubbleView)
+                
+                NSLayoutConstraint.activate([
+                    messageLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 20),
+                    messageLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                    messageLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
+                    messageLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
+                    messageLabel.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor),
+                    messageLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -20),
+                    
+                    bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+                    bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+                    bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+                    bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+                ])
+            } else {
+                bubbleView.addSubview(messageLabel)
+                bubbleView.addSubview(makeReviewButton)
+                contentView.addSubview(bubbleView)
+                
+                NSLayoutConstraint.activate([
+                    messageLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 20),
+                    messageLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                    messageLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
+                    messageLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
+                    
+                    makeReviewButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 20),
+                    makeReviewButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+                    makeReviewButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
+                    makeReviewButton.widthAnchor.constraint(equalToConstant: 130),
+                    
+                    bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+                    bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+                    bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+                    bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+                ])
+            }
+        }
+        
     }
     
     func updateRecipientName() {
@@ -111,8 +175,27 @@ class ChatMessageTableViewReviewCell: UITableViewCell {
             }
             return recipientName
         }()
-        DispatchQueue.main.async {
-            self.messageLabel.text = "\(self.recipientName)님과의\n돌봄 거래는 어떠셨나요?\n\n후기는 다른 고객분들께\n큰 도움이 됩니다!"
+        
+        if chatRoom?.postType == .lookingForSitter {
+            if chatRoom?.postUserId == currentId {
+                DispatchQueue.main.async {
+                    self.messageLabel.text = "\(self.recipientName)님과의\n돌봄 거래는 어떠셨나요?\n\n후기는 다른 고객분들께\n큰 도움이 됩니다!"
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.messageLabel.text = "\(self.recipientName)님과의\n돌봄 거래가 완료되었습니다!"
+                }
+            }
+        } else {
+            if chatRoom?.postUserId == currentId {
+                DispatchQueue.main.async {
+                    self.messageLabel.text = "\(self.recipientName)님과의\n돌봄 거래가 완료되었습니다!"
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.messageLabel.text = "\(self.recipientName)님과의\n돌봄 거래는 어떠셨나요?\n\n후기는 다른 고객분들께\n큰 도움이 됩니다!"
+                }
+            }
         }
     }
     

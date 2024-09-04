@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ReviewSendTableViewCell: UITableViewCell {
+class ReviewSendTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     lazy var badButton: UIButton = {
         let button = UIButton()
@@ -71,6 +71,7 @@ class ReviewSendTableViewCell: UITableViewCell {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.backgroundColor = .white
         textField.textColor = .black
+        textField.delegate = self
         return textField
     }()
     
@@ -168,5 +169,14 @@ class ReviewSendTableViewCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+    @objc func dismissKeyboard() {
+        contentView.endEditing(true)
     }
 }

@@ -76,14 +76,17 @@ class ChatPostViewController: UIViewController {
     
     // MARK: - Setup UI
     private func setupUI() {
+        // 이미지 다운로드 실패 시 기본 이미지로 설정
+        let placeholderImage = UIImage(named: "chatIcon")
+        
         if let firstImageUrlString = chatRoom.postImage,
            let postThumbnailUrl = URL(string: firstImageUrlString) {
-            // 이미지 다운로드 실패 시 기본 이미지로 설정
-            let placeholderImage = UIImage(named: "chatIcon")
-            
 //            chatViewModel?.downloadImage(from: postThumbnailUrl, to: postThumbnailView, placeholderImage: placeholderImage)
             // Kingfisher를 사용하여 이미지 다운로드 및 설정
             postThumbnailView.kf.setImage(with: postThumbnailUrl, placeholder: placeholderImage)
+        } else {
+            // postImage가 nil일 경우 기본 이미지로 설정
+            postThumbnailView.image = placeholderImage
         }
         
         postTitleLabel.text = chatRoom.postTitle
