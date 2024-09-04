@@ -180,12 +180,65 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
     
     func presentMakePlan(planType: PlanType) {
         guard let viewController = self.presentingViewController else { return }
-        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planType: planType, chatRoom: chatRoom))
-        makePlanViewController.modalPresentationStyle = .fullScreen
-        makePlanViewController.viewModel.chatViewModel = chatViewModel
-        DispatchQueue.main.async {
-            self.dismiss(animated: false) {
-                viewController.present(makePlanViewController, animated: true)
+        Task {
+            let postStatus = await chatViewModel?.fetchChatPostStatus(chatRoomId: chatRoom.id)
+            if postStatus == .completedTrade {
+                self.dismiss(animated: true) {
+                    let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 거래가 완료된 게시물입니다.", preferredStyle: .alert)
+                    
+                    let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                    }
+                    alert.addAction(confirmAction)
+                    
+                    viewController.present(alert, animated: true, completion: nil)
+                }
+            } else {
+                switch planType {
+                case .leavePlan :
+                    let hasLeavePlan = await chatViewModel?.fetchChatHasLeavePlan(chatRoomId: chatRoom.id) ?? true
+                    if hasLeavePlan {
+                        self.dismiss(animated: true) {
+                            let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 위탁 약속이 있습니다. 약속을 새로 만드시려면 기존 약속을 먼저 취소해주세요.", preferredStyle: .alert)
+                            
+                            let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                            }
+                            alert.addAction(confirmAction)
+                            
+                            viewController.present(alert, animated: true, completion: nil)
+                        }
+                    } else {
+                        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planType: planType, chatRoom: chatRoom))
+                        makePlanViewController.modalPresentationStyle = .fullScreen
+                        makePlanViewController.viewModel.chatViewModel = chatViewModel
+                        DispatchQueue.main.async {
+                            self.dismiss(animated: false) {
+                                viewController.present(makePlanViewController, animated: true)
+                            }
+                        }
+                    }
+                case .getBackPlan :
+                    let hasGetBackPlan = await chatViewModel?.fetchChatHasLeavePlan(chatRoomId: chatRoom.id) ?? true
+                    if hasGetBackPlan {
+                        self.dismiss(animated: true) {
+                            let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 회수 약속이 있습니다. 약속을 새로 만드시려면 기존 약속을 먼저 취소해주세요.", preferredStyle: .alert)
+                            
+                            let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                            }
+                            alert.addAction(confirmAction)
+                            
+                            viewController.present(alert, animated: true, completion: nil)
+                        }
+                    } else {
+                        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planType: planType, chatRoom: chatRoom))
+                        makePlanViewController.modalPresentationStyle = .fullScreen
+                        makePlanViewController.viewModel.chatViewModel = chatViewModel
+                        DispatchQueue.main.async {
+                            self.dismiss(animated: false) {
+                                viewController.present(makePlanViewController, animated: true)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

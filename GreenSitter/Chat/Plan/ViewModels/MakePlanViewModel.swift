@@ -84,6 +84,12 @@ class MakePlanViewModel {
             await chatViewModel?.sendPlanMessage(plan: plan, chatRoom: chatRoom)
             await chatViewModel?.updatePostStatusAfterMakePlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
         }
+        chatRoom.postStatus = .inTrade
+        if planType == .leavePlan {
+            chatRoom.hasLeavePlan = true
+        } else {
+            chatRoom.hasGetBackPlan = true
+        }
     }
     
     func updatePlanNotification() async {
