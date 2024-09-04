@@ -52,7 +52,7 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
         view.backgroundColor = UIColor(named: "BGSecondary")
         tableView.backgroundColor = UIColor(named: "BGSecondary")
         
-        tableView.register(ReviewPostTableViewCell.self, forCellReuseIdentifier: "reviewPostTableViewCell")
+//        tableView.register(ReviewPostTableViewCell.self, forCellReuseIdentifier: "reviewPostTableViewCell")
         tableView.register(ReceiveReviewTableViewCell.self, forCellReuseIdentifier: "receiveReviewTableViewCell")
         
         view.addSubview(tableView)
@@ -64,10 +64,6 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
         ])
         fetchPostFirebase()
         fetchReviewFirebase()
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -128,6 +124,9 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
             cell.backgroundColor = UIColor(named: "BGSecondary")
             return cell
 
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 1000 // 원하는 셀 높이
     }
 }
 
