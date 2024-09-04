@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		15358F5C2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15358F5B2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift */; };
+		15358F682C86CE5B00DECA1F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 15358F672C86CE5B00DECA1F /* GoogleService-Info.plist */; };
+		15358F6A2C86CE6500DECA1F /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 15358F692C86CE6500DECA1F /* APPKey.plist */; };
 		156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156A3B582C749E3900F22B74 /* PlanPlaceDetailViewController.swift */; };
 		15C8208A2C775ECB002991DE /* ImageDetailCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C820892C775ECB002991DE /* ImageDetailCollectionViewController.swift */; };
 		15C8208C2C776FA2002991DE /* ImageDetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C8208B2C776FA2002991DE /* ImageDetailCollectionViewCell.swift */; };
@@ -142,6 +144,8 @@
 
 /* Begin PBXFileReference section */
 		15358F5B2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewReviewCell.swift; sourceTree = "<group>"; };
+		15358F672C86CE5B00DECA1F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		15358F692C86CE6500DECA1F /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
 		1543FB262C63113C002E4CC8 /* ChatAdditionalButtonsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewController.swift; sourceTree = "<group>"; };
 		1543FB2A2C636331002E4CC8 /* ChatAdditionalButtonsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonsViewModel.swift; sourceTree = "<group>"; };
 		1543FB2C2C6365A1002E4CC8 /* ChatAdditionalButtonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdditionalButtonModel.swift; sourceTree = "<group>"; };
@@ -435,8 +439,8 @@
 		97934DD32C62F3C600B38E0A /* GreenSitter */ = {
 			isa = PBXGroup;
 			children = (
-				58DD07242C87EB49005FF41A /* APPKey.plist */,
-				58DD07232C87EB49005FF41A /* GoogleService-Info.plist */,
+				15358F672C86CE5B00DECA1F /* GoogleService-Info.plist */,
+				15358F692C86CE6500DECA1F /* APPKey.plist */,
 				97D1BEB02C6C9DDD00F7A983 /* GreenSitter.entitlements */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
@@ -829,12 +833,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15358F6A2C86CE6500DECA1F /* APPKey.plist in Resources */,
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				971D20A22C87FBEB00CF94F4 /* (null) in Resources */,
 				971D20A42C87FCA600CF94F4 /* LaunchScreen.storyboard in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
-				3B63C69B2C8829F0004E589E /* APPKey.plist in Resources */,
-				3B63C69D2C8829FA004E589E /* GoogleService-Info.plist in Resources */,
+				15358F682C86CE5B00DECA1F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

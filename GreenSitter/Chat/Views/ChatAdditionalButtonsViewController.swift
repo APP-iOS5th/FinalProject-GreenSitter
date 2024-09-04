@@ -149,16 +149,35 @@ extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, 
 //MARK: viewModel에 전달할 additionalButton 함수
 extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDelegate {
     func presentPhotoPicker() {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 10
-        configuration.filter = .any(of: [.images, .livePhotos])
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        
-        guard let viewController = self.presentingViewController else { return }
-        DispatchQueue.main.async {
-            self.dismiss(animated: false) {
-                viewController.present(picker, animated: true)
+        var hasAuthorization = false
+        Task {
+            let authorization = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+            switch authorization {
+            case .authorized, .limited:
+                hasAuthorization = true
+            case .denied, .restricted:
+                DispatchQueue.main.async {
+                    self.showPhotoLibraryAccessDeniedAlert()
+                }
+            case .notDetermined:
+                // 권한 요청 대화상자가 표시
+                break
+            @unknown default:
+                break
+            }
+            if hasAuthorization {
+                var configuration = PHPickerConfiguration()
+                configuration.selectionLimit = 10
+                configuration.filter = .any(of: [.images, .livePhotos])
+                let picker = PHPickerViewController(configuration: configuration)
+                picker.delegate = self
+                
+                guard let viewController = self.presentingViewController else { return }
+                DispatchQueue.main.async {
+                    self.dismiss(animated: false) {
+                        viewController.present(picker, animated: true)
+                    }
+                }
             }
         }
     }
@@ -180,13 +199,96 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
     
     func presentMakePlan(planType: PlanType) {
         guard let viewController = self.presentingViewController else { return }
-        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planType: planType, chatRoom: chatRoom))
-        makePlanViewController.modalPresentationStyle = .fullScreen
-        makePlanViewController.viewModel.chatViewModel = chatViewModel
-        DispatchQueue.main.async {
-            self.dismiss(animated: false) {
-                viewController.present(makePlanViewController, animated: true)
+        Task {
+            let postStatus = await chatViewModel?.fetchChatPostStatus(chatRoomId: chatRoom.id)
+            let authorityToCommit = await chatViewModel?.checkAuthorityToCommit(postId: chatRoom.postId) ?? false
+            if postStatus == .completedTrade {
+                self.dismiss(animated: true) {
+                    let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 거래가 완료된 게시물입니다.", preferredStyle: .alert)
+                    
+                    let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                    }
+                    alert.addAction(confirmAction)
+                    
+                    viewController.present(alert, animated: true, completion: nil)
+                }
+            } else if authorityToCommit {
+                // 거래가 완료되지 않았고,
+                // 약속을 만들 수 있는 권한이 있을 떄
+                switch planType {
+                case .leavePlan :
+                    let hasLeavePlan = await chatViewModel?.fetchChatHasLeavePlan(chatRoomId: chatRoom.id) ?? true
+                    if hasLeavePlan {
+                        self.dismiss(animated: true) {
+                            let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 위탁 약속이 있습니다. 약속을 새로 만드시려면 기존 약속을 먼저 취소해주세요.", preferredStyle: .alert)
+                            
+                            let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                            }
+                            alert.addAction(confirmAction)
+                            
+                            viewController.present(alert, animated: true, completion: nil)
+                        }
+                    } else {
+                        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planPlace: chatRoom.preferredPlace, planType: planType, chatRoom: chatRoom))
+                        makePlanViewController.modalPresentationStyle = .fullScreen
+                        makePlanViewController.viewModel.chatViewModel = chatViewModel
+                        DispatchQueue.main.async {
+                            self.dismiss(animated: false) {
+                                viewController.present(makePlanViewController, animated: true)
+                            }
+                        }
+                    }
+                case .getBackPlan :
+                    let hasGetBackPlan = await chatViewModel?.fetchChatHasGetBackPlan(chatRoomId: chatRoom.id) ?? true
+                    if hasGetBackPlan {
+                        self.dismiss(animated: true) {
+                            let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 회수 약속이 있습니다. 약속을 새로 만드시려면 기존 약속을 먼저 취소해주세요.", preferredStyle: .alert)
+                            
+                            let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                            }
+                            alert.addAction(confirmAction)
+                            
+                            viewController.present(alert, animated: true, completion: nil)
+                        }
+                    } else {
+                        let makePlanViewController = MakePlanViewController(viewModel: MakePlanViewModel(planPlace: chatRoom.preferredPlace, planType: planType, chatRoom: chatRoom))
+                        makePlanViewController.modalPresentationStyle = .fullScreen
+                        makePlanViewController.viewModel.chatViewModel = chatViewModel
+                        DispatchQueue.main.async {
+                            self.dismiss(animated: false) {
+                                viewController.present(makePlanViewController, animated: true)
+                            }
+                        }
+                    }
+                }
+            } else {
+                // 거래가 완료되지 않았고,
+                // 약속을 만들 수 있는 권한이 없을 떄
+                self.dismiss(animated: true) {
+                    let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 다른 사용자와의 약속이 있습니다.", preferredStyle: .alert)
+                    
+                    let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                    }
+                    alert.addAction(confirmAction)
+                    
+                    viewController.present(alert, animated: true, completion: nil)
+                }
             }
         }
+    }
+    
+    private func showPhotoLibraryAccessDeniedAlert() {
+        let alert = UIAlertController(
+            title: "사진 접근 권한이 없습니다",
+            message: "사진을 선택하려면 '설정'에서 사진 접근 권한을 허용해주세요.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
+        })
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(alert, animated: true)
     }
 }
