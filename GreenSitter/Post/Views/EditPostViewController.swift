@@ -184,6 +184,17 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         titleTextField.delegate = self
         textView.delegate = self
         mapView.delegate = self
+        
+        hideKeyboard()
+    }
+    
+    
+    func hideKeyboard() {
+            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        }
+
+        @objc func dismissKeyboard() {
+            view.endEditing(true)
     }
     
     @objc private func textDidChange() {
@@ -380,7 +391,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
                     DispatchQueue.main.async {
                         // View model에 이미지 추가
                         self?.viewModel.selectedImages.append(image)
-                        
+                        self?.viewModel.addedImages.append(image)
                         // UI 업데이트
                         self?.addImageToStackView(image)
                     }
@@ -461,13 +472,13 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     }
     
     private func updateUIWithLoadedImages() {
-            for urlString in viewModel.selectedImageURLs { // URL 배열을 가져옴
-                loadImageFromURL(urlString) { [weak self] image in
-                    guard let image = image else { return }
-                    self?.addImageToStackView(image)
-                }
+        for urlString in viewModel.selectedImageURLs { // URL 배열을 가져옴
+            loadImageFromURL(urlString) { [weak self] image in
+                guard let image = image else { return }
+                self?.addImageToStackView(image)
             }
         }
+    }
     // URL로부터 UIImage를 로드하는 함수
     private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?) -> Void) {
         guard let url = URL(string: urlString) else {
@@ -663,11 +674,11 @@ extension EditPostViewController: MKMapViewDelegate {
         }
         return MKOverlayRenderer()
     }
+    
 }
 //MARK: -UITextFieldDelegate,UITextViewDelegate
 
 extension EditPostViewController: UITextFieldDelegate, UITextViewDelegate {
-    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         updateSaveButtonState()
         return true
@@ -686,5 +697,3 @@ extension EditPostViewController: UITextFieldDelegate, UITextViewDelegate {
         }
     }
 }
-
-
