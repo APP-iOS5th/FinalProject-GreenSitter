@@ -70,6 +70,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
         textField.placeholder = "직접입력하세요"
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.backgroundColor = .white
+        textField.textColor = .black
         return textField
     }()
 
