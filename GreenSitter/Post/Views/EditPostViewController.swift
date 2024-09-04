@@ -632,7 +632,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         searchMapVC.editPostViewModel = viewModel
         let navigationVC = UINavigationController(rootViewController: searchMapVC)
         
-        navigationVC.modalPresentationStyle = .pageSheet
+        navigationVC.modalPresentationStyle = .fullScreen
         present(navigationVC, animated: true, completion: nil)
     }
 }

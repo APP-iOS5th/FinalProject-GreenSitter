@@ -233,14 +233,6 @@ class PostDetailViewController: UIViewController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-           super.viewWillAppear(animated)
-           
-           loadPost(with: postId)
-       }
-
-
-
     private func configureUI(with post: Post) {
         setupUI()
         
