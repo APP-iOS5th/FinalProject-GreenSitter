@@ -8,6 +8,8 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+#if DEBUG
+import SwiftUI
 
 class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -19,6 +21,8 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
     var postId: String
     var reviews: Review?
     var selectedTexts: [String] = []
+    var fetchedPostIds = Set<String>()
+
     
     let row1Button = UIButton()
     let row2Button = UIButton()
@@ -38,7 +42,6 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
         let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.backgroundColor = UIColor(named: "BGSecondary")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -46,62 +49,34 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "돌봄 후기"
+        view.backgroundColor = UIColor(named: "BGSecondary")
+        tableView.backgroundColor = UIColor(named: "BGSecondary")
+        
         tableView.register(ReviewPostTableViewCell.self, forCellReuseIdentifier: "reviewPostTableViewCell")
         tableView.register(ReceiveReviewTableViewCell.self, forCellReuseIdentifier: "receiveReviewTableViewCell")
         
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         fetchPostFirebase()
         fetchReviewFirebase()
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return 1
-        case 1:
-            return 1
-        default:
-            return 0
-        }
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath.section {
-        case 0:
-            // post 배열이 비어있지 않은지 확인 후 접근
-            guard !post.isEmpty else { return UITableViewCell() }
-            let currentPost = post[0] // post는 하나의 요소만 포함하므로 인덱스는 항상 0
-            let cell = tableView.dequeueReusableCell(withIdentifier: "reviewPostTableViewCell", for: indexPath) as! ReviewPostTableViewCell
-
-            cell.titleLabel.text = currentPost.postTitle
-            cell.bodyLabel.text = currentPost.postBody
-            cell.timeLabel.text = DateFormatter.localizedString(from: currentPost.updateDate, dateStyle: .short, timeStyle: .short)
-            if let imageURL = currentPost.postImages?.first {
-                postLoadImage(from: imageURL) { image in
-                    DispatchQueue.main.async {
-                        cell.plantImage.image = image ?? UIImage(named: "logo7")
-                    }
-                }
-            } else {
-                cell.plantImage.image = UIImage(named: "logo7")
-            }
-
-            cell.backgroundColor = UIColor(named: "BGPrimary")
-            return cell
-
-        case 1:
             // 리뷰가 있는 경우에만 접근
-            guard reviews != nil else { return UITableViewCell() }
+//            guard reviews != nil else { return UITableViewCell() }
             let cell = tableView.dequeueReusableCell(withIdentifier: "receiveReviewTableViewCell", for: indexPath) as! ReceiveReviewTableViewCell
             cell.badButton.setImage(UIImage(named: "2"), for: .normal)
             cell.averageButton.setImage(UIImage(named: "3"), for: .normal)
@@ -153,19 +128,33 @@ class ReceiveReviewViewController: UIViewController, UITableViewDelegate, UITabl
             cell.backgroundColor = UIColor(named: "BGSecondary")
             return cell
 
-        default:
-            return UITableViewCell()
-        }
-    }
-
-    
-    
-    //MARK: - 셀 높이 조정
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 1 && indexPath.row == 0 {
-            return 600
-        } else {
-            return UITableView.automaticDimension
-        }
     }
 }
+
+
+struct ReceiveReviewViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        // Create a mock postId for preview purposes
+        let mockPostId = "mockPostId"
+
+        // Wrap your UIViewController in a UIHostingController
+        UIViewControllerPreview(viewController: ReceiveReviewViewController(postId: mockPostId))
+            .previewLayout(.fixed(width: 375, height: 667)) // Set a preview size that fits your design
+    }
+}
+
+struct UIViewControllerPreview: UIViewControllerRepresentable {
+    let viewController: UIViewController
+
+    init(viewController: UIViewController) {
+        self.viewController = viewController
+    }
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        viewController
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+#endif
+
