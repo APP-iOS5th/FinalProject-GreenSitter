@@ -197,7 +197,7 @@ class PostDetailViewController: UIViewController {
         postDetailViewModel.delegate = self
 
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
-        loadPost(with: postId)
+//        loadPost(with: postId)
         hideKeyboard()
     }
     
