@@ -68,7 +68,6 @@ class ChatMessageViewController: UIViewController {
                         do {
                             try await chatViewModel?.updateUnread(chatRoomId: chatRoom.id)
                         } catch {
-                            // 에러 발생 시 처리 (로깅 등)
                             print("Failed to update unread status: \(error)")
                         }
                     }

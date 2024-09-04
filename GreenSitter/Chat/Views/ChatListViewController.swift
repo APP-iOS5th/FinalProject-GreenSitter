@@ -25,7 +25,7 @@ class ChatListViewController: UIViewController {
     // 아이콘
     private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "ChatIcon")
+        imageView.image = UIImage(named: "chatIcon")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
