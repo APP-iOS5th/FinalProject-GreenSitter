@@ -59,7 +59,7 @@ class MakePlanViewModel {
 
         
         self.planDate = newDate
-        self.planPlace = planPlace ?? chatRoom.postUserLocation
+        self.planPlace = planPlace ?? chatRoom.preferredPlace
         self.ownerNotification = ownerNotification
         self.sitterNotification = sitterNotification
         self.progress = progress
@@ -83,6 +83,12 @@ class MakePlanViewModel {
         Task {
             await chatViewModel?.sendPlanMessage(plan: plan, chatRoom: chatRoom)
             await chatViewModel?.updatePostStatusAfterMakePlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
+        }
+        chatRoom.postStatus = .inTrade
+        if planType == .leavePlan {
+            chatRoom.hasLeavePlan = true
+        } else {
+            chatRoom.hasGetBackPlan = true
         }
     }
     

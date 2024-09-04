@@ -61,6 +61,7 @@ struct SampleChatData {
             postImage: "https://example.com/post1.jpg",
             postTitle: "Post Title 1",
             postStatus: .beforeTrade,
+            postType: .lookingForSitter,
             hasLeavePlan: false,
             hasGetBackPlan: false
         ),
@@ -115,6 +116,7 @@ struct SampleChatData {
             postImage: "https://example.com/post2.jpg",
             postTitle: "Post Title 2",
             postStatus: .inTrade,
+            postType: .lookingForSitter,
             hasLeavePlan: false,
             hasGetBackPlan: false
         ),
@@ -156,6 +158,7 @@ struct SampleChatData {
             postImage: "https://example.com/post3.jpg",
             postTitle: "Post Title 3",
             postStatus: .inTrade,
+            postType: .lookingForSitter,
             hasLeavePlan: false,
             hasGetBackPlan: false
         )

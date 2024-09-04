@@ -158,8 +158,22 @@ class ChatViewController: UIViewController {
         ) { [weak self] _ in
             guard let self = self else { return }
             Task {
-                await self.chatViewModel?.completeTrade(chatRoomId: self.chatRoom.id, postId: self.chatRoom.postId, recipientId: self.chatRoom.userId)
-                self.chatViewModel?.sendReviewMessage(chatRoom: self.chatRoom)
+                let postStatus = await self.chatViewModel?.fetchChatPostStatus(chatRoomId: self.chatRoom.id)
+                if postStatus == .completedTrade {
+                    self.dismiss(animated: true) {
+                        let alert = UIAlertController(title: "거래 완료", message: "이미 거래가 완료된 게시물입니다.", preferredStyle: .alert)
+                        
+                        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                        }
+                        alert.addAction(confirmAction)
+                
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                } else {
+                    await self.chatViewModel?.completeTrade(chatRoomId: self.chatRoom.id, postId: self.chatRoom.postId, recipientId: self.chatRoom.userId)
+                        self.chatViewModel?.sendReviewMessage(chatRoom: self.chatRoom)
+                    self.chatRoom.postStatus = .completedTrade
+                }
             }
         }
         

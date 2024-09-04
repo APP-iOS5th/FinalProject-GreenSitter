@@ -211,6 +211,10 @@ extension ChatMessageViewController: UITableViewDataSource {
                 }
                 cell.isRead = messages[indexPath.row].isRead
                 
+                cell.chatRoom = chatRoom
+                cell.chatViewModel = self.chatViewModel
+                cell.configure()
+                
                 return cell
             case 2:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "TwoImagesCell", for: indexPath) as! TwoImagesTableViewCell
@@ -235,6 +239,10 @@ extension ChatMessageViewController: UITableViewDataSource {
                     cell.isIncoming = true
                 }
                 cell.isRead = messages[indexPath.row].isRead
+                
+                cell.chatRoom = chatRoom
+                cell.chatViewModel = self.chatViewModel
+                cell.configure()
                 
                 return cell
             case 3:
@@ -261,6 +269,10 @@ extension ChatMessageViewController: UITableViewDataSource {
                 }
                 cell.isRead = messages[indexPath.row].isRead
                 
+                cell.chatRoom = chatRoom
+                cell.chatViewModel = self.chatViewModel
+                cell.configure()
+                
                 return cell
             case 4:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "FourImagesCell", for: indexPath) as! FourImagesTableViewCell
@@ -286,6 +298,10 @@ extension ChatMessageViewController: UITableViewDataSource {
                 }
                 cell.isRead = messages[indexPath.row].isRead
                 
+                cell.chatRoom = chatRoom
+                cell.chatViewModel = self.chatViewModel
+                cell.configure()
+                
                 return cell
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "MoreImagesCell", for: indexPath) as! MoreImagesTableViewCell
@@ -310,6 +326,10 @@ extension ChatMessageViewController: UITableViewDataSource {
                     cell.isIncoming = true
                 }
                 cell.isRead = messages[indexPath.row].isRead
+                
+                cell.chatRoom = chatRoom
+                cell.chatViewModel = self.chatViewModel
+                cell.configure()
                 
                 return cell
             }
@@ -363,6 +383,10 @@ extension ChatMessageViewController: UITableViewDataSource {
             
             cell.isRead = messages[indexPath.row].isRead
             
+            cell.chatRoom = chatRoom
+            cell.chatViewModel = self.chatViewModel
+            cell.configure()
+            
             return cell
         case .review:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageReviewCell", for: indexPath) as! ChatMessageTableViewReviewCell
@@ -374,12 +398,13 @@ extension ChatMessageViewController: UITableViewDataSource {
             }
             
             cell.makeReviewButtonAction = {
-                let navigationController = UINavigationController(rootViewController: WriteReviewViewController())
-                navigationController.modalPresentationStyle = .fullScreen
-                self.present(navigationController, animated: true)
+                if let userId = self.chatViewModel?.userId {
+                    self.navigationController?.pushViewController(ReviewListViewController(userId: userId), animated: true)
+                }
             }
             cell.chatRoom = chatRoom
             cell.chatViewModel = self.chatViewModel
+            cell.setupUI()
             cell.updateRecipientName()
             
             return cell

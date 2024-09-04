@@ -448,4 +448,22 @@ class FirestoreManager {
             "recipientId" : recipientId
         ])
     }
+    
+    func fetchChatHasLeavePlan(chatRoomId: String) async throws -> Bool {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+         let hasLeavePlan = try await chatRoomRef.getDocument().get("hasLeavePlan") as? Bool ?? true
+        return hasLeavePlan
+    }
+    
+    func fetchChatHasGetBackPlan(chatRoomId: String) async throws -> Bool {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+         let hasGetBackPlan = try await chatRoomRef.getDocument().get("hasGetBackPlan") as? Bool ?? true
+        return hasGetBackPlan
+    }
+    
+    func fetchChatPostStatus(chatRoomId: String) async throws -> PostStatus {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+        let postStatus = try await chatRoomRef.getDocument().get("postStatus") as? PostStatus ?? .completedTrade
+        return postStatus
+    }
 }

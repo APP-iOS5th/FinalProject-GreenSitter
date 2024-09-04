@@ -43,13 +43,21 @@ class PlanPlaceViewController: UIViewController {
         placeText.font = UIFont.systemFont(ofSize: 17)
         placeText.textColor = .systemGreen
         placeText.translatesAutoresizingMaskIntoConstraints = false
-        placeText.text = viewModel.planPlace?.placeName
+        if viewModel.planPlace == nil {
+            placeText.text = "선택된 장소가 없습니다."
+        } else {
+            placeText.text = viewModel.planPlace?.placeName
+        }
         return placeText
     }()
     
     private lazy var dealHereText: UILabel = {
         let dealHereText = UILabel()
-        dealHereText.text = "여기서 거래할게요!"
+        if viewModel.planPlace == nil {
+            dealHereText.text = "아래에서 장소를 먼저 선택해주세요"
+        } else {
+            dealHereText.text = "여기서 거래할게요!"
+        }
         dealHereText.textAlignment = .center
         dealHereText.font = UIFont.systemFont(ofSize: 17)
         dealHereText.textColor = UIColor(named: "LabelsPrimary")

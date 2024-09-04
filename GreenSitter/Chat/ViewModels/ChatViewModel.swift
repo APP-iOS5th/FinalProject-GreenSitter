@@ -417,7 +417,6 @@ class ChatViewModel {
     func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String) async {
         do {
             try await firestoreManager.updatePostStatusAfterMakePlan(chatRoomId: chatRoomId, planType: planType, postId: postId)
-            
             delegate?.updatePostStatusLabelAfterMakePlan()
         } catch {
             print("Failed to update post status: \(error.localizedDescription)")
@@ -443,5 +442,35 @@ class ChatViewModel {
         } catch {
             print("Failed to complete trade: \(error.localizedDescription)")
         }
+    }
+    
+    func fetchChatHasLeavePlan(chatRoomId: String) async -> Bool {
+        var hasLeavePlan = true
+        do {
+            hasLeavePlan = try await firestoreManager.fetchChatHasLeavePlan(chatRoomId: chatRoomId)
+        } catch {
+            print("Failed to fetch hasLeavePlan: \(error.localizedDescription)")
+        }
+        return hasLeavePlan
+    }
+    
+    func fetchChatHasGetBackPlan(chatRoomId: String) async -> Bool {
+        var hasGetBackPlan = true
+        do {
+            hasGetBackPlan = try await firestoreManager.fetchChatHasGetBackPlan(chatRoomId: chatRoomId)
+        } catch {
+            print("Failed to fetch hasGetBackPlan: \(error.localizedDescription)")
+        }
+        return hasGetBackPlan
+    }
+    
+    func fetchChatPostStatus(chatRoomId: String) async -> PostStatus {
+        var postStatus = PostStatus.completedTrade
+        do {
+            postStatus = try await firestoreManager.fetchChatPostStatus(chatRoomId: chatRoomId)
+        } catch {
+            print("Failed to fetch postStatus: \(error.localizedDescription)")
+        }
+        return postStatus
     }
 }
