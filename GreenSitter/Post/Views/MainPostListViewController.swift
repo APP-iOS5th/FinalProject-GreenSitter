@@ -257,9 +257,12 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! PostTableViewCell
-        let post = viewModel.filteredPosts[indexPath.row]
+        if let post = viewModel.filteredPosts[safe: indexPath.row] {
+            cell.configure(with: post)
+        } else {
+            cell.configure(with: nil)
+        }
         
-        cell.configure(with: post)
         
         return cell
     }
@@ -291,5 +294,11 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
         } else {    // 비로그인, 혹은 위치 정보 없으면
             viewModel.fetchPostsByCategoryAndLocation(for: categoryText, userLocation: nil, loadMore: true)
         }
+    }
+}
+
+extension Array {
+    subscript (safe index: Int) -> Element? {
+        return indices ~= index ? self[index] : nil
     }
 }
