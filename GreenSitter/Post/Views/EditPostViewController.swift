@@ -239,16 +239,16 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         hideKeyboard()
         
         let initialCharacterCount = textView.text.count
-            remainCountLabel.text = "\(initialCharacterCount)/700"
+        remainCountLabel.text = "\(initialCharacterCount)/700"
     }
     
     
     func hideKeyboard() {
-            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
-        }
-
-        @objc func dismissKeyboard() {
-            view.endEditing(true)
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     @objc private func textDidChange() {
@@ -281,7 +281,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         let initialCharacterCount = textView.text.count
         remainCountLabel.text = "\(initialCharacterCount)/700"
     }
-
+    
     @objc private func pickerImageViewTapped() {
         presentImagePickerController()
     }
@@ -298,22 +298,29 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             return
         }
         
+        
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.center = view.center
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        
         viewModel.updatePost(postTitle: titleTextField.text!, postBody: textView.text) { [weak self] result in
             DispatchQueue.main.async {
+                
+                activityIndicator.stopAnimating()
+                activityIndicator.removeFromSuperview()
+                
                 self?.saveButton.isEnabled = true
-            }
-            switch result {
-            case .success(let updatedPost):
-                print("Update Post: \(updatedPost)")
-                self?.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
-            case .failure(let error):
-                print("Error updating post: \(error.localizedDescription)")
-                self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
+                
+                switch result {
+                case .success:
+                    self?.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
+                case .failure(let error):
+                    self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
+                }
             }
         }
     }
-    
-    
     
     private func showAlertWithNavigation(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -354,7 +361,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         
         return isValid
     }
-
+    
     private func setupLayout() {
         self.title = post.postType.rawValue
         navigationItem.leftBarButtonItem = closeButton
@@ -379,7 +386,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         mapLabelButton.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
-
+        
         imageScrollView.addSubview(imageStackView)
         imageStackView.addArrangedSubview(pickerImageView)
         
@@ -440,7 +447,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             mapLabelButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapLabelButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
             mapLabelButton.heightAnchor.constraint(equalToConstant: 60),
-
+            
             mapView.topAnchor.constraint(equalTo: mapLabelButton.bottomAnchor, constant: 12),
             mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
