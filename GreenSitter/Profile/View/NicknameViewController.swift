@@ -10,7 +10,7 @@ import FirebaseFirestore
 import FirebaseAuth
 
 
-class NicknameViewController: UIViewController {
+class NicknameViewController: UIViewController,UITextFieldDelegate {
     // MARK: - Properties
     var user: User?
     let db = Firestore.firestore()
@@ -63,10 +63,12 @@ class NicknameViewController: UIViewController {
         
         
         super.viewDidLoad()
-        print("size: \(view.frame.size)") // View의 크기를 확인
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
         
         view.backgroundColor = .white
-        
+        nicknameTextfield.delegate = self
         view.addSubview(titleLabel)
         view.addSubview(closeButton)
         view.addSubview(nicknameTextfield)
@@ -93,5 +95,14 @@ class NicknameViewController: UIViewController {
             completeButton.heightAnchor.constraint(equalToConstant: 45)
         ])
         fetchUserFirebase()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

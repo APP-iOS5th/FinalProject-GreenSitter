@@ -370,7 +370,7 @@ class FirestoreManager {
         ])
     }
     
-    func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String) async throws {
+    func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String, recipientId: String) async throws {
         let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
         let postRef = db.collection("posts").document(postId)
         
@@ -378,18 +378,24 @@ class FirestoreManager {
         case .leavePlan:
             try await chatRoomRef.updateData([
                 "hasLeavePlan" : true,
-                "postStatus" : PostStatus.inTrade.rawValue
+                "postStatus" : PostStatus.inTrade.rawValue,
+                "updateDate" : Date()
             ])
             try await postRef.updateData([
-                "postStatus" : PostStatus.inTrade.rawValue
+                "postStatus" : PostStatus.inTrade.rawValue,
+                "recipientId" : recipientId,
+                "updateDate" : Date()
             ])
         case .getBackPlan:
             try await chatRoomRef.updateData([
                 "hasGetBackPlan" : true,
-                "postStatus" : PostStatus.inTrade.rawValue
+                "postStatus" : PostStatus.inTrade.rawValue,
+                "updateDate" : Date()
             ])
             try await postRef.updateData([
-                "postStatus" : PostStatus.inTrade.rawValue
+                "postStatus" : PostStatus.inTrade.rawValue,
+                "recipientId" : recipientId,
+                "updateDate" : Date()
             ])
         }
     }
@@ -402,22 +408,26 @@ class FirestoreManager {
         case .leavePlan:
             try await chatRoomRef.updateData([
                 "hasLeavePlan" : false,
+                "updateDate" : Date()
             ])
             let chatRoomSnapshot = try await chatRoomRef.getDocument()
             if let chatRoomData = chatRoomSnapshot.data(),
                let hasGetBackPlan = chatRoomData["hasGetBackPlan"] as? Bool,
                hasGetBackPlan == false {
                 try await chatRoomRef.updateData([
-                    "postStatus" : PostStatus.beforeTrade.rawValue
+                    "postStatus" : PostStatus.beforeTrade.rawValue,
                 ])
                 try await postRef.updateData([
-                    "postStatus" : PostStatus.beforeTrade.rawValue
+                    "postStatus" : PostStatus.beforeTrade.rawValue,
+                    "recipientId" : "",
+                    "updateDate" : Date()
                 ])
                 return true
             }
         case .getBackPlan:
             try await chatRoomRef.updateData([
                 "hasGetBackPlan" : false,
+                "updateDate" : Date()
             ])
             let chatRoomSnapshot = try await chatRoomRef.getDocument()
             if let chatRoomData = chatRoomSnapshot.data(),
@@ -427,7 +437,9 @@ class FirestoreManager {
                     "postStatus" : PostStatus.beforeTrade.rawValue
                 ])
                 try await postRef.updateData([
-                    "postStatus" : PostStatus.beforeTrade.rawValue
+                    "postStatus" : PostStatus.beforeTrade.rawValue,
+                    "recipientId" : "",
+                    "updateDate" : Date()
                 ])
                 return true
             }
@@ -440,12 +452,54 @@ class FirestoreManager {
         let postRef = db.collection("posts").document(postId)
         
         try await chatRoomRef.updateData([
-            "postStatus" : PostStatus.completedTrade.rawValue
+            "postStatus" : PostStatus.completedTrade.rawValue,
+            "updateDate" : Date()
         ])
         
         try await postRef.updateData([
             "postStatus" : PostStatus.completedTrade.rawValue,
-            "recipientId" : recipientId
+            "recipientId" : recipientId,
+            "updateDate" : Date()
         ])
+    }
+    
+    func fetchChatHasLeavePlan(chatRoomId: String) async throws -> Bool {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+         let hasLeavePlan = try await chatRoomRef.getDocument().get("hasLeavePlan") as? Bool ?? true
+        return hasLeavePlan
+    }
+    
+    func fetchChatHasGetBackPlan(chatRoomId: String) async throws -> Bool {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+         let hasGetBackPlan = try await chatRoomRef.getDocument().get("hasGetBackPlan") as? Bool ?? true
+        return hasGetBackPlan
+    }
+    
+    func fetchChatPostStatus(chatRoomId: String) async throws -> PostStatus {
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+        let postStatus: PostStatus
+        let postStatusString = try await chatRoomRef.getDocument().get("postStatus") as? String
+        switch postStatusString {
+        case PostStatus.beforeTrade.rawValue:
+            postStatus = .beforeTrade
+        case PostStatus.inTrade.rawValue:
+            postStatus = .inTrade
+        case PostStatus.completedTrade.rawValue:
+            postStatus = .completedTrade
+        default:
+            postStatus = .completedTrade
+        }
+        return postStatus
+    }
+    
+    func checkAuthorityToCommit(postId: String, currentId: String) async throws -> Bool {
+        let postRef = db.collection("posts").document(postId)
+         let recipientId = try await postRef.getDocument().get("recipientId") as? String
+        let userId = try await postRef.getDocument().get("userId") as? String
+        if recipientId == "" || recipientId == currentId || userId == currentId {
+            return true
+        } else {
+            return false
+        }
     }
 }

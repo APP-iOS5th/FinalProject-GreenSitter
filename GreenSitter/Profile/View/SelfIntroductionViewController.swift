@@ -57,6 +57,9 @@ class SelfIntroductionViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "BGPrimary")
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+        
         view.addSubview(titleLabel)
         view.addSubview(closeButton)
         view.addSubview(introductionTextView)
@@ -81,5 +84,8 @@ class SelfIntroductionViewController: UIViewController {
             completeButton.heightAnchor.constraint(equalToConstant: 45)
         ])
         fetchUserFirebase()
+    }
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
