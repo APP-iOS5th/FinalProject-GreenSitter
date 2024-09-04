@@ -243,6 +243,8 @@ class AddPostViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         } else {
             textLabel.text = "거래 희망 장소를 선택하세요!"
         }
+        
+        self.updateSaveButtonState()
     }
     
     @objc private func saveButtonTapped() {
@@ -618,7 +620,9 @@ extension AddPostViewController: PHPickerViewControllerDelegate {
         
         let textViewIsNotEmpty = !textView.text.trimmingCharacters(in: .whitespaces).isEmpty && textView.text != textViewPlaceHolder
         
-        if titleTextFieldIsNotEmpty && textViewIsNotEmpty {
+        let locationIsNotEmpty = (viewModel.postLocation != nil)
+        
+        if titleTextFieldIsNotEmpty && textViewIsNotEmpty && locationIsNotEmpty {
             saveButton.backgroundColor = .dominent
             saveButton.isEnabled = true
         } else {
