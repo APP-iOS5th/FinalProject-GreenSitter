@@ -16,6 +16,8 @@ import FirebaseFirestore
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
+    var window: UIWindow?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //MARK: - Firbase init
         FirebaseApp.configure()
@@ -28,7 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Show the app's signed-in state.
           }
         }
-        
         
         //MARK: - Push Notification
         // 알림 허용 권한 받음
@@ -43,12 +44,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         application.registerForRemoteNotifications()
         
-        // 등록 토큰 엑세스
+        // 등록 토큰 액세스
         Messaging.messaging().delegate = self
         
         return true
-
     }
+    
     // MARK: - 구글 로그인
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]
     ) -> Bool {
@@ -88,9 +89,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: - Push Notification 함수
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // APN 토큰과 등록 토큰 매핑
-    // 백그라운드에서 푸시 알림 탭했을 때 실행
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("APN TOKEN MAPPING")
+        // Firebase에 디바이스 토큰 전달
         Messaging.messaging().apnsToken = deviceToken
     }
     
@@ -98,9 +99,69 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         print("Failed to register for remote notifications: \(error.localizedDescription)")
     }
     
-    // 푸시 알림을 처리하기 위한 함수
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .badge, .sound, .list]) /// 앱 켜진 상태에서도 알림 설정
+    // 포그라운드(앱 실행 상태)에서 푸시 알림 처리
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        return [.banner, .badge, .sound, .list]
+    }
+    
+    // 백그라운드에서 푸시 알림 처리
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+        let userInfo = response.notification.request.content.userInfo
+        if let chatRoomId = userInfo["chatRoomId"] as? String {
+            do {
+                if let chatRoom = try await fetchChatRoom(chatRoomId: chatRoomId) {
+                    // 메인 스레드에서 UI 업데이트
+                    DispatchQueue.main.async {
+                        Task {
+                            await self.navigateToChatRoom(chatRoom: chatRoom)
+                        }
+                    }
+                } else {
+                    print("No ChatRoom found with given ID.")
+                }
+            } catch {
+                print("Failed to fetch ChatRoom: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    // ChatRoom 데이터 가져오기
+    func fetchChatRoom(chatRoomId: String) async throws -> ChatRoom? {
+        let db = Firestore.firestore()
+        let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
+        
+        do {
+            let document = try await chatRoomRef.getDocument()
+            
+            guard let data = document.data() else {
+                print("ChatRoom does not exist.")
+                return nil
+            }
+            
+            let chatRoom = try document.data(as: ChatRoom.self)
+            return chatRoom
+        } catch {
+            print("Error fetching chat room: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    // 푸시 알림 눌렀을 때 채팅방으로 이동
+    func navigateToChatRoom(chatRoom: ChatRoom) async {
+        //메인 스레드에서 UI 업데이트
+        await MainActor.run {
+            let chatViewModel = ChatViewModel()
+            let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
+            chatDetailViewController.chatViewModel = chatViewModel
+            
+            if let tabBarController = window?.rootViewController as? UITabBarController,
+               let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
+                navigationController.pushViewController(chatDetailViewController, animated: true)
+                
+                // 채팅 탭으로 전환
+                tabBarController.selectedIndex = 2
+            }
+        }
     }
 }
 

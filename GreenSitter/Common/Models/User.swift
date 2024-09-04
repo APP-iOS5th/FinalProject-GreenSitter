@@ -19,7 +19,7 @@ struct User: Codable {
     var levelPoint: Level
     var exp: Int
     var aboutMe: String
-    let chatNotification: Bool
+    var chatNotification: Bool /// 제거
     var fcmToken: String? = nil
     
     
