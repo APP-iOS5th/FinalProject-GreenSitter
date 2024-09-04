@@ -94,8 +94,8 @@ class PostTableViewCell: UITableViewCell {
             postImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             postImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            postImageView.widthAnchor.constraint(equalToConstant: 80),
-            postImageView.heightAnchor.constraint(equalTo: postImageView.widthAnchor),
+            postImageView.widthAnchor.constraint(equalToConstant: 80)
+//            postImageView.heightAnchor.constraint(equalTo: postImageView.widthAnchor),
         ])
     }
     

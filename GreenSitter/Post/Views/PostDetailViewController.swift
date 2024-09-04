@@ -198,12 +198,21 @@ class PostDetailViewController: UIViewController {
 
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
         loadPost(with: postId)
+        hideKeyboard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         loadPost(with: postId)
+    }
+    
+    func hideKeyboard() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     // MARK: - Helpful Functions
@@ -223,6 +232,13 @@ class PostDetailViewController: UIViewController {
             }
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+           super.viewWillAppear(animated)
+           
+           loadPost(with: postId)
+       }
+
 
 
     private func configureUI(with post: Post) {
@@ -474,7 +490,7 @@ class PostDetailViewController: UIViewController {
         imageUrls.removeAll()
         // image
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
-            self.imageUrls = imageUrls //이게원인
+            self.imageUrls = imageUrls
             for (index, imageUrl) in imageUrls.enumerated() {
                 
                 // Create a new UIImageView for each image

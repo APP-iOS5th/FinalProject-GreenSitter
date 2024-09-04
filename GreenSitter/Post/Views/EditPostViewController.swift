@@ -13,7 +13,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     private let post: Post
     private var viewModel: EditPostViewModel
-    
     private var overlayPostMapping: [MKCircle: Post] = [:]
     
     init(post: Post, viewModel: EditPostViewModel) {
@@ -215,6 +214,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         return button
     }()
     
+    //MARK: - viewDidLoad
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
@@ -227,9 +228,28 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         loadExistingImages()
         updateImageStackView()
         configureMapView(with: post)
+        
+        updateSaveButtonState()
+        titleTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        
         titleTextField.delegate = self
         textView.delegate = self
         mapView.delegate = self
+        
+        hideKeyboard()
+    }
+    
+    
+    func hideKeyboard() {
+            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        }
+
+        @objc func dismissKeyboard() {
+            view.endEditing(true)
+    }
+    
+    @objc private func textDidChange() {
+        updateSaveButtonState()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -271,17 +291,22 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             return
         }
         
-        viewModel.updatePost(postTitle: titleTextField.text!, postBody: textView.text) { result in
+        viewModel.updatePost(postTitle: titleTextField.text!, postBody: textView.text) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.saveButton.isEnabled = true
+            }
             switch result {
             case .success(let updatedPost):
                 print("Update Post: \(updatedPost)")
-                self.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
+                self?.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
             case .failure(let error):
                 print("Error updating post: \(error.localizedDescription)")
-                self.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
+                self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
             }
         }
     }
+    
+    
     
     private func showAlertWithNavigation(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -427,6 +452,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        print("Picker did finish picking. Results count: \(results.count)")
+        
         picker.dismiss(animated: true, completion: nil)
         
         let itemProviders = results.map(\.itemProvider)
@@ -442,6 +469,10 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
                     guard let image = image as? UIImage else { return }
                     
                     DispatchQueue.main.async {
+                        // View model에 이미지 추가
+                        self?.viewModel.selectedImages.append(image)
+                        self?.viewModel.addedImages.append(image)
+                        // UI 업데이트
                         self?.addImageToStackView(image)
                     }
                 }
@@ -449,73 +480,99 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         }
     }
     
+    
     private func addImageToStackView(_ image: UIImage) {
-        let existingImages = imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
-        if existingImages.contains(image) {
-            return
-        }
-        
-        let containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        
-        let imageView = UIImageView(image: image)
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let deleteButton = UIButton(type: .custom)
-        deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
-        deleteButton.tintColor = .red
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.addTarget(self, action: #selector(deleteImage(_:)), for: .touchUpInside)
-        
-        containerView.addSubview(imageView)
-        containerView.addSubview(deleteButton)
-        
-        NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+        DispatchQueue.main.async {
+            let existingImages = self.imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
+            if existingImages.contains(image) {
+                return
+            }
             
-            deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 5),
-            deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -5),
-            deleteButton.widthAnchor.constraint(equalToConstant: 24),
-            deleteButton.heightAnchor.constraint(equalToConstant: 24),
-        ])
-        
-        if let pickerImageViewIndex = imageStackView.arrangedSubviews.firstIndex(of: pickerImageView) {
-            imageStackView.insertArrangedSubview(containerView, at: pickerImageViewIndex + 1)
-        } else {
-            imageStackView.addArrangedSubview(containerView)
+            let containerView = UIView()
+            containerView.translatesAutoresizingMaskIntoConstraints = false
+            containerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+            containerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+            
+            let imageView = UIImageView(image: image)
+            imageView.contentMode = .scaleAspectFill
+            imageView.clipsToBounds = true
+            imageView.layer.cornerRadius = 10
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            let deleteButton = UIButton(type: .custom)
+            deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+            deleteButton.tintColor = .red
+            deleteButton.translatesAutoresizingMaskIntoConstraints = false
+            deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+            
+            containerView.addSubview(imageView)
+            containerView.addSubview(deleteButton)
+            
+            NSLayoutConstraint.activate([
+                imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+                
+                deleteButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 5),
+                deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -5),
+                deleteButton.widthAnchor.constraint(equalToConstant: 24),
+                deleteButton.heightAnchor.constraint(equalToConstant: 24),
+            ])
+            
+            if let pickerImageViewIndex = self.imageStackView.arrangedSubviews.firstIndex(of: self.pickerImageView) {
+                self.imageStackView.insertArrangedSubview(containerView, at: pickerImageViewIndex + 1)
+            } else {
+                self.imageStackView.addArrangedSubview(containerView)
+            }
+            
+            self.updateImageStackView()
         }
-        
-        updateImageStackView()
-        
     }
     
     @objc private func deleteImage(_ sender: UIButton) {
+        print("before: \(viewModel.postImageURLs)")
         guard let containerView = sender.superview else { return }
+        guard let containerViewIndex = imageStackView.arrangedSubviews.firstIndex(of: containerView) else {
+            return
+        }
+        let originalImageViewIndex: Int = Int(containerViewIndex) - 1
+        viewModel.imageURLsToDelete.append(viewModel.postImageURLs[originalImageViewIndex])
         containerView.removeFromSuperview()
         updateImageStackView()
     }
     
+    
     private func loadExistingImages() {
-        viewModel.loadExistingImages(from: viewModel.selectedPost.postImages ?? []) { [weak self] in
+        viewModel.loadExistingImages(from: viewModel.selectedPost.postImages ?? []) { _ in
             DispatchQueue.main.async {
-                self?.updateUIWithLoadedImages()
+                self.updateUIWithLoadedImages()
             }
         }
     }
     
     private func updateUIWithLoadedImages() {
-        for image in viewModel.postImages {
-            addImageToStackView(image)
+        for urlString in viewModel.selectedImageURLs { // URL 배열을 가져옴
+            loadImageFromURL(urlString) { [weak self] image in
+                guard let image = image else { return }
+                self?.addImageToStackView(image)
+            }
         }
-        updateImageStackView()
+    }
+    // URL로부터 UIImage를 로드하는 함수
+    private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(nil)
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil, let image = UIImage(data: data) else {
+                completion(nil)
+                return
+            }
+            completion(image)
+        }.resume()
     }
     
     private func updateImageStackView() {
@@ -549,12 +606,13 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         }
         
         updateSaveButtonState()
+        
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == textViewPlaceHolder {
             textView.text = ""
-            textView.textColor = .black
+            textView.textColor = .labelsPrimary
         } else {
             textView.textColor = .labelsPrimary
         }
@@ -567,19 +625,19 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         }
     }
     
-    //MARK: - mapLabelButton
+    //MARK: - mapLabelButton 탭하면 MainPostListVC로 이동하는 메서
     
     @objc private func mapLabelButtonTapped() {
         let searchMapVC = SearchMapViewController()
         searchMapVC.editPostViewModel = viewModel
         let navigationVC = UINavigationController(rootViewController: searchMapVC)
         
-        navigationVC.modalPresentationStyle = .fullScreen
+        navigationVC.modalPresentationStyle = .pageSheet
         present(navigationVC, animated: true, completion: nil)
     }
 }
 
-    //MARK: - MKMapViewDelegate
+//MARK: - MKMapViewDelegate
 
 extension EditPostViewController: MKMapViewDelegate {
     
@@ -692,20 +750,20 @@ extension EditPostViewController: MKMapViewDelegate {
         }
         return MKOverlayRenderer()
     }
+    
 }
 // MARK: -UITextFieldDelegate,UITextViewDelegate
 
 extension EditPostViewController: UITextFieldDelegate, UITextViewDelegate {
-    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         updateSaveButtonState()
         return true
     }
     // Save 버튼의 상태를 업데이트하는 메서드
     private func updateSaveButtonState() {
-        let titleTextFieldIsNotEmpty = ((titleTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty) == true)
+        let titleTextFieldIsNotEmpty = !(titleTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
         let textViewIsNotEmpty = !(textView.text.trimmingCharacters(in: .whitespaces).isEmpty)
-
+        
         if titleTextFieldIsNotEmpty && textViewIsNotEmpty {
             saveButton.backgroundColor = .dominent
             saveButton.isEnabled = true
@@ -715,5 +773,3 @@ extension EditPostViewController: UITextFieldDelegate, UITextViewDelegate {
         }
     }
 }
-
-
