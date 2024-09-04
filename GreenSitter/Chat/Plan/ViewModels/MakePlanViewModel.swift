@@ -82,7 +82,7 @@ class MakePlanViewModel {
         let plan = Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: planDate, planPlace: planPlace, contract: nil, ownerNotification: ownerNotification, sitterNotification: sitterNotification, isAccepted: false, planType: planType)
         Task {
             await chatViewModel?.sendPlanMessage(plan: plan, chatRoom: chatRoom)
-            await chatViewModel?.updatePostStatusAfterMakePlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
+            await chatViewModel?.updatePostStatusAfterMakePlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId, recipientId: chatRoom.userId)
         }
         chatRoom.postStatus = .inTrade
         if planType == .leavePlan {

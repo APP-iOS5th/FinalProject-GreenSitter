@@ -414,9 +414,9 @@ class ChatViewModel {
         }
     }
     
-    func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String) async {
+    func updatePostStatusAfterMakePlan(chatRoomId: String, planType: PlanType, postId: String, recipientId: String) async {
         do {
-            try await firestoreManager.updatePostStatusAfterMakePlan(chatRoomId: chatRoomId, planType: planType, postId: postId)
+            try await firestoreManager.updatePostStatusAfterMakePlan(chatRoomId: chatRoomId, planType: planType, postId: postId, recipientId: recipientId)
             delegate?.updatePostStatusLabelAfterMakePlan()
         } catch {
             print("Failed to update post status: \(error.localizedDescription)")
@@ -472,5 +472,15 @@ class ChatViewModel {
             print("Failed to fetch postStatus: \(error.localizedDescription)")
         }
         return postStatus
+    }
+    
+    func checkAuthorityToCommit(postId: String) async -> Bool {
+        var authorityToCommit = false
+        do {
+            authorityToCommit = try await firestoreManager.checkAuthorityToCommit(postId: postId, currentId: userId)
+        } catch {
+            print("Failed to check authority to commit: \(error.localizedDescription)")
+        }
+        return authorityToCommit
     }
 }

@@ -182,6 +182,7 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
         guard let viewController = self.presentingViewController else { return }
         Task {
             let postStatus = await chatViewModel?.fetchChatPostStatus(chatRoomId: chatRoom.id)
+            let authorityToCommit = await chatViewModel?.checkAuthorityToCommit(postId: chatRoom.postId) ?? false
             if postStatus == .completedTrade {
                 self.dismiss(animated: true) {
                     let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 거래가 완료된 게시물입니다.", preferredStyle: .alert)
@@ -192,7 +193,9 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
                     
                     viewController.present(alert, animated: true, completion: nil)
                 }
-            } else {
+            } else if authorityToCommit {
+                // 거래가 완료되지 않았고,
+                // 약속을 만들 수 있는 권한이 있을 떄
                 switch planType {
                 case .leavePlan :
                     let hasLeavePlan = await chatViewModel?.fetchChatHasLeavePlan(chatRoomId: chatRoom.id) ?? true
@@ -238,6 +241,18 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
                             }
                         }
                     }
+                }
+            } else {
+                // 거래가 완료되지 않았고,
+                // 약속을 만들 수 있는 권한이 없을 떄
+                self.dismiss(animated: true) {
+                    let alert = UIAlertController(title: "약속을 만들 수 없습니다.", message: "이미 다른 사용자와의 약속이 있습니다.", preferredStyle: .alert)
+                    
+                    let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                    }
+                    alert.addAction(confirmAction)
+                    
+                    viewController.present(alert, animated: true, completion: nil)
                 }
             }
         }
