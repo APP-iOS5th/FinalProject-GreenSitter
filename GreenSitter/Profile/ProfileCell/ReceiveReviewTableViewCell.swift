@@ -37,7 +37,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(UIColor.black, for: .normal)
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "BGPrimary")
         return button
     }()
     
@@ -45,7 +45,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
         let button = UIButton()
         button.setTitleColor(UIColor.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "BGPrimary")
         return button
     }()
     
@@ -53,7 +53,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
         let button = UIButton()
         button.setTitleColor(UIColor.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "BGPrimary")
         return button
     }()
     
@@ -61,7 +61,7 @@ class ReceiveReviewTableViewCell: UITableViewCell {
         let button = UIButton()
         button.setTitleColor(UIColor.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .white
+        button.backgroundColor = UIColor(named: "BGPrimary")
         return button
     }()
     
