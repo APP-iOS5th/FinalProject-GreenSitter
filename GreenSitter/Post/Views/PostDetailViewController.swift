@@ -217,6 +217,13 @@ class PostDetailViewController: UIViewController {
             }
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+           super.viewWillAppear(animated)
+           
+           loadPost(with: postId)
+       }
+
 
 
     private func configureUI(with post: Post) {
@@ -468,7 +475,7 @@ class PostDetailViewController: UIViewController {
         imageUrls.removeAll()
         // image
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
-            self.imageUrls = imageUrls //이게원인
+            self.imageUrls = imageUrls
             for (index, imageUrl) in imageUrls.enumerated() {
                 
                 // Create a new UIImageView for each image
