@@ -9,6 +9,8 @@ import UIKit
 import FirebaseCore
 import FirebaseMessaging
 import GoogleSignIn
+import FirebaseAuth
+import FirebaseFirestore
 
 
 @main
@@ -103,8 +105,26 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 }
 
 extension AppDelegate: MessagingDelegate {
-    // 디바이스 등록 토큰 가져오기
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("fcmToken: \(fcmToken ?? "nil")")
+        if let token = fcmToken, let userId = Auth.auth().currentUser?.uid {
+            saveFCMToken(userId: userId)
+        }
+    }
+    
+    // 디바이스 토큰 DB에 저장
+    func saveFCMToken(userId: String) {
+        guard let fcmToken = Messaging.messaging().fcmToken else {
+            print("FCM Token is not available.")
+            return
+        }
+        
+        let db = Firestore.firestore()
+        db.collection("users").document(userId).updateData(["fcmToken": fcmToken]) { error in
+            if let error = error {
+                print("Error updating FCM token: \(error.localizedDescription)")
+            } else {
+                print("FCM token successfully updated.")
+            }
+        }
     }
 }

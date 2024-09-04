@@ -20,6 +20,7 @@ struct User: Codable {
     var exp: Int
     var aboutMe: String
     let chatNotification: Bool
+    var fcmToken: String? = nil
     
     
 
