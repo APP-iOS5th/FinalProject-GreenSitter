@@ -134,7 +134,7 @@ class ChatTableViewCell: UITableViewCell {
         // 이미지 다운로드 실패 시 기본 이미지로 설정
         let placeholderImage = UIImage(named: "profileIcon")
         
-//        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView, placeholderImage: placeholderImage)
+        //        chatViewModel?.downloadImage(from: profileImageUrl, to: profileImageView, placeholderImage: placeholderImage)
         // Kingfisher를 사용하여 이미지 다운로드 및 설정
         profileImageView.kf.setImage(with: profileImageUrl, placeholder: placeholderImage)
         
@@ -148,7 +148,7 @@ class ChatTableViewCell: UITableViewCell {
         //        userLocationLabel.text = location
         
         // 임시 위치 데이터
-//        userLocationLabel.text = "상도동"
+        //        userLocationLabel.text = "상도동"
         
         // 알림 여부
         guard let notification = chatRoom?.userId == userId ? chatRoom?.userNotification : chatRoom?.postUserNotification else {
@@ -164,13 +164,16 @@ class ChatTableViewCell: UITableViewCell {
             unreadCountLabel.text = ""
             return
         }
-
-        if let text = lastMessage.text {
-            lastMessageLabel.text = text
-        } else if (lastMessage.image) != nil {
+        
+        switch lastMessage.messageType {
+        case .text:
+            lastMessageLabel.text = lastMessage.text
+        case .image:
             lastMessageLabel.text = "사진"
-        } else if (lastMessage.plan) != nil {
-            lastMessageLabel.text = "약속"
+        case .plan:
+            lastMessageLabel.text = "약속이 정해졌습니다."
+        case .review:
+            lastMessageLabel.text = "거래가 완료되었습니다."
         }
         
         // 마지막 메세지 시간
