@@ -149,16 +149,35 @@ extension ChatAdditionalButtonsViewController: UIImagePickerControllerDelegate, 
 //MARK: viewModel에 전달할 additionalButton 함수
 extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDelegate {
     func presentPhotoPicker() {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 10
-        configuration.filter = .any(of: [.images, .livePhotos])
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        
-        guard let viewController = self.presentingViewController else { return }
-        DispatchQueue.main.async {
-            self.dismiss(animated: false) {
-                viewController.present(picker, animated: true)
+        var hasAuthorization = false
+        Task {
+            let authorization = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+            switch authorization {
+            case .authorized, .limited:
+                hasAuthorization = true
+            case .denied, .restricted:
+                DispatchQueue.main.async {
+                    self.showPhotoLibraryAccessDeniedAlert()
+                }
+            case .notDetermined:
+                // 권한 요청 대화상자가 표시
+                break
+            @unknown default:
+                break
+            }
+            if hasAuthorization {
+                var configuration = PHPickerConfiguration()
+                configuration.selectionLimit = 10
+                configuration.filter = .any(of: [.images, .livePhotos])
+                let picker = PHPickerViewController(configuration: configuration)
+                picker.delegate = self
+                
+                guard let viewController = self.presentingViewController else { return }
+                DispatchQueue.main.async {
+                    self.dismiss(animated: false) {
+                        viewController.present(picker, animated: true)
+                    }
+                }
             }
         }
     }
@@ -256,5 +275,20 @@ extension ChatAdditionalButtonsViewController: ChatAdditionalButtonsViewModelDel
                 }
             }
         }
+    }
+    
+    private func showPhotoLibraryAccessDeniedAlert() {
+        let alert = UIAlertController(
+            title: "사진 접근 권한이 없습니다",
+            message: "사진을 선택하려면 '설정'에서 사진 접근 권한을 허용해주세요.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
+        })
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(alert, animated: true)
     }
 }
