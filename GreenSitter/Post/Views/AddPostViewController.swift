@@ -182,14 +182,6 @@ class AddPostViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         return button
     }()
 
-
-    
-    private lazy var mapView: MKMapView = {
-        let mapView = MKMapView()
-        mapView.translatesAutoresizingMaskIntoConstraints = false
-        return mapView
-    }()
-    
     private let saveButton: UIButton = {
         let button = UIButton()
         button.setTitle("작성완료", for: .normal)
@@ -330,7 +322,6 @@ class AddPostViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         contentView.addSubview(remainCountLabel)
         contentView.addSubview(dividerLine3)
         contentView.addSubview(mapLabelButton)
-        contentView.addSubview(mapView)
         
         view.addSubview(saveButton)
         
@@ -394,12 +385,8 @@ class AddPostViewController: UIViewController, UITextFieldDelegate, UITextViewDe
             mapLabelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             mapLabelButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapLabelButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
+            mapLabelButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -100),
             mapLabelButton.heightAnchor.constraint(equalToConstant: 60),
-         
-            mapView.topAnchor.constraint(equalTo: mapLabelButton.bottomAnchor, constant: 12),
-            mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
-            mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            mapView.heightAnchor.constraint(equalToConstant: 200),
             
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
