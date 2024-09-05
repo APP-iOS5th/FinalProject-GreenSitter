@@ -640,9 +640,15 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         if characterCount > 700 {
             textView.deleteBackward()
         }
-        
+
         updateSaveButtonState()
-        
+    }
+    
+    func resetTextViewFocus() {
+        if textView.isFirstResponder {
+            textView.resignFirstResponder()
+        }
+        textView.becomeFirstResponder()
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
