@@ -122,6 +122,6 @@ class MakePlanViewModel {
     
     func makePlanNotification() async {
         let firestoreManager = FirestoreManager()
-        await firestoreManager.makePlanNotification(planId: planId, planDate: planDate, ownerNotification: ownerNotification, sitterNotification: sitterNotification, postUserId: chatRoom.postUserId, userId: chatRoom.userId)
+        await firestoreManager.makePlanNotification(planId: planId, planDate: planDate, ownerNotification: ownerNotification, sitterNotification: sitterNotification, postUserId: chatRoom.postUserId, userId: chatRoom.userId, chatRoomId: chatRoom.id)
     }
 }

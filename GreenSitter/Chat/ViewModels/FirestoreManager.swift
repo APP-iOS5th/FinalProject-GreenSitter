@@ -505,7 +505,7 @@ class FirestoreManager {
     }
     
     // 약속 push 알림을 위한 planNotification 문서 생성
-    func makePlanNotification(planId: String, planDate: Date, ownerNotification: Bool, sitterNotification: Bool, postUserId: String, userId: String) async {
+    func makePlanNotification(planId: String, planDate: Date, ownerNotification: Bool, sitterNotification: Bool, postUserId: String, userId: String, chatRoomId: String) async {
         var fcmTokens = [String]()
         if ownerNotification {
             let postUserFcmToken = await fetchFCMTokenFromUserId(userId: postUserId)
@@ -524,7 +524,8 @@ class FirestoreManager {
                 try await db.collection("planNotifications").document(planId).setData([
                     "planId" : planId,
                     "planDate" : planDate,
-                    "fcmTokens" : fcmTokens
+                    "fcmTokens" : fcmTokens,
+                    "chatRoomId" : chatRoomId
                 ])
             } catch {
                 print("Failed to make plan notification: \(error.localizedDescription)")
