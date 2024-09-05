@@ -27,6 +27,7 @@ class PostDetailViewModel: ObservableObject {
     
     // MARK: - Post 삭제
     func deletePost(postId: String, completion: @escaping (Bool) -> Void) {
+        // TODO: 삭제 -> enable = false
         db.collection("posts").document(postId).delete { error in
             if let error = error {
                 print("Error removing document: \(error.localizedDescription)")
