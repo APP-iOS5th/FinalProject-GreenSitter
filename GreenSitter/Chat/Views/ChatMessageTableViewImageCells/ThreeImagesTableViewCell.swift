@@ -254,7 +254,7 @@ class ThreeImagesTableViewCell: UITableViewCell {
     }
     
     // MARK: - Cell 구성
-    func configure() {
+    func configure(date: Date) {
         // 프로필 이미지 설정
         let profileImage: String?
         if chatRoom?.userId == chatViewModel?.user?.id {
@@ -275,7 +275,6 @@ class ThreeImagesTableViewCell: UITableViewCell {
         profileImageView.kf.setImage(with: profileImageUrl, placeholder: placeholderImage)
         
         // 메세지 시간 설정
-        let date = Date()
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")

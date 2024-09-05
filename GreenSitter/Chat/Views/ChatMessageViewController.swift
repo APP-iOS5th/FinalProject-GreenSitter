@@ -215,7 +215,8 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.chatRoom = chatRoom
                 cell.chatViewModel = self.chatViewModel
-                cell.configure()
+                let messageTime = messages[indexPath.row].createDate
+                cell.configure(date: messageTime)
                 
                 return cell
             case 2:
@@ -244,7 +245,8 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.chatRoom = chatRoom
                 cell.chatViewModel = self.chatViewModel
-                cell.configure()
+                let messageTime = messages[indexPath.row].createDate
+                cell.configure(date: messageTime)
                 
                 return cell
             case 3:
@@ -273,7 +275,8 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.chatRoom = chatRoom
                 cell.chatViewModel = self.chatViewModel
-                cell.configure()
+                let messageTime = messages[indexPath.row].createDate
+                cell.configure(date: messageTime)
                 
                 return cell
             case 4:
@@ -302,7 +305,8 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.chatRoom = chatRoom
                 cell.chatViewModel = self.chatViewModel
-                cell.configure()
+                let messageTime = messages[indexPath.row].createDate
+                cell.configure(date: messageTime)
                 
                 return cell
             default:
@@ -331,7 +335,8 @@ extension ChatMessageViewController: UITableViewDataSource {
                 
                 cell.chatRoom = chatRoom
                 cell.chatViewModel = self.chatViewModel
-                cell.configure()
+                let messageTime = messages[indexPath.row].createDate
+                cell.configure(date: messageTime)
                 
                 return cell
             }
@@ -387,7 +392,8 @@ extension ChatMessageViewController: UITableViewDataSource {
             
             cell.chatRoom = chatRoom
             cell.chatViewModel = self.chatViewModel
-            cell.configure()
+            let messageTime = messages[indexPath.row].createDate
+            cell.configure(date: messageTime)
             
             return cell
         case .review:

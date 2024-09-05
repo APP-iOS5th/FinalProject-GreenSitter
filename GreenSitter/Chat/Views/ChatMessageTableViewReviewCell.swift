@@ -10,7 +10,11 @@ import UIKit
 class ChatMessageTableViewReviewCell: UITableViewCell {
     var makeReviewButtonAction: (() -> Void)?
     
-    var chatViewModel: ChatViewModel?
+    var chatViewModel: ChatViewModel? {
+        didSet {
+            currentId = chatViewModel?.userId
+        }
+    }
     var chatRoom: ChatRoom?
     
     private lazy var currentId: String? = {
