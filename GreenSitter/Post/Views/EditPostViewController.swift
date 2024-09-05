@@ -487,7 +487,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
                         self?.viewModel.selectedImages.append(image)
                         self?.viewModel.addedImages.append(image)
                         // UI 업데이트
-                        self?.addImageToStackView(image)
+                        self?.addImageToStackView(image, "")
                     }
                 }
             }
@@ -495,7 +495,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     }
     
     
-    private func addImageToStackView(_ image: UIImage) {
+    private func addImageToStackView(_ image: UIImage, _ str:String?) {
         DispatchQueue.main.async {
             let existingImages = self.imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
             if existingImages.contains(image) {
@@ -517,7 +517,16 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
             deleteButton.tintColor = .red
             deleteButton.translatesAutoresizingMaskIntoConstraints = false
-            deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+//            deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+            if let str = str, !str.isEmpty {
+                 deleteButton.addAction(UIAction { [weak self] _ in
+                     guard let self = self else { return }
+                     deleteImageBy(str: str, sender: deleteButton)
+                 }, for: .touchUpInside)
+             } else {
+                 deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+             }
+            
             
             containerView.addSubview(imageView)
             containerView.addSubview(deleteButton)
@@ -544,6 +553,19 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         }
     }
     
+    func deleteImageBy(str: String, sender: UIButton) {
+        guard let containerView = sender.superview else { return }
+        guard let containerViewIndex = imageStackView.arrangedSubviews.firstIndex(of: containerView) else {
+            return
+        }
+        if let idx = viewModel.postImageURLs.firstIndex(of: str) {
+            viewModel.imageURLsToDelete.append(viewModel.postImageURLs[idx])
+            containerView.removeFromSuperview()
+        }
+//        let originalImageViewIndex: Int = Int(containerViewIndex) - 1
+        updateImageStackView()
+    }
+    
     @objc private func deleteImage(_ sender: UIButton) {
         print("before: \(viewModel.postImageURLs)")
         guard let containerView = sender.superview else { return }
@@ -567,25 +589,25 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     private func updateUIWithLoadedImages() {
         for urlString in viewModel.selectedImageURLs { // URL 배열을 가져옴
-            loadImageFromURL(urlString) { [weak self] image in
+            loadImageFromURL(urlString) { [weak self] (image, str) in
                 guard let image = image else { return }
-                self?.addImageToStackView(image)
+                self?.addImageToStackView(image, str)
             }
         }
     }
     // URL로부터 UIImage를 로드하는 함수
-    private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?) -> Void) {
+    private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?, String?) -> Void) {
         guard let url = URL(string: urlString) else {
-            completion(nil)
+            completion(nil, nil)
             return
         }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil, let image = UIImage(data: data) else {
-                completion(nil)
+                completion(nil, nil)
                 return
             }
-            completion(image)
+            completion(image, urlString)
         }.resume()
     }
     
