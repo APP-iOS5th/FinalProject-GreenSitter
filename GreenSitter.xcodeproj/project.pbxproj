@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		15358F5C2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15358F5B2C86A01900DECA1F /* ChatMessageTableViewReviewCell.swift */; };
 		156A3B592C749E3900F22B74 /* PlanPlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156A3B582C749E3900F22B74 /* PlanPlaceDetailViewController.swift */; };
+		1583F22B2C893F450008E53E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1583F22A2C893F450008E53E /* GoogleService-Info.plist */; };
+		1583F22D2C893F540008E53E /* APPKey.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1583F22C2C893F540008E53E /* APPKey.plist */; };
 		15C8208A2C775ECB002991DE /* ImageDetailCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C820892C775ECB002991DE /* ImageDetailCollectionViewController.swift */; };
 		15C8208C2C776FA2002991DE /* ImageDetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C8208B2C776FA2002991DE /* ImageDetailCollectionViewCell.swift */; };
 		15F221A42C758AA300DF285A /* FirestorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F221A32C758AA300DF285A /* FirestorageManager.swift */; };
@@ -152,6 +154,8 @@
 		1543FB412C69C1DE002E4CC8 /* PlanPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanPlaceViewController.swift; sourceTree = "<group>"; };
 		1543FB432C69E4BB002E4CC8 /* FinalConfirmPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalConfirmPlanViewController.swift; sourceTree = "<group>"; };
 		156A3B582C749E3900F22B74 /* PlanPlaceDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanPlaceDetailViewController.swift; sourceTree = "<group>"; };
+		1583F22A2C893F450008E53E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1583F22C2C893F540008E53E /* APPKey.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = APPKey.plist; path = ../../../Downloads/APPKey.plist; sourceTree = "<group>"; };
 		15C820892C775ECB002991DE /* ImageDetailCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailCollectionViewController.swift; sourceTree = "<group>"; };
 		15C8208B2C776FA2002991DE /* ImageDetailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailCollectionViewCell.swift; sourceTree = "<group>"; };
 		15F221A32C758AA300DF285A /* FirestorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorageManager.swift; sourceTree = "<group>"; };
@@ -431,8 +435,8 @@
 		97934DD32C62F3C600B38E0A /* GreenSitter */ = {
 			isa = PBXGroup;
 			children = (
-				3B8D49012C8968C000655F25 /* APPKey.plist */,
-				3B8D48FF2C8968B900655F25 /* GoogleService-Info.plist */,
+				1583F22A2C893F450008E53E /* GoogleService-Info.plist */,
+				1583F22C2C893F540008E53E /* APPKey.plist */,
 				97D1BEB02C6C9DDD00F7A983 /* GreenSitter.entitlements */,
 				97934DD42C62F3C600B38E0A /* AppDelegate.swift */,
 				97934DD62C62F3C600B38E0A /* SceneDelegate.swift */,
@@ -823,10 +827,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B8D49022C8968C000655F25 /* APPKey.plist in Resources */,
+				1583F22D2C893F540008E53E /* APPKey.plist in Resources */,
 				97934DDE2C62F3C800B38E0A /* Assets.xcassets in Resources */,
 				971D20A22C87FBEB00CF94F4 /* (null) in Resources */,
-				3B8D49002C8968BA00655F25 /* GoogleService-Info.plist in Resources */,
+				1583F22B2C893F450008E53E /* GoogleService-Info.plist in Resources */,
 				971D20A42C87FCA600CF94F4 /* LaunchScreen.storyboard in Resources */,
 				97934DE12C62F3C800B38E0A /* Base in Resources */,
 			);

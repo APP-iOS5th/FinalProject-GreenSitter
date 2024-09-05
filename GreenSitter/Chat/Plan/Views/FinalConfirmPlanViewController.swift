@@ -179,7 +179,7 @@ class FinalConfirmPlanViewController: UIViewController {
     
     private lazy var notificationStackView: UIStackView = {
         let notificationLabel = UILabel()
-        notificationLabel.text = "약속 시간 30분 전 알림"
+        notificationLabel.text = "약속 당일 알림"
         notificationLabel.textColor = UIColor(named: "LabelsPrimary")
         notificationLabel.font = UIFont.systemFont(ofSize: 17)
         notificationLabel.addCharacterSpacing(-0.043)
@@ -237,8 +237,11 @@ class FinalConfirmPlanViewController: UIViewController {
                 self?.viewModel.sitterNotification = isNotificationSwitchOn
             }
             self?.viewModel.progress = 3
-            self?.viewModel.sendPlan()
-            self?.dismiss(animated: true)
+            Task {
+                await self?.viewModel.sendPlan()
+                await self?.viewModel.makePlanNotification()
+                self?.dismiss(animated: true)
+            }
         }, for: .touchUpInside)
         return offeringButton
     }()
@@ -494,8 +497,10 @@ class FinalConfirmPlanViewController: UIViewController {
                 let alert = UIAlertController(title: "약속 취소하기", message: "약속을 취소하시겠습니까?", preferredStyle: .alert)
                 
                 let cancelAction = UIAlertAction(title: "약속 취소하기", style: .cancel) { _ in
-                    self.viewModel.cancelPlan()
-                    self.dismiss(animated: true)
+                    Task {
+                        await self.viewModel.cancelPlan()
+                        self.dismiss(animated: true)
+                    }
                 }
                 alert.addAction(cancelAction)
                 
