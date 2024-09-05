@@ -31,6 +31,17 @@ class ChatViewController: UIViewController {
         self.view.addGestureRecognizer(tapGesture)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        ChatManager.shared.currentChatRoomId = chatRoom.id
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        ChatManager.shared.currentChatRoomId = nil
+    }
     // MARK: - Setup UI
     private func setupUI() {
         

@@ -101,6 +101,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     // 포그라운드(앱 실행 상태)에서 푸시 알림 처리
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        let userInfo = notification.request.content.userInfo
+        if let chatRoomId = userInfo["chatRoomId"] as? String {
+            if chatRoomId == ChatManager.shared.currentChatRoomId {
+                return []
+            }
+        }
+        
         return [.banner, .badge, .sound, .list]
     }
     
