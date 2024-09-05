@@ -36,10 +36,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         
         // 원격 알림 등록
-        let authOptions: UNAuthorizationOptions = [.badge, .sound]
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,
-            completionHandler: { _, _ in }
+            completionHandler: { granted, error in
+                if granted {
+                    DispatchQueue.main.async {
+                        application.registerForRemoteNotifications()
+                    }
+                } else {
+                    print("Permission not granted: \(error?.localizedDescription ?? "No error")")
+                }
+            }
         )
         
         application.registerForRemoteNotifications()
@@ -83,7 +91,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
-    
+
 }
 
 // MARK: - Push Notification 함수
@@ -102,10 +110,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     // 포그라운드(앱 실행 상태)에서 푸시 알림 처리
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
         let userInfo = notification.request.content.userInfo
-        if let chatRoomId = userInfo["chatRoomId"] as? String {
-            if chatRoomId == ChatManager.shared.currentChatRoomId {
+        if let chatRoomId = userInfo["chatRoomId"] as? String,
+           chatRoomId == ChatManager.shared.currentChatRoomId {
                 return []
-            }
         }
         
         return [.banner, .badge, .sound, .list]

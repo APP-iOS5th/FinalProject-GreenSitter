@@ -149,11 +149,21 @@ class MessageInputViewController: UIViewController {
     
     // MARK: - SendButton
     private func sendMessage() {
-        guard let text = messageInputField.text, !text.isEmpty else { return }
+        guard let text = messageInputField.text, !text.isEmpty else {
+            sendButton.isEnabled = false
+            return
+        }
         
-        self.chatViewModel?.sendButtonTapped(text: text, chatRoom: chatRoom)
-        messageInputField.text = ""
-        sendButton.isEnabled = false
+        // 공백 문자열 버튼 비활성화
+        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if !trimmedText.isEmpty {
+            self.chatViewModel?.sendButtonTapped(text: text, chatRoom: chatRoom)
+            messageInputField.text = ""
+            sendButton.isEnabled = false
+        } else {
+            sendButton.isEnabled = false
+        }
     }
 }
 
