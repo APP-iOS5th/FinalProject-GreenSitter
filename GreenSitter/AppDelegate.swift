@@ -129,11 +129,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         if let chatRoomId = userInfo["chatRoomId"] as? String {
-            // Fetch chat room and navigate to it
             fetchChatRoom(chatRoomId: chatRoomId) { [weak self] chatRoom in
                 guard let self = self else { return }
                 if let chatRoom = chatRoom {
-                    // Navigate to the chat room
                     self.navigateToChatRoom(chatRoom: chatRoom)
                 } else {
                     print("No ChatRoom found with given ID.")
@@ -141,7 +139,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 completionHandler()
             }
         } else {
-            // Handle cases where chatRoomId is not present
             completionHandler()
         }
     }
