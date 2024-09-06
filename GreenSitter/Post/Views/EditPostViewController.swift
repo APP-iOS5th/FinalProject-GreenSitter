@@ -14,6 +14,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     private let post: Post
     private var viewModel: EditPostViewModel
     private var overlayPostMapping: [MKCircle: Post] = [:]
+    private var isUploading = false
+    private var throttleTimer: Timer?
     
     init(post: Post, viewModel: EditPostViewModel) {
         self.post = post
@@ -287,17 +289,34 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     }
     
     @objc private func saveButtonTapped() {
+        // 업로드 중이거나 쓰로틀 타이머가 동작 중이면 클릭 이벤트 무시
+        guard !isUploading, throttleTimer == nil else { return }
+        
+        // 버튼을 비활성화하고 중복 요청 방지
+        isUploading = true
+        saveButton.isEnabled = false
+        
+        // 쓰로틀 타이머 설정: 1초 동안 중복 클릭 방지
+        throttleTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { [weak self] _ in
+            self?.throttleTimer = nil // 타이머가 끝나면 다시 클릭 가능
+        }
+        
         guard validateInputs() else {
+            isUploading = false
             saveButton.isEnabled = true
+            throttleTimer?.invalidate()
+            throttleTimer = nil
             return
         }
         
         guard let currentUser = LoginViewModel.shared.user else {
             print("User ID is not available")
+            isUploading = false
             saveButton.isEnabled = true
+            throttleTimer?.invalidate()
+            throttleTimer = nil
             return
         }
-        
         
         let activityIndicator = UIActivityIndicatorView(style: .large)
         activityIndicator.center = view.center
@@ -306,11 +325,14 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         
         viewModel.updatePost(postTitle: titleTextField.text!, postBody: textView.text) { [weak self] result in
             DispatchQueue.main.async {
-                
                 activityIndicator.stopAnimating()
                 activityIndicator.removeFromSuperview()
                 
+                // 작업이 끝난 후 다시 초기화
+                self?.isUploading = false
                 self?.saveButton.isEnabled = true
+                self?.throttleTimer?.invalidate()
+                self?.throttleTimer = nil
                 
                 switch result {
                 case .success:
@@ -517,15 +539,15 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
             deleteButton.tintColor = .red
             deleteButton.translatesAutoresizingMaskIntoConstraints = false
-//            deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+            //            deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
             if let str = str, !str.isEmpty {
-                 deleteButton.addAction(UIAction { [weak self] _ in
-                     guard let self = self else { return }
-                     deleteImageBy(str: str, sender: deleteButton)
-                 }, for: .touchUpInside)
-             } else {
-                 deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
-             }
+                deleteButton.addAction(UIAction { [weak self] _ in
+                    guard let self = self else { return }
+                    deleteImageBy(str: str, sender: deleteButton)
+                }, for: .touchUpInside)
+            } else {
+                deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+            }
             
             
             containerView.addSubview(imageView)
@@ -562,7 +584,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             viewModel.imageURLsToDelete.append(viewModel.postImageURLs[idx])
             containerView.removeFromSuperview()
         }
-//        let originalImageViewIndex: Int = Int(containerViewIndex) - 1
+        //        let originalImageViewIndex: Int = Int(containerViewIndex) - 1
         updateImageStackView()
     }
     
@@ -640,7 +662,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         if characterCount > 700 {
             textView.deleteBackward()
         }
-
+        
         updateSaveButtonState()
     }
     
