@@ -489,7 +489,7 @@ class PostDetailViewController: UIViewController {
             self.imageUrls = imageUrls
             for imageUrl in imageUrls {
                 let imageView = UIImageView()
-                imageView.contentMode = .scaleAspectFill // 비율 유지하며 꽉 채움
+                imageView.contentMode = .scaleAspectFill
                 imageView.clipsToBounds = true
                 imageView.layer.cornerRadius = 10
                 imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -501,9 +501,12 @@ class PostDetailViewController: UIViewController {
                         let resizedImage = self?.resizeImage(image: image, targetSize: CGSize(width: 180, height: 200))
                         imageView.image = resizedImage
                         
+                        imageView.isUserInteractionEnabled = true
+                        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.imageTapped(_:)))
+                        imageView.addGestureRecognizer(tapGesture)
+                        
                         self?.imagesStackView.addArrangedSubview(imageView)
                         
-                        // 이미지뷰에 크기 제약 조건 설정
                         NSLayoutConstraint.activate([
                             imageView.widthAnchor.constraint(equalToConstant: 180),
                             imageView.heightAnchor.constraint(equalToConstant: 200)
@@ -515,6 +518,7 @@ class PostDetailViewController: UIViewController {
             self.imagesScrollView.isHidden = true
         }
     }
+    
     
     // URL에서 이미지를 로드하는 함수
     private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?) -> Void) {
@@ -796,9 +800,7 @@ class PostDetailViewController: UIViewController {
         let fullScreenPageVC = FullScreenPageViewController(imageUrls: imageUrls, initialIndex: index)
         fullScreenPageVC.modalPresentationStyle = .fullScreen
         present(fullScreenPageVC, animated: true, completion: nil)
-        
     }
-    
 }
 
 extension PostDetailViewController: UITextViewDelegate {
