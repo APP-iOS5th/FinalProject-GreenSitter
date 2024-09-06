@@ -32,7 +32,7 @@ class ChatMessageViewController: UIViewController {
         tableView.allowsSelection = false
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         return tableView
     }()
     
@@ -84,7 +84,7 @@ class ChatMessageViewController: UIViewController {
                     // 테이블 뷰를 리로드하여 최신 메시지를 표시
                     self?.tableView.reloadData()
                     
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         guard let numberOfSections = self?.tableView.numberOfSections,
                               let numberOfRows = self?.tableView.numberOfRows(inSection: numberOfSections - 1) else {
                             return

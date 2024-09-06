@@ -114,7 +114,7 @@ class ChatPostViewController: UIViewController {
             // postImage가 nil일 경우 기본 이미지로 설정
             postThumbnailView.image = placeholderImage
         }
-        
+         
         postTitleLabel.text = chatRoom.postTitle
         postStatusLabel.text = chatRoom.postStatus.rawValue
         

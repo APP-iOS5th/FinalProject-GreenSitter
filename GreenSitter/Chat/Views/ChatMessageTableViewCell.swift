@@ -98,7 +98,7 @@ class ChatMessageTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+        
     // MARK: - Setup UI
     private func setupUI() {
         bubbleView.addSubview(messageLabel)
@@ -127,8 +127,6 @@ class ChatMessageTableViewCell: UITableViewCell {
                 messageLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -10),
                 messageLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
                 messageLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
-                messageLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
-                messageLabel.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor),
                 
                 profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
                 profileImageView.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor),
@@ -168,8 +166,6 @@ class ChatMessageTableViewCell: UITableViewCell {
                 messageLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -10),
                 messageLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
                 messageLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
-                messageLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
-                messageLabel.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor),
                 
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
@@ -208,6 +204,9 @@ class ChatMessageTableViewCell: UITableViewCell {
         let timeString = formatter.string(from: date)
         
         timeLabel.text = timeString
+        
+        // 메세지가 여러 줄이 될 경우 변경된 레이아웃으로 즉시 반영되도록 조치
+        layoutIfNeeded()
     }
 
 }
