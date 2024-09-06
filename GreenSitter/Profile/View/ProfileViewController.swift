@@ -105,7 +105,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchUserFirebase()
-        
+        fetchUserExperience()
         if Auth.auth().currentUser == nil {
             view.removeAllSubviews()
             showLoginScreen()
