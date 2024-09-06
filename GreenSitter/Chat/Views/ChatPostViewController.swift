@@ -103,7 +103,7 @@ class ChatPostViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         // 이미지 다운로드 실패 시 기본 이미지로 설정
-        let placeholderImage = UIImage(named: "chatIcon")
+        let placeholderImage = UIImage(named: "ChatIcon")
         
         if let firstImageUrlString = chatRoom.postImage,
            let postThumbnailUrl = URL(string: firstImageUrlString) {
