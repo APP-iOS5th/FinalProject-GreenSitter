@@ -131,9 +131,11 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
     }
     
     private func setupConstraints() {
+        let screenHeight = UIScreen.main.bounds.height
+
         NSLayoutConstraint.activate([
             circleView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            circleView.centerYAnchor.constraint(equalTo: view.topAnchor, constant: 180),
+            circleView.centerYAnchor.constraint(equalTo: view.topAnchor, constant: screenHeight < 800 ? 140 : 180),
             circleView.widthAnchor.constraint(equalToConstant: 120),
             circleView.heightAnchor.constraint(equalToConstant: 120),
             
@@ -143,7 +145,7 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
             imageButton.heightAnchor.constraint(equalToConstant: 100),
             
             profileButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            profileButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -150),
+            profileButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: screenHeight < 800 ? -110 : -150),
             profileButton.widthAnchor.constraint(equalToConstant: 130),
             
             tableView.topAnchor.constraint(equalTo: profileButton.bottomAnchor, constant: 30),

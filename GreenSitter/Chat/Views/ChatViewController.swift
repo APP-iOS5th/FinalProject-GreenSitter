@@ -158,8 +158,53 @@ class ChatViewController: UIViewController {
         ) { [weak self] _ in
             guard let self = self else { return }
             Task {
-                await self.chatViewModel?.completeTrade(chatRoomId: self.chatRoom.id, postId: self.chatRoom.postId, recipientId: self.chatRoom.userId)
-                self.chatViewModel?.sendReviewMessage(chatRoom: self.chatRoom)
+                let postStatus = await self.chatViewModel?.fetchChatPostStatus(chatRoomId: self.chatRoom.id)
+                let hasLeavePlan = await self.chatViewModel?.fetchChatHasLeavePlan(chatRoomId: self.chatRoom.id) ?? false
+                let hasGetBackPlan = await self.chatViewModel?.fetchChatHasGetBackPlan(chatRoomId: self.chatRoom.id) ?? false
+                let authorityToCommit = await self.chatViewModel?.checkAuthorityToCommit(postId: self.chatRoom.postId) ?? false
+                if postStatus == .completedTrade {
+                    self.dismiss(animated: true) {
+                        let alert = UIAlertController(title: "거래 완료", message: "이미 거래가 완료된 게시물입니다.", preferredStyle: .alert)
+                        
+                        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                        }
+                        alert.addAction(confirmAction)
+                
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                } else if !(hasLeavePlan && hasGetBackPlan) {
+                    // 거래 완료 상태가 아니고
+                    // 약속이 없다면
+                    self.dismiss(animated: true) {
+                        let alert = UIAlertController(title: "거래 완료 불가", message: "아직 위탁 혹은 회수 약속이 없습니다. 먼저 약속을 만들어주세요.", preferredStyle: .alert)
+                        
+                        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                        }
+                        alert.addAction(confirmAction)
+                        
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                } else if !authorityToCommit {
+                    // 거래 완료 상태가 아니고
+                    // 약속이 있고
+                    // 거래 완료 권한이 없다면
+                    self.dismiss(animated: true) {
+                        let alert = UIAlertController(title: "거래 완료 불가", message: "다른 사용자와 약속이 있습니다. 거래 완료 권한이 없습니다.", preferredStyle: .alert)
+                        
+                        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                        }
+                        alert.addAction(confirmAction)
+                        
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                } else {
+                    // 거래 완료 상태가 아니고
+                    // 약속이 있고
+                    // 거래 완료 권한이 있다면
+                    await self.chatViewModel?.completeTrade(chatRoomId: self.chatRoom.id, postId: self.chatRoom.postId, recipientId: self.chatRoom.userId)
+                        self.chatViewModel?.sendReviewMessage(chatRoom: self.chatRoom)
+                    self.chatRoom.postStatus = .completedTrade
+                }
             }
         }
         

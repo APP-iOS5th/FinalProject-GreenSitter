@@ -27,6 +27,7 @@ class PostDetailViewModel: ObservableObject {
     
     // MARK: - Post 삭제
     func deletePost(postId: String, completion: @escaping (Bool) -> Void) {
+        // TODO: 삭제 -> enable = false
         db.collection("posts").document(postId).delete { error in
             if let error = error {
                 print("Error removing document: \(error.localizedDescription)")
@@ -119,7 +120,7 @@ class PostDetailViewModel: ObservableObject {
         // 게시물 썸네일
         let postThumbnail = self.selectedPost?.postImages?.first
 
-        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost!.userNotification, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus, hasLeavePlan: false, hasGetBackPlan: false)
+        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost!.userNotification, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus, postType: selectedPost!.postType, hasLeavePlan: false, hasGetBackPlan: false, preferredPlace: selectedPost!.location)
             
         return newChat
     }

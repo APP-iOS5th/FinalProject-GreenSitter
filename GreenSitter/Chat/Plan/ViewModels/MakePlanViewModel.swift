@@ -13,6 +13,7 @@ protocol MakePlanViewModelDelegate {
 }
 
 class MakePlanViewModel {
+    let planId: String
     var planDate: Date
     var planPlace: Location?
     var ownerNotification: Bool
@@ -28,7 +29,7 @@ class MakePlanViewModel {
     
     var messageId: String?
     
-    init(date: Date = Date(), planPlace: Location? = nil, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0, isPlaceSelected: Bool = false, planType: PlanType, chatViewModel: ChatViewModel? = nil, chatRoom: ChatRoom, messageId: String? = nil) {
+    init(planId: String = UUID().uuidString, date: Date = Date(), planPlace: Location? = nil, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0, isPlaceSelected: Bool = false, planType: PlanType, chatViewModel: ChatViewModel? = nil, chatRoom: ChatRoom, messageId: String? = nil) {
         let interval = 5
         let calendar = Calendar.current
         let currentDateComponents = calendar.dateComponents([.hour, .minute, .second], from: date)
@@ -57,9 +58,9 @@ class MakePlanViewModel {
             of: date
         ) ?? date
 
-        
+        self.planId = planId
         self.planDate = newDate
-        self.planPlace = planPlace ?? chatRoom.postUserLocation
+        self.planPlace = planPlace ?? chatRoom.preferredPlace
         self.ownerNotification = ownerNotification
         self.sitterNotification = sitterNotification
         self.progress = progress
@@ -78,11 +79,15 @@ class MakePlanViewModel {
         delegate?.backtoPreviousPage()
     }
     
-    func sendPlan() {
-        let plan = Plan(planId: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), planDate: planDate, planPlace: planPlace, contract: nil, ownerNotification: ownerNotification, sitterNotification: sitterNotification, isAccepted: false, planType: planType)
-        Task {
-            await chatViewModel?.sendPlanMessage(plan: plan, chatRoom: chatRoom)
-            await chatViewModel?.updatePostStatusAfterMakePlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
+    func sendPlan() async {
+        let plan = Plan(planId: planId, enabled: true, createDate: Date(), updateDate: Date(), planDate: planDate, planPlace: planPlace, contract: nil, ownerNotification: ownerNotification, sitterNotification: sitterNotification, isAccepted: false, planType: planType)
+        await chatViewModel?.sendPlanMessage(plan: plan, chatRoom: chatRoom)
+        await chatViewModel?.updatePostStatusAfterMakePlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId, recipientId: chatRoom.userId)
+        chatRoom.postStatus = .inTrade
+        if planType == .leavePlan {
+            chatRoom.hasLeavePlan = true
+        } else {
+            chatRoom.hasGetBackPlan = true
         }
     }
     
@@ -95,12 +100,28 @@ class MakePlanViewModel {
         } catch {
             print(error.localizedDescription)
         }
+        
+        if !ownerNotification && !sitterNotification {
+            await firestoreManager.deletePlanNotification(planId: planId)
+        } else {
+            await makePlanNotification()
+        }
     }
     
-    func cancelPlan() {
-        Task {
-            await chatViewModel?.updatePostStatusAfterCancelPlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
-            await chatViewModel?.sendButtonTapped(text: "약속을 취소했습니다.", chatRoom: chatRoom)
+    func cancelPlan() async {
+        await chatViewModel?.updatePostStatusAfterCancelPlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
+        if planType == .leavePlan {
+            await chatViewModel?.sendButtonTapped(text: "위탁 약속을 취소했습니다.", chatRoom: chatRoom)
+        } else {
+            await chatViewModel?.sendButtonTapped(text: "회수 약속을 취소했습니다.", chatRoom: chatRoom)
         }
+        
+        let firestoreManager = FirestoreManager()
+        await firestoreManager.deletePlanNotification(planId: planId)
+    }
+    
+    func makePlanNotification() async {
+        let firestoreManager = FirestoreManager()
+        await firestoreManager.makePlanNotification(planId: planId, planDate: planDate, ownerNotification: ownerNotification, sitterNotification: sitterNotification, postUserId: chatRoom.postUserId, userId: chatRoom.userId)
     }
 }
