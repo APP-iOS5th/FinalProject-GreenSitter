@@ -24,8 +24,6 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        setupUI()
-        
         // 키보드 숨기기
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.view.addGestureRecognizer(tapGesture)

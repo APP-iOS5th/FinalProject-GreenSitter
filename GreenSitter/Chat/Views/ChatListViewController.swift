@@ -295,9 +295,6 @@ extension ChatListViewController: UITableViewDelegate {
                     } else {
                         self.tableView.reloadData()
                     }
-                    
-                    self.tableView.reloadData()
-                    
                     print("delete")
                 } catch {
                     print("Error deleting chat room: \(error.localizedDescription)")
