@@ -51,6 +51,11 @@ class ChatListViewController: UIViewController {
         
         button.translatesAutoresizingMaskIntoConstraints = false
         
+        // 버튼 클릭 시 홈 화면으로 이동
+        button.addAction(UIAction { [weak self] _ in
+            self?.navigateToHome()
+        }, for: .touchUpInside)
+        
         return button
     }()
     
@@ -99,7 +104,7 @@ class ChatListViewController: UIViewController {
         }
         createChatList()
         
-        self.navigationController?.navigationBar.prefersLargeTitles = true
+//        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     // MARK: - viewWillDisappear
@@ -163,11 +168,6 @@ class ChatListViewController: UIViewController {
                         // MARK: - 로그인/채팅방 없음
                         self.chatViewModel.updateUI = { [weak self] in
                             self?.setupEmptyChatListUI()
-                            
-                            // 버튼 클릭 시 홈 화면으로 이동
-                            self?.goToHomeButton.addAction(UIAction { [weak self] _ in
-                                self?.navigateToHome()
-                            }, for: .touchUpInside)
                         }
                     }
                     

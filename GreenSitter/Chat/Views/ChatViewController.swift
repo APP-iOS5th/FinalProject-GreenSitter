@@ -33,7 +33,7 @@ class ChatViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         ChatManager.shared.currentChatRoomId = chatRoom.id
     }
     
