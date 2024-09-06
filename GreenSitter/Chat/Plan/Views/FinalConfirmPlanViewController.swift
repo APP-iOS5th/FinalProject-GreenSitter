@@ -25,14 +25,14 @@ class FinalConfirmPlanViewController: UIViewController {
     }()
     
     private lazy var scrollView: UIScrollView = {
-       let scrollView = UIScrollView()
+        let scrollView = UIScrollView()
         scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 150, right: 10)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
     private lazy var cautionTextStackView: UIStackView = {
-       let cautionTitleLabel = UILabel()
+        let cautionTitleLabel = UILabel()
         cautionTitleLabel.text = "서로 배려하는 소비자/새싹 돌봄이로 노력해주세요!\n"
         cautionTitleLabel.addCharacterSpacing(-0.043)
         cautionTitleLabel.numberOfLines = 3
@@ -67,7 +67,7 @@ class FinalConfirmPlanViewController: UIViewController {
     }()
     
     private lazy var dateTimeTitle: UILabel = {
-       let dateTimeTitle = UILabel()
+        let dateTimeTitle = UILabel()
         dateTimeTitle.text = "약속 날짜 / 시간"
         dateTimeTitle.addCharacterSpacing(-0.043)
         dateTimeTitle.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
@@ -100,7 +100,7 @@ class FinalConfirmPlanViewController: UIViewController {
     }()
     
     private lazy var placeTitle: UILabel = {
-       let placeTitle = UILabel()
+        let placeTitle = UILabel()
         placeTitle.text = "약속 장소"
         placeTitle.addCharacterSpacing(-0.043)
         placeTitle.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
@@ -179,12 +179,12 @@ class FinalConfirmPlanViewController: UIViewController {
     
     private lazy var notificationStackView: UIStackView = {
         let notificationLabel = UILabel()
-        notificationLabel.text = "약속 시간 30분 전 알림"
+        notificationLabel.text = "약속 당일 알림"
         notificationLabel.textColor = UIColor(named: "LabelsPrimary")
         notificationLabel.font = UIFont.systemFont(ofSize: 17)
         notificationLabel.addCharacterSpacing(-0.043)
         
-       let notificationStackView = UIStackView(arrangedSubviews: [notificationLabel])
+        let notificationStackView = UIStackView(arrangedSubviews: [notificationLabel])
         notificationStackView.axis = .horizontal
         notificationStackView.backgroundColor = UIColor(named: "BGPrimary")
         notificationStackView.layer.cornerRadius = 10
@@ -197,7 +197,7 @@ class FinalConfirmPlanViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let cancelButton = UIButton()
-            
+        
         var config = UIButton.Configuration.plain()
         config.title = "약속 취소하기"
         config.contentInsets = .init(top: 6.5, leading: 16, bottom: 6.5, trailing: 16)
@@ -208,29 +208,12 @@ class FinalConfirmPlanViewController: UIViewController {
         cancelButton.layer.cornerRadius = 10
         cancelButton.clipsToBounds = true
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        cancelButton.addAction(UIAction { [weak self] _ in
-            let alert = UIAlertController(title: "약속 취소하기", message: "약속을 취소하시겠습니까?", preferredStyle: .alert)
-            
-            let cancelAction = UIAlertAction(title: "약속 취소하기", style: .cancel) { _ in
-                self?.viewModel.cancelPlan()
-                self?.dismiss(animated: true)
-            }
-            alert.addAction(cancelAction)
-            
-            let confirmAction = UIAlertAction(title: "약속 유지하기", style: .default) { _ in
-                
-            }
-            
-            alert.addAction(confirmAction)
-            
-            self?.present(alert, animated: true, completion: nil)
-        }, for: .touchUpInside)
-        
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
         return cancelButton
     }()
     
     private lazy var bottomPaddingView: UIView = {
-       let bottomPaddingView = UIView()
+        let bottomPaddingView = UIView()
         bottomPaddingView.backgroundColor = .clear
         bottomPaddingView.translatesAutoresizingMaskIntoConstraints = false
         return bottomPaddingView
@@ -254,8 +237,11 @@ class FinalConfirmPlanViewController: UIViewController {
                 self?.viewModel.sitterNotification = isNotificationSwitchOn
             }
             self?.viewModel.progress = 3
-            self?.viewModel.sendPlan()
-            self?.dismiss(animated: true)
+            Task {
+                await self?.viewModel.sendPlan()
+                await self?.viewModel.makePlanNotification()
+                self?.dismiss(animated: true)
+            }
         }, for: .touchUpInside)
         return offeringButton
     }()
@@ -490,6 +476,42 @@ class FinalConfirmPlanViewController: UIViewController {
             viewModel.ownerNotification = sender.isOn
         } else {
             viewModel.sitterNotification = sender.isOn
+        }
+    }
+    
+    @objc
+    private func cancelButtonTapped(_ sender: UIButton) {
+        Task {
+            let postStatus = await viewModel.chatViewModel?.fetchChatPostStatus(chatRoomId: viewModel.chatRoom.id)
+            if postStatus == .completedTrade {
+                // 거래 완료 후일 경우
+                let alert = UIAlertController(title: "약속을 취소할 수 없습니다.", message: "이미 거래가 완료된 게시물입니다.", preferredStyle: .alert)
+                
+                let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+                }
+                alert.addAction(confirmAction)
+                
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                // 거래 완료 전일 경우
+                let alert = UIAlertController(title: "약속 취소하기", message: "약속을 취소하시겠습니까?", preferredStyle: .alert)
+                
+                let cancelAction = UIAlertAction(title: "약속 취소하기", style: .cancel) { _ in
+                    Task {
+                        await self.viewModel.cancelPlan()
+                        self.dismiss(animated: true)
+                    }
+                }
+                alert.addAction(cancelAction)
+                
+                let confirmAction = UIAlertAction(title: "약속 유지하기", style: .default) { _ in
+                    
+                }
+                
+                alert.addAction(confirmAction)
+                
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
 }

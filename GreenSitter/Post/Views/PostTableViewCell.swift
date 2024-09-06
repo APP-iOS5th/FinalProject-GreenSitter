@@ -103,16 +103,16 @@ class PostTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with post: Post) {
-        postStatusLabel.text = post.postStatus.rawValue
-        postTitleLabel.text = post.postTitle
-        postBodyLabel.text = post.postBody
-        postDateLabel.text = timeAgoSinceDate(post.updateDate)
+    func configure(with post: Post?) {
+        postStatusLabel.text = post?.postStatus.rawValue
+        postTitleLabel.text = post?.postTitle
+        postBodyLabel.text = post?.postBody
+        postDateLabel.text = timeAgoSinceDate(post?.updateDate ?? Date())
         
         // 기본 이미지 설정
         postImageView.image = UIImage(named: "defaultImage")
         
-        guard let postImages = post.postImages, !postImages.isEmpty else {
+        guard let postImages = post?.postImages, !postImages.isEmpty else {
             postImageView.isHidden = true
             return
         }

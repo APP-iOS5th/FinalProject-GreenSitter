@@ -197,13 +197,15 @@ extension ReviewViewController {
         
         // 리뷰 완료 후 사용자 프로필로 이동
         DispatchQueue.main.async {
-            guard let userId = LoginViewModel.shared.user?.id else {
-                print("User ID is not available")
-                return
-            }
+//            guard let userId = LoginViewModel.shared.user?.id else {
+//                print("User ID is not available")
+//                return
+//            }
             
-            let aboutMeViewController = AboutMeViewController(userId: userId)
-            self.navigationController?.pushViewController(aboutMeViewController, animated: true)
+//            let aboutMeViewController = AboutMeViewController(userId: userId)
+//            self.navigationController?.pushViewController(aboutMeViewController, animated: true)
+            let profileViewcontrooler = ProfileViewController()
+            self.navigationController?.pushViewController(profileViewcontrooler, animated: true)
         }
     }
     

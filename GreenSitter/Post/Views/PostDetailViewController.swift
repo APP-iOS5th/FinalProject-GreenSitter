@@ -18,6 +18,7 @@ class PostDetailViewController: UIViewController {
     private let postId: String
     private var overlayPostMapping: [MKCircle: Post] = [:]
     private var postBodyTextViewHeightConstraint: NSLayoutConstraint?
+    private var isPostLoaded = false
 
     // MARK: - Initializer
     
@@ -203,8 +204,9 @@ class PostDetailViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        loadPost(with: postId)
+        if !isPostLoaded {
+            loadPost(with: postId)
+        }
     }
     
     func hideKeyboard() {
@@ -224,6 +226,7 @@ class PostDetailViewController: UIViewController {
             switch result {
             case .success(let post):
                 DispatchQueue.main.async {
+                    self.isPostLoaded = true
                     self.configureUI(with: post)
                     self.configureMapView(with: post)
                 }
@@ -751,7 +754,7 @@ class PostDetailViewController: UIViewController {
         let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
         chatDetailViewController.chatViewModel = chatViewModel
         
-        // 현재 탭 바 컨트롤러 가져오기
+        // TODO: 현재 탭 바 컨트롤러 가져오기
         if let tabBarController = self.tabBarController,
            let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
 

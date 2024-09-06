@@ -237,6 +237,9 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         mapView.delegate = self
         
         hideKeyboard()
+        
+        let initialCharacterCount = textView.text.count
+            remainCountLabel.text = "\(initialCharacterCount)/700"
     }
     
     
@@ -254,6 +257,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         
         let address = viewModel.selectedPost.location?.address
         let placeName = viewModel.selectedPost.location?.placeName
@@ -273,8 +277,11 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             textLabel.text = "거래 희망 장소를 선택하세요!"
         }
         configureMapView(with: viewModel.selectedPost)
+        
+        let initialCharacterCount = textView.text.count
+        remainCountLabel.text = "\(initialCharacterCount)/700"
     }
-    
+
     @objc private func pickerImageViewTapped() {
         presentImagePickerController()
     }
