@@ -104,7 +104,7 @@ class ChatMessageViewController: UIViewController {
     
     // MARK: - viewWillDisappear
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(true)
+        super.viewWillDisappear(animated)
         
         // 메세지 리스너 해제
         for listener in messageListeners {

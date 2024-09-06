@@ -87,7 +87,7 @@ class ChatListViewController: UIViewController {
     
     // MARK: - ViewWillAppear
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
+        super.viewWillAppear(animated)
         
         if Auth.auth().currentUser != nil {
             chatViewModel.user = LoginViewModel.shared.user
