@@ -259,6 +259,21 @@ class ChatViewModel {
         var imagePaths = [String]()
         
         Task {
+            // 로컬 메시지 리스트에 임시 메시지 추가
+            var tempImagePaths = [String]()
+            for _ in 1...images.count {
+                tempImagePaths.append("placeholder")
+            }
+            
+            let tempImageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: user!.id, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: tempImagePaths, plan: nil)
+            
+            if var chatRoomMessages = self.messages[chatRoom.id] {
+                chatRoomMessages.append(tempImageMessage)
+                self.messages[chatRoom.id] = chatRoomMessages
+            } else {
+                self.messages[chatRoom.id] = [tempImageMessage]
+            }
+            
             //이미지 파이어베이스 스토리지에 저장
             await withTaskGroup(of: String?.self) { group in
                 for image in images {
@@ -285,6 +300,13 @@ class ChatViewModel {
                     }
                 }
             }
+            
+            // 로컬 임시 메세지 삭제
+            if var chatRoomMessages = self.messages[chatRoom.id] {
+                chatRoomMessages.removeAll { $0.id == tempImageMessage.id }
+                self.messages[chatRoom.id] = chatRoomMessages
+            }
+            
             let imageMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: user!.id, receiverUserId: receiverUserId!, isRead: false, messageType: .image, text: nil, image: imagePaths, plan: nil)
             
             // 로컬 메시지 리스트에 메시지 추가
