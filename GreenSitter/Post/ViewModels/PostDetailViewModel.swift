@@ -152,7 +152,7 @@ class PostDetailViewModel: ObservableObject {
         // 게시물 썸네일
         let postThumbnail = self.selectedPost?.postImages?.first
 
-        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost!.userNotification, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus, postEnabled: true, postType: selectedPost!.postType, hasLeavePlan: false, hasGetBackPlan: false, preferredPlace: selectedPost!.location)
+        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: true, postUserNotification: true, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus, postEnabled: true, postType: selectedPost!.postType, hasLeavePlan: false, hasGetBackPlan: false, preferredPlace: selectedPost!.location)
             
         return newChat
     }
