@@ -83,6 +83,19 @@ class ChatPostViewController: UIViewController {
         return label
     }()
     
+    // Post toggle 버튼
+    lazy var postToggleButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = .bgPrimary
+        button.tintColor = .labelsPrimary
+        button.layer.cornerRadius = 10
+        button.clipsToBounds = true
+        button.setImage(UIImage(systemName: "chevron.up.circle.fill"), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if chatRoom.postEnabled {
@@ -103,7 +116,7 @@ class ChatPostViewController: UIViewController {
     // MARK: - Setup UI
     private func setupUI() {
         // 이미지 다운로드 실패 시 기본 이미지로 설정
-        let placeholderImage = UIImage(named: "chatIcon")
+        let placeholderImage = UIImage(named: "ChatIcon")
         
         if let firstImageUrlString = chatRoom.postImage,
            let postThumbnailUrl = URL(string: firstImageUrlString) {
