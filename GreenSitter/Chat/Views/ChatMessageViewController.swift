@@ -370,6 +370,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             
             if let plan = messages[indexPath.row].plan {
                 let makePlanViewModel = MakePlanViewModel(planId: plan.planId, date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, planType: plan.planType, chatViewModel: chatViewModel, chatRoom: chatRoom, messageId: messages[indexPath.row].id)
+                makePlanViewModel.chatMessageTableViewPlanCellDelegate = cell
                 cell.detailButtonAction = {
                     self.present(MakePlanViewController(viewModel: makePlanViewModel), animated: true)
                 }
@@ -392,6 +393,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             
             cell.chatRoom = chatRoom
             cell.chatViewModel = self.chatViewModel
+            cell.planEnabled = messages[indexPath.row].plan?.enabled ?? true
             let messageTime = messages[indexPath.row].createDate
             cell.configure(date: messageTime)
             
