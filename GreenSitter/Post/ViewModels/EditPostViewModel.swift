@@ -73,7 +73,7 @@ class EditPostViewModel: ObservableObject {
     }
     
     // PHPicker에서 선택된 이미지를 Firebase Storage에 업로드하고 URL을 저장하는 함수
-    // 이미지를 추가할 때 배열을 업데이트하는 함수
+
     func addSelectedImages(results: [PHPickerResult], completion: @escaping () -> Void) {
         let dispatchGroup = DispatchGroup()
         
@@ -83,10 +83,10 @@ class EditPostViewModel: ObservableObject {
             if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
                 result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
                     if let image = object as? UIImage {
-                        // 이미지를 리사이징 후 업로드
-                        let resizedImage = self?.resizeImage(image: image, targetSize: CGSize(width: 190, height: 200))
-                        
-                        guard let imageData = resizedImage?.jpegData(compressionQuality: 0.5) else {
+                        guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+
+
+
                             dispatchGroup.leave()
                             return
                         }
@@ -104,9 +104,9 @@ class EditPostViewModel: ObservableObject {
                             storageRef?.downloadURL { (url, error) in
                                 if let url = url?.absoluteString {
                                     DispatchQueue.main.async {
-                                        // 배열에 추가하기 전에 현재 배열 상태를 확인하고 업데이트
+
                                         self?.selectedImageURLs.append(url)
-                                        print("Added image URL. Total count: \(self?.selectedImageURLs.count ?? 0)")
+                                        print("Added image URL to selectedImageURLs. Total count: \(self?.selectedImageURLs.count ?? 0)")
                                     }
                                 }
                                 dispatchGroup.leave()
@@ -122,22 +122,22 @@ class EditPostViewModel: ObservableObject {
             }
         }
         
-        // 모든 작업이 끝난 후 배열 업데이트
+
         dispatchGroup.notify(queue: .main) {
-            print("Finished loading images. Total count: \(self.selectedImageURLs.count ?? 0)")
+            print("Finished loading images. Total count: \(self.selectedImageURLs.count)")
             completion()
         }
     }
     
-    // 이미지를 삭제하고 배열을 업데이트하는 함수
+    // 선택된 이미지 URL을 삭제하는 함수
     func removeSelectedImage(at index: Int) {
         guard index >= 0 && index < selectedImageURLs.count else {
             print("Index out of bounds")
             return
         }
-        // 배열에서 이미지 삭제
+
         selectedImageURLs.remove(at: index)
-        print("Removed image at index \(index). Current count: \(selectedImageURLs.count)")
+
     }
     
     // 기존 이미지 URL을 삭제하는 함수
@@ -213,25 +213,25 @@ class EditPostViewModel: ObservableObject {
         }
     }
     
-    func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
-        let size = image.size
-        let widthRatio  = targetSize.width  / size.width
-        let heightRatio = targetSize.height / size.height
-        
-        // 비율을 유지하면서 최소 비율로 조정
-        let scaleFactor = min(widthRatio, heightRatio)
-        
-        let newSize = CGSize(width: size.width * scaleFactor, height: size.height * scaleFactor)
-        
-        // 새로운 사이즈로 리사이즈
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        let resizedImage = renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: newSize))
-        }
-        
-        return resizedImage
-    }
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // 포스트 업데이트
     func updatePost(postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
         // 삭제할 이미지 처리

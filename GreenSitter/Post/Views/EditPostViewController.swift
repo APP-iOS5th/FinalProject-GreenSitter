@@ -127,45 +127,37 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        // StackView to hold the image and label (left side)
         let leftStackView = UIStackView()
         leftStackView.axis = .horizontal
         leftStackView.alignment = .center
         leftStackView.spacing = 8 // Space between image and text
         leftStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Image on the left
         let symbolImageView = UIImageView()
         let symbolImage = UIImage(systemName: "mappin.and.ellipse")
         symbolImageView.image = symbolImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
         
-        // Text label
         let textLabel = UILabel()
         textLabel.text = "거래 희망 장소를 선택하세요!"
         textLabel.font = .systemFont(ofSize: 17)
         textLabel.textColor = .labelsSecondary
         
-        // Add image and label to the left stack view
         leftStackView.addArrangedSubview(symbolImageView)
         leftStackView.addArrangedSubview(textLabel)
         
-        // Right arrow '>' on the far right
         let arrowImageView = UIImageView()
         let arrowImage = UIImage(systemName: "chevron.right")
         arrowImageView.image = arrowImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Add the left stack view and the arrow to the button
         button.addSubview(leftStackView)
         button.addSubview(arrowImageView)
         
-        // Constraints for the left stack view (image and text)
         NSLayoutConstraint.activate([
             leftStackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
             leftStackView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
         ])
         
-        // Constraints for the arrow on the right
         NSLayoutConstraint.activate([
             arrowImageView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
             arrowImageView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
@@ -292,7 +284,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         // 업로드 중이거나 쓰로틀 타이머가 동작 중이면 클릭 이벤트 무시
         guard !isUploading, throttleTimer == nil else { return }
         
-        // 버튼을 비활성화하고 중복 요청 방지
         isUploading = true
         saveButton.isEnabled = false
         
@@ -487,6 +478,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     }
     
     
+    
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         print("Picker did finish picking. Results count: \(results.count)")
         
@@ -641,7 +633,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     private func presentImagePickerController() {
         let numberOfImages = imageStackView.arrangedSubviews.count - 1 // -1 to exclude pickerImageView
         
-        // 이미 10장이라면 이미지 피커를 비활성화
         if numberOfImages >= 10 {
             showAlert(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.")
             return
