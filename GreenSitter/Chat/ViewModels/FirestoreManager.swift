@@ -552,4 +552,17 @@ class FirestoreManager {
             print("Failed to remove plan notification: \(error.localizedDescription)")
         }
     }
+    
+    func cancelPlan(chatRoomId: String, messageId: String) async {
+        let planRef = db.collection("chatRooms").document(chatRoomId)
+            .collection("messages").document(messageId)
+
+        do {
+            try await planRef.updateData([
+                "plan.enabled" : false
+            ])
+        } catch {
+            print("Failed to enable plan: \(error.localizedDescription)")
+        }
+    }
 }

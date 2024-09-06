@@ -29,6 +29,8 @@ class MakePlanViewModel {
     
     var messageId: String?
     
+    var chatMessageTableViewPlanCellDelegate: ChatMessageTableViewPlanCellDelegate?
+    
     init(planId: String = UUID().uuidString, date: Date = Date(), planPlace: Location? = nil, ownerNotification: Bool = true, sitterNotification: Bool = true, progress: Int = 0, isPlaceSelected: Bool = false, planType: PlanType, chatViewModel: ChatViewModel? = nil, chatRoom: ChatRoom, messageId: String? = nil) {
         let interval = 5
         let calendar = Calendar.current
@@ -109,6 +111,8 @@ class MakePlanViewModel {
     }
     
     func cancelPlan() async {
+        guard let messageId = messageId else { return }
+        
         await chatViewModel?.updatePostStatusAfterCancelPlan(chatRoomId: chatRoom.id, planType: planType, postId: chatRoom.postId)
         if planType == .leavePlan {
             await chatViewModel?.sendButtonTapped(text: "위탁 약속을 취소했습니다.", chatRoom: chatRoom)
@@ -118,6 +122,8 @@ class MakePlanViewModel {
         
         let firestoreManager = FirestoreManager()
         await firestoreManager.deletePlanNotification(planId: planId)
+        await firestoreManager.cancelPlan(chatRoomId: chatRoom.id, messageId: messageId)
+        chatMessageTableViewPlanCellDelegate?.makePlanEnabled()
     }
     
     func makePlanNotification() async {

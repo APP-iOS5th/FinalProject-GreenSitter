@@ -7,12 +7,25 @@
 
 import UIKit
 
-class ChatMessageTableViewPlanCell: UITableViewCell {
+protocol ChatMessageTableViewPlanCellDelegate: AnyObject {
+    func makePlanEnabled()
+}
+
+class ChatMessageTableViewPlanCell: UITableViewCell, ChatMessageTableViewPlanCellDelegate {
     var chatViewModel: ChatViewModel?
     var chatRoom: ChatRoom?
     
     var detailButtonAction: (() -> Void)?
     var placeButtonAction: (() -> Void)?
+    
+    var planEnabled: Bool = false {
+        didSet {
+            print(planEnabled)
+            DispatchQueue.main.async {
+                self.canceledPlanLabel.isHidden = self.planEnabled
+            }
+        }
+    }
     
     var isIncoming: Bool = false {
         didSet {
@@ -93,7 +106,7 @@ class ChatMessageTableViewPlanCell: UITableViewCell {
         view.backgroundColor = UIColor(named: "BGPrimary")
         view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
-        
+        view.clipsToBounds = true
         return view
     }()
     
@@ -142,6 +155,17 @@ class ChatMessageTableViewPlanCell: UITableViewCell {
         return label
     }()
     
+    lazy var canceledPlanLabel: UILabel = {
+        let canceledPlanLabel = UILabel()
+        canceledPlanLabel.backgroundColor = .systemGray.withAlphaComponent(0.8)
+        canceledPlanLabel.text = "취소된 약속입니다."
+        canceledPlanLabel.numberOfLines = 0
+        canceledPlanLabel.textAlignment = .center
+        canceledPlanLabel.textColor = .white
+        canceledPlanLabel.translatesAutoresizingMaskIntoConstraints = false
+        return canceledPlanLabel
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -160,6 +184,7 @@ class ChatMessageTableViewPlanCell: UITableViewCell {
         bubbleView.addSubview(planPlaceLabel)
         bubbleView.addSubview(detailButton)
         bubbleView.addSubview(placeButton)
+        bubbleView.addSubview(canceledPlanLabel)
         contentView.addSubview(bubbleView)
         contentView.addSubview(timeLabel)
         
@@ -222,7 +247,12 @@ class ChatMessageTableViewPlanCell: UITableViewCell {
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
-                timeLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -100)
+                timeLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -100),
+                
+                canceledPlanLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                canceledPlanLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                canceledPlanLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                canceledPlanLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
             ])
         } else {
             contentView.addSubview(isReadLabel)
@@ -280,9 +310,17 @@ class ChatMessageTableViewPlanCell: UITableViewCell {
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
                 bubbleView.leadingAnchor.constraint(equalTo: timeLabel.trailingAnchor, constant: 5),
                 bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-
+                
+                canceledPlanLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor),
+                canceledPlanLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
+                canceledPlanLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
+                canceledPlanLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor),
             ])
         }
+    }
+    
+    func makePlanEnabled() {
+        planEnabled = false
     }
     
     // MARK: - Cell 구성
