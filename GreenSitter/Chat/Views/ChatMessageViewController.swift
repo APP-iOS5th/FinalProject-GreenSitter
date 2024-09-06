@@ -408,7 +408,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             }
             
             cell.makeReviewButtonAction = {
-                if let userId = self.chatViewModel?.userId {
+                if let userId = self.chatViewModel?.user?.id {
                     self.navigationController?.pushViewController(ReviewListViewController(userId: userId), animated: true)
                 }
             }

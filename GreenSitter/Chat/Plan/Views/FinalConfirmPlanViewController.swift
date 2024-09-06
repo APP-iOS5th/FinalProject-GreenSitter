@@ -21,7 +21,7 @@ class FinalConfirmPlanViewController: UIViewController {
     private var viewModel: MakePlanViewModel
     
     private lazy var currentId: String? = {
-        viewModel.chatViewModel?.userId
+        viewModel.chatViewModel?.user?.id
     }()
     
     private lazy var scrollView: UIScrollView = {

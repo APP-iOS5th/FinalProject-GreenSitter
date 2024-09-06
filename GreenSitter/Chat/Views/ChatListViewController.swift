@@ -102,6 +102,7 @@ class ChatListViewController: UIViewController {
                 $0.removeFromSuperview()
             }
         }
+        self.view.subviews.forEach { $0.removeFromSuperview() }
         createChatList()
         
 //        self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -295,6 +296,8 @@ extension ChatListViewController: UITableViewDelegate {
                         self.tableView.reloadData()
                     }
                     
+                    self.tableView.reloadData()
+                    
                     print("delete")
                 } catch {
                     print("Error deleting chat room: \(error.localizedDescription)")
@@ -309,7 +312,7 @@ extension ChatListViewController: UITableViewDelegate {
         
         let chatViewController = ChatViewController(chatRoom: selectedChatRoom)
         chatViewController.chatViewModel = chatViewModel
-        chatViewController.index = indexPath.row
+        chatViewController.indexRow = indexPath.row
         
         self.navigationController?.pushViewController(chatViewController, animated: true)
     }

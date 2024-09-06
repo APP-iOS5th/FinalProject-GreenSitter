@@ -25,15 +25,10 @@ class ChatViewModel {
     var isLoggedIn = false
     var hasChats = false
     
-    // 임시 유저 id
-//    let userId = "250e8400-e29b-41d4-a716-446655440003"
     var user: User? {
         didSet {
             isLoggedIn = user != nil
         }
-    }
-    var userId: String {
-        return user!.id
     }
     
     var chatRooms: [ChatRoom] = [] {
@@ -131,18 +126,27 @@ class ChatViewModel {
         return firestoreManager.fetchMessages(chatRoomId: chatRoomId)
     }
     
-    func deleteChatRoom(at index: Int) async throws {
-        guard index >= 0 && index < self.chatRooms.count else {
+    func deleteChatRoom(at indexNum: Int) async throws {
+        guard indexNum >= 0 && indexNum < self.chatRooms.count else {
             print("index out of range")
             return
         }
         
-        let chatRoom = self.chatRooms[index]
+        let chatRoom = self.chatRooms[indexNum]
         
         do {
             let updatedChatRoom = try await firestoreManager.deleteChatRoom(userId: user!.id, chatRoom: chatRoom)
-            self.chatRooms[index] = updatedChatRoom
-            self.chatRooms.remove(at: index)
+            self.chatRooms[indexNum] = updatedChatRoom
+            self.chatRooms.remove(at: indexNum)
+            
+        } catch {
+            print("Error deleting chat room: \(error.localizedDescription)")
+        }
+    }
+    
+    func deleteThisChatRoom(chatRoom: ChatRoom) async throws {
+        do {
+            try await firestoreManager.deleteChatRoom(userId: user!.id, chatRoom: chatRoom)
         } catch {
             print("Error deleting chat room: \(error.localizedDescription)")
         }
@@ -377,7 +381,7 @@ class ChatViewModel {
 //        self.updateUI?()
         
         Task {
-            let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
+            let planMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: user!.id, receiverUserId: receiverUserId!, isRead: false, messageType: .plan, text: nil, image: nil, plan: plan)
 
             // 로컬 메시지 리스트에 메시지 추가
             if var chatRoomMessages = self.messages[chatRoom.id] {
@@ -405,13 +409,13 @@ class ChatViewModel {
     func sendReviewMessage(chatRoom: ChatRoom) {
 
         let receiverUserId: String?
-        if userId == chatRoom.userId {
+        if user?.id == chatRoom.userId {
             receiverUserId = chatRoom.postUserId
         } else {
             receiverUserId = chatRoom.userId
         }
         
-        let reviewMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: userId, receiverUserId: receiverUserId!, isRead: false, messageType: .review, text: nil, image: nil, plan: nil)
+        let reviewMessage = Message(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), senderUserId: user!.id, receiverUserId: receiverUserId!, isRead: false, messageType: .review, text: nil, image: nil, plan: nil)
         
         // 로컬 메시지 리스트에 메시지 추가
         if var chatRoomMessages = self.messages[chatRoom.id] {
@@ -499,7 +503,7 @@ class ChatViewModel {
     func checkAuthorityToCommit(postId: String) async -> Bool {
         var authorityToCommit = false
         do {
-            authorityToCommit = try await firestoreManager.checkAuthorityToCommit(postId: postId, currentId: userId)
+            authorityToCommit = try await firestoreManager.checkAuthorityToCommit(postId: postId, currentId: user!.id)
         } catch {
             print("Failed to check authority to commit: \(error.localizedDescription)")
         }
