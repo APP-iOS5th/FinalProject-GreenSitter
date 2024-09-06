@@ -98,6 +98,8 @@ class ChatListViewController: UIViewController {
             }
         }
         createChatList()
+        
+        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     // MARK: - viewWillDisappear
