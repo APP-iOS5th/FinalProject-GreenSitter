@@ -80,6 +80,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         tabBarController.tabBar.backgroundColor = .bgPrimary
         tabBarController.tabBar.isTranslucent = false
         
+        tabBarController.delegate = self
+        
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
@@ -107,5 +109,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_ scene: UIScene) {
         // Called as the scene transitions from the foreground to the background.
+    }
+}
+
+extension SceneDelegate: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        if let navigationController = viewController as? UINavigationController {
+            navigationController.viewControllers = [navigationController.viewControllers.first].compactMap { $0 }
+        }
     }
 }
