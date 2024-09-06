@@ -21,6 +21,16 @@ class ChatPostViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // Post View
+    lazy var postView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .bgPrimary
+        view.tintColor = .labelsPrimary
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     // 게시물 이미지
     lazy var postThumbnailView: UIImageView = {
         let imageView = UIImageView()
@@ -179,7 +189,12 @@ class ChatPostViewController: UIViewController {
         // 특정 게시물로 이동
         let postDetailViewController = PostDetailViewController(postId: chatRoom.postId)
         
-        self.navigationController?.pushViewController(postDetailViewController, animated: true)
+        // 채팅방 포스트를 눌렀을 때 그 안에서 채팅하기 버튼을 누르면 부자연스럽게 push됨
+//        self.navigationController?.popViewController(animated: true)
+//        self.navigationController?.pushViewController(postDetailViewController, animated: true)
+        
+        // 위 문제 해결방안
+        self.present(postDetailViewController, animated: true)
     }
 
 }

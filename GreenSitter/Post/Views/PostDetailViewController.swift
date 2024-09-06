@@ -753,13 +753,14 @@ class PostDetailViewController: UIViewController {
         let chatViewModel = ChatViewModel()
         let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
         chatDetailViewController.chatViewModel = chatViewModel
-        
-        // TODO: 현재 탭 바 컨트롤러 가져오기
+
         if let tabBarController = self.tabBarController,
            let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
-
+            
+            // 중복 push되는 문제 방지
+            navigationController.popViewController(animated: true)
             navigationController.pushViewController(chatDetailViewController, animated: true)
-
+            
             // 채팅 탭으로 전환
             tabBarController.selectedIndex = 2
         }

@@ -51,6 +51,11 @@ class ChatListViewController: UIViewController {
         
         button.translatesAutoresizingMaskIntoConstraints = false
         
+        // 버튼 클릭 시 홈 화면으로 이동
+        button.addAction(UIAction { [weak self] _ in
+            self?.navigateToHome()
+        }, for: .touchUpInside)
+        
         return button
     }()
     
@@ -97,9 +102,10 @@ class ChatListViewController: UIViewController {
                 $0.removeFromSuperview()
             }
         }
+        self.view.subviews.forEach { $0.removeFromSuperview() }
         createChatList()
         
-        self.navigationController?.navigationBar.prefersLargeTitles = true
+//        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     // MARK: - viewWillDisappear
@@ -163,11 +169,6 @@ class ChatListViewController: UIViewController {
                         // MARK: - 로그인/채팅방 없음
                         self.chatViewModel.updateUI = { [weak self] in
                             self?.setupEmptyChatListUI()
-                            
-                            // 버튼 클릭 시 홈 화면으로 이동
-                            self?.goToHomeButton.addAction(UIAction { [weak self] _ in
-                                self?.navigateToHome()
-                            }, for: .touchUpInside)
                         }
                     }
                     
@@ -245,7 +246,6 @@ class ChatListViewController: UIViewController {
     }
     
     // MARK: - 로그인/채팅 목록 없음 Methods
-    // goToHomeButton 눌렀을 때
     private func navigateToHome() {
         // 현재 탭 바 컨트롤러 가져오기
         if let tabBarController = self.tabBarController {
@@ -253,7 +253,7 @@ class ChatListViewController: UIViewController {
             tabBarController.selectedIndex = 0
         }
     }
-    
+
     // MARK: - 비로그인 Methods
     // 비로그인 시 로그인 화면 보여주기
     private func presentLoginViewController() {
@@ -295,7 +295,6 @@ extension ChatListViewController: UITableViewDelegate {
                     } else {
                         self.tableView.reloadData()
                     }
-                    
                     print("delete")
                 } catch {
                     print("Error deleting chat room: \(error.localizedDescription)")
@@ -310,7 +309,7 @@ extension ChatListViewController: UITableViewDelegate {
         
         let chatViewController = ChatViewController(chatRoom: selectedChatRoom)
         chatViewController.chatViewModel = chatViewModel
-        chatViewController.index = indexPath.row
+        chatViewController.indexRow = indexPath.row
         
         self.navigationController?.pushViewController(chatViewController, animated: true)
     }

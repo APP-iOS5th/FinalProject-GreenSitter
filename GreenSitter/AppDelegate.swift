@@ -184,7 +184,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
                 navigationController.pushViewController(chatDetailViewController, animated: true)
                 
-                // Switch to the chat tab
                 tabBarController.selectedIndex = 2
             }
         }
