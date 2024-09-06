@@ -21,6 +21,16 @@ class ChatPostViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // Post View
+    lazy var postView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .bgPrimary
+        view.tintColor = .labelsPrimary
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     // 게시물 이미지
     lazy var postThumbnailView: UIImageView = {
         let imageView = UIImageView()

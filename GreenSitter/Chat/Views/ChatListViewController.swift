@@ -243,21 +243,14 @@ class ChatListViewController: UIViewController {
     }
     
     // MARK: - 로그인/채팅 목록 없음 Methods
-    // goToHomeButton 눌렀을 때
     private func navigateToHome() {
-        let homeViewController = MainPostListViewController()
-        
         // 현재 탭 바 컨트롤러 가져오기
-        if let tabBarController = self.tabBarController,
-           let navigationController = tabBarController.viewControllers?[0] as? UINavigationController {
-
-            navigationController.pushViewController(homeViewController, animated: true)
-
+        if let tabBarController = self.tabBarController {
             // 홈 탭으로 전환
             tabBarController.selectedIndex = 0
         }
     }
-    
+
     // MARK: - 비로그인 Methods
     // 비로그인 시 로그인 화면 보여주기
     private func presentLoginViewController() {
