@@ -48,10 +48,7 @@ class SetProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .labelsPrimary
         label.font = UIFont.preferredFont(forTextStyle: .subheadline)
-        label.text = """
-        프로필 정보 등록을 위해
-        이미지와 닉네임을 설정해주세요.
-        """
+        label.text = "이미지와 닉네임을 설정해주세요."
         return label
     }()
     
@@ -156,6 +153,7 @@ class SetProfileViewController: UIViewController {
         
         // 서브뷰 추가
         view.addSubview(titleLabel)
+        view.addSubview(bodyLabel)
         view.addSubview(imageStackView1)
         view.addSubview(imageStackView2)
         view.addSubview(nickNameTextField)
