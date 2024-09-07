@@ -231,11 +231,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         mapView.delegate = self
         
         hideKeyboard()
-        
-        let initialCharacterCount = textView.text.count
-        remainCountLabel.text = "\(initialCharacterCount)/700"
     }
-    
     
     func hideKeyboard() {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
@@ -251,7 +247,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         
         let address = viewModel.selectedPost.location?.address
         let placeName = viewModel.selectedPost.location?.placeName
@@ -478,7 +473,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     }
     
     
-    
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         print("Picker did finish picking. Results count: \(results.count)")
         
@@ -633,6 +627,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     private func presentImagePickerController() {
         let numberOfImages = imageStackView.arrangedSubviews.count - 1 // -1 to exclude pickerImageView
         
+        // 이미 10장이라면 이미지 피커를 비활성화
         if numberOfImages >= 10 {
             showAlert(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.")
             return
