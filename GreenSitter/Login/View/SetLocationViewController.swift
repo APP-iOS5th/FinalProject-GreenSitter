@@ -136,7 +136,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate, SetProfi
         bindViewModel()
         mapViewModel.checkLocationAuthorization()
 
-        hideKeyboard()
         print("User 객체 상태: \(String(describing: users))")
         
         view.backgroundColor = .bgPrimary
@@ -146,6 +145,11 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate, SetProfi
         view.addSubview(locationTextField)
         view.addSubview(nextButton)
         view.addSubview(guideTextLabel)
+        
+        locationTextField.delegate = self
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
@@ -184,14 +188,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate, SetProfi
     
     
 
-    func hideKeyboard() {
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
-    }
-    
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
     
     // MARK: - BACK BUTTON METHOD
     
@@ -284,6 +280,14 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate, SetProfi
             setProfileViewController.delegate = self
             self.navigationController?.pushViewController(setProfileViewController, animated: true)
         }
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 
