@@ -321,7 +321,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
                 self?.throttleTimer = nil
                 
                 switch result {
-                case .success:
+                case .success(let updatedPost):
+                    NotificationCenter.default.post(name: NSNotification.Name("PostUpdated"), object: updatedPost)
                     self?.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
                 case .failure(let error):
                     self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)

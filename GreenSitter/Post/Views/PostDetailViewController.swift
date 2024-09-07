@@ -20,6 +20,8 @@ class PostDetailViewController: UIViewController {
     private var postBodyTextViewHeightConstraint: NSLayoutConstraint?
     private var isPostLoaded = false
     
+    var post: Post?
+    
     // MARK: - Initializer
     
     init(postId: String) {
@@ -200,14 +202,40 @@ class PostDetailViewController: UIViewController {
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
         //        loadPost(with: postId)
         hideKeyboard()
+        
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("PostUpdated"), object: nil)
+    }
+    
+    @objc private func handlePostUpdate(_ notification: Notification) {
+        if let updatedPost = notification.object as? Post {
+            // 받은 게시글로 UI 업데이트
+            self.post = updatedPost
+            updateUIWithPostDetails()
+        }
+    }
+    
+    func updateUIWithPostDetails() {
+        guard let post = post else { return }
+        postTitleLabel.text = post.postTitle
+        postBodyTextView.text = post.postBody
+    }
+    
+    deinit {
+        // 알림 해제 (메모리 누수 방지)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("PostUpdated"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if !isPostLoaded {
             loadPost(with: postId)
+        } else {
+            // 이미 로드되었더라도 강제로 다시 로드
+            loadPost(with: postId)
         }
     }
+    
+    // MARK: - Helpful Functions
     
     func hideKeyboard() {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
@@ -216,8 +244,6 @@ class PostDetailViewController: UIViewController {
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
-    
-    // MARK: - Helpful Functions
     
     private func loadPost(with postId: String) {
         postDetailViewModel.fetchPostById(postId: postId) { [weak self] result in
@@ -501,12 +527,14 @@ class PostDetailViewController: UIViewController {
                         let resizedImage = self?.resizeImage(image: image, targetSize: CGSize(width: 180, height: 200))
                         imageView.image = resizedImage
                         
+                        
                         imageView.isUserInteractionEnabled = true
                         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.imageTapped(_:)))
                         imageView.addGestureRecognizer(tapGesture)
                         
                         self?.imagesStackView.addArrangedSubview(imageView)
                         
+                        // 이미지뷰에 크기 제약 조건 설정
                         NSLayoutConstraint.activate([
                             imageView.widthAnchor.constraint(equalToConstant: 180),
                             imageView.heightAnchor.constraint(equalToConstant: 200)
@@ -804,11 +832,9 @@ class PostDetailViewController: UIViewController {
 }
 
 extension PostDetailViewController: UITextViewDelegate {
-    // 텍스트뷰 높이를 자동으로 조정하는 메서드
     private func adjustTextViewHeight() {
         let size = postBodyTextView.sizeThatFits(CGSize(width: postBodyTextView.frame.width, height: CGFloat.greatestFiniteMagnitude))
         
-        // 텍스트뷰의 최소 높이를 200으로 설정
         let newHeight = max(size.height, 200)
         
         if postBodyTextViewHeightConstraint == nil {
