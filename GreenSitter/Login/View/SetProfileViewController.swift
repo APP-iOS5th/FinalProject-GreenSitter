@@ -139,6 +139,8 @@ class SetProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
         
+        hideKeyboard()
+        
         // 서브뷰 추가
         view.addSubview(titleLabel)
         view.addSubview(imageStackView1)
@@ -190,6 +192,14 @@ class SetProfileViewController: UIViewController {
             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             skipButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
         ])
+    }
+    
+    func hideKeyboard() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     // MARK: - 중복된 닉네임 체크
