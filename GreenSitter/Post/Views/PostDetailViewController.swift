@@ -13,13 +13,13 @@ import Kingfisher
 class PostDetailViewController: UIViewController {
     private var postDetailViewModel = PostDetailViewModel()
     private let reportsAndBlocksViewModel = ReportsAndBlocksViewModel()
-
+    
     private var imageUrls: [String] = []
     private let postId: String
     private var overlayPostMapping: [MKCircle: Post] = [:]
     private var postBodyTextViewHeightConstraint: NSLayoutConstraint?
     private var isPostLoaded = false
-
+    
     // MARK: - Initializer
     
     init(postId: String) {
@@ -196,9 +196,9 @@ class PostDetailViewController: UIViewController {
         mapView.delegate = self
         postBodyTextView.delegate = self
         postDetailViewModel.delegate = self
-
+        
         // postId 를 가지고 파이어베이스에서 해당 post 불러오기
-//        loadPost(with: postId)
+        //        loadPost(with: postId)
         hideKeyboard()
     }
     
@@ -212,7 +212,7 @@ class PostDetailViewController: UIViewController {
     func hideKeyboard() {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
     }
-
+    
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
@@ -246,10 +246,10 @@ class PostDetailViewController: UIViewController {
             print("EMPTY IMAGES")
             setupConstraints()
         }
-
+        
         configure(with: post)
         contactButton.isHidden = true
-
+        
         if Auth.auth().currentUser != nil {
             if LoginViewModel.shared.user?.id == post.userId {
                 setupNavigationBarWithEdit(post: post)
@@ -367,19 +367,19 @@ class PostDetailViewController: UIViewController {
             }
         }
     }
-
+    
     private func presentConfirmationAlert(message: String) {
         let alert = UIAlertController(title: "완료", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         self.present(alert, animated: true, completion: nil)
     }
-
+    
     private func presentErrorAlert(message: String) {
         let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         self.present(alert, animated: true, completion: nil)
     }
-
+    
     // MARK: - 차단 기능 구현
     private func blockPost(post: Post) {
         reportsAndBlocksViewModel.blockItem(blockedId: post.id, blockType: .post) { result in
@@ -391,7 +391,7 @@ class PostDetailViewController: UIViewController {
             }
         }
     }
-
+    
     private func updateUIForBlockedPost() {
         let alert = UIAlertController(title: "차단 완료", message: "이 포스트는 더 이상 볼 수 없습니다.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
@@ -422,7 +422,7 @@ class PostDetailViewController: UIViewController {
         postTitleLabel.text = post.postTitle
         postTimeLabel.text = timeAgoSinceDate(post.updateDate)
         configurePostBodyTextView(with: post.postBody)
-
+        
         statusLabel.text = post.postStatus.rawValue
         userLevelLabel.text = post.userLevel.rawValue
         
@@ -454,7 +454,7 @@ class PostDetailViewController: UIViewController {
     private func loadProfileImage(from post: Post) {
         if let imageUrl = URL(string: post.profileImage) {
             let processor = DownsamplingImageProcessor(size: CGSize(width: 80, height: 80))
-                           |> RoundCornerImageProcessor(cornerRadius: 4)
+            |> RoundCornerImageProcessor(cornerRadius: 4)
             
             profileImageView.kf.indicatorType = .activity
             profileImageView.kf.setImage(
@@ -474,62 +474,83 @@ class PostDetailViewController: UIViewController {
                     }
                 }
             )
-
+            
         } else {
             profileImageView.backgroundColor = .lightGray
             print("Profile Image is empty.")
         }
     }
+    
     private func loadPostImages(from post: Post) {
         imagesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         imageUrls.removeAll()
-        // image
+        
         if let imageUrls = post.postImages, !imageUrls.isEmpty {
             self.imageUrls = imageUrls
-            for (index, imageUrl) in imageUrls.enumerated() {
-                
-                // Create a new UIImageView for each image
+            for imageUrl in imageUrls {
                 let imageView = UIImageView()
-                imageView.translatesAutoresizingMaskIntoConstraints = false
                 imageView.contentMode = .scaleAspectFill
-                imageView.layer.masksToBounds = true
-                imageView.layer.cornerRadius = 4
-                imageView.tag = index
+                imageView.clipsToBounds = true
+                imageView.layer.cornerRadius = 10
+                imageView.translatesAutoresizingMaskIntoConstraints = false
                 
-                let processor = DownsamplingImageProcessor(size: CGSize(width: 190, height: 200))
-                               |> RoundCornerImageProcessor(cornerRadius: 4)
-                imageView.kf.setImage(
-                    with: URL(string: imageUrl),
-                    placeholder: UIImage(named: "PlaceholderAvatar"),
-                    options: [
-                        .processor(processor),
-                        .scaleFactor(UIScreen.main.scale),
-                        .transition(.fade(0.25)),
-                        .cacheOriginalImage
-                    ],
-                    completionHandler: { result in
-                        switch result {
-                        case .success(_):
-                            self.addTapGestureToImages()
-                        case .failure(let error):
-                            print("Failed to load image: \(error.localizedDescription)")
-                        }
+                // 이미지 로드 후 크기 조정
+                loadImageFromURL(imageUrl) { [weak self] (image) in
+                    guard let image = image else { return }
+                    DispatchQueue.main.async {
+                        let resizedImage = self?.resizeImage(image: image, targetSize: CGSize(width: 180, height: 200))
+                        imageView.image = resizedImage
+                        
+                        imageView.isUserInteractionEnabled = true
+                        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.imageTapped(_:)))
+                        imageView.addGestureRecognizer(tapGesture)
+                        
+                        self?.imagesStackView.addArrangedSubview(imageView)
+                        
+                        NSLayoutConstraint.activate([
+                            imageView.widthAnchor.constraint(equalToConstant: 180),
+                            imageView.heightAnchor.constraint(equalToConstant: 200)
+                        ])
                     }
-                )
-                
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:)))
-                imageView.isUserInteractionEnabled = true
-                imageView.addGestureRecognizer(tapGesture)
-                
-                self.imagesStackView.addArrangedSubview(imageView)
-
-            }   // for
-            
+                }
+            }
         } else {
             self.imagesScrollView.isHidden = true
         }
     }
-
+    
+    
+    // URL에서 이미지를 로드하는 함수
+    private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(nil)
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            guard let data = data, error == nil, let image = UIImage(data: data) else {
+                completion(nil)
+                return
+            }
+            completion(image)
+        }.resume()
+    }
+    
+    // 이미지 리사이징 함수
+    private func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+        let newSize = CGSize(width: size.width * widthRatio, height: size.height * heightRatio)
+        
+        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0.0)
+        image.draw(in: CGRect(origin: .zero, size: newSize))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage ?? image
+    }
+    
     private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -551,11 +572,11 @@ class PostDetailViewController: UIViewController {
         contentView.addSubview(mapView)
         contentView.addSubview(descriptionLabel)
     }
-
+    
     private func setupConstraintsWithImages() {
         contentView.addSubview(imagesScrollView)
         imagesScrollView.addSubview(imagesStackView)
-
+        
         imagesScrollView.isHidden = false
         
         NSLayoutConstraint.activate([
@@ -584,7 +605,7 @@ class PostDetailViewController: UIViewController {
             profileImageView.topAnchor.constraint(equalTo: userProfileButton.topAnchor),
             profileImageView.widthAnchor.constraint(equalToConstant: 50),
             profileImageView.heightAnchor.constraint(equalToConstant: 50),
-
+            
             userNameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
             userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor, constant: 5),
             userNameLabel.heightAnchor.constraint(equalToConstant: userNameLabel.font.pointSize),
@@ -606,7 +627,6 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-
             imagesScrollView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             imagesScrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             imagesScrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -698,7 +718,6 @@ class PostDetailViewController: UIViewController {
             postTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             postTitleLabel.heightAnchor.constraint(equalToConstant: postTitleLabel.font.pointSize),
             
-            
             postBodyTextView.topAnchor.constraint(equalTo: postTitleLabel.bottomAnchor, constant: 20),
             postBodyTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             postBodyTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -754,12 +773,13 @@ class PostDetailViewController: UIViewController {
         let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
         chatDetailViewController.chatViewModel = chatViewModel
         
-        // TODO: 현재 탭 바 컨트롤러 가져오기
         if let tabBarController = self.tabBarController,
            let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
-
+            
+            // 중복 push되는 문제 방지
+            navigationController.popViewController(animated: true)
             navigationController.pushViewController(chatDetailViewController, animated: true)
-
+            
             // 채팅 탭으로 전환
             tabBarController.selectedIndex = 2
         }
@@ -772,7 +792,7 @@ class PostDetailViewController: UIViewController {
             imageView.addGestureRecognizer(tapGesture)
         }
     }
-
+    
     @objc private func imageTapped(_ gesture: UITapGestureRecognizer) {
         guard !imageUrls.isEmpty,
               let tappedImageView = gesture.view as? UIImageView,
@@ -780,9 +800,7 @@ class PostDetailViewController: UIViewController {
         let fullScreenPageVC = FullScreenPageViewController(imageUrls: imageUrls, initialIndex: index)
         fullScreenPageVC.modalPresentationStyle = .fullScreen
         present(fullScreenPageVC, animated: true, completion: nil)
-
     }
-
 }
 
 extension PostDetailViewController: UITextViewDelegate {
@@ -835,7 +853,7 @@ extension PostDetailViewController: MKMapViewDelegate {
               let longitude = post.location?.longitude else { return }
         
         let circleCenter = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-
+        
         // make random Center
         let randomOffset = generateRandomOffset(for: circleCenter, radius: 500)
         let randomCenter = CLLocationCoordinate2D (
@@ -857,9 +875,9 @@ extension PostDetailViewController: MKMapViewDelegate {
         
         let annotation = CustomAnnotation(postType: post.postType, coordinate: randomCenter)
         mapView.addAnnotation(annotation)  // MKAnnotationView
-
+        
     }
-
+    
     // 실제 위치(center) 기준으로 반경 내의 무작위 좌표를 새로운 중심점으로 설정
     func generateRandomOffset(for center: CLLocationCoordinate2D, radius: Double) -> (latitudeDelta: Double, longitudeDelta: Double) {
         let earthRadius: Double = 6378137 // meters
@@ -877,7 +895,7 @@ extension PostDetailViewController: MKMapViewDelegate {
         guard let annotation = annotation as? CustomAnnotation else {
             return nil
         }
-           
+        
         var annotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: CustomAnnotationView.identifier)
         
         if annotationView == nil {
@@ -914,7 +932,7 @@ extension PostDetailViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let circleOverlay = overlay as? MKCircle {
             let circleRenderer = MKCircleRenderer(circle: circleOverlay)
-//            print("rendererFor methods: dict: \(overlayPostMapping)")
+            //            print("rendererFor methods: dict: \(overlayPostMapping)")
             
             // 딕셔너리로부터 해당 circleOverlay에 저장된 Post 가져오기
             if let post = overlayPostMapping[circleOverlay] {
@@ -929,7 +947,7 @@ extension PostDetailViewController: MKMapViewDelegate {
                 print("post is nil")
                 circleRenderer.fillColor = UIColor.gray.withAlphaComponent(0.5) // Default color
             }
-
+            
             circleRenderer.strokeColor = .separatorsNonOpaque
             circleRenderer.lineWidth = 2
             return circleRenderer

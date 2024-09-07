@@ -178,7 +178,6 @@ class ChatTableViewCell: UITableViewCell {
         
         // 마지막 메세지 시간
         let timeAgoString = timeAgo(from: lastMessage.updateDate)
-        print(timeAgoString)
         
         dateLabel.text = timeAgoString
 

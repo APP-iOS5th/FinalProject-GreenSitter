@@ -12,13 +12,13 @@ class ChatMessageTableViewReviewCell: UITableViewCell {
     
     var chatViewModel: ChatViewModel? {
         didSet {
-            currentId = chatViewModel?.userId
+            currentId = chatViewModel?.user?.id
         }
     }
     var chatRoom: ChatRoom?
     
     private lazy var currentId: String? = {
-        chatViewModel?.userId
+        chatViewModel?.user?.id
     }()
     
     lazy var recipientName: String = {

@@ -14,6 +14,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     private let post: Post
     private var viewModel: EditPostViewModel
     private var overlayPostMapping: [MKCircle: Post] = [:]
+    private var isUploading = false
+    private var throttleTimer: Timer?
     
     init(post: Post, viewModel: EditPostViewModel) {
         self.post = post
@@ -125,45 +127,37 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        // StackView to hold the image and label (left side)
         let leftStackView = UIStackView()
         leftStackView.axis = .horizontal
         leftStackView.alignment = .center
         leftStackView.spacing = 8 // Space between image and text
         leftStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Image on the left
         let symbolImageView = UIImageView()
         let symbolImage = UIImage(systemName: "mappin.and.ellipse")
         symbolImageView.image = symbolImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
         
-        // Text label
         let textLabel = UILabel()
         textLabel.text = "거래 희망 장소를 선택하세요!"
         textLabel.font = .systemFont(ofSize: 17)
         textLabel.textColor = .labelsSecondary
         
-        // Add image and label to the left stack view
         leftStackView.addArrangedSubview(symbolImageView)
         leftStackView.addArrangedSubview(textLabel)
         
-        // Right arrow '>' on the far right
         let arrowImageView = UIImageView()
         let arrowImage = UIImage(systemName: "chevron.right")
         arrowImageView.image = arrowImage?.withTintColor(.labelsSecondary, renderingMode: .alwaysOriginal)
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Add the left stack view and the arrow to the button
         button.addSubview(leftStackView)
         button.addSubview(arrowImageView)
         
-        // Constraints for the left stack view (image and text)
         NSLayoutConstraint.activate([
             leftStackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
             leftStackView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
         ])
         
-        // Constraints for the arrow on the right
         NSLayoutConstraint.activate([
             arrowImageView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
             arrowImageView.centerYAnchor.constraint(equalTo: button.centerYAnchor)
@@ -239,16 +233,16 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         hideKeyboard()
         
         let initialCharacterCount = textView.text.count
-            remainCountLabel.text = "\(initialCharacterCount)/700"
+        remainCountLabel.text = "\(initialCharacterCount)/700"
     }
     
     
     func hideKeyboard() {
-            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
-        }
-
-        @objc func dismissKeyboard() {
-            view.endEditing(true)
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     @objc private func textDidChange() {
@@ -281,39 +275,65 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         let initialCharacterCount = textView.text.count
         remainCountLabel.text = "\(initialCharacterCount)/700"
     }
-
+    
     @objc private func pickerImageViewTapped() {
         presentImagePickerController()
     }
     
     @objc private func saveButtonTapped() {
+        // 업로드 중이거나 쓰로틀 타이머가 동작 중이면 클릭 이벤트 무시
+        guard !isUploading, throttleTimer == nil else { return }
+        
+        isUploading = true
+        saveButton.isEnabled = false
+        
+        // 쓰로틀 타이머 설정: 1초 동안 중복 클릭 방지
+        throttleTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { [weak self] _ in
+            self?.throttleTimer = nil // 타이머가 끝나면 다시 클릭 가능
+        }
+        
         guard validateInputs() else {
+            isUploading = false
             saveButton.isEnabled = true
+            throttleTimer?.invalidate()
+            throttleTimer = nil
             return
         }
         
         guard let currentUser = LoginViewModel.shared.user else {
             print("User ID is not available")
+            isUploading = false
             saveButton.isEnabled = true
+            throttleTimer?.invalidate()
+            throttleTimer = nil
             return
         }
         
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.center = view.center
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        
         viewModel.updatePost(postTitle: titleTextField.text!, postBody: textView.text) { [weak self] result in
             DispatchQueue.main.async {
+                activityIndicator.stopAnimating()
+                activityIndicator.removeFromSuperview()
+                
+                // 작업이 끝난 후 다시 초기화
+                self?.isUploading = false
                 self?.saveButton.isEnabled = true
-            }
-            switch result {
-            case .success(let updatedPost):
-                print("Update Post: \(updatedPost)")
-                self?.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
-            case .failure(let error):
-                print("Error updating post: \(error.localizedDescription)")
-                self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
+                self?.throttleTimer?.invalidate()
+                self?.throttleTimer = nil
+                
+                switch result {
+                case .success:
+                    self?.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
+                case .failure(let error):
+                    self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
+                }
             }
         }
     }
-    
-    
     
     private func showAlertWithNavigation(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -354,7 +374,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         
         return isValid
     }
-
+    
     private func setupLayout() {
         self.title = post.postType.rawValue
         navigationItem.leftBarButtonItem = closeButton
@@ -379,7 +399,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         mapLabelButton.addTarget(self, action: #selector(mapLabelButtonTapped), for: .touchUpInside)
-
+        
         imageScrollView.addSubview(imageStackView)
         imageStackView.addArrangedSubview(pickerImageView)
         
@@ -440,7 +460,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             mapLabelButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             mapLabelButton.topAnchor.constraint(equalTo: dividerLine3.bottomAnchor, constant: 10),
             mapLabelButton.heightAnchor.constraint(equalToConstant: 60),
-
+            
             mapView.topAnchor.constraint(equalTo: mapLabelButton.bottomAnchor, constant: 12),
             mapView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -32),
             mapView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -456,6 +476,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
+    
     
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
@@ -480,7 +501,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
                         self?.viewModel.selectedImages.append(image)
                         self?.viewModel.addedImages.append(image)
                         // UI 업데이트
-                        self?.addImageToStackView(image)
+                        self?.addImageToStackView(image, "")
                     }
                 }
             }
@@ -488,7 +509,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     }
     
     
-    private func addImageToStackView(_ image: UIImage) {
+    private func addImageToStackView(_ image: UIImage, _ str:String?) {
         DispatchQueue.main.async {
             let existingImages = self.imageStackView.arrangedSubviews.compactMap { ($0 as? UIImageView)?.image }
             if existingImages.contains(image) {
@@ -510,7 +531,16 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             deleteButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
             deleteButton.tintColor = .red
             deleteButton.translatesAutoresizingMaskIntoConstraints = false
-            deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+            //            deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+            if let str = str, !str.isEmpty {
+                deleteButton.addAction(UIAction { [weak self] _ in
+                    guard let self = self else { return }
+                    deleteImageBy(str: str, sender: deleteButton)
+                }, for: .touchUpInside)
+            } else {
+                deleteButton.addTarget(self, action: #selector(self.deleteImage(_:)), for: .touchUpInside)
+            }
+            
             
             containerView.addSubview(imageView)
             containerView.addSubview(deleteButton)
@@ -537,6 +567,19 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         }
     }
     
+    func deleteImageBy(str: String, sender: UIButton) {
+        guard let containerView = sender.superview else { return }
+        guard let containerViewIndex = imageStackView.arrangedSubviews.firstIndex(of: containerView) else {
+            return
+        }
+        if let idx = viewModel.postImageURLs.firstIndex(of: str) {
+            viewModel.imageURLsToDelete.append(viewModel.postImageURLs[idx])
+            containerView.removeFromSuperview()
+        }
+        //        let originalImageViewIndex: Int = Int(containerViewIndex) - 1
+        updateImageStackView()
+    }
+    
     @objc private func deleteImage(_ sender: UIButton) {
         print("before: \(viewModel.postImageURLs)")
         guard let containerView = sender.superview else { return }
@@ -560,25 +603,25 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     private func updateUIWithLoadedImages() {
         for urlString in viewModel.selectedImageURLs { // URL 배열을 가져옴
-            loadImageFromURL(urlString) { [weak self] image in
+            loadImageFromURL(urlString) { [weak self] (image, str) in
                 guard let image = image else { return }
-                self?.addImageToStackView(image)
+                self?.addImageToStackView(image, str)
             }
         }
     }
     // URL로부터 UIImage를 로드하는 함수
-    private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?) -> Void) {
+    private func loadImageFromURL(_ urlString: String, completion: @escaping (UIImage?, String?) -> Void) {
         guard let url = URL(string: urlString) else {
-            completion(nil)
+            completion(nil, nil)
             return
         }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil, let image = UIImage(data: data) else {
-                completion(nil)
+                completion(nil, nil)
                 return
             }
-            completion(image)
+            completion(image, urlString)
         }.resume()
     }
     
@@ -590,7 +633,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     private func presentImagePickerController() {
         let numberOfImages = imageStackView.arrangedSubviews.count - 1 // -1 to exclude pickerImageView
         
-        // 이미 10장이라면 이미지 피커를 비활성화
         if numberOfImages >= 10 {
             showAlert(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.")
             return
@@ -613,7 +655,13 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         }
         
         updateSaveButtonState()
-        
+    }
+    
+    func resetTextViewFocus() {
+        if textView.isFirstResponder {
+            textView.resignFirstResponder()
+        }
+        textView.becomeFirstResponder()
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {

@@ -52,24 +52,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         fourthNavigationController.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person.fill"), tag: 3)
         
         setupTabBarController(with: [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController])
-        
-        // Chat을 비동기적으로 로드
-//        if let currentUser = Auth.auth().currentUser {
-//            LoginViewModel.shared.firebaseFetch(docId: currentUser.uid) { [weak self] in
-//                guard let self = self else { return }
-//                let chatListViewController = ChatListViewController()
-//                let thirdNavigationController = UINavigationController(rootViewController: chatListViewController)
-//                thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
-//                
-//                self.setupTabBarController(with: [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController])
-//            }
-//        } else {
-//            let chatListViewController = LoginViewController()
-//            let thirdNavigationController = UINavigationController(rootViewController: chatListViewController)
-//            thirdNavigationController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(systemName: "bubble.left.and.bubble.right.fill"), tag: 2)
-//
-//            setupTabBarController(with: [firstNavigationController, secondNavigationController, thirdNavigationController, fourthNavigationController])
-//        }
     }
     
     // TabBarController 설정 함수
@@ -79,6 +61,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         tabBarController.tabBar.backgroundColor = .bgPrimary
         tabBarController.tabBar.isTranslucent = false
+        
+        tabBarController.delegate = self
         
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
@@ -107,5 +91,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_ scene: UIScene) {
         // Called as the scene transitions from the foreground to the background.
+    }
+}
+
+extension SceneDelegate: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        if let navigationController = viewController as? UINavigationController {
+            navigationController.viewControllers = [navigationController.viewControllers.first].compactMap { $0 }
+        }
     }
 }

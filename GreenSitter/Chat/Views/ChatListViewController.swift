@@ -25,7 +25,7 @@ class ChatListViewController: UIViewController {
     // 아이콘
     private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "chatIcon")
+        imageView.image = UIImage(named: "ChatIcon")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -50,6 +50,11 @@ class ChatListViewController: UIViewController {
         button.titleLabel?.lineBreakMode = .byWordWrapping
         
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        // 버튼 클릭 시 홈 화면으로 이동
+        button.addAction(UIAction { [weak self] _ in
+            self?.navigateToHome()
+        }, for: .touchUpInside)
         
         return button
     }()
@@ -87,7 +92,7 @@ class ChatListViewController: UIViewController {
     
     // MARK: - ViewWillAppear
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
+        super.viewWillAppear(animated)
         
         if Auth.auth().currentUser != nil {
             chatViewModel.user = LoginViewModel.shared.user
@@ -97,7 +102,10 @@ class ChatListViewController: UIViewController {
                 $0.removeFromSuperview()
             }
         }
+        self.view.subviews.forEach { $0.removeFromSuperview() }
         createChatList()
+        
+//        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     // MARK: - viewWillDisappear
@@ -161,11 +169,6 @@ class ChatListViewController: UIViewController {
                         // MARK: - 로그인/채팅방 없음
                         self.chatViewModel.updateUI = { [weak self] in
                             self?.setupEmptyChatListUI()
-                            
-                            // 버튼 클릭 시 홈 화면으로 이동
-                            self?.goToHomeButton.addAction(UIAction { [weak self] _ in
-                                self?.navigateToHome()
-                            }, for: .touchUpInside)
                         }
                     }
                     
@@ -243,21 +246,14 @@ class ChatListViewController: UIViewController {
     }
     
     // MARK: - 로그인/채팅 목록 없음 Methods
-    // goToHomeButton 눌렀을 때
     private func navigateToHome() {
-        let homeViewController = MainPostListViewController()
-        
         // 현재 탭 바 컨트롤러 가져오기
-        if let tabBarController = self.tabBarController,
-           let navigationController = tabBarController.viewControllers?[0] as? UINavigationController {
-
-            navigationController.pushViewController(homeViewController, animated: true)
-
+        if let tabBarController = self.tabBarController {
             // 홈 탭으로 전환
             tabBarController.selectedIndex = 0
         }
     }
-    
+
     // MARK: - 비로그인 Methods
     // 비로그인 시 로그인 화면 보여주기
     private func presentLoginViewController() {
@@ -299,7 +295,6 @@ extension ChatListViewController: UITableViewDelegate {
                     } else {
                         self.tableView.reloadData()
                     }
-                    
                     print("delete")
                 } catch {
                     print("Error deleting chat room: \(error.localizedDescription)")
@@ -314,7 +309,7 @@ extension ChatListViewController: UITableViewDelegate {
         
         let chatViewController = ChatViewController(chatRoom: selectedChatRoom)
         chatViewController.chatViewModel = chatViewModel
-        chatViewController.index = indexPath.row
+        chatViewController.indexRow = indexPath.row
         
         self.navigationController?.pushViewController(chatViewController, animated: true)
     }

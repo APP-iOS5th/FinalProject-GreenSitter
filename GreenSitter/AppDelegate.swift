@@ -36,10 +36,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         
         // 원격 알림 등록
-        let authOptions: UNAuthorizationOptions = [.badge, .sound]
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,
-            completionHandler: { _, _ in }
+            completionHandler: { granted, error in
+                if granted {
+                    DispatchQueue.main.async {
+                        application.registerForRemoteNotifications()
+                    }
+                } else {
+                    print("Permission not granted: \(error?.localizedDescription ?? "No error")")
+                }
+            }
         )
         
         application.registerForRemoteNotifications()
@@ -83,7 +91,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
-    
+
 }
 
 // MARK: - Push Notification 함수
@@ -99,66 +107,83 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         print("Failed to register for remote notifications: \(error.localizedDescription)")
     }
     
-    // 포그라운드(앱 실행 상태)에서 푸시 알림 처리
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
-        return [.banner, .badge, .sound, .list]
+    // 푸시 알림 처리
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+      ) {
+        let userInfo = notification.request.content.userInfo
+        // 채팅방 내에서는 푸시 알림 오지 않음
+        if let chatRoomId = userInfo["chatRoomId"] as? String,
+           chatRoomId == ChatManager.shared.currentChatRoomId {
+            completionHandler([])
+            return
+        } else {
+            completionHandler([.banner, .badge, .sound, .list])
+        }
+          completionHandler([.banner, .badge, .sound, .list])
     }
     
-    // 백그라운드에서 푸시 알림 처리
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+    // 푸시 알림 클릭했을 때
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         if let chatRoomId = userInfo["chatRoomId"] as? String {
-            do {
-                if let chatRoom = try await fetchChatRoom(chatRoomId: chatRoomId) {
-                    // 메인 스레드에서 UI 업데이트
-                    DispatchQueue.main.async {
-                        Task {
-                            await self.navigateToChatRoom(chatRoom: chatRoom)
-                        }
-                    }
+            fetchChatRoom(chatRoomId: chatRoomId) { [weak self] chatRoom in
+                guard let self = self else { return }
+                if let chatRoom = chatRoom {
+                    self.navigateToChatRoom(chatRoom: chatRoom)
                 } else {
                     print("No ChatRoom found with given ID.")
                 }
-            } catch {
-                print("Failed to fetch ChatRoom: \(error.localizedDescription)")
+                completionHandler()
             }
+        } else {
+            completionHandler()
         }
     }
     
     // ChatRoom 데이터 가져오기
-    func fetchChatRoom(chatRoomId: String) async throws -> ChatRoom? {
+    func fetchChatRoom(chatRoomId: String, completion: @escaping (ChatRoom?) -> Void) {
         let db = Firestore.firestore()
         let chatRoomRef = db.collection("chatRooms").document(chatRoomId)
         
-        do {
-            let document = try await chatRoomRef.getDocument()
-            
-            guard let data = document.data() else {
-                print("ChatRoom does not exist.")
-                return nil
+        chatRoomRef.getDocument { document, error in
+            if let error = error {
+                print("Error fetching chat room: \(error.localizedDescription)")
+                completion(nil)
+                return
             }
             
-            let chatRoom = try document.data(as: ChatRoom.self)
-            return chatRoom
-        } catch {
-            print("Error fetching chat room: \(error.localizedDescription)")
-            throw error
+            guard let document = document, document.exists,
+                  let data = document.data() else {
+                print("ChatRoom does not exist.")
+                completion(nil)
+                return
+            }
+            
+            do {
+                let chatRoom = try document.data(as: ChatRoom.self)
+                completion(chatRoom)
+            } catch {
+                print("Error parsing chat room data: \(error.localizedDescription)")
+                completion(nil)
+            }
         }
     }
     
     // 푸시 알림 눌렀을 때 채팅방으로 이동
-    func navigateToChatRoom(chatRoom: ChatRoom) async {
+    func navigateToChatRoom(chatRoom: ChatRoom) {
         //메인 스레드에서 UI 업데이트
-        await MainActor.run {
+        DispatchQueue.main.async {
             let chatViewModel = ChatViewModel()
             let chatDetailViewController = ChatViewController(chatRoom: chatRoom)
             chatDetailViewController.chatViewModel = chatViewModel
             
-            if let tabBarController = window?.rootViewController as? UITabBarController,
+            if let tabBarController = self.window?.rootViewController as? UITabBarController,
                let navigationController = tabBarController.viewControllers?[2] as? UINavigationController {
                 navigationController.pushViewController(chatDetailViewController, animated: true)
                 
-                // 채팅 탭으로 전환
                 tabBarController.selectedIndex = 2
             }
         }

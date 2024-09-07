@@ -21,6 +21,16 @@ class ChatPostViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // Post View
+    lazy var postView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .bgPrimary
+        view.tintColor = .labelsPrimary
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     // 게시물 이미지
     lazy var postThumbnailView: UIImageView = {
         let imageView = UIImageView()
@@ -62,22 +72,61 @@ class ChatPostViewController: UIViewController {
         return label
     }()
     
+    // 삭제된 게시물을 위한 회색 뷰
+    lazy var grayView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var deletePostLabel: UILabel = {
+        let label = UILabel()
+        label.text = "삭제된 게시글입니다."
+        label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
+        label.textColor = .white
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    // Post toggle 버튼
+    lazy var postToggleButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = .bgPrimary
+        button.tintColor = .labelsPrimary
+        button.layer.cornerRadius = 10
+        button.clipsToBounds = true
+        button.setImage(UIImage(systemName: "chevron.up.circle.fill"), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        setupUI()
-        
-        chatViewModel?.delegate = self
-        
-        // 게시물 디테일로 이동하기 위한 Tap Gesture
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        self.view.addGestureRecognizer(tapGesture)
+        if chatRoom.postEnabled {
+            setupUI()
+            
+            chatViewModel?.delegate = self
+            
+            // 게시물 디테일로 이동하기 위한 Tap Gesture
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            self.view.addGestureRecognizer(tapGesture)
+        } else {
+            self.grayView.isHidden = false
+            self.deletePostLabel.isHidden = false
+            setupUI()
+        }
     }
     
     // MARK: - Setup UI
     private func setupUI() {
         // 이미지 다운로드 실패 시 기본 이미지로 설정
-        let placeholderImage = UIImage(named: "chatIcon")
+        let placeholderImage = UIImage(named: "ChatIcon")
         
         if let firstImageUrlString = chatRoom.postImage,
            let postThumbnailUrl = URL(string: firstImageUrlString) {
@@ -88,7 +137,7 @@ class ChatPostViewController: UIViewController {
             // postImage가 nil일 경우 기본 이미지로 설정
             postThumbnailView.image = placeholderImage
         }
-        
+         
         postTitleLabel.text = chatRoom.postTitle
         postStatusLabel.text = chatRoom.postStatus.rawValue
         
@@ -100,7 +149,18 @@ class ChatPostViewController: UIViewController {
         self.view.addSubview(postThumbnailView)
         self.view.addSubview(stackView)
         
+        grayView.addSubview(deletePostLabel)
+        self.view.addSubview(grayView)
+        
         NSLayoutConstraint.activate([
+            grayView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            grayView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            grayView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            grayView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            
+            deletePostLabel.bottomAnchor.constraint(equalTo: grayView.bottomAnchor, constant: -20),
+            deletePostLabel.trailingAnchor.constraint(equalTo: grayView.trailingAnchor, constant: -20),
+            
             postThumbnailView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10),
             postThumbnailView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             postThumbnailView.widthAnchor.constraint(equalToConstant: 80),
@@ -129,7 +189,12 @@ class ChatPostViewController: UIViewController {
         // 특정 게시물로 이동
         let postDetailViewController = PostDetailViewController(postId: chatRoom.postId)
         
-        self.navigationController?.pushViewController(postDetailViewController, animated: true)
+        // 채팅방 포스트를 눌렀을 때 그 안에서 채팅하기 버튼을 누르면 부자연스럽게 push됨
+//        self.navigationController?.popViewController(animated: true)
+//        self.navigationController?.pushViewController(postDetailViewController, animated: true)
+        
+        // 위 문제 해결방안
+        self.present(postDetailViewController, animated: true)
     }
 
 }

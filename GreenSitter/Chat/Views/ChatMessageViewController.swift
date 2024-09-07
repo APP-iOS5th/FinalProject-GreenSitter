@@ -32,7 +32,7 @@ class ChatMessageViewController: UIViewController {
         tableView.allowsSelection = false
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         return tableView
     }()
     
@@ -84,7 +84,7 @@ class ChatMessageViewController: UIViewController {
                     // 테이블 뷰를 리로드하여 최신 메시지를 표시
                     self?.tableView.reloadData()
                     
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         guard let numberOfSections = self?.tableView.numberOfSections,
                               let numberOfRows = self?.tableView.numberOfRows(inSection: numberOfSections - 1) else {
                             return
@@ -104,7 +104,7 @@ class ChatMessageViewController: UIViewController {
     
     // MARK: - viewWillDisappear
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(true)
+        super.viewWillDisappear(animated)
         
         // 메세지 리스너 해제
         for listener in messageListeners {
@@ -369,7 +369,8 @@ extension ChatMessageViewController: UITableViewDataSource {
             cell.planPlaceLabel.text = "장소: \(planPlace)"
             
             if let plan = messages[indexPath.row].plan {
-                let makePlanViewModel = MakePlanViewModel(date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, planType: plan.planType, chatViewModel: chatViewModel, chatRoom: chatRoom, messageId: messages[indexPath.row].id)
+                let makePlanViewModel = MakePlanViewModel(planId: plan.planId, date: plan.planDate, planPlace: plan.planPlace, ownerNotification: plan.ownerNotification, sitterNotification: plan.sitterNotification, progress: 3, isPlaceSelected: true, planType: plan.planType, chatViewModel: chatViewModel, chatRoom: chatRoom, messageId: messages[indexPath.row].id)
+                makePlanViewModel.chatMessageTableViewPlanCellDelegate = cell
                 cell.detailButtonAction = {
                     self.present(MakePlanViewController(viewModel: makePlanViewModel), animated: true)
                 }
@@ -392,6 +393,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             
             cell.chatRoom = chatRoom
             cell.chatViewModel = self.chatViewModel
+            cell.planEnabled = messages[indexPath.row].plan?.enabled ?? true
             let messageTime = messages[indexPath.row].createDate
             cell.configure(date: messageTime)
             
@@ -406,7 +408,7 @@ extension ChatMessageViewController: UITableViewDataSource {
             }
             
             cell.makeReviewButtonAction = {
-                if let userId = self.chatViewModel?.userId {
+                if let userId = self.chatViewModel?.user?.id {
                     self.navigationController?.pushViewController(ReviewListViewController(userId: userId), animated: true)
                 }
             }

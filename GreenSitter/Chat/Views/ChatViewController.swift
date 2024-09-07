@@ -10,7 +10,7 @@ import UIKit
 class ChatViewController: UIViewController {
     var chatViewModel: ChatViewModel?
     var chatRoom: ChatRoom
-    var index: Int?
+    var indexRow: Int?
     
     init(chatRoom: ChatRoom) {
         self.chatRoom = chatRoom
@@ -24,13 +24,23 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupUI()
-        
         // 키보드 숨기기
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.view.addGestureRecognizer(tapGesture)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        setupUI()
+        ChatManager.shared.currentChatRoomId = chatRoom.id
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        ChatManager.shared.currentChatRoomId = nil
+    }
     // MARK: - Setup UI
     private func setupUI() {
         
@@ -141,10 +151,23 @@ class ChatViewController: UIViewController {
         ) { [weak self] _ in
             guard let self = self else { return }
             Task {
-                if let index = self.index {
+                if let indexRow = self.indexRow {
                     do {
-                        try await self.chatViewModel?.deleteChatRoom(at: index)
-                        self.navigationController?.popViewController(animated: true)
+                        try await self.chatViewModel?.deleteChatRoom(at: indexRow)
+                        // 메인 스레드에서 UI 업데이트
+                        DispatchQueue.main.async {
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                    } catch {
+                        print("Failed to delete chat room: \(error)")
+                    }
+                } else {
+                    do {
+                        try await self.chatViewModel?.deleteThisChatRoom(chatRoom: self.chatRoom)
+                        // 메인 스레드에서 UI 업데이트
+                        DispatchQueue.main.async {
+                            self.navigationController?.popViewController(animated: true)
+                        }
                     } catch {
                         print("Failed to delete chat room: \(error)")
                     }

@@ -59,11 +59,12 @@ class FirestorageManager {
 //    }
     func loadImage(imageURL: URL, imageSize: CGFloat, imageView: inout UIImageView, completion: (() -> Void)? = nil ) {
         let processor = DownsamplingImageProcessor(size: CGSize(width: imageSize, height: imageSize))
+        let placeholderImage: UIImage = UIImage()
         
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(
             with: imageURL,
-            placeholder: nil,
+            placeholder: placeholderImage,
             options: [
                 .processor(processor),
                 .scaleFactor(UIScreen.main.scale),
@@ -78,6 +79,9 @@ class FirestorageManager {
                     }
                 case .failure(let error):
                     print("Failed to load Image: \(error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        completion?()
+                    }
                 }
             }
         )

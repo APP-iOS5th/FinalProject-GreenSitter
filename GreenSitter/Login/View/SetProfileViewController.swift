@@ -42,6 +42,16 @@ class SetProfileViewController: UIViewController {
         return label
     }()
     
+    private var bodyLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .labelsPrimary
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        label.text = "이미지와 닉네임을 설정해주세요."
+        return label
+    }()
+    
     func createImageButton() -> UIButton {
         let button = UIButton()
         button.configuration?.imagePadding = 5        
@@ -139,8 +149,11 @@ class SetProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .bgPrimary
         
+        hideKeyboard()
+        
         // 서브뷰 추가
         view.addSubview(titleLabel)
+        view.addSubview(bodyLabel)
         view.addSubview(imageStackView1)
         view.addSubview(imageStackView2)
         view.addSubview(nickNameTextField)
@@ -164,8 +177,12 @@ class SetProfileViewController: UIViewController {
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
+            bodyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            bodyLabel.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -50),
+            
             imageStackView1.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageStackView1.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
+            imageStackView1.topAnchor.constraint(equalTo: bodyLabel.bottomAnchor, constant: 50),
             imageStackView1.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -80),
             imageStackView1.heightAnchor.constraint(equalToConstant: 100),
             
@@ -190,6 +207,14 @@ class SetProfileViewController: UIViewController {
             skipButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             skipButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
         ])
+    }
+    
+    func hideKeyboard() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     // MARK: - 중복된 닉네임 체크
@@ -235,8 +260,11 @@ class SetProfileViewController: UIViewController {
         // 닉네임 텍스트 필드가 비어 있는지 확인
         let isNicknameEmpty = nickNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         
+        // 이미지 선택 여부 확인
+        let isImageSelected = selectButton != nil
+        
         // 버튼의 활성화 상태를 설정
-        let isEnabled = !isNicknameEmpty && isUniqueNickname
+        let isEnabled = !isNicknameEmpty && isUniqueNickname && isImageSelected
         nextButton.isEnabled = isEnabled
         
         // 버튼의 배경색 및 텍스트 색상을 설정
@@ -300,6 +328,9 @@ class SetProfileViewController: UIViewController {
             selectButton?.layer.borderColor = complementaryColor.cgColor
             selectButton?.layer.borderWidth = 2.0 // 테두리 두께 설정
         }
+        
+        // 이미지 선택 후 버튼 활성화 선택 업데이트
+        updateNextButtonAppearance(isUniqueNickname: nicknameStatusLabel.textColor == .green)
     }
 
     //MARK: - nextButton을 눌렀을때 닉네임을 파이어베이스에 저장

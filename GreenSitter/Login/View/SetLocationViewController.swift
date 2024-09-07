@@ -136,6 +136,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate, SetProfi
         bindViewModel()
         mapViewModel.checkLocationAuthorization()
 
+        hideKeyboard()
         print("User 객체 상태: \(String(describing: users))")
         
         view.backgroundColor = .bgPrimary
@@ -183,6 +184,14 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate, SetProfi
     
     
 
+    func hideKeyboard() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
     
     // MARK: - BACK BUTTON METHOD
     

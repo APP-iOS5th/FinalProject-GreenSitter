@@ -492,6 +492,7 @@ class FirestoreManager {
         return postStatus
     }
     
+    // 약속 혹은 거래완료 권한 확인
     func checkAuthorityToCommit(postId: String, currentId: String) async throws -> Bool {
         let postRef = db.collection("posts").document(postId)
          let recipientId = try await postRef.getDocument().get("recipientId") as? String
@@ -500,6 +501,68 @@ class FirestoreManager {
             return true
         } else {
             return false
+        }
+    }
+    
+    // 약속 push 알림을 위한 planNotification 문서 생성
+    func makePlanNotification(planId: String, planDate: Date, ownerNotification: Bool, sitterNotification: Bool, postUserId: String, userId: String, chatRoomId: String) async {
+        var fcmTokens = [String]()
+        if ownerNotification {
+            let postUserFcmToken = await fetchFCMTokenFromUserId(userId: postUserId)
+            if let postUserFcmToken = postUserFcmToken {
+                fcmTokens.append(postUserFcmToken)
+            }
+        }
+        if sitterNotification {
+            let userFcmToken = await fetchFCMTokenFromUserId(userId: userId)
+            if let userFcmToken = userFcmToken {
+                fcmTokens.append(userFcmToken)
+            }
+        }
+        if !(fcmTokens.isEmpty) {
+            do {
+                try await db.collection("planNotifications").document(planId).setData([
+                    "planId" : planId,
+                    "planDate" : planDate,
+                    "fcmTokens" : fcmTokens,
+                    "chatRoomId" : chatRoomId
+                ])
+            } catch {
+                print("Failed to make plan notification: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func fetchFCMTokenFromUserId(userId: String) async -> String? {
+        let userRef = db.collection("users").document(userId)
+        do {
+            let fcmToken = try await userRef.getDocument().get("fcmToken") as? String
+            return fcmToken
+        } catch {
+            print("Failed to fetch FCM Token: \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
+    //약속 취소 시 plan notification 제거
+    func deletePlanNotification(planId: String) async {
+        do {
+            try await db.collection("planNotifications").document(planId).delete()
+        } catch {
+            print("Failed to remove plan notification: \(error.localizedDescription)")
+        }
+    }
+    
+    func cancelPlan(chatRoomId: String, messageId: String) async {
+        let planRef = db.collection("chatRooms").document(chatRoomId)
+            .collection("messages").document(messageId)
+
+        do {
+            try await planRef.updateData([
+                "plan.enabled" : false
+            ])
+        } catch {
+            print("Failed to enable plan: \(error.localizedDescription)")
         }
     }
 }

@@ -37,7 +37,40 @@ class PostDetailViewModel: ObservableObject {
                 completion(true)
             }
         }
+        
+        // Post 삭제 시, ChatRoom의 postEnabled 값 false로 업데이트
+        let chatRoomsRef = db.collection("chatRooms")
+        chatRoomsRef.whereField("postId", isEqualTo: postId).getDocuments { [weak self] snapshot, error in
+            if let error = error {
+                print("Error fetching chat rooms: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            guard let documents = snapshot?.documents else {
+                print("No chat rooms found with postId: \(postId)")
+                completion(true)
+                return
+            }
+            
+            let batch = self?.db.batch()
+            for document in documents {
+                let chatRoomRef = chatRoomsRef.document(document.documentID)
+                batch?.updateData(["postEnabled": false], forDocument: chatRoomRef)
+            }
+            
+            batch?.commit { error in
+                if let error = error {
+                    print("Error updating chat rooms: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    print("Chat rooms successfully updated.")
+                    completion(true)
+                }
+            }
+        }
     }
+    
     // MARK: - Post 가져오기
     func fetchPostById(postId: String, completion: @escaping (Result<Post, Error>) -> Void) {
         db.collection("posts").document(postId).getDocument { [weak self] snapshot, error in
@@ -90,7 +123,6 @@ class PostDetailViewModel: ObservableObject {
                 return
             }
             
-            
             // 채팅방 데이터 저장
             try await self.firestoreManager.saveChatRoom(newChat)
             
@@ -120,7 +152,7 @@ class PostDetailViewModel: ObservableObject {
         // 게시물 썸네일
         let postThumbnail = self.selectedPost?.postImages?.first
 
-        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: user.chatNotification, postUserNotification: selectedPost!.userNotification, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus, postType: selectedPost!.postType, hasLeavePlan: false, hasGetBackPlan: false, preferredPlace: selectedPost!.location)
+        let newChat = ChatRoom(id: UUID().uuidString, enabled: true, createDate: Date(), updateDate: Date(), userId: user.id, postUserId: selectedPost!.userId, userNickname: user.nickname, postUserNickname: selectedPost!.nickname, userProfileImage: user.profileImage, postUserProfileImage: selectedPost!.profileImage, userEnabled: true, postUserEnabled: true, userNotification: true, postUserNotification: true, userLocation: user.location, postUserLocation: selectedPost!.userLocation, messages: [], postId: selectedPost!.id, postImage: postThumbnail, postTitle: selectedPost!.postTitle, postStatus: selectedPost!.postStatus, postEnabled: true, postType: selectedPost!.postType, hasLeavePlan: false, hasGetBackPlan: false, preferredPlace: selectedPost!.location)
             
         return newChat
     }

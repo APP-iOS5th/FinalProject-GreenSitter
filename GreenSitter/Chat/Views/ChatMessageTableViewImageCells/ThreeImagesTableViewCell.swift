@@ -84,11 +84,11 @@ class ThreeImagesTableViewCell: UITableViewCell {
     
     lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.frame = CGRect(x: 0, y: 4, width: 52, height: 52)
         imageView.layer.cornerRadius = imageView.frame.height/2
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "logo7")
         
         return imageView
     }()
@@ -111,7 +111,6 @@ class ThreeImagesTableViewCell: UITableViewCell {
     lazy var timeLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "오후 1:43"
         label.textColor = .labelsSecondary
         label.font = UIFont.systemFont(ofSize: 11)
         return label
@@ -282,6 +281,7 @@ class ThreeImagesTableViewCell: UITableViewCell {
         let timeString = formatter.string(from: date)
         
         timeLabel.text = timeString
+        
     }
     
     @objc

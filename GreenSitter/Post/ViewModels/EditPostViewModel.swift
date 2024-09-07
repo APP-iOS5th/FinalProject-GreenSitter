@@ -73,6 +73,7 @@ class EditPostViewModel: ObservableObject {
     }
     
     // PHPicker에서 선택된 이미지를 Firebase Storage에 업로드하고 URL을 저장하는 함수
+
     func addSelectedImages(results: [PHPickerResult], completion: @escaping () -> Void) {
         let dispatchGroup = DispatchGroup()
         
@@ -83,6 +84,9 @@ class EditPostViewModel: ObservableObject {
                 result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
                     if let image = object as? UIImage {
                         guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+
+
+
                             dispatchGroup.leave()
                             return
                         }
@@ -100,6 +104,7 @@ class EditPostViewModel: ObservableObject {
                             storageRef?.downloadURL { (url, error) in
                                 if let url = url?.absoluteString {
                                     DispatchQueue.main.async {
+
                                         self?.selectedImageURLs.append(url)
                                         print("Added image URL to selectedImageURLs. Total count: \(self?.selectedImageURLs.count ?? 0)")
                                     }
@@ -117,6 +122,7 @@ class EditPostViewModel: ObservableObject {
             }
         }
         
+
         dispatchGroup.notify(queue: .main) {
             print("Finished loading images. Total count: \(self.selectedImageURLs.count)")
             completion()
@@ -129,7 +135,9 @@ class EditPostViewModel: ObservableObject {
             print("Index out of bounds")
             return
         }
+
         selectedImageURLs.remove(at: index)
+
     }
     
     // 기존 이미지 URL을 삭제하는 함수
@@ -205,6 +213,25 @@ class EditPostViewModel: ObservableObject {
         }
     }
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // 포스트 업데이트
     func updatePost(postTitle: String, postBody: String, completion: @escaping (Result<Post, Error>) -> Void) {
         // 삭제할 이미지 처리
