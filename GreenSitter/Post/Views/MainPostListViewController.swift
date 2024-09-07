@@ -52,7 +52,7 @@ class MainPostListViewController: UIViewController {
     
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.text = "현재위치에서 등록된 게시글이 아직 없어요."
+        label.text = "현재위치에서 등록된 게시물이 아직 없어요."
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         label.textColor = .labelsSecondary
