@@ -231,11 +231,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
         mapView.delegate = self
         
         hideKeyboard()
-        
-        let initialCharacterCount = textView.text.count
-        remainCountLabel.text = "\(initialCharacterCount)/700"
     }
-    
     
     func hideKeyboard() {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
@@ -251,7 +247,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         
         let address = viewModel.selectedPost.location?.address
         let placeName = viewModel.selectedPost.location?.placeName
@@ -326,7 +321,8 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
                 self?.throttleTimer = nil
                 
                 switch result {
-                case .success:
+                case .success(let updatedPost):
+                    NotificationCenter.default.post(name: NSNotification.Name("PostUpdated"), object: updatedPost)
                     self?.showAlertWithNavigation(title: "성공", message: "게시글이 수정되었습니다.")
                 case .failure(let error):
                     self?.showAlert(title: "게시물 저장 실패", message: error.localizedDescription)
@@ -476,7 +472,6 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
             saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
-    
     
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
@@ -633,6 +628,7 @@ class EditPostViewController: UIViewController, PHPickerViewControllerDelegate {
     private func presentImagePickerController() {
         let numberOfImages = imageStackView.arrangedSubviews.count - 1 // -1 to exclude pickerImageView
         
+        // 이미 10장이라면 이미지 피커를 비활성화
         if numberOfImages >= 10 {
             showAlert(title: "이미지 초과", message: "최대 10장의 이미지만 업로드할 수 있습니다.")
             return

@@ -50,6 +50,43 @@ class MainPostListViewController: UIViewController {
         return tableView
     }()
     
+    private let emptyStateLabel: UILabel = {
+        let label = UILabel()
+        label.text = "현재위치에서 등록된 게시물이 아직 없어요."
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .labelsSecondary
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let additionalStateLabel: UILabel = {
+        let label = UILabel()
+        label.text = "첫번째로 게시물을 등록해보세요!"
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 18, weight: .heavy)
+        label.textColor = .labelsSecondary
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let emptyStateImageView: UIImageView = {
+           let imageView = UIImageView()
+           imageView.image = UIImage(named: "traveler")
+           imageView.contentMode = .scaleAspectFit
+           imageView.translatesAutoresizingMaskIntoConstraints = false
+           return imageView
+       }()
+    
+    private let emptyStateStackView: UIStackView = {
+            let stackView = UIStackView()
+            stackView.axis = .vertical
+            stackView.alignment = .center
+            stackView.spacing = 10
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            return stackView
+        }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
@@ -58,9 +95,34 @@ class MainPostListViewController: UIViewController {
         setupNavigationBarButtons()
         setupLocationLabel()
         setupTableView()
+        setupEmptyStateView()
         bindViewModel()
         fetchPostsByCategoryAndLocationWithViewModel()
     }
+    
+    private func setupEmptyStateView() {
+            // 스택 뷰에 이미지와 라벨을 추가
+            emptyStateStackView.addArrangedSubview(emptyStateImageView)
+            emptyStateStackView.addArrangedSubview(emptyStateLabel)
+            emptyStateStackView.addArrangedSubview(additionalStateLabel)
+            
+            view.addSubview(emptyStateStackView)
+            
+            NSLayoutConstraint.activate([
+                emptyStateStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                emptyStateStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 50),
+                
+                emptyStateImageView.widthAnchor.constraint(equalToConstant: 150),
+                emptyStateImageView.heightAnchor.constraint(equalToConstant: 150)
+            ])
+        }
+        
+        // 게시글이 없을 때는 라벨을 표시하고, 있을 때는 숨김
+        private func updateEmptyStateStackView() {
+            emptyStateStackView.isHidden = !viewModel.filteredPosts.isEmpty
+        }
+
+    
     
     private func fetchPostsByCategoryAndLocationWithViewModel(loadMore: Bool = false) {
         guard let categoryText = selectedButton?.titleLabel?.text else {
@@ -98,6 +160,7 @@ class MainPostListViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] posts in
                 self?.tableView.reloadData()
+                self?.updateEmptyStateStackView()
             }
             .store(in: &cancellables)
     }
@@ -252,6 +315,7 @@ extension MainPostListViewController: UITableViewDataSource, UITableViewDelegate
     // MARK: - UITABLE VIEW DATA SOURCE
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        updateEmptyStateStackView()
         return viewModel.filteredPosts.count
     }
     
