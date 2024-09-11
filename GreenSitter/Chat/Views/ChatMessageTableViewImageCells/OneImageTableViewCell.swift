@@ -166,7 +166,7 @@ class OneImageTableViewCell: UITableViewCell {
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
                 timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -80),
-                timeLabel.widthAnchor.constraint(equalToConstant: 45),
+                timeLabel.widthAnchor.constraint(equalToConstant: 50),
                 
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 firstImageView.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor),
@@ -184,7 +184,7 @@ class OneImageTableViewCell: UITableViewCell {
 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: isReadLabel.trailingAnchor, constant: 5),
-                timeLabel.widthAnchor.constraint(equalToConstant: 45),
+                timeLabel.widthAnchor.constraint(equalToConstant: 50),
                 
                 bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
                 bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
