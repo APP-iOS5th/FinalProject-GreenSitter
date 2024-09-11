@@ -11,6 +11,7 @@ import FirebaseAuth
 import FirebaseStorage
 import Combine
 import AuthenticationServices
+import Photos
 
 class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     func didCompleteLogin() {
@@ -98,6 +99,9 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
             setupView()
             fetchUserFirebase()
             setupTextField()
+        }
+        PHPhotoLibrary.requestAuthorization { (state) in
+            print(state)
         }
         
     }

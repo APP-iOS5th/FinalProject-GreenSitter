@@ -8,16 +8,56 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import Photos
 
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    
     @objc func changeImageTap() {
+        // 권한 상태를 확인합니다
+        PHPhotoLibrary.requestAuthorization { status in
+            switch status {
+            case .authorized:
+                DispatchQueue.main.async {
+                    self.presentImagePickerController()
+                }
+            case .denied, .restricted:
+                DispatchQueue.main.async {
+                    self.showPhotoLibraryPermissionAlert()
+                }
+            case .notDetermined:
+                // 권한 요청이 아직 결정되지 않은 경우, 이미지 선택기 표시
+                DispatchQueue.main.async {
+                    self.presentImagePickerController()
+                }
+            @unknown default:
+                break
+            }
+        }
+    }
+    private func presentImagePickerController() {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
         present(imagePicker, animated: true, completion: nil)
     }
+    
+    private func showPhotoLibraryPermissionAlert() {
+        let alertController = UIAlertController(
+            title: "사진 라이브러리 접근 권한 필요",
+            message: "사진 라이브러리 접근 권한이 필요합니다. 설정에서 권한을 허용해주세요.",
+            preferredStyle: .alert
+        )
+        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            if let appSettings = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(appSettings)
+            }
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alertController.addAction(settingsAction)
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true, completion: nil)
+    }
+
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         dismiss(animated: true, completion: nil)
