@@ -1121,7 +1121,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "채팅에서 사진을 찍어 상대방에게 전송하려면 카메라 권한이 필요합니다. 사진 촬영은 메시지를 보내는 과정에서만 사용됩니다.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"게시글에 사진을 추가하기 위해 사진 라이브러리 접근 권한이 필요합니다.\"";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "게시글에 사진을 추가하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -1164,7 +1164,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "채팅에서 사진을 찍어 상대방에게 전송하려면 카메라 권한이 필요합니다. 사진 촬영은 메시지를 보내는 과정에서만 사용됩니다.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재 위치를 기반으로 새싹 돌봄이 매칭 시스템을 제공하기 위해 필요한 권한입니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"게시글에 사진을 추가하기 위해 사진 라이브러리 접근 권한이 필요합니다.\"";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "게시글에 사진을 추가하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

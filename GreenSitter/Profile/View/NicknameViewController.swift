@@ -19,6 +19,7 @@ class NicknameViewController: UIViewController,UITextFieldDelegate {
         let label = UILabel()
         label.text = "이름 변경"
         label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textColor = UIColor.labelsPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -27,6 +28,7 @@ class NicknameViewController: UIViewController,UITextFieldDelegate {
         let textField = UITextField()
         textField.frame.size.height = 30
         textField.borderStyle = .roundedRect
+        textField.backgroundColor = .fillPrimary
         textField.layer.cornerRadius = 10
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -67,7 +69,7 @@ class NicknameViewController: UIViewController,UITextFieldDelegate {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
         
-        view.backgroundColor = .white
+        view.backgroundColor = .bgPrimary
         nicknameTextfield.delegate = self
         view.addSubview(titleLabel)
         view.addSubview(closeButton)
