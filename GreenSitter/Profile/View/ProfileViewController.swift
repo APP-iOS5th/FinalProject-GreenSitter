@@ -100,9 +100,6 @@ class ProfileViewController: UIViewController, LoginViewControllerDelegate, ASAu
             fetchUserFirebase()
             setupTextField()
         }
-        PHPhotoLibrary.requestAuthorization { (state) in
-            print(state)
-        }
         
     }
     
