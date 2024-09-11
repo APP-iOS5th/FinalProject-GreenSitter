@@ -205,23 +205,23 @@ class ChatMessageTableViewPlanCell: UITableViewCell, ChatMessageTableViewPlanCel
             
             NSLayoutConstraint.activate([
                 titleLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 15),
-                titleLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 20),
-                titleLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -20),
+                titleLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                titleLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
                 titleLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
                 
                 planDateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
-                planDateLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 20),
-                planDateLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -20),
+                planDateLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                planDateLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
                 planDateLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
                 
                 planTimeLabel.topAnchor.constraint(equalTo: planDateLabel.bottomAnchor, constant: 5),
-                planTimeLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 20),
-                planTimeLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -20),
+                planTimeLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                planTimeLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
                 planTimeLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
                 
                 planPlaceLabel.topAnchor.constraint(equalTo: planTimeLabel.bottomAnchor, constant: 5),
-                planPlaceLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 20),
-                planPlaceLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -20),
+                planPlaceLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                planPlaceLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
                 planPlaceLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
                 
                 detailButton.topAnchor.constraint(equalTo: planPlaceLabel.bottomAnchor, constant: 15),
@@ -246,7 +246,7 @@ class ChatMessageTableViewPlanCell: UITableViewCell, ChatMessageTableViewPlanCel
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
-                timeLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -100),
+                timeLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -80),
                 
                 canceledPlanLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor),
                 canceledPlanLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor),
@@ -269,29 +269,29 @@ class ChatMessageTableViewPlanCell: UITableViewCell, ChatMessageTableViewPlanCel
             
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
-                isReadLabel.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 100),
+                isReadLabel.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 80),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: isReadLabel.trailingAnchor, constant: 5),
                 
                 titleLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 15),
-                titleLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 20),
-                titleLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -20),
+                titleLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                titleLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
                 titleLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
                 
                 planDateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
-                planDateLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 20),
-                planDateLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -20),
+                planDateLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                planDateLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
                 planDateLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
                 
                 planTimeLabel.topAnchor.constraint(equalTo: planDateLabel.bottomAnchor, constant: 5),
-                planTimeLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 20),
-                planTimeLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -20),
+                planTimeLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                planTimeLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
                 planTimeLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
                 
                 planPlaceLabel.topAnchor.constraint(equalTo: planTimeLabel.bottomAnchor, constant: 5),
-                planPlaceLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 20),
-                planPlaceLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -20),
+                planPlaceLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 10),
+                planPlaceLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -10),
                 planPlaceLabel.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor),
                 
                 detailButton.topAnchor.constraint(equalTo: planPlaceLabel.bottomAnchor, constant: 15),
@@ -365,4 +365,5 @@ class ChatMessageTableViewPlanCell: UITableViewCell, ChatMessageTableViewPlanCel
         placeButtonAction?()
     }
 }
+
 

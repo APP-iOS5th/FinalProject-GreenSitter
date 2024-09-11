@@ -178,7 +178,7 @@ class TwoImagesTableViewCell: UITableViewCell {
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
                 timeLabel.leadingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: 5),
-                timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100),
+                timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -80),
                 timeLabel.widthAnchor.constraint(equalToConstant: 45),
                 
                 firstImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor),
@@ -198,7 +198,7 @@ class TwoImagesTableViewCell: UITableViewCell {
             
             NSLayoutConstraint.activate([
                 isReadLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
-                isReadLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100),
+                isReadLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 80),
                 isReadLabel.widthAnchor.constraint(equalToConstant: 41.333333333333336),
                 
                 timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -5),
