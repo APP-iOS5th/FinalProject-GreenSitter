@@ -83,6 +83,8 @@
 - 프로필 이미지, 닉네임(중복 체크), 나의 위치 수정 가능
 - 레벨 시스템, 돌봄 후기 등을 통한 신뢰도 확인
 
+## 📌 아키텍처
+<img src="https://github.com/user-attachments/assets/82e0b1cb-a23d-43ef-8b5d-bb3bf11b6cac" alt="아키텍처" width="400">
 
 ## 📌 회고
 <details>
