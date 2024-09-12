@@ -2,7 +2,7 @@
 앱스쿨 5기 떡잎마을방법대 최종 프로젝트
 
 ## 📌 프로젝트 소개
-<table align="center">
+<table>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/2eda6f9e-ec2d-49b8-8f93-e404f28a43dd" alt="런치 스크린" width="200"></td>
     <td><h2><strong>식물 돌봄 서비스를 매칭해주는 앱</strong></h2><br/>
