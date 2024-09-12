@@ -149,158 +149,157 @@
 - 코드 재사용을 통해 효율적인 코드를 작성할 것.
 </details>
 
-# Models Overview
+## 📌 모델 개요
 
-This project contains several key data models used to manage users, posts, reviews, chats, and contracts. Below is a breakdown of each model and its properties.
+이 프로젝트에는 사용자, 게시물, 리뷰, 채팅, 계약을 관리하기 위한 여러 주요 데이터 모델이 포함되어 있습니다. 각 모델과 그 속성에 대한 설명은 아래와 같습니다.
 
-## User
+#### User (사용자)
 
-| Property       | Type         | Description                         |
-| -------------- | ------------ | ----------------------------------- |
-| id             | String       | Unique identifier for the user      |
-| enabled        | Bool         | User status (active/inactive)       |
-| createDate     | Date         | User creation date                  |
-| updateDate     | Date         | Last update date                    |
-| profileImage   | String       | URL of user's profile image         |
-| nickname       | String       | User's nickname                     |
-| location       | Location     | User's location information         |
-| platform       | String       | Platform user is on                 |
-| levelPoint     | Level        | User's current level                |
-| exp            | Int          | User's experience points            |
-| aboutMe        | String       | User's bio                          |
-| fcmToken       | String?      | Optional token for push notifications |
+| 속성             | 타입         | 설명                                      |
+| ---------------- | ------------ | ---------------------------------------- |
+| id               | String       | 사용자의 고유 식별자                     |
+| enabled          | Bool         | 사용자 상태 (활성/비활성)                 |
+| createDate       | Date         | 사용자 생성 날짜                          |
+| updateDate       | Date         | 마지막 업데이트 날짜                      |
+| profileImage     | String       | 사용자의 프로필 이미지 URL                |
+| nickname         | String       | 사용자의 닉네임                           |
+| location         | Location     | 사용자의 위치 정보                        |
+| platform         | String       | 사용자가 사용하는 플랫폼                  |
+| levelPoint       | Level        | 사용자의 현재 레벨                        |
+| exp              | Int          | 사용자의 경험치                           |
+| aboutMe          | String       | 사용자의 자기소개                         |
+| fcmToken         | String?      | 푸시 알림을 위한 선택적 토큰               |
 
-### Methods
+#### 메서드
 
-- **updateExp(by: Int)**: Updates the user's experience points and adjusts the user's level accordingly.
-
----
-
-## Post
-
-| Property       | Type         | Description                         |
-| -------------- | ------------ | ----------------------------------- |
-| id             | String       | Unique identifier for the post      |
-| enabled        | Bool         | Post status (active/inactive)       |
-| createDate     | Date         | Post creation date                  |
-| updateDate     | Date         | Last update date                    |
-| userId         | String       | ID of the post creator              |
-| postType       | PostType     | Type of the post                    |
-| postTitle      | String       | Title of the post                   |
-| postBody       | String       | Body content of the post            |
-| location       | Location?    | Location associated with the post   |
-| postStatus     | PostStatus   | Current status of the post          |
+- **updateExp(by: Int)**: 사용자의 경험치를 업데이트하고 사용자의 레벨을 조정합니다.
 
 ---
 
-## Review
+#### Post (게시물)
 
-| Property       | Type         | Description                         |
-| -------------- | ------------ | ----------------------------------- |
-| id             | String       | Unique identifier for the review    |
-| userId         | String       | ID of the user who created the review|
-| postId         | String       | ID of the related post              |
-| rating         | Rating       | Review rating (bad, average, good)  |
-| reviewText     | String?      | Optional review text                |
-| reviewImage    | String?      | Optional review image               |
-
----
-
-## ChatRoom
-
-| Property           | Type         | Description                         |
-| ------------------ | ------------ | ----------------------------------- |
-| id                 | String       | Unique identifier for the chat room |
-| userId             | String       | ID of the user                      |
-| postUserId         | String       | ID of the post owner                |
-| messages           | [Message]    | Array of messages in the chat room  |
-| postId             | String       | Related post ID                     |
-| postTitle          | String       | Title of the post                   |
-| postStatus         | PostStatus   | Current status of the post          |
+| 속성             | 타입         | 설명                                      |
+| ---------------- | ------------ | ---------------------------------------- |
+| id               | String       | 게시물의 고유 식별자                     |
+| enabled          | Bool         | 게시물 상태 (활성/비활성)                 |
+| createDate       | Date         | 게시물 생성 날짜                          |
+| updateDate       | Date         | 마지막 업데이트 날짜                      |
+| userId           | String       | 게시물 작성자의 ID                        |
+| postType         | PostType     | 게시물의 유형                             |
+| postTitle        | String       | 게시물의 제목                             |
+| postBody         | String       | 게시물의 내용                             |
+| location         | Location?    | 게시물과 관련된 위치 정보                 |
+| postStatus       | PostStatus   | 게시물의 현재 상태                        |
 
 ---
 
-## Message
+#### Review (리뷰)
 
-| Property       | Type         | Description                         |
-| -------------- | ------------ | ----------------------------------- |
-| id             | String       | Unique identifier for the message   |
-| senderUserId   | String       | ID of the message sender            |
-| receiverUserId | String       | ID of the message receiver          |
-| messageType    | MessageType  | Type of the message (text, image, etc.) |
-| text           | String?      | Optional message text               |
-| image          | [String]?    | Optional image URLs                 |
-| plan           | Plan?        | Optional associated plan            |
-
----
-
-## Plan
-
-| Property           | Type         | Description                         |
-| ------------------ | ------------ | ----------------------------------- |
-| planId             | String       | Unique identifier for the plan      |
-| planDate           | Date         | Date of the planned event           |
-| planPlace          | Location?    | Optional location for the plan      |
-| contract           | Contract?    | Optional associated contract        |
-| isAccepted         | Bool         | Whether the plan has been accepted  |
+| 속성             | 타입         | 설명                                      |
+| ---------------- | ------------ | ---------------------------------------- |
+| id               | String       | 리뷰의 고유 식별자                       |
+| userId           | String       | 리뷰 작성자의 ID                         |
+| postId           | String       | 관련된 게시물의 ID                       |
+| rating           | Rating       | 리뷰의 평가 (bad, average, good)          |
+| reviewText       | String?      | 선택적인 리뷰 내용                       |
+| reviewImage      | String?      | 선택적인 리뷰 이미지                     |
 
 ---
 
-## Contract
+#### ChatRoom (채팅방)
 
-| Property           | Type         | Description                         |
-| ------------------ | ------------ | ----------------------------------- |
-| contractId         | String       | Unique identifier for the contract  |
-| ownerId            | String       | ID of the plant owner               |
-| sitterId           | String       | ID of the sitter                    |
-| plantName          | String?      | Name of the plant                   |
-| plantType          | String?      | Type of the plant                   |
-| startCareDate      | Date         | Start date of care                  |
-| endCareDate        | Date         | End date of care                    |
-
----
-
-## Report
-
-| Property       | Type         | Description                         |
-| -------------- | ------------ | ----------------------------------- |
-| reporterId     | String       | ID of the user reporting            |
-| reportedId     | String       | ID of the user/post being reported  |
-| reportType     | ReportType   | Type of the report (post or user)   |
-| reportDate     | Date         | Date the report was filed           |
-| reason         | String       | Reason for the report               |
+| 속성               | 타입         | 설명                                      |
+| ------------------ | ------------ | ---------------------------------------- |
+| id                 | String       | 채팅방의 고유 식별자                     |
+| userId             | String       | 사용자의 ID                              |
+| postUserId         | String       | 게시물 소유자의 ID                        |
+| messages           | [Message]    | 채팅방의 메시지 배열                     |
+| postId             | String       | 관련된 게시물의 ID                        |
+| postTitle          | String       | 게시물의 제목                             |
+| postStatus         | PostStatus   | 게시물의 현재 상태                        |
 
 ---
 
-## Block
+#### Message (메시지)
 
-| Property       | Type         | Description                         |
-| -------------- | ------------ | ----------------------------------- |
-| blockerId      | String       | ID of the user blocking             |
-| blockedId      | String       | ID of the user/post being blocked   |
-| blockType      | BlockType    | Type of the block (post or user)    |
-| blockDate      | Date         | Date the block was made             |
+| 속성             | 타입         | 설명                                      |
+| ---------------- | ------------ | ---------------------------------------- |
+| id               | String       | 메시지의 고유 식별자                     |
+| senderUserId     | String       | 메시지 발신자의 ID                       |
+| receiverUserId   | String       | 메시지 수신자의 ID                       |
+| messageType      | MessageType  | 메시지 유형 (텍스트, 이미지 등)           |
+| text             | String?      | 선택적인 메시지 내용                      |
+| image            | [String]?    | 선택적인 이미지 URL 배열                 |
+| plan             | Plan?        | 선택적인 관련 계획                       |
 
 ---
 
-## Enums
+#### Plan (계획)
 
-- **PostType**: Describes the type of post (`lookingForSitter`, `offeringToSitter`).
-- **PostStatus**: Status of a post (`beforeTrade`, `inTrade`, `completedTrade`).
-- **MessageType**: Describes the type of message (`text`, `image`, `plan`, `review`).
-- **PlanType**: Type of the plan (`leavePlan`, `getBackPlan`).
-- **Level**: User level progression from `rottenSeeds` to `fruit`.
-- **Rating**: Review rating (`bad`, `average`, `good`).
-- **ReportType**: Type of report (`post`, `user`).
-- **BlockType**: Type of block (`post`, `user`).
+| 속성             | 타입         | 설명                                      |
+| ---------------- | ------------ | ---------------------------------------- |
+| planId           | String       | 계획의 고유 식별자                       |
+| planDate         | Date         | 계획된 이벤트 날짜                       |
+| planPlace        | Location?    | 선택적인 계획 위치                       |
+| contract         | Contract?    | 선택적인 관련 계약                       |
+| isAccepted       | Bool         | 계획이 수락되었는지 여부                 |
 
-## Location
+---
 
-| Property       | Type         | Description                         |
-| -------------- | ------------ | ----------------------------------- |
-| locationId     | String       | Unique identifier for the location  |
-| latitude       | Double       | Latitude of the location            |
-| longitude      | Double       | Longitude of the location           |
-| placeName      | String       | Name of the place                   |
-| address        | String       | Full address                        |
+#### Contract (계약)
 
+| 속성             | 타입         | 설명                                      |
+| ---------------- | ------------ | ---------------------------------------- |
+| contractId       | String       | 계약의 고유 식별자                       |
+| ownerId          | String       | 식물 소유자의 ID                         |
+| sitterId         | String       | 돌보미의 ID                              |
+| plantName        | String?      | 식물의 이름                               |
+| plantType        | String?      | 식물의 종류                               |
+| startCareDate    | Date         | 돌봄 시작 날짜                            |
+| endCareDate      | Date         | 돌봄 종료 날짜                            |
+
+---
+
+#### Report (신고)
+
+| 속성             | 타입         | 설명                                      |
+| ---------------- | ------------ | ---------------------------------------- |
+| reporterId       | String       | 신고자의 ID                              |
+| reportedId       | String       | 신고된 사용자 또는 게시물의 ID            |
+| reportType       | ReportType   | 신고 유형 (게시물 또는 사용자)            |
+| reportDate       | Date         | 신고 날짜                                 |
+| reason           | String       | 신고 이유                                 |
+
+---
+
+#### Block (차단)
+
+| 속성             | 타입         | 설명                                      |
+| ---------------- | ------------ | ---------------------------------------- |
+| blockerId        | String       | 차단한 사용자의 ID                       |
+| blockedId        | String       | 차단된 사용자 또는 게시물의 ID            |
+| blockType        | BlockType    | 차단 유형 (게시물 또는 사용자)            |
+| blockDate        | Date         | 차단 날짜                                 |
+
+---
+
+#### Enums (열거형)
+
+- **PostType**: 게시물의 유형 (`lookingForSitter`, `offeringToSitter`).
+- **PostStatus**: 게시물의 상태 (`beforeTrade`, `inTrade`, `completedTrade`).
+- **MessageType**: 메시지 유형 (`text`, `image`, `plan`, `review`).
+- **PlanType**: 계획 유형 (`leavePlan`, `getBackPlan`).
+- **Level**: 사용자의 레벨 (`rottenSeeds`, `fruit` 등).
+- **Rating**: 리뷰 평가 (`bad`, `average`, `good`).
+- **ReportType**: 신고 유형 (`post`, `user`).
+- **BlockType**: 차단 유형 (`post`, `user`).
+
+#### Location (위치 정보)
+
+| 속성             | 타입         | 설명                                      |
+| ---------------- | ------------ | ---------------------------------------- |
+| locationId       | String       | 위치의 고유 식별자                       |
+| latitude         | Double       | 위치의 위도                              |
+| longitude        | Double       | 위치의 경도                              |
+| placeName        | String       | 장소의 이름                              |
+| address          | String       | 전체 주소                                |
