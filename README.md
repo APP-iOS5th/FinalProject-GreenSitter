@@ -2,7 +2,8 @@
 앱스쿨 5기 떡잎마을방법대 최종 프로젝트
 
 ## 📌 프로젝트 소개
-<img src="https://github.com/user-attachments/assets/2eda6f9e-ec2d-49b8-8f93-e404f28a43dd" alt="런치 스크린">
+<img src="https://github.com/user-attachments/assets/2eda6f9e-ec2d-49b8-8f93-e404f28a43dd" alt="런치 스크린" width="300">
+
 > 프로젝트 기간: 2024/07/22 ~ 2024/09/13
 
 > 노션 링크: https://likelion.notion.site/2c740f9ccfe34ca7946635f9e08bdb1e
