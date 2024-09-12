@@ -4,7 +4,7 @@
 ## 📌 프로젝트 소개
 <table align="center">
   <tr>
-    <td><img src="https://github.com/user-attachments/assets/2eda6f9e-ec2d-49b8-8f93-e404f28a43dd" alt="런치 스크린"></td>
+    <td><img src="https://github.com/user-attachments/assets/2eda6f9e-ec2d-49b8-8f93-e404f28a43dd" alt="런치 스크린" width="400"></td>
     <td><h2><strong>식물 돌봄 서비스를 매칭해주는 앱</strong></h2><br/>
     <ul>
       <li>현재 위치를 기반으로 가까운 곳의 식물 돌봄이를 찾는 / 자원하는 게시물 및 지도 표기</li>
@@ -84,7 +84,7 @@
 - 레벨 시스템, 돌봄 후기 등을 통한 신뢰도 확인
 
 ## 📌 아키텍처
-<img src="https://github.com/user-attachments/assets/82e0b1cb-a23d-43ef-8b5d-bb3bf11b6cac" alt="아키텍처" width="400">
+<img src="https://github.com/user-attachments/assets/82e0b1cb-a23d-43ef-8b5d-bb3bf11b6cac" alt="아키텍처">
 
 ## 📌 회고
 <details>
