@@ -1,27 +1,21 @@
 # FinalProject-GreenSitter
 앱스쿨 5기 떡잎마을방법대 최종 프로젝트
 
-
-
 ## 📌 프로젝트 소개
 > 프로젝트 기간: 2024/07/22 ~ 2024/09/13
 
 > 노션 링크: https://likelion.notion.site/2c740f9ccfe34ca7946635f9e08bdb1e
 
  식물 돌봄 서비스를 매칭해주는 앱.
- - 현재 위치를 기반으로 가까운 곳의 식물 돌봄이를 찾는/자원하는 게시물 표기
+ - 현재 위치를 기반으로 가까운 곳의 식물 돌봄이를 찾는 / 자원하는 게시물 및 지도 표기
  - 실시간 채팅 기능을 통해 사용자 간의 소통 및 약속 만들기 기능 제공
  - 돌봄 후기, 레벨을 통한 신뢰도 평가 가능
-
-
 
 
 ## 📌 팀원
 | 이융의(팀장) | 박지혜(부팀장) | 김영훈 | 조아라 | 차지용 |
 |:--:|:--:|:--:|:--:|:--:|
 | 맵, 총괄 | 채팅, 알림 | 약속, 채팅| 게시물 | 로그인, 프로필 |
-
-
 
 
 ## 📌 개발도구 및 기술스택
@@ -38,7 +32,6 @@
 - Server: Firebase
 - Software Architecture: MVVM
 - SPM, FCM, Kingfisher
-
 
 
 ## 📌 기능
@@ -79,3 +72,50 @@
 #### 프로필
 - 프로필 이미지, 닉네임(중복 체크), 나의 위치 수정 가능
 - 레벨 시스템, 돌봄 후기 등을 통한 신뢰도 확인
+
+
+## 📌 회고
+<details open>
+<summary>이융의</summary>
+
+### Keep
+### Problem
+### Try
+
+</details>
+
+<details open>
+<summary>박지혜</summary>
+
+### Keep
+### Problem
+### Try
+
+</details>
+
+<details open>
+<summary>김영훈</summary>
+
+### Keep
+### Problem
+### Try
+
+</details>
+
+<details open>
+<summary>조아라</summary>
+
+### Keep
+### Problem
+### Try
+
+</details>
+
+<details open>
+<summary>차지용</summary>
+
+### Keep
+### Problem
+### Try
+
+</details>
