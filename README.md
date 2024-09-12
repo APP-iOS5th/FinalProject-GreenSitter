@@ -5,7 +5,7 @@
 <table align="center">
   <tr>
     <td><img src="https://github.com/user-attachments/assets/2eda6f9e-ec2d-49b8-8f93-e404f28a43dd" alt="런치 스크린" width="400"></td>
-    <td>식물 돌봄 서비스를 매칭해주는 앱.<br/><br/>
+    <td><h2><strong>식물 돌봄 서비스를 매칭해주는 앱.</strong></h2><br/><br/>
  - 현재 위치를 기반으로 가까운 곳의 식물 돌봄이를 찾는 / 자원하는 게시물 및 지도 표기<br/><br/>
  - 실시간 채팅 기능을 통해 사용자 간의 소통 및 약속 만들기 기능 제공<br/><br/>
  - 돌봄 후기, 레벨을 통한 신뢰도 평가 가능</td>
