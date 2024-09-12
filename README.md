@@ -158,3 +158,7 @@
 - MVVM 명확하게 이해하고 적용할 것.
 - 코드 재사용을 통해 효율적인 코드를 작성할 것.
 </details>
+
+## 📌 기타
+- DB 설계서 (https://docs.google.com/spreadsheets/d/1P5zxbyuBczHrqWP0q6ixZcDpZ0kJjIv8Jvjp1PCB3h8/edit?gid=0#gid=0)
+- 디렉토리 구조 (https://likelion.notion.site/c810d1739d1e4472b5cf80d8db944ebf#a654a464555842e8b96fd119acb11432)
