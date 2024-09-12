@@ -2,10 +2,16 @@
 앱스쿨 5기 떡잎마을방법대 최종 프로젝트
 
 ## 📌 프로젝트 소개
-| <img src="https://github.com/user-attachments/assets/2eda6f9e-ec2d-49b8-8f93-e404f28a43dd" alt="런치 스크린" width="200"> | 식물 돌봄 서비스를 매칭해주는 앱.
+<table align="center">
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/2eda6f9e-ec2d-49b8-8f93-e404f28a43dd" alt="런치 스크린" width="200"></td>
+    <td>식물 돌봄 서비스를 매칭해주는 앱.
  - 현재 위치를 기반으로 가까운 곳의 식물 돌봄이를 찾는 / 자원하는 게시물 및 지도 표기
  - 실시간 채팅 기능을 통해 사용자 간의 소통 및 약속 만들기 기능 제공
- - 돌봄 후기, 레벨을 통한 신뢰도 평가 가능 |
+ - 돌봄 후기, 레벨을 통한 신뢰도 평가 가능</td>
+  </tr>
+</table>
+<br/>
 
 > 프로젝트 기간: 2024/07/22 ~ 2024/09/13
 
