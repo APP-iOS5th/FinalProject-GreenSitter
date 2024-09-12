@@ -6,6 +6,8 @@
 
 > 노션 링크: https://likelion.notion.site/2c740f9ccfe34ca7946635f9e08bdb1e
 
+
+
  식물 돌봄 서비스를 매칭해주는 앱.
  - 현재 위치를 기반으로 가까운 곳의 식물 돌봄이를 찾는 / 자원하는 게시물 및 지도 표기
  - 실시간 채팅 기능을 통해 사용자 간의 소통 및 약속 만들기 기능 제공
@@ -75,7 +77,7 @@
 
 
 ## 📌 회고
-<details open>
+<details>
 <summary>이융의</summary>
 
 ### Keep
@@ -84,7 +86,7 @@
 
 </details>
 
-<details open>
+<details>
 <summary>박지혜</summary>
 
 ### Keep
@@ -93,7 +95,7 @@
 
 </details>
 
-<details open>
+<details>
 <summary>김영훈</summary>
 
 ### Keep
@@ -102,7 +104,7 @@
 
 </details>
 
-<details open>
+<details>
 <summary>조아라</summary>
 
 ### Keep
@@ -111,7 +113,7 @@
 
 </details>
 
-<details open>
+<details>
 <summary>차지용</summary>
 
 ### Keep
