@@ -148,3 +148,159 @@
 - MVVM 명확하게 이해하고 적용할 것.
 - 코드 재사용을 통해 효율적인 코드를 작성할 것.
 </details>
+
+# Models Overview
+
+This project contains several key data models used to manage users, posts, reviews, chats, and contracts. Below is a breakdown of each model and its properties.
+
+## User
+
+| Property       | Type         | Description                         |
+| -------------- | ------------ | ----------------------------------- |
+| id             | String       | Unique identifier for the user      |
+| enabled        | Bool         | User status (active/inactive)       |
+| createDate     | Date         | User creation date                  |
+| updateDate     | Date         | Last update date                    |
+| profileImage   | String       | URL of user's profile image         |
+| nickname       | String       | User's nickname                     |
+| location       | Location     | User's location information         |
+| platform       | String       | Platform user is on                 |
+| levelPoint     | Level        | User's current level                |
+| exp            | Int          | User's experience points            |
+| aboutMe        | String       | User's bio                          |
+| fcmToken       | String?      | Optional token for push notifications |
+
+### Methods
+
+- **updateExp(by: Int)**: Updates the user's experience points and adjusts the user's level accordingly.
+
+---
+
+## Post
+
+| Property       | Type         | Description                         |
+| -------------- | ------------ | ----------------------------------- |
+| id             | String       | Unique identifier for the post      |
+| enabled        | Bool         | Post status (active/inactive)       |
+| createDate     | Date         | Post creation date                  |
+| updateDate     | Date         | Last update date                    |
+| userId         | String       | ID of the post creator              |
+| postType       | PostType     | Type of the post                    |
+| postTitle      | String       | Title of the post                   |
+| postBody       | String       | Body content of the post            |
+| location       | Location?    | Location associated with the post   |
+| postStatus     | PostStatus   | Current status of the post          |
+
+---
+
+## Review
+
+| Property       | Type         | Description                         |
+| -------------- | ------------ | ----------------------------------- |
+| id             | String       | Unique identifier for the review    |
+| userId         | String       | ID of the user who created the review|
+| postId         | String       | ID of the related post              |
+| rating         | Rating       | Review rating (bad, average, good)  |
+| reviewText     | String?      | Optional review text                |
+| reviewImage    | String?      | Optional review image               |
+
+---
+
+## ChatRoom
+
+| Property           | Type         | Description                         |
+| ------------------ | ------------ | ----------------------------------- |
+| id                 | String       | Unique identifier for the chat room |
+| userId             | String       | ID of the user                      |
+| postUserId         | String       | ID of the post owner                |
+| messages           | [Message]    | Array of messages in the chat room  |
+| postId             | String       | Related post ID                     |
+| postTitle          | String       | Title of the post                   |
+| postStatus         | PostStatus   | Current status of the post          |
+
+---
+
+## Message
+
+| Property       | Type         | Description                         |
+| -------------- | ------------ | ----------------------------------- |
+| id             | String       | Unique identifier for the message   |
+| senderUserId   | String       | ID of the message sender            |
+| receiverUserId | String       | ID of the message receiver          |
+| messageType    | MessageType  | Type of the message (text, image, etc.) |
+| text           | String?      | Optional message text               |
+| image          | [String]?    | Optional image URLs                 |
+| plan           | Plan?        | Optional associated plan            |
+
+---
+
+## Plan
+
+| Property           | Type         | Description                         |
+| ------------------ | ------------ | ----------------------------------- |
+| planId             | String       | Unique identifier for the plan      |
+| planDate           | Date         | Date of the planned event           |
+| planPlace          | Location?    | Optional location for the plan      |
+| contract           | Contract?    | Optional associated contract        |
+| isAccepted         | Bool         | Whether the plan has been accepted  |
+
+---
+
+## Contract
+
+| Property           | Type         | Description                         |
+| ------------------ | ------------ | ----------------------------------- |
+| contractId         | String       | Unique identifier for the contract  |
+| ownerId            | String       | ID of the plant owner               |
+| sitterId           | String       | ID of the sitter                    |
+| plantName          | String?      | Name of the plant                   |
+| plantType          | String?      | Type of the plant                   |
+| startCareDate      | Date         | Start date of care                  |
+| endCareDate        | Date         | End date of care                    |
+
+---
+
+## Report
+
+| Property       | Type         | Description                         |
+| -------------- | ------------ | ----------------------------------- |
+| reporterId     | String       | ID of the user reporting            |
+| reportedId     | String       | ID of the user/post being reported  |
+| reportType     | ReportType   | Type of the report (post or user)   |
+| reportDate     | Date         | Date the report was filed           |
+| reason         | String       | Reason for the report               |
+
+---
+
+## Block
+
+| Property       | Type         | Description                         |
+| -------------- | ------------ | ----------------------------------- |
+| blockerId      | String       | ID of the user blocking             |
+| blockedId      | String       | ID of the user/post being blocked   |
+| blockType      | BlockType    | Type of the block (post or user)    |
+| blockDate      | Date         | Date the block was made             |
+
+---
+
+## Enums
+
+- **PostType**: Describes the type of post (`lookingForSitter`, `offeringToSitter`).
+- **PostStatus**: Status of a post (`beforeTrade`, `inTrade`, `completedTrade`).
+- **MessageType**: Describes the type of message (`text`, `image`, `plan`, `review`).
+- **PlanType**: Type of the plan (`leavePlan`, `getBackPlan`).
+- **Level**: User level progression from `rottenSeeds` to `fruit`.
+- **Rating**: Review rating (`bad`, `average`, `good`).
+- **ReportType**: Type of report (`post`, `user`).
+- **BlockType**: Type of block (`post`, `user`).
+
+## Location
+
+| Property       | Type         | Description                         |
+| -------------- | ------------ | ----------------------------------- |
+| locationId     | String       | Unique identifier for the location  |
+| latitude       | Double       | Latitude of the location            |
+| longitude      | Double       | Longitude of the location           |
+| placeName      | String       | Name of the place                   |
+| address        | String       | Full address                        |
+
